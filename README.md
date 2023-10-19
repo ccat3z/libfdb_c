@@ -1,0 +1,1 @@
+# Standalone foundationdb client library
