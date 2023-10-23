@@ -1,20 +1,24 @@
-BUILDER_IMAGE = foundationdb-builder
-EXTRACT_WORKDIR = extractor/workdir
 
-.PHONY: all
-all: extract
+.PHONY: all extract build clean clean-all
 
-.PHONY: docker-image
-docker-image: extractor/Dockerfile
-	cd extractor && docker build --tag "$(BUILDER_IMAGE)" .
+all:
 
-.PHONY:
-extract: docker-image | $(WORKDIR) src
-	rm -rf src/*
-	docker run --rm -ti \
-		-u $(shell id -u):$(shell id -g) \
-		-v "$(CURDIR)/$(EXTRACT_WORKDIR):/tmp/fdb_c" \
-		-v "$(CURDIR)/src:/src" \
-		-e FOUNDATIONDB_TAG="7.1.41" \
-		"$(BUILDER_IMAGE)" \
-		/tmp/fdb_c/extract.sh
+build:
+	cmake -Bbuild \
+		-DCMAKE_TOOLCHAIN_FILE="$(CURDIR)/vcpkg/scripts/buildsystems/vcpkg.cmake" \
+		-DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+		.
+	taskset -c 0-29 cmake --build build -j
+
+extract:
+	$(MAKE) -C extractor \
+		OUTPUT_DIR="$(CURDIR)/src"
+
+clean:
+	-rm -r build
+
+clean-all: clean
+	$(MAKE) -C extractor clean
+
+
+

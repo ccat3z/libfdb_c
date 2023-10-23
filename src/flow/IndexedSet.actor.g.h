@@ -1,5 +1,5 @@
 #define POST_ACTOR_COMPILER 1
-#line 1 "/tmp/fdb_c/foundationdb_ep/flow/IndexedSet.actor.h"
+#line 1 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.h"
 /*
  * IndexedSet.actor.h
  *
@@ -34,40 +34,42 @@
 #include "flow/Platform.h"
 #include "flow/actorcompiler.h" // This must be the last #include.
 
-															#line 37 "/src/flow/IndexedSet.actor.g.h"
+															#line 37 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.g.h"
 namespace {
 // This generated class is to be used only via ISFreeNodes()
-															#line 35 "/tmp/fdb_c/foundationdb_ep/flow/IndexedSet.actor.h"
+															#line 35 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.h"
 template <class Node, class ISFreeNodesActor>
-															#line 35 "/tmp/fdb_c/foundationdb_ep/flow/IndexedSet.actor.h"
+															#line 35 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.h"
 class ISFreeNodesActorState {
-															#line 44 "/src/flow/IndexedSet.actor.g.h"
+															#line 44 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.g.h"
 public:
-															#line 35 "/tmp/fdb_c/foundationdb_ep/flow/IndexedSet.actor.h"
+															#line 35 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.h"
 	ISFreeNodesActorState(std::vector<Node*> const& toFree,bool const& synchronous) 
-															#line 35 "/tmp/fdb_c/foundationdb_ep/flow/IndexedSet.actor.h"
-															#line 35 "/tmp/fdb_c/foundationdb_ep/flow/IndexedSet.actor.h"
+															#line 35 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.h"
+															#line 35 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.h"
 		 : toFree(toFree),
-															#line 35 "/tmp/fdb_c/foundationdb_ep/flow/IndexedSet.actor.h"
+															#line 35 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.h"
 		   synchronous(synchronous),
-															#line 40 "/tmp/fdb_c/foundationdb_ep/flow/IndexedSet.actor.h"
+															#line 40 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.h"
 		   eraseCount(0),
-															#line 47 "/tmp/fdb_c/foundationdb_ep/flow/IndexedSet.actor.h"
+															#line 47 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.h"
 		   prefetchQueue()
-															#line 57 "/src/flow/IndexedSet.actor.g.h"
+															#line 57 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.g.h"
 	{
+		fdb_probe_actor_create("ISFreeNodes", reinterpret_cast<unsigned long>(this));
 
 	}
 	~ISFreeNodesActorState() 
 	{
+		fdb_probe_actor_destroy("ISFreeNodes", reinterpret_cast<unsigned long>(this));
 
 	}
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 48 "/tmp/fdb_c/foundationdb_ep/flow/IndexedSet.actor.h"
+															#line 48 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.h"
 			;
-															#line 70 "/src/flow/IndexedSet.actor.g.h"
+															#line 72 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.g.h"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -88,9 +90,9 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 71 "/tmp/fdb_c/foundationdb_ep/flow/IndexedSet.actor.h"
+															#line 71 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.h"
 		if (!static_cast<ISFreeNodesActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~ISFreeNodesActorState(); static_cast<ISFreeNodesActor*>(this)->destroy(); return 0; }
-															#line 93 "/src/flow/IndexedSet.actor.g.h"
+															#line 95 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.g.h"
 		new (&static_cast<ISFreeNodesActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~ISFreeNodesActorState();
 		static_cast<ISFreeNodesActor*>(this)->finishSendAndDelPromiseRef();
@@ -107,62 +109,62 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 48 "/tmp/fdb_c/foundationdb_ep/flow/IndexedSet.actor.h"
+															#line 48 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.h"
 		if (!(!prefetchQueue.empty() || !toFree.empty()))
-															#line 112 "/src/flow/IndexedSet.actor.g.h"
+															#line 114 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.g.h"
 		{
 			return a_body1break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 50 "/tmp/fdb_c/foundationdb_ep/flow/IndexedSet.actor.h"
+															#line 50 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.h"
 		for(;prefetchQueue.size() < 10 && !toFree.empty();) {
-															#line 51 "/tmp/fdb_c/foundationdb_ep/flow/IndexedSet.actor.h"
+															#line 51 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.h"
 			_mm_prefetch((const char*)toFree.back(), _MM_HINT_T0);
-															#line 52 "/tmp/fdb_c/foundationdb_ep/flow/IndexedSet.actor.h"
+															#line 52 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.h"
 			prefetchQueue.push_back(toFree.back());
-															#line 53 "/tmp/fdb_c/foundationdb_ep/flow/IndexedSet.actor.h"
+															#line 53 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.h"
 			toFree.pop_back();
-															#line 124 "/src/flow/IndexedSet.actor.g.h"
+															#line 126 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.g.h"
 		}
-															#line 56 "/tmp/fdb_c/foundationdb_ep/flow/IndexedSet.actor.h"
+															#line 56 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.h"
 		auto n = prefetchQueue.front();
-															#line 57 "/tmp/fdb_c/foundationdb_ep/flow/IndexedSet.actor.h"
+															#line 57 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.h"
 		prefetchQueue.pop_front();
-															#line 59 "/tmp/fdb_c/foundationdb_ep/flow/IndexedSet.actor.h"
+															#line 59 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.h"
 		if (n->child[0])
-															#line 132 "/src/flow/IndexedSet.actor.g.h"
+															#line 134 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.g.h"
 		{
-															#line 60 "/tmp/fdb_c/foundationdb_ep/flow/IndexedSet.actor.h"
+															#line 60 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.h"
 			toFree.push_back(n->child[0]);
-															#line 136 "/src/flow/IndexedSet.actor.g.h"
+															#line 138 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.g.h"
 		}
-															#line 61 "/tmp/fdb_c/foundationdb_ep/flow/IndexedSet.actor.h"
+															#line 61 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.h"
 		if (n->child[1])
-															#line 140 "/src/flow/IndexedSet.actor.g.h"
+															#line 142 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.g.h"
 		{
-															#line 62 "/tmp/fdb_c/foundationdb_ep/flow/IndexedSet.actor.h"
+															#line 62 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.h"
 			toFree.push_back(n->child[1]);
-															#line 144 "/src/flow/IndexedSet.actor.g.h"
+															#line 146 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.g.h"
 		}
-															#line 63 "/tmp/fdb_c/foundationdb_ep/flow/IndexedSet.actor.h"
+															#line 63 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.h"
 		n->child[0] = n->child[1] = 0;
-															#line 64 "/tmp/fdb_c/foundationdb_ep/flow/IndexedSet.actor.h"
+															#line 64 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.h"
 		delete n;
-															#line 65 "/tmp/fdb_c/foundationdb_ep/flow/IndexedSet.actor.h"
+															#line 65 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.h"
 		++eraseCount;
-															#line 67 "/tmp/fdb_c/foundationdb_ep/flow/IndexedSet.actor.h"
+															#line 67 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.h"
 		if (!synchronous && eraseCount % 1000 == 0)
-															#line 154 "/src/flow/IndexedSet.actor.g.h"
+															#line 156 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.g.h"
 		{
-															#line 68 "/tmp/fdb_c/foundationdb_ep/flow/IndexedSet.actor.h"
+															#line 68 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.h"
 			StrictFuture<Void> __when_expr_0 = yield();
-															#line 68 "/tmp/fdb_c/foundationdb_ep/flow/IndexedSet.actor.h"
+															#line 68 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.h"
 			if (static_cast<ISFreeNodesActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 160 "/src/flow/IndexedSet.actor.g.h"
+															#line 162 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.g.h"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<ISFreeNodesActor*>(this)->actor_wait_state = 1;
-															#line 68 "/tmp/fdb_c/foundationdb_ep/flow/IndexedSet.actor.h"
+															#line 68 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.h"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ISFreeNodesActor, 0, Void >*>(static_cast<ISFreeNodesActor*>(this)));
-															#line 165 "/src/flow/IndexedSet.actor.g.h"
+															#line 167 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.g.h"
 			loopDepth = 0;
 		}
 		else
@@ -223,6 +225,7 @@ public:
 	}
 	void a_callback_fire(ActorCallback< ISFreeNodesActor, 0, Void >*,Void const& value) 
 	{
+		fdb_probe_actor_enter("ISFreeNodes", reinterpret_cast<unsigned long>(this), 0);
 		a_exitChoose1();
 		try {
 			a_body1loopBody1when1(value, 0);
@@ -232,10 +235,12 @@ public:
 		} catch (...) {
 			a_body1Catch1(unknown_error(), 0);
 		}
+		fdb_probe_actor_exit("ISFreeNodes", reinterpret_cast<unsigned long>(this), 0);
 
 	}
 	void a_callback_fire(ActorCallback< ISFreeNodesActor, 0, Void >*,Void && value) 
 	{
+		fdb_probe_actor_enter("ISFreeNodes", reinterpret_cast<unsigned long>(this), 0);
 		a_exitChoose1();
 		try {
 			a_body1loopBody1when1(std::move(value), 0);
@@ -245,10 +250,12 @@ public:
 		} catch (...) {
 			a_body1Catch1(unknown_error(), 0);
 		}
+		fdb_probe_actor_exit("ISFreeNodes", reinterpret_cast<unsigned long>(this), 0);
 
 	}
 	void a_callback_error(ActorCallback< ISFreeNodesActor, 0, Void >*,Error err) 
 	{
+		fdb_probe_actor_enter("ISFreeNodes", reinterpret_cast<unsigned long>(this), 0);
 		a_exitChoose1();
 		try {
 			a_body1Catch1(err, 0);
@@ -258,24 +265,25 @@ public:
 		} catch (...) {
 			a_body1Catch1(unknown_error(), 0);
 		}
+		fdb_probe_actor_exit("ISFreeNodes", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 35 "/tmp/fdb_c/foundationdb_ep/flow/IndexedSet.actor.h"
+															#line 35 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.h"
 	std::vector<Node*> toFree;
-															#line 35 "/tmp/fdb_c/foundationdb_ep/flow/IndexedSet.actor.h"
+															#line 35 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.h"
 	bool synchronous;
-															#line 40 "/tmp/fdb_c/foundationdb_ep/flow/IndexedSet.actor.h"
+															#line 40 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.h"
 	int eraseCount;
-															#line 47 "/tmp/fdb_c/foundationdb_ep/flow/IndexedSet.actor.h"
+															#line 47 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.h"
 	Deque<Node*> prefetchQueue;
-															#line 271 "/src/flow/IndexedSet.actor.g.h"
+															#line 279 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.g.h"
 };
 // This generated class is to be used only via ISFreeNodes()
-															#line 35 "/tmp/fdb_c/foundationdb_ep/flow/IndexedSet.actor.h"
+															#line 35 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.h"
 template <class Node>
-															#line 35 "/tmp/fdb_c/foundationdb_ep/flow/IndexedSet.actor.h"
+															#line 35 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.h"
 class ISFreeNodesActor final : public Actor<Void>, public ActorCallback< ISFreeNodesActor<Node>, 0, Void >, public FastAllocated<ISFreeNodesActor<Node>>, public ISFreeNodesActorState<Node, ISFreeNodesActor<Node>> {
-															#line 278 "/src/flow/IndexedSet.actor.g.h"
+															#line 286 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.g.h"
 public:
 	using FastAllocated<ISFreeNodesActor<Node>>::operator new;
 	using FastAllocated<ISFreeNodesActor<Node>>::operator delete;
@@ -284,17 +292,19 @@ public:
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< ISFreeNodesActor<Node>, 0, Void >;
-															#line 35 "/tmp/fdb_c/foundationdb_ep/flow/IndexedSet.actor.h"
+															#line 35 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.h"
 	ISFreeNodesActor(std::vector<Node*> const& toFree,bool const& synchronous) 
-															#line 289 "/src/flow/IndexedSet.actor.g.h"
+															#line 297 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.g.h"
 		 : Actor<Void>(),
 		   ISFreeNodesActorState<Node, ISFreeNodesActor<Node>>(toFree, synchronous)
 	{
+		fdb_probe_actor_enter("ISFreeNodes", reinterpret_cast<unsigned long>(this), -1);
 		#ifdef ENABLE_SAMPLING
 		this->lineage.setActorName("ISFreeNodes");
 		LineageScope _(&this->lineage);
 		#endif
 		this->a_body1();
+		fdb_probe_actor_exit("ISFreeNodes", reinterpret_cast<unsigned long>(this), -1);
 
 	}
 	void cancel() override
@@ -308,16 +318,16 @@ friend struct ActorCallback< ISFreeNodesActor<Node>, 0, Void >;
 	}
 };
 }
-															#line 35 "/tmp/fdb_c/foundationdb_ep/flow/IndexedSet.actor.h"
+															#line 35 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.h"
 template <class Node>
-															#line 35 "/tmp/fdb_c/foundationdb_ep/flow/IndexedSet.actor.h"
+															#line 35 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.h"
 Future<Void> ISFreeNodes( std::vector<Node*> const& toFree, bool const& synchronous ) {
-															#line 35 "/tmp/fdb_c/foundationdb_ep/flow/IndexedSet.actor.h"
+															#line 35 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.h"
 	return Future<Void>(new ISFreeNodesActor<Node>(toFree, synchronous));
-															#line 317 "/src/flow/IndexedSet.actor.g.h"
+															#line 327 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.g.h"
 }
 
-#line 73 "/tmp/fdb_c/foundationdb_ep/flow/IndexedSet.actor.h"
+#line 73 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/IndexedSet.actor.h"
 
 #include "flow/unactorcompiler.h"
 #endif

@@ -1,5 +1,5 @@
 #define POST_ACTOR_COMPILER 1
-#line 1 "/tmp/fdb_c/foundationdb_ep/flow/TDMetric.actor.h"
+#line 1 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.h"
 /*
  * TDMetric.actor.h
  *
@@ -593,48 +593,50 @@ public:
 		}
 	}
 
-																#line 596 "/src/flow/TDMetric.actor.g.h"
+																#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.g.h"
 // This generated class is to be used only via updatePreviousHeader()
-															#line 594 "/tmp/fdb_c/foundationdb_ep/flow/TDMetric.actor.h"
+															#line 594 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.h"
 template <class UpdatePreviousHeaderActor>
-															#line 594 "/tmp/fdb_c/foundationdb_ep/flow/TDMetric.actor.h"
+															#line 594 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.h"
 class UpdatePreviousHeaderActorState {
-															#line 602 "/src/flow/TDMetric.actor.g.h"
+															#line 602 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.g.h"
 public:
-															#line 594 "/tmp/fdb_c/foundationdb_ep/flow/TDMetric.actor.h"
+															#line 594 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.h"
 	UpdatePreviousHeaderActorState(FieldLevel* const& self,IMetricDB* const& db,Standalone<MetricKeyRef> const& mk,uint64_t const& rollTime,MetricUpdateBatch* const& batch) 
-															#line 594 "/tmp/fdb_c/foundationdb_ep/flow/TDMetric.actor.h"
-															#line 594 "/tmp/fdb_c/foundationdb_ep/flow/TDMetric.actor.h"
+															#line 594 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.h"
+															#line 594 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.h"
 		 : self(self),
-															#line 594 "/tmp/fdb_c/foundationdb_ep/flow/TDMetric.actor.h"
+															#line 594 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.h"
 		   db(db),
-															#line 594 "/tmp/fdb_c/foundationdb_ep/flow/TDMetric.actor.h"
+															#line 594 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.h"
 		   mk(mk),
-															#line 594 "/tmp/fdb_c/foundationdb_ep/flow/TDMetric.actor.h"
+															#line 594 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.h"
 		   rollTime(rollTime),
-															#line 594 "/tmp/fdb_c/foundationdb_ep/flow/TDMetric.actor.h"
+															#line 594 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.h"
 		   batch(batch)
-															#line 617 "/src/flow/TDMetric.actor.g.h"
+															#line 617 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.g.h"
 	{
+		fdb_probe_actor_create("updatePreviousHeader", reinterpret_cast<unsigned long>(this));
 
 	}
 	~UpdatePreviousHeaderActorState() 
 	{
+		fdb_probe_actor_destroy("updatePreviousHeader", reinterpret_cast<unsigned long>(this));
 
 	}
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 600 "/tmp/fdb_c/foundationdb_ep/flow/TDMetric.actor.h"
+															#line 600 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.h"
 			StrictFuture<Optional<Standalone<StringRef>>> __when_expr_0 = db->getLastBlock(mk.packDataKey(-1));
-															#line 600 "/tmp/fdb_c/foundationdb_ep/flow/TDMetric.actor.h"
+															#line 600 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.h"
 			if (static_cast<UpdatePreviousHeaderActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 632 "/src/flow/TDMetric.actor.g.h"
+															#line 634 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.g.h"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<UpdatePreviousHeaderActor*>(this)->actor_wait_state = 1;
-															#line 600 "/tmp/fdb_c/foundationdb_ep/flow/TDMetric.actor.h"
+															#line 600 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.h"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< UpdatePreviousHeaderActor, 0, Optional<Standalone<StringRef>> >*>(static_cast<UpdatePreviousHeaderActor*>(this)));
-															#line 637 "/src/flow/TDMetric.actor.g.h"
+															#line 639 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.g.h"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -655,33 +657,33 @@ public:
 	}
 	int a_body1cont1(Optional<Standalone<StringRef>> const& block,int loopDepth) 
 	{
-															#line 603 "/tmp/fdb_c/foundationdb_ep/flow/TDMetric.actor.h"
+															#line 603 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.h"
 		if (block.present())
-															#line 660 "/src/flow/TDMetric.actor.g.h"
+															#line 662 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.g.h"
 		{
-															#line 605 "/tmp/fdb_c/foundationdb_ep/flow/TDMetric.actor.h"
+															#line 605 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.h"
 			Header oldHeader = calculateHeader(block.get());
-															#line 608 "/tmp/fdb_c/foundationdb_ep/flow/TDMetric.actor.h"
+															#line 608 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.h"
 			self->previousHeader = oldHeader;
-															#line 611 "/tmp/fdb_c/foundationdb_ep/flow/TDMetric.actor.h"
+															#line 611 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.h"
 			self->header.update(oldHeader);
-															#line 616 "/tmp/fdb_c/foundationdb_ep/flow/TDMetric.actor.h"
+															#line 616 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.h"
 			self->lastTimeRequiringHeaderPatch = self->metrics.back().rollTime;
-															#line 670 "/src/flow/TDMetric.actor.g.h"
+															#line 672 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.g.h"
 		}
 		else
 		{
-															#line 621 "/tmp/fdb_c/foundationdb_ep/flow/TDMetric.actor.h"
+															#line 621 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.h"
 			self->previousHeader = Header();
-															#line 622 "/tmp/fdb_c/foundationdb_ep/flow/TDMetric.actor.h"
+															#line 622 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.h"
 			self->lastTimeRequiringHeaderPatch = 0;
-															#line 678 "/src/flow/TDMetric.actor.g.h"
+															#line 680 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.g.h"
 		}
-															#line 627 "/tmp/fdb_c/foundationdb_ep/flow/TDMetric.actor.h"
+															#line 627 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.h"
 		self->flushUpdates(mk, rollTime, *batch);
-															#line 629 "/tmp/fdb_c/foundationdb_ep/flow/TDMetric.actor.h"
+															#line 629 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.h"
 		if (!static_cast<UpdatePreviousHeaderActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~UpdatePreviousHeaderActorState(); static_cast<UpdatePreviousHeaderActor*>(this)->destroy(); return 0; }
-															#line 684 "/src/flow/TDMetric.actor.g.h"
+															#line 686 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.g.h"
 		new (&static_cast<UpdatePreviousHeaderActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~UpdatePreviousHeaderActorState();
 		static_cast<UpdatePreviousHeaderActor*>(this)->finishSendAndDelPromiseRef();
@@ -691,33 +693,33 @@ public:
 	}
 	int a_body1cont1(Optional<Standalone<StringRef>> && block,int loopDepth) 
 	{
-															#line 603 "/tmp/fdb_c/foundationdb_ep/flow/TDMetric.actor.h"
+															#line 603 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.h"
 		if (block.present())
-															#line 696 "/src/flow/TDMetric.actor.g.h"
+															#line 698 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.g.h"
 		{
-															#line 605 "/tmp/fdb_c/foundationdb_ep/flow/TDMetric.actor.h"
+															#line 605 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.h"
 			Header oldHeader = calculateHeader(block.get());
-															#line 608 "/tmp/fdb_c/foundationdb_ep/flow/TDMetric.actor.h"
+															#line 608 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.h"
 			self->previousHeader = oldHeader;
-															#line 611 "/tmp/fdb_c/foundationdb_ep/flow/TDMetric.actor.h"
+															#line 611 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.h"
 			self->header.update(oldHeader);
-															#line 616 "/tmp/fdb_c/foundationdb_ep/flow/TDMetric.actor.h"
+															#line 616 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.h"
 			self->lastTimeRequiringHeaderPatch = self->metrics.back().rollTime;
-															#line 706 "/src/flow/TDMetric.actor.g.h"
+															#line 708 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.g.h"
 		}
 		else
 		{
-															#line 621 "/tmp/fdb_c/foundationdb_ep/flow/TDMetric.actor.h"
+															#line 621 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.h"
 			self->previousHeader = Header();
-															#line 622 "/tmp/fdb_c/foundationdb_ep/flow/TDMetric.actor.h"
+															#line 622 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.h"
 			self->lastTimeRequiringHeaderPatch = 0;
-															#line 714 "/src/flow/TDMetric.actor.g.h"
+															#line 716 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.g.h"
 		}
-															#line 627 "/tmp/fdb_c/foundationdb_ep/flow/TDMetric.actor.h"
+															#line 627 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.h"
 		self->flushUpdates(mk, rollTime, *batch);
-															#line 629 "/tmp/fdb_c/foundationdb_ep/flow/TDMetric.actor.h"
+															#line 629 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.h"
 		if (!static_cast<UpdatePreviousHeaderActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~UpdatePreviousHeaderActorState(); static_cast<UpdatePreviousHeaderActor*>(this)->destroy(); return 0; }
-															#line 720 "/src/flow/TDMetric.actor.g.h"
+															#line 722 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.g.h"
 		new (&static_cast<UpdatePreviousHeaderActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~UpdatePreviousHeaderActorState();
 		static_cast<UpdatePreviousHeaderActor*>(this)->finishSendAndDelPromiseRef();
@@ -745,6 +747,7 @@ public:
 	}
 	void a_callback_fire(ActorCallback< UpdatePreviousHeaderActor, 0, Optional<Standalone<StringRef>> >*,Optional<Standalone<StringRef>> const& value) 
 	{
+		fdb_probe_actor_enter("updatePreviousHeader", reinterpret_cast<unsigned long>(this), 0);
 		a_exitChoose1();
 		try {
 			a_body1when1(value, 0);
@@ -754,10 +757,12 @@ public:
 		} catch (...) {
 			a_body1Catch1(unknown_error(), 0);
 		}
+		fdb_probe_actor_exit("updatePreviousHeader", reinterpret_cast<unsigned long>(this), 0);
 
 	}
 	void a_callback_fire(ActorCallback< UpdatePreviousHeaderActor, 0, Optional<Standalone<StringRef>> >*,Optional<Standalone<StringRef>> && value) 
 	{
+		fdb_probe_actor_enter("updatePreviousHeader", reinterpret_cast<unsigned long>(this), 0);
 		a_exitChoose1();
 		try {
 			a_body1when1(std::move(value), 0);
@@ -767,10 +772,12 @@ public:
 		} catch (...) {
 			a_body1Catch1(unknown_error(), 0);
 		}
+		fdb_probe_actor_exit("updatePreviousHeader", reinterpret_cast<unsigned long>(this), 0);
 
 	}
 	void a_callback_error(ActorCallback< UpdatePreviousHeaderActor, 0, Optional<Standalone<StringRef>> >*,Error err) 
 	{
+		fdb_probe_actor_enter("updatePreviousHeader", reinterpret_cast<unsigned long>(this), 0);
 		a_exitChoose1();
 		try {
 			a_body1Catch1(err, 0);
@@ -780,24 +787,25 @@ public:
 		} catch (...) {
 			a_body1Catch1(unknown_error(), 0);
 		}
+		fdb_probe_actor_exit("updatePreviousHeader", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 594 "/tmp/fdb_c/foundationdb_ep/flow/TDMetric.actor.h"
+															#line 594 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.h"
 	FieldLevel* self;
-															#line 594 "/tmp/fdb_c/foundationdb_ep/flow/TDMetric.actor.h"
+															#line 594 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.h"
 	IMetricDB* db;
-															#line 594 "/tmp/fdb_c/foundationdb_ep/flow/TDMetric.actor.h"
+															#line 594 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.h"
 	Standalone<MetricKeyRef> mk;
-															#line 594 "/tmp/fdb_c/foundationdb_ep/flow/TDMetric.actor.h"
+															#line 594 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.h"
 	uint64_t rollTime;
-															#line 594 "/tmp/fdb_c/foundationdb_ep/flow/TDMetric.actor.h"
+															#line 594 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.h"
 	MetricUpdateBatch* batch;
-															#line 795 "/src/flow/TDMetric.actor.g.h"
+															#line 803 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.g.h"
 };
 // This generated class is to be used only via updatePreviousHeader()
-															#line 594 "/tmp/fdb_c/foundationdb_ep/flow/TDMetric.actor.h"
+															#line 594 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.h"
 class UpdatePreviousHeaderActor final : public Actor<Void>, public ActorCallback< UpdatePreviousHeaderActor, 0, Optional<Standalone<StringRef>> >, public FastAllocated<UpdatePreviousHeaderActor>, public UpdatePreviousHeaderActorState<UpdatePreviousHeaderActor> {
-															#line 800 "/src/flow/TDMetric.actor.g.h"
+															#line 808 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.g.h"
 public:
 	using FastAllocated<UpdatePreviousHeaderActor>::operator new;
 	using FastAllocated<UpdatePreviousHeaderActor>::operator delete;
@@ -806,17 +814,19 @@ public:
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< UpdatePreviousHeaderActor, 0, Optional<Standalone<StringRef>> >;
-															#line 594 "/tmp/fdb_c/foundationdb_ep/flow/TDMetric.actor.h"
+															#line 594 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.h"
 	UpdatePreviousHeaderActor(FieldLevel* const& self,IMetricDB* const& db,Standalone<MetricKeyRef> const& mk,uint64_t const& rollTime,MetricUpdateBatch* const& batch) 
-															#line 811 "/src/flow/TDMetric.actor.g.h"
+															#line 819 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.g.h"
 		 : Actor<Void>(),
 		   UpdatePreviousHeaderActorState<UpdatePreviousHeaderActor>(self, db, mk, rollTime, batch)
 	{
+		fdb_probe_actor_enter("updatePreviousHeader", reinterpret_cast<unsigned long>(this), -1);
 		#ifdef ENABLE_SAMPLING
 		this->lineage.setActorName("updatePreviousHeader");
 		LineageScope _(&this->lineage);
 		#endif
 		this->a_body1();
+		fdb_probe_actor_exit("updatePreviousHeader", reinterpret_cast<unsigned long>(this), -1);
 
 	}
 	void cancel() override
@@ -829,14 +839,14 @@ friend struct ActorCallback< UpdatePreviousHeaderActor, 0, Optional<Standalone<S
 
 	}
 };
-															#line 594 "/tmp/fdb_c/foundationdb_ep/flow/TDMetric.actor.h"
+															#line 594 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.h"
 [[nodiscard]] static Future<Void> updatePreviousHeader( FieldLevel* const& self, IMetricDB* const& db, Standalone<MetricKeyRef> const& mk, uint64_t const& rollTime, MetricUpdateBatch* const& batch ) {
-															#line 594 "/tmp/fdb_c/foundationdb_ep/flow/TDMetric.actor.h"
+															#line 594 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.h"
 	return Future<Void>(new UpdatePreviousHeaderActor(self, db, mk, rollTime, batch));
-															#line 836 "/src/flow/TDMetric.actor.g.h"
+															#line 846 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.g.h"
 }
 
-#line 631 "/tmp/fdb_c/foundationdb_ep/flow/TDMetric.actor.h"
+#line 631 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TDMetric.actor.h"
 
 	// Flush this level's data to the output batch.
 	// This function must NOT be called again until any callbacks added to batch have been completed.

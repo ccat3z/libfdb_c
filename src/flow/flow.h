@@ -1373,5 +1373,5 @@ inline bool check_yield(TaskPriority taskID = TaskPriority::DefaultYield) {
 	return g_network->check_yield(taskID);
 }
 
-#include "flow/genericactors.actor.g.h"
+#include "flow/genericactors.actor.h"
 #endif

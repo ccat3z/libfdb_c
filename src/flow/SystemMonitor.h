@@ -23,7 +23,7 @@
 #pragma once
 
 #include "flow/Platform.h"
-#include "flow/TDMetric.actor.g.h"
+#include "flow/TDMetric.actor.h"
 
 struct SystemMonitorMachineState {
 	Optional<std::string> folder;

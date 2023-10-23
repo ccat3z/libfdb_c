@@ -9,7 +9,8 @@ FOUNDATIONDB_TAG=${FOUNDATIONDB_TAG:?FOUNDATIONDB_TAG is required}
 FOUNDATIONDB_REPO="${WORKDIR}/foundationdb_ep"
 FOUNDATIONDB_BUILDDIR="${WORKDIR}/foundationdb_build"
 
-OUTPUT_DIR="/src"
+OUTPUT_DIR="$1"
+[ -d "$OUTPUT_DIR" ] || exit 1
 
 cd "${WORKDIR}"
 
@@ -31,28 +32,98 @@ ACTORCOMPILER="mono ${FOUNDATIONDB_BUILDDIR}/actorcompiler.exe"
 VEXILLOGRAPHER="mono ${FOUNDATIONDB_BUILDDIR}/vexillographer.exe"
 
 # Copy flow source
-[ -d "${OUTPUT_DIR}/flow" ] || mkdir "${OUTPUT_DIR}/flow"
-flow_skip_source=(
-    "CMakeLists.txt"
-    "README.md"
-    "stacktrace_internal"
-    "coveragetool"
-    "actorcompiler"
-    "no_intellisense.opt"
+function convert_fdb_source() {
+    rm -rf "${OUTPUT_DIR}/${_subdir}"
+    mkdir -p "${OUTPUT_DIR}/${_subdir}"
+
+    for path in "${FOUNDATIONDB_REPO}/${_subdir}/"*; do
+        file="$(basename "$path")"
+        if [[ " ${_skip_source[@]} " =~ " $file " ]]; then
+            echo "Skip $file"
+        elif [[ " ${_copy_source[@]} " =~ " $file " ]]; then
+            cp "$path" "${OUTPUT_DIR}/${_subdir}/${file}"
+        elif [[ "$file" =~ ^(.*)\.(h|cpp)$ ]]; then
+            _target="${OUTPUT_DIR}/${_subdir}/${file}"
+            sed  "$path" \
+                -e 's|contrib/fmt-8.1.1/include/||' \
+                -e 's|flow/stacktrace.h|absl/debugging/stacktrace.h|' \
+                -e 's|fdbrpc/md5/md5.h|openssl/md5.h|;' \
+                > "$_target"
+
+            if [[ "$file" =~ ^(.*)\.actor\.(h|cpp)$ ]]; then
+                _actor_target="${OUTPUT_DIR}/${_subdir}/${BASH_REMATCH[1]}.actor.g.${BASH_REMATCH[2]}"
+                $ACTORCOMPILER "$_target" "$_actor_target" --generate-probes
+            fi
+        elif [[ "$file" =~ ^(.*).h.cmake$ ]]; then
+            cp "$FOUNDATIONDB_BUILDDIR/${_subdir}/${BASH_REMATCH[1]}.h" "${OUTPUT_DIR}/${_subdir}/${BASH_REMATCH[1]}.h"
+        else
+            cp -R "$path" "${OUTPUT_DIR}/${_subdir}/${file}"
+        fi
+    done
+    cp "${WORKDIR}/cmake/${_subdir}.cmake" "${OUTPUT_DIR}/${_subdir}/CMakeLists.txt"
+}
+
+# flow
+_subdir=flow
+_skip_source=(
+    CMakeLists.txt
+    README.md
+    coveragetool
+    actorcompiler
+    no_intellisense.opt
+    stacktrace_internal
+    stacktrace.amalgamation.cpp
+    stacktrace.h
 )
-for path in "${FOUNDATIONDB_REPO}/flow/"*; do
-    file="$(basename "$path")"
-    if [[ " ${flow_skip_source[@]} " =~ " $file " ]]; then
-        echo "Skip $file"
-    elif [[ "$file" =~ ^(.*)\.actor\.(h|cpp)$ ]]; then
-        $ACTORCOMPILER "$path" "${OUTPUT_DIR}/flow/${BASH_REMATCH[1]}.actor.g.${BASH_REMATCH[2]}"
-    elif [[ "$file" =~ ^(.*)\.(h|cpp)$ ]]; then
-        sed 's/\.actor\.h/.actor.g.h/' "$path" > "${OUTPUT_DIR}/flow/${file}"
-    elif [ "$file" = "config.h.cmake" ]; then
-        cp "$path" "${OUTPUT_DIR}/flow/${file}"
-    elif [[ "$file" =~ ^(.*).h.cmake$ ]]; then
-        cp "$FOUNDATIONDB_BUILDDIR/flow/${BASH_REMATCH[1]}.h" "${OUTPUT_DIR}/flow/${BASH_REMATCH[1]}.h"
-    else
-        cp -R "$path" "${OUTPUT_DIR}/flow/${file}"
-    fi
-done
+_copy_source=(
+    config.h.cmake
+)
+convert_fdb_source
+
+# fdbrpc
+_subdir=fdbrpc
+_skip_source=(
+    CMakeLists.txt
+    README.md
+    actorFuzz.py
+
+    # Depends
+    libcoroutine # use boost coro impl
+    md5          # use openssl impl
+    # libb64
+    # libeio
+)
+_copy_source=()
+convert_fdb_source
+
+# fdbrpc requires fdbserver/Knobs.h
+mkdir "${OUTPUT_DIR}/fdbserver"
+cp "${FOUNDATIONDB_REPO}/fdbserver/Knobs.h" "${OUTPUT_DIR}/fdbserver/Knobs.h"
+
+# fdbclient
+_subdir=fdbclient
+_skip_source=(
+    CMakeLists.txt
+    README.md
+    azurestorage.cmake
+    vexillographer  
+
+    # Depends
+    rapidxml        # required by s3
+    rapidjson       # required by unit test
+    # json_spirit
+    # sha1
+
+    # Disable AZURE
+    BackupContainerAzureBlobStore.actor.cpp
+
+    # Disable S3
+    S3BlobStore.actor.cpp
+)
+_copy_source=()
+convert_fdb_source
+$VEXILLOGRAPHER "${FOUNDATIONDB_REPO}/fdbclient/vexillographer/fdb.options" cpp "${OUTPUT_DIR}/fdbclient/FDBOptions.g"
+
+# bindings/c
+mkdir -p "${OUTPUT_DIR}/bindings/c/foundationdb"
+$VEXILLOGRAPHER "${FOUNDATIONDB_REPO}/fdbclient/vexillographer/fdb.options" c "${OUTPUT_DIR}/bindings/c/foundationdb/fdb_c_options.g.h"

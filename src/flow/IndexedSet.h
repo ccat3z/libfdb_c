@@ -1382,7 +1382,7 @@ Metric IndexedSet<T, Metric>::sumTo(typename IndexedSet<T, Metric>::const_iterat
 }
 
 #include "flow/flow.h"
-#include "flow/IndexedSet.actor.g.h"
+#include "flow/IndexedSet.actor.h"
 
 template <class T, class Metric>
 void IndexedSet<T, Metric>::erase(typename IndexedSet<T, Metric>::iterator begin,

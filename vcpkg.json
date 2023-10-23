@@ -1,0 +1,27 @@
+{
+  "dependencies": [
+    "boost-algorithm",
+    "boost-asio",
+    "boost-bind",
+    "boost-container",
+    "boost-date-time",
+    "boost-functional",
+    "boost-lockfree",
+    "boost-preprocessor",
+    "boost-range",
+    "boost-system",
+    "boost-variant",
+    "boost-spirit",
+    "msgpack",
+    "abseil",
+    "fmt",
+    "openssl"
+  ],
+  "builtin-baseline": "8eb57355a4ffb410a2e94c07b4dca2dffbee8e50",
+  "overrides": [
+    {
+      "name": "fmt",
+      "version": "8.1.1"
+    }
+  ]
+}

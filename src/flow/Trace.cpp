@@ -32,10 +32,10 @@
 #include <set>
 #include <iomanip>
 #include "flow/IThreadPool.h"
-#include "flow/ThreadHelper.actor.g.h"
+#include "flow/ThreadHelper.actor.h"
 #include "flow/FastRef.h"
-#include "flow/EventTypes.actor.g.h"
-#include "flow/TDMetric.actor.g.h"
+#include "flow/EventTypes.actor.h"
+#include "flow/TDMetric.actor.h"
 #include "flow/MetricSample.h"
 
 #ifdef _WIN32

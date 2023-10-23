@@ -23,7 +23,7 @@
 #pragma once
 
 #include "flow/network.h"
-#include "flow/genericactors.actor.g.h"
+#include "flow/genericactors.actor.h"
 
 struct Hostname {
 	std::string host;

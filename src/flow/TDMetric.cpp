@@ -18,7 +18,7 @@
  * limitations under the License.
  */
 
-#include "flow/TDMetric.actor.g.h"
+#include "flow/TDMetric.actor.h"
 #include "flow/flow.h"
 
 const StringRef BaseEventMetric::metricType = LiteralStringRef("Event");

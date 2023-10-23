@@ -1,1 +1,6 @@
 /tmp
+/build
+/vcpkg
+/vcpkg_installed
+/.cache
+/.clangd

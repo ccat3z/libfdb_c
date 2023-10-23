@@ -21,7 +21,7 @@
 #include "flow/FileTraceLogWriter.h"
 #include "flow/Platform.h"
 #include "flow/flow.h"
-#include "flow/ThreadHelper.actor.g.h"
+#include "flow/ThreadHelper.actor.h"
 
 #if defined(__unixish__)
 #define __open ::open
