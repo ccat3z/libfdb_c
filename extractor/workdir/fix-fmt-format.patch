@@ -1,0 +1,22 @@
+From 13841e907cb53908271f5e097c65323b5e43e294 Mon Sep 17 00:00:00 2001
+From: ccat3z <fzhang.chn@outlook.com>
+Date: Sun, 12 Mar 2023 14:41:55 +0000
+Subject: [PATCH] Fix print format
+
+---
+ flow/IndexedSet.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/flow/IndexedSet.cpp b/flow/IndexedSet.cpp
+index 7f1337279..ef74ca884 100644
+--- a/flow/IndexedSet.cpp
++++ b/flow/IndexedSet.cpp
+@@ -497,7 +497,7 @@ TEST_CASE("/flow/IndexedSet/all numbers") {
+ 		int ib = ii != is.end() ? *ii : 1000000;
+ 		ASSERT(ib == b);
+ 		if (ib != b) {
+-			fmt::print("{0} {1} {2} {3} {4} {5}\n", ib == b ? "OK" : "ERROR", n, b, ib, is.sumTo(ii));
++			fmt::print("{0} {1} {2} {3} {4}\n", ib == b ? "OK" : "ERROR", n, b, ib, is.sumTo(ii));
+ 		}
+ 	}
+ 

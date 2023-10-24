@@ -23,6 +23,9 @@ git checkout -f "$FOUNDATIONDB_TAG"
 git reset HEAD --hard
 git clean -dffx
 
+# Apply patchs
+git apply "${WORKDIR}/fix-fmt-format.patch"
+
 # Configure build
 # rm -rf "${FOUNDATIONDB_BUILDDIR}"
 cmake -B "${FOUNDATIONDB_BUILDDIR}" -G Ninja "${FOUNDATIONDB_REPO}"
