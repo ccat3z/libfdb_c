@@ -1,4 +1,4 @@
-project(fdb_c)
+project(fdb_c C CXX ASM)
 
 function(glob_flow_source VAR_NAME)
     file(GLOB SOURCE_FILES *.c *.cpp *.h)
