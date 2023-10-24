@@ -19,7 +19,9 @@ cd "${WORKDIR}"
 cd "$FOUNDATIONDB_REPO"
 [ -d ".git" ] || git init
 git fetch "$FOUNDATIONDB_GIT" "$FOUNDATIONDB_TAG" --tags
-git checkout "$FOUNDATIONDB_TAG"
+git checkout -f "$FOUNDATIONDB_TAG"
+git reset HEAD --hard
+git clean -dffx
 
 # Configure build
 # rm -rf "${FOUNDATIONDB_BUILDDIR}"
