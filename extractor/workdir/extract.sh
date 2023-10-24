@@ -125,5 +125,24 @@ convert_fdb_source
 $VEXILLOGRAPHER "${FOUNDATIONDB_REPO}/fdbclient/vexillographer/fdb.options" cpp "${OUTPUT_DIR}/fdbclient/FDBOptions.g"
 
 # bindings/c
-mkdir -p "${OUTPUT_DIR}/bindings/c/foundationdb"
+mkdir -p "${OUTPUT_DIR}/bindings/c"
+cp "${FOUNDATIONDB_REPO}/bindings/c/fdb_c.cpp" "${OUTPUT_DIR}/bindings/c/fdb_c.cpp"
+cp -r "${FOUNDATIONDB_REPO}/bindings/c/foundationdb" "${OUTPUT_DIR}/bindings/c/foundationdb"
 $VEXILLOGRAPHER "${FOUNDATIONDB_REPO}/fdbclient/vexillographer/fdb.options" c "${OUTPUT_DIR}/bindings/c/foundationdb/fdb_c_options.g.h"
+function generate_fdb_c_asm() {
+    _os="${1}"
+    _cpu="${2}"
+    _asm_dir="${OUTPUT_DIR}/bindings/c/${_os}-${_cpu}"
+
+    mkdir "${_asm_dir}"
+    python3 "${FOUNDATIONDB_REPO}/bindings/c/generate_asm.py" \
+        "${_os}" "${_cpu}" \
+        "${FOUNDATIONDB_REPO}/bindings/c/fdb_c.cpp" \
+        "${_asm_dir}/fdb_c.g.S" \
+        "${_asm_dir}/fdb_c_function_pointers.g.h"
+}
+generate_fdb_c_asm linux intel
+generate_fdb_c_asm linux aarch64
+generate_fdb_c_asm osx aarch64
+cp "${WORKDIR}/cmake/fdb_c.cmake" "${OUTPUT_DIR}/bindings/c/CMakeLists.txt"
+

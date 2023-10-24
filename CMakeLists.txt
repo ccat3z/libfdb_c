@@ -16,8 +16,11 @@ endfunction()
 find_package(Boost REQUIRED)
 find_package(fmt CONFIG REQUIRED)
 
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 add_compile_definitions(NO_INTELLISENSE)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_CURRENT_BINARY_DIR}/src)
 add_subdirectory(src/flow)
 add_subdirectory(src/fdbrpc)
 add_subdirectory(src/fdbclient)
+add_subdirectory(src/bindings/c)

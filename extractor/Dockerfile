@@ -37,6 +37,7 @@ RUN apt-get update \
     && apt-get install \
         git \
         mono-devel \
+        python3 \
         --yes --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
