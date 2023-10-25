@@ -1,14 +1,26 @@
+ENABLE_VCPKG 		  = ON
+CMAKE_CONFIGURE_DEPS  =
+CMAKE_CONFIGURE_FLAGS = -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+
+check = $(if $(filter $(1), on ON true TRUE yes YES 1),1)
 
 .PHONY: all extract build clean clean-all
+all: build
 
-all:
+ifeq ($(call check, $(ENABLE_VCPKG)), 1)
+vcpkg:
+	git clone https://github.com/microsoft/vcpkg.git
 
-build:
-	cmake -Bbuild \
-		-DCMAKE_TOOLCHAIN_FILE="$(CURDIR)/vcpkg/scripts/buildsystems/vcpkg.cmake" \
-		-DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
-		.
-	taskset -c 0-29 cmake --build build -j
+vcpkg/vcpkg: vcpkg
+	./vcpkg/bootstrap-vcpkg.sh
+
+CMAKE_CONFIGURE_DEPS  += vcpkg/vcpkg
+CMAKE_CONFIGURE_FLAGS += -DCMAKE_TOOLCHAIN_FILE="$(CURDIR)/vcpkg/scripts/buildsystems/vcpkg.cmake"
+endif
+
+build: $(CMAKE_CONFIGURE_DEPS)
+	cmake -Bbuild $(CMAKE_CONFIGURE_FLAGS) .
+	cmake --build build -j
 
 extract:
 	$(MAKE) -C extractor \
@@ -19,6 +31,3 @@ clean:
 
 clean-all: clean
 	$(MAKE) -C extractor clean
-
-
-
