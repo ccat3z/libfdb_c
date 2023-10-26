@@ -21,8 +21,11 @@ git reset HEAD --hard
 git clean -dffx
 
 # Apply patchs
-git apply "${WORKDIR}/fix-fmt-format.patch"
+for patch in fix-fmt-format.patch build-c-binding-only.patch backport-doctest.patch
+do
+    git apply "${WORKDIR}/patches/${patch}"
+done
 
 # Configure build
 # rm -rf "${FOUNDATIONDB_BUILDDIR}"
-cmake -B "${FOUNDATIONDB_BUILDDIR}" -G Ninja "${FOUNDATIONDB_REPO}"
+cmake -B "${FOUNDATIONDB_BUILDDIR}" -DCMAKE_BUILD_TYPE=Debug -G Ninja "${FOUNDATIONDB_REPO}"

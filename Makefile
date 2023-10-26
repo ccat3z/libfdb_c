@@ -4,7 +4,7 @@ CMAKE_CONFIGURE_FLAGS = -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
 check = $(if $(filter $(1), on ON true TRUE yes YES 1),1)
 
-.PHONY: all extract build clean clean-all
+.PHONY: all extract build build-tests clean clean-all
 all: build
 
 ifeq ($(call check, $(ENABLE_VCPKG)), 1)
@@ -21,6 +21,9 @@ endif
 build: $(CMAKE_CONFIGURE_DEPS)
 	cmake -Bbuild $(CMAKE_CONFIGURE_FLAGS) .
 	cmake --build build -j
+
+build-tests:
+	$(MAKE) -C extractor build-tests
 
 extract:
 	$(MAKE) -C extractor \

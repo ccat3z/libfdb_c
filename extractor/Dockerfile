@@ -38,6 +38,8 @@ RUN apt-get update \
         git \
         mono-devel \
         python3 \
+        make \
+        libssl-dev \
         --yes --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
