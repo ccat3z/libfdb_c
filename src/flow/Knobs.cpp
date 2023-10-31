@@ -18,9 +18,13 @@
  * limitations under the License.
  */
 
+#include "flow/EncryptUtils.h"
+#include "flow/Error.h"
 #include "flow/flow.h"
 #include "flow/Knobs.h"
 #include "flow/BooleanParam.h"
+#include "flow/UnitTest.h"
+
 #include <cmath>
 #include <cinttypes>
 
@@ -67,8 +71,8 @@ void FlowKnobs::initialize(Randomize randomize, IsSimulated isSimulated) {
 	init( SATURATION_PROFILING_MAX_LOG_INTERVAL,               5.0 );
 	init( SATURATION_PROFILING_LOG_BACKOFF,                    2.0 );
 
-	init( RANDOMSEED_RETRY_LIMIT,                                4 );
 	init( FAST_ALLOC_LOGGING_BYTES,                           10e6 );
+	init( FAST_ALLOC_ALLOW_GUARD_PAGES,                      false );
 	init( HUGE_ARENA_LOGGING_BYTES,                          100e6 );
 	init( HUGE_ARENA_LOGGING_INTERVAL,                         5.0 );
 
@@ -80,9 +84,18 @@ void FlowKnobs::initialize(Randomize randomize, IsSimulated isSimulated) {
 
 
 	init( WRITE_TRACING_ENABLED,                              true ); if( randomize && BUGGIFY ) WRITE_TRACING_ENABLED = false;
-	init( TRACING_SAMPLE_RATE,                                 0.0 ); // Fraction of distributed traces (not spans) to sample (0 means ignore all traces)
+	init( TRACING_SAMPLE_RATE,                                 0.0 ); if (randomize && BUGGIFY) TRACING_SAMPLE_RATE = 0.01; // Fraction of distributed traces (not spans) to sample (0 means ignore all traces)
 	init( TRACING_UDP_LISTENER_ADDR,                   "127.0.0.1" ); // Only applicable if TracerType is set to a network option
 	init( TRACING_UDP_LISTENER_PORT,                          8889 ); // Only applicable if TracerType is set to a network option
+
+	// Native metrics
+	init( METRICS_DATA_MODEL,                                "none"); if (randomize && BUGGIFY) METRICS_DATA_MODEL="otel";
+	init( METRICS_EMISSION_INTERVAL,                          30.0 ); // The time (in seconds) between metric flushes
+	init( STATSD_UDP_EMISSION_ADDR,                     "127.0.0.1");
+	init( STATSD_UDP_EMISSION_PORT,                           8125 );
+	init( OTEL_UDP_EMISSION_ADDR,                       "127.0.0.1");
+	init( OTEL_UDP_EMISSION_PORT,                             8903 );
+	init( METRICS_EMIT_DDSKETCH,                             false ); // Determines if DDSketch buckets will get emitted
 
 	//connectionMonitor
 	init( CONNECTION_MONITOR_LOOP_TIME,   isSimulated ? 0.75 : 1.0 ); if( randomize && BUGGIFY ) CONNECTION_MONITOR_LOOP_TIME = 6.0;
@@ -106,8 +119,7 @@ void FlowKnobs::initialize(Randomize randomize, IsSimulated isSimulated) {
 	init( PEER_UNAVAILABLE_FOR_LONG_TIME_TIMEOUT,           3600.0 );
 	init( INCOMPATIBLE_PEER_DELAY_BEFORE_LOGGING,              5.0 );
 	init( PING_LOGGING_INTERVAL,                               3.0 );
-	init( PING_SAMPLE_AMOUNT,                                  100 );
-	init( NETWORK_CONNECT_SAMPLE_AMOUNT,                       100 );
+	init( PING_SKETCH_ACCURACY,                                0.1 );
 
 	init( TLS_CERT_REFRESH_DELAY_SECONDS,                 12*60*60 );
 	init( TLS_SERVER_CONNECTION_THROTTLE_TIMEOUT,              9.0 );
@@ -126,6 +138,15 @@ void FlowKnobs::initialize(Randomize randomize, IsSimulated isSimulated) {
 	init( NETWORK_TEST_REQUEST_SIZE,                             1 );
 	init( NETWORK_TEST_SCRIPT_MODE,                          false );
 
+	//Authorization
+	init( ALLOW_TOKENLESS_TENANT_ACCESS,                     false );
+	init( AUDIT_LOGGING_ENABLED,                              true );
+	init( PUBLIC_KEY_FILE_MAX_SIZE,                    1024 * 1024 );
+	init( PUBLIC_KEY_FILE_REFRESH_INTERVAL_SECONDS,            300 );
+	init( AUDIT_TIME_WINDOW,                                   5.0 );
+	init( TOKEN_CACHE_SIZE,                                   2000 );
+	init( WIPE_SENSITIVE_DATA_FROM_PACKET_BUFFER,             true );
+
 	//AsyncFileCached
 	init( PAGE_CACHE_4K,                                   2LL<<30 );
 	init( PAGE_CACHE_64K,                                200LL<<20 );
@@ -133,6 +154,7 @@ void FlowKnobs::initialize(Randomize randomize, IsSimulated isSimulated) {
 	init( SIM_PAGE_CACHE_64K,                                  1e7 );
 	init( BUGGIFY_SIM_PAGE_CACHE_4K,                           1e6 );
 	init( BUGGIFY_SIM_PAGE_CACHE_64K,                          1e6 );
+	init( BLOB_WORKER_PAGE_CACHE,                            500e6 );
 	init( MAX_EVICT_ATTEMPTS,                                  100 ); if( randomize && BUGGIFY ) MAX_EVICT_ATTEMPTS = 2;
 	init( CACHE_EVICTION_POLICY,                          "random" );
 	init( PAGE_CACHE_TRUNCATE_LOOKUP_FRACTION,                 0.1 ); if( randomize && BUGGIFY ) PAGE_CACHE_TRUNCATE_LOOKUP_FRACTION = 0.0; else if( randomize && BUGGIFY ) PAGE_CACHE_TRUNCATE_LOOKUP_FRACTION = 1.0;
@@ -153,6 +175,9 @@ void FlowKnobs::initialize(Randomize randomize, IsSimulated isSimulated) {
 	//AsyncFileKAIO
 	init( MAX_OUTSTANDING,                                      64 );
 	init( MIN_SUBMIT,                                           10 );
+	init( SQLITE_DISK_METRIC_LOGGING_INTERVAL,                 5.0 );
+	init( KAIO_LATENCY_LOGGING_INTERVAL,                      30.0 );
+	init( KAIO_LATENCY_SKETCH_ACCURACY,                       0.01 );
 
 	init( PAGE_WRITE_CHECKSUM_HISTORY,                           0 ); if( randomize && BUGGIFY ) PAGE_WRITE_CHECKSUM_HISTORY = 10000000;
 	init( DISABLE_POSIX_KERNEL_AIO,                              0 );
@@ -167,12 +192,11 @@ void FlowKnobs::initialize(Randomize randomize, IsSimulated isSimulated) {
 	init( LOW_PRIORITY_MAX_DELAY,                              5.0 );
 
 	// HTTP
-	init( HTTP_READ_SIZE,                                 128*1024 );
-	init( HTTP_SEND_SIZE,                                  32*1024 );
+	init( HTTP_READ_SIZE,                                 128*1024 ); if (randomize && BUGGIFY) HTTP_READ_SIZE = deterministicRandom()->randomSkewedUInt32(1024, 2 * HTTP_READ_SIZE);
+	init( HTTP_SEND_SIZE,                                  32*1024 ); if (randomize && BUGGIFY) HTTP_SEND_SIZE = deterministicRandom()->randomSkewedUInt32(1024, 2 * HTTP_SEND_SIZE);
 	init( HTTP_VERBOSE_LEVEL,                                    0 );
 	init( HTTP_REQUEST_ID_HEADER,                               "" );
 	init( HTTP_RESPONSE_SKIP_VERIFY_CHECKSUM_FOR_PARTIAL_CONTENT, false );
-	init( HTTP_CONNECT_TRIES,                                   10 );
 
 	//IAsyncFile
 	init( INCREMENTAL_DELETE_TRUNCATE_AMOUNT,                  5e8 ); //500MB
@@ -210,13 +234,14 @@ void FlowKnobs::initialize(Randomize randomize, IsSimulated isSimulated) {
 	init( SLOW_NETWORK_LATENCY,                             100e-3 );
 	init( MAX_CLOGGING_LATENCY,                                  0 ); if( randomize && BUGGIFY ) MAX_CLOGGING_LATENCY =  0.1 * deterministicRandom()->random01();
 	init( MAX_BUGGIFIED_DELAY,                                   0 ); if( randomize && BUGGIFY ) MAX_BUGGIFIED_DELAY =  0.2 * deterministicRandom()->random01();
+	init( MAX_RUNLOOP_SLEEP_DELAY,                               0 );
 	init( SIM_CONNECT_ERROR_MODE, deterministicRandom()->randomInt(0,3) );
 
 	//Tracefiles
 	init( ZERO_LENGTH_FILE_PAD,                                  1 );
 	init( TRACE_FLUSH_INTERVAL,                               0.25 );
 	init( TRACE_RETRY_OPEN_INTERVAL,						  1.00 );
-	init( MIN_TRACE_SEVERITY,                 isSimulated ? 1 : 10 ); // Related to the trace severity in Trace.h
+	init( MIN_TRACE_SEVERITY,                isSimulated ?  1 : 10, Atomic::NO ); // Related to the trace severity in Trace.h
 	init( MAX_TRACE_SUPPRESSIONS,                              1e4 );
 	init( TRACE_DATETIME_ENABLED,                             true ); // trace time in human readable format (always real time)
 	init( TRACE_SYNC_ENABLED,                                    0 );
@@ -232,7 +257,7 @@ void FlowKnobs::initialize(Randomize randomize, IsSimulated isSimulated) {
 
 	//TDMetrics
 	init( MAX_METRICS,                                         600 );
-	init( MAX_METRIC_SIZE,                                    2500 );
+	init( MAX_METRIC_SIZE,                                    2500, Atomic::NO );
 	init( MAX_METRIC_LEVEL,                                     25 );
 	init( METRIC_LEVEL_DIVISOR,                             log(4) );
 	init( METRIC_LIMIT_START_QUEUE_SIZE,                        10 );  // The queue size at which to start restricting logging by disabling levels
@@ -280,6 +305,31 @@ void FlowKnobs::initialize(Randomize randomize, IsSimulated isSimulated) {
 	init( HEALTH_MONITOR_MARK_FAILED_UNSTABLE_CONNECTIONS,    true );
 	init( HEALTH_MONITOR_CLIENT_REQUEST_INTERVAL_SECS,          30 );
 	init( HEALTH_MONITOR_CONNECTION_MAX_CLOSED,                  5 );
+
+	// Encryption
+	init( ENCRYPT_CIPHER_KEY_CACHE_TTL, isSimulated ? 5 * 60 : 10 * 60 );
+	if ( randomize && BUGGIFY) { ENCRYPT_CIPHER_KEY_CACHE_TTL = deterministicRandom()->randomInt(2, 10) * 60; }
+	init( ENCRYPT_KEY_REFRESH_INTERVAL,   isSimulated ? 60 : 8 * 60 );
+	if ( randomize && BUGGIFY) { ENCRYPT_KEY_REFRESH_INTERVAL = deterministicRandom()->randomInt(2, 10); }
+	init( ENCRYPT_KEY_HEALTH_CHECK_INTERVAL,                    10 );
+	if ( randomize && BUGGIFY) { ENCRYPT_KEY_HEALTH_CHECK_INTERVAL = deterministicRandom()->randomInt(10, 60); }
+	init( EKP_HEALTH_CHECK_REQUEST_TIMEOUT,                    10.0);
+	init( ENCRYPT_KEY_CACHE_LOGGING_INTERVAL,                  5.0 );
+	init( ENCRYPT_KEY_CACHE_LATENCY_LOGGING_INTERVAL,         60.0 );
+	init( ENCRYPT_KEY_CACHE_LOGGING_SKETCH_ACCURACY,          0.01 );
+	// Refer to EncryptUtil::EncryptAuthTokenAlgo for more details
+	init( ENCRYPT_HEADER_AUTH_TOKEN_ENABLED,                 false ); if ( randomize && BUGGIFY ) { ENCRYPT_HEADER_AUTH_TOKEN_ENABLED = !ENCRYPT_HEADER_AUTH_TOKEN_ENABLED; }
+	init( ENCRYPT_HEADER_AUTH_TOKEN_ALGO,                        0 ); if ( randomize && ENCRYPT_HEADER_AUTH_TOKEN_ENABLED ) { ENCRYPT_HEADER_AUTH_TOKEN_ALGO = getRandomAuthTokenAlgo(); }
+	init( ENCRYPT_INPLACE_ENABLED,                           false ); if ( randomize && BUGGIFY ) { ENCRYPT_INPLACE_ENABLED = true; }
+
+	// REST Client
+	init( RESTCLIENT_MAX_CONNECTIONPOOL_SIZE,                   10 );
+	init( RESTCLIENT_CONNECT_TRIES,                             10 );
+	init( RESTCLIENT_CONNECT_TIMEOUT,                           10 );
+	init( RESTCLIENT_MAX_CONNECTION_LIFE,                      120 );
+	init( RESTCLIENT_REQUEST_TRIES,                             10 );
+	init( RESTCLIENT_REQUEST_TIMEOUT_SEC,                      120 );
+	init( REST_LOG_LEVEL,                                        3 );
 }
 // clang-format on
 
@@ -293,22 +343,68 @@ static std::string toLower(std::string const& name) {
 	return lower_name;
 }
 
+// Converts the given string into a double. If any errors are
+// encountered, it throws an invalid_option_value exception.
+static double safe_stod(std::string const& str) {
+	size_t n;
+	double value = std::stod(str, &n);
+	if (n < str.size()) {
+		throw invalid_option_value();
+	}
+	return value;
+}
+
+// Converts the given (possibly hexadecimal) string into an
+// integer. If any errors are encountered, it throws an
+// invalid_option_value exception.
+static int safe_stoi(std::string const& str) {
+	size_t n;
+	int value = std::stoi(str, &n, 0);
+	if (n < str.size()) {
+		throw invalid_option_value();
+	}
+	return value;
+}
+
+// Converts the given (possibly hexadecimal) string into a 64-bit
+// integer. If any errors are encountered, it throws an
+// invalid_option_value exception.
+static int64_t safe_stoi64(std::string const& str) {
+	size_t n;
+	int64_t value = static_cast<int64_t>(std::stoll(str, &n, 0));
+	if (n < str.size()) {
+		throw invalid_option_value();
+	}
+	return value;
+}
+
+// Converts the given string into a bool. "true" and "false" are case
+// insenstively interpreted as true and false. Otherwise, any non-zero
+// integer is true. If any errors are encountered, it throws an
+// invalid_option_value exception.
+static bool safe_stob(std::string const& str) {
+	if (toLower(str) == "true") {
+		return true;
+	} else if (toLower(str) == "false") {
+		return false;
+	} else {
+		return safe_stoi(str) != 0;
+	}
+}
+
+// Parses a string value into the appropriate type based upon the knob
+// name. If any errors are encountered, it throws an
+// invalid_option_value exception.
 ParsedKnobValue Knobs::parseKnobValue(std::string const& knob, std::string const& value) const {
 	try {
 		if (double_knobs.count(knob)) {
-			return std::stod(value);
+			return safe_stod(value);
 		} else if (bool_knobs.count(knob)) {
-			if (toLower(value) == "true") {
-				return true;
-			} else if (toLower(value) == "false") {
-				return false;
-			} else {
-				return (std::stoi(value) != 0);
-			}
+			return safe_stob(value);
 		} else if (int64_knobs.count(knob)) {
-			return static_cast<int64_t>(std::stol(value, nullptr, 0));
+			return safe_stoi64(value);
 		} else if (int_knobs.count(knob)) {
-			return std::stoi(value, nullptr, 0);
+			return safe_stoi(value);
 		} else if (string_knobs.count(knob)) {
 			return value;
 		}
@@ -459,4 +555,24 @@ void Knobs::trace() const {
 		    .detail("Name", k.first.c_str())
 		    .detail("Value", *k.second.value)
 		    .detail("Atomic", k.second.atomic);
+}
+
+TEST_CASE("/flow/Knobs/ParseKnobValue") {
+	// Test the safe conversion functions.
+	ASSERT_EQ(safe_stod("4.0"), 4.0);
+
+	ASSERT_EQ(safe_stoi("4"), 4);
+
+	ASSERT_EQ(safe_stoi64("4"), (int64_t)4);
+	try {
+		[[maybe_unused]] int64_t value = safe_stoi64("4GiB");
+		UNREACHABLE();
+	} catch (Error& e) {
+		ASSERT_EQ(e.code(), error_code_invalid_option_value);
+	}
+
+	ASSERT_EQ(safe_stob("true"), true);
+	ASSERT_EQ(safe_stob("false"), false);
+
+	return Void();
 }

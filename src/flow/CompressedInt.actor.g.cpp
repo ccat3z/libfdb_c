@@ -115,17 +115,17 @@ public:
 	{
 		try {
 															#line 89 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/CompressedInt.actor.cpp"
-			testCompressedInt<int>(-2, LiteralStringRef("\x7e"));
+			testCompressedInt<int>(-2, "\x7e"_sr);
 															#line 90 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/CompressedInt.actor.cpp"
-			testCompressedInt<int>(-1, LiteralStringRef("\x7f"));
+			testCompressedInt<int>(-1, "\x7f"_sr);
 															#line 91 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/CompressedInt.actor.cpp"
-			testCompressedInt<int>(0, LiteralStringRef("\x80"));
+			testCompressedInt<int>(0, "\x80"_sr);
 															#line 92 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/CompressedInt.actor.cpp"
-			testCompressedInt<int>(1, LiteralStringRef("\x81"));
+			testCompressedInt<int>(1, "\x81"_sr);
 															#line 93 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/CompressedInt.actor.cpp"
-			testCompressedInt<int>(2, LiteralStringRef("\x82"));
+			testCompressedInt<int>(2, "\x82"_sr);
 															#line 94 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/CompressedInt.actor.cpp"
-			testCompressedInt<int64_t>(0x4000000000000000, LiteralStringRef("\xFF\xC0\x40\x00\x00\x00\x00\x00\x00\x00"));
+			testCompressedInt<int64_t>(0x4000000000000000, "\xFF\xC0\x40\x00\x00\x00\x00\x00\x00\x00"_sr);
 															#line 96 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/CompressedInt.actor.cpp"
 			int64_t n = 0;
 															#line 97 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/CompressedInt.actor.cpp"

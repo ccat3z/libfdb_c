@@ -22,15 +22,21 @@
 
 // Define boost::asio::io_service
 #include <algorithm>
+#ifndef BOOST_SYSTEM_NO_LIB
 #define BOOST_SYSTEM_NO_LIB
+#endif
+#ifndef BOOST_DATE_TIME_NO_LIB
 #define BOOST_DATE_TIME_NO_LIB
+#endif
+#ifndef BOOST_REGEX_NO_LIB
 #define BOOST_REGEX_NO_LIB
+#endif
 #include <boost/asio.hpp>
 
 #define FILESYSTEM_IMPL 1
 
 #include "fdbrpc/AsyncFileCached.actor.h"
-#include "fdbrpc/AsyncFileChaos.actor.h"
+#include "fdbrpc/AsyncFileChaos.h"
 #include "fdbrpc/AsyncFileEIO.actor.h"
 #include "fdbrpc/AsyncFileEncrypted.h"
 #include "fdbrpc/AsyncFileWinASIO.actor.h"
@@ -79,14 +85,12 @@ Future<Reference<class IAsyncFile>> Net2FileSystem::open(const std::string& file
 		f = map(f, [=](Reference<IAsyncFile> r) { return Reference<IAsyncFile>(new AsyncFileWriteChecker(r)); });
 	if (FLOW_KNOBS->ENABLE_CHAOS_FEATURES)
 		f = map(f, [=](Reference<IAsyncFile> r) { return Reference<IAsyncFile>(new AsyncFileChaos(r)); });
-#if ENCRYPTION_ENABLED
 	if (flags & IAsyncFile::OPEN_ENCRYPTED)
 		f = map(f, [flags](Reference<IAsyncFile> r) {
 			auto mode = flags & IAsyncFile::OPEN_READWRITE ? AsyncFileEncrypted::Mode::APPEND_ONLY
 			                                               : AsyncFileEncrypted::Mode::READ_ONLY;
 			return Reference<IAsyncFile>(new AsyncFileEncrypted(r, mode));
 		});
-#endif // ENCRYPTION_ENABLED
 	return f;
 }
 

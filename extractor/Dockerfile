@@ -43,5 +43,22 @@ RUN apt-get update \
         --yes --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
+# Install latest cmake
+ENV CMAKE_VERSION 3.26.3
+ENV CMAKE_URL=https://github.com/Kitware/CMake/releases/download/v3.27.0-rc4/cmake-3.27.0-rc4-linux-x86_64.sh
+RUN wget -O /tmp/cmake-installer "$CMAKE_URL" \
+    && chmod +x /tmp/cmake-installer \
+    && /tmp/cmake-installer --prefix=/usr/local --skip-license \
+    && rm /tmp/cmake-installer
+
+# Install build depends
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update \
+    && apt-get install \
+        liblz4-dev \
+        python3-sphinx \
+        --yes --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/*
+
 ENV CC=clang-15
 ENV CXX=clang++-15

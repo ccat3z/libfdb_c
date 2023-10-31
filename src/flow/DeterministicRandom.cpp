@@ -19,6 +19,7 @@
  */
 
 #include "fmt/format.h"
+#include "flow/Arena.h"
 #include "flow/DeterministicRandom.h"
 
 #include <cstring>
@@ -32,9 +33,7 @@ uint64_t DeterministicRandom::gen64() {
 }
 
 DeterministicRandom::DeterministicRandom(uint32_t seed, bool useRandLog)
-  : random((unsigned long)seed), next((uint64_t(random()) << 32) ^ random()), useRandLog(useRandLog) {
-	UNSTOPPABLE_ASSERT(seed != 0); // docs for mersenne twister say x0>0
-};
+  : random((unsigned long)seed), next((uint64_t(random()) << 32) ^ random()), useRandLog(useRandLog) {}
 
 double DeterministicRandom::random01() {
 	double d = gen64() / double(uint64_t(-1));
@@ -44,7 +43,7 @@ double DeterministicRandom::random01() {
 }
 
 int DeterministicRandom::randomInt(int min, int maxPlusOne) {
-	ASSERT(min < maxPlusOne);
+	ASSERT_LT(min, maxPlusOne);
 	unsigned int range;
 	if (maxPlusOne < 0)
 		range = std::abs(maxPlusOne - min);
@@ -64,7 +63,7 @@ int DeterministicRandom::randomInt(int min, int maxPlusOne) {
 }
 
 int64_t DeterministicRandom::randomInt64(int64_t min, int64_t maxPlusOne) {
-	ASSERT(min < maxPlusOne);
+	ASSERT_LT(min, maxPlusOne);
 	uint64_t range;
 	if (maxPlusOne < 0)
 		range = std::abs(maxPlusOne - min);
@@ -92,11 +91,12 @@ uint64_t DeterministicRandom::randomUInt64() {
 }
 
 uint32_t DeterministicRandom::randomSkewedUInt32(uint32_t min, uint32_t maxPlusOne) {
-	std::uniform_real_distribution<double> distribution(std::log(min), std::log(maxPlusOne - 1));
-	double logpower = distribution(random);
-	uint32_t loguniform = static_cast<uint32_t>(std::pow(10, logpower));
-	// doubles can be imprecise, so let's make sure we don't violate an edge case.
-	return std::max(std::min(loguniform, maxPlusOne - 1), min);
+	ASSERT_LT(min, maxPlusOne);
+	std::uniform_real_distribution<double> distribution(std::log(std::max<double>(min, 1.0 / M_E)),
+	                                                    std::log(maxPlusOne));
+	double exponent = distribution(random);
+	uint32_t value = static_cast<uint32_t>(std::pow(M_E, exponent));
+	return std::max(std::min(value, maxPlusOne - 1), min);
 }
 
 UID DeterministicRandom::randomUniqueID() {
@@ -124,6 +124,23 @@ std::string DeterministicRandom::randomAlphaNumeric(int length) {
 	return s;
 }
 
+void DeterministicRandom::randomBytes(uint8_t* buf, int length) {
+	constexpr const int unitLen = sizeof(decltype(gen64()));
+	for (int i = 0; i < length; i += unitLen) {
+		auto val = gen64();
+		memcpy(buf + i, &val, std::min(unitLen, length - i));
+	}
+	if (randLog && useRandLog) {
+		constexpr const int cutOff = 32;
+		bool tooLong = length > cutOff;
+		fmt::print(randLog,
+		           "Rbytes[{}] {}{}\n",
+		           length,
+		           StringRef(buf, std::min(cutOff, length)).printable(),
+		           tooLong ? "..." : "");
+	}
+}
+
 uint64_t DeterministicRandom::peek() const {
 	return next;
 }
@@ -133,11 +150,4 @@ void DeterministicRandom::addref() {
 }
 void DeterministicRandom::delref() {
 	ReferenceCounted<DeterministicRandom>::delref();
-}
-
-void generateRandomData(uint8_t* buffer, int length) {
-	for (int i = 0; i < length; i += sizeof(uint32_t)) {
-		uint32_t val = deterministicRandom()->randomUInt32();
-		memcpy(&buffer[i], &val, std::min(length - i, (int)sizeof(uint32_t)));
-	}
 }

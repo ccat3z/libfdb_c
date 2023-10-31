@@ -25,6 +25,7 @@
 #include "fdbclient/CommitTransaction.h"
 #include "fdbclient/FDBTypes.h"
 #include "fdbclient/ReadYourWrites.h"
+#include "flow/UnitTest.h"
 #include "flow/actorcompiler.h" // has to be last include
 
 void KeyRangeActorMap::getRangesAffectedByInsertion(const KeyRangeRef& keys, std::vector<KeyRange>& affectedRanges) {
@@ -37,61 +38,83 @@ void KeyRangeActorMap::getRangesAffectedByInsertion(const KeyRangeRef& keys, std
 		affectedRanges.push_back(KeyRangeRef(keys.end, e.end()));
 }
 
-RangeResult krmDecodeRanges(KeyRef mapPrefix, KeyRange keys, RangeResult kv) {
+RangeResult krmDecodeRanges(KeyRef mapPrefix, KeyRange keys, RangeResult kv, bool align) {
 	ASSERT(!kv.more || kv.size() > 1);
 	KeyRange withPrefix =
 	    KeyRangeRef(mapPrefix.toString() + keys.begin.toString(), mapPrefix.toString() + keys.end.toString());
-
-	ValueRef beginValue, endValue;
-	if (kv.size() && kv[0].key.startsWith(mapPrefix))
-		beginValue = kv[0].value;
-	if (kv.size() && kv.end()[-1].key.startsWith(mapPrefix))
-		endValue = kv.end()[-1].value;
 
 	RangeResult result;
 	result.arena().dependsOn(kv.arena());
 	result.arena().dependsOn(keys.arena());
 
-	result.push_back(result.arena(), KeyValueRef(keys.begin, beginValue));
+	// Always push a kv pair <= keys.begin.
+	KeyRef beginKey = keys.begin;
+	if (!align && !kv.empty() && kv.front().key.startsWith(mapPrefix) && kv.front().key < withPrefix.begin) {
+		beginKey = kv[0].key.removePrefix(mapPrefix);
+	}
+	ValueRef beginValue;
+	if (!kv.empty() && kv.front().key.startsWith(mapPrefix) && kv.front().key <= withPrefix.begin) {
+		beginValue = kv.front().value;
+	}
+	result.push_back(result.arena(), KeyValueRef(beginKey, beginValue));
+
 	for (int i = 0; i < kv.size(); i++) {
 		if (kv[i].key > withPrefix.begin && kv[i].key < withPrefix.end) {
 			KeyRef k = kv[i].key.removePrefix(mapPrefix);
 			result.push_back(result.arena(), KeyValueRef(k, kv[i].value));
-		} else if (kv[i].key >= withPrefix.end)
+		} else if (kv[i].key >= withPrefix.end) {
 			kv.more = false;
+			// There should be at most 1 value past mapPrefix + keys.end.
+			ASSERT(i == kv.size() - 1);
+			break;
+		}
 	}
 
-	if (!kv.more)
-		result.push_back(result.arena(), KeyValueRef(keys.end, endValue));
+	if (!kv.more) {
+		KeyRef endKey = keys.end;
+		if (!align && !kv.empty() && kv.back().key.startsWith(mapPrefix) && kv.back().key >= withPrefix.end) {
+			endKey = kv.back().key.removePrefix(mapPrefix);
+		}
+		ValueRef endValue;
+		if (!kv.empty()) {
+			// In the aligned case, carry the last value to be the end value.
+			if (align && kv.back().key.startsWith(mapPrefix) && kv.back().key > withPrefix.end) {
+				endValue = result.back().value;
+			} else {
+				endValue = kv.back().value;
+			}
+		}
+		result.push_back(result.arena(), KeyValueRef(endKey, endValue));
+	}
 	result.more = kv.more;
 
 	return result;
 }
 
 // Returns keys.begin, all transitional points in keys, and keys.end, and their values
-															#line 72 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 95 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 namespace {
 // This generated class is to be used only via krmGetRanges()
-															#line 70 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 93 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 template <class KrmGetRangesActor>
-															#line 70 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 93 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 class KrmGetRangesActorState {
-															#line 79 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 102 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 public:
-															#line 70 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 93 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 	KrmGetRangesActorState(Transaction* const& tr,Key const& mapPrefix,KeyRange const& keys,int const& limit,int const& limitBytes) 
-															#line 70 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
-															#line 70 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 93 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 93 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		 : tr(tr),
-															#line 70 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 93 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		   mapPrefix(mapPrefix),
-															#line 70 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 93 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		   keys(keys),
-															#line 70 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 93 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		   limit(limit),
-															#line 70 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 93 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		   limitBytes(limitBytes)
-															#line 94 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 117 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 	{
 		fdb_probe_actor_create("krmGetRanges", reinterpret_cast<unsigned long>(this));
 
@@ -104,22 +127,22 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 71 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 94 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 			KeyRange withPrefix = KeyRangeRef(mapPrefix.toString() + keys.begin.toString(), mapPrefix.toString() + keys.end.toString());
-															#line 74 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 97 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 			limits = GetRangeLimits(limit, limitBytes);
-															#line 75 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 98 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 			limits.minRows = 2;
-															#line 76 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 99 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 			StrictFuture<RangeResult> __when_expr_0 = tr->getRange(lastLessOrEqual(withPrefix.begin), firstGreaterThan(withPrefix.end), limits);
-															#line 76 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 99 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 			if (static_cast<KrmGetRangesActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 117 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<KrmGetRangesActor*>(this)->actor_wait_state = 1;
-															#line 76 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 99 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< KrmGetRangesActor, 0, RangeResult >*>(static_cast<KrmGetRangesActor*>(this)));
-															#line 122 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 145 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -140,9 +163,9 @@ public:
 	}
 	int a_body1cont1(RangeResult const& kv,int loopDepth) 
 	{
-															#line 78 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 101 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		if (!static_cast<KrmGetRangesActor*>(this)->SAV<RangeResult>::futures) { (void)(krmDecodeRanges(mapPrefix, keys, kv)); this->~KrmGetRangesActorState(); static_cast<KrmGetRangesActor*>(this)->destroy(); return 0; }
-															#line 145 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 168 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 		new (&static_cast<KrmGetRangesActor*>(this)->SAV< RangeResult >::value()) RangeResult(krmDecodeRanges(mapPrefix, keys, kv));
 		this->~KrmGetRangesActorState();
 		static_cast<KrmGetRangesActor*>(this)->finishSendAndDelPromiseRef();
@@ -152,9 +175,9 @@ public:
 	}
 	int a_body1cont1(RangeResult && kv,int loopDepth) 
 	{
-															#line 78 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 101 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		if (!static_cast<KrmGetRangesActor*>(this)->SAV<RangeResult>::futures) { (void)(krmDecodeRanges(mapPrefix, keys, kv)); this->~KrmGetRangesActorState(); static_cast<KrmGetRangesActor*>(this)->destroy(); return 0; }
-															#line 157 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 		new (&static_cast<KrmGetRangesActor*>(this)->SAV< RangeResult >::value()) RangeResult(krmDecodeRanges(mapPrefix, keys, kv));
 		this->~KrmGetRangesActorState();
 		static_cast<KrmGetRangesActor*>(this)->finishSendAndDelPromiseRef();
@@ -225,24 +248,24 @@ public:
 		fdb_probe_actor_exit("krmGetRanges", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 70 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 93 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 	Transaction* tr;
-															#line 70 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 93 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 	Key mapPrefix;
-															#line 70 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 93 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 	KeyRange keys;
-															#line 70 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 93 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 	int limit;
-															#line 70 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 93 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 	int limitBytes;
-															#line 74 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 97 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 	GetRangeLimits limits;
-															#line 240 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 263 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 };
 // This generated class is to be used only via krmGetRanges()
-															#line 70 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 93 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 class KrmGetRangesActor final : public Actor<RangeResult>, public ActorCallback< KrmGetRangesActor, 0, RangeResult >, public FastAllocated<KrmGetRangesActor>, public KrmGetRangesActorState<KrmGetRangesActor> {
-															#line 245 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 268 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 public:
 	using FastAllocated<KrmGetRangesActor>::operator new;
 	using FastAllocated<KrmGetRangesActor>::operator delete;
@@ -251,9 +274,9 @@ public:
 	void destroy() override { ((Actor<RangeResult>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< KrmGetRangesActor, 0, RangeResult >;
-															#line 70 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 93 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 	KrmGetRangesActor(Transaction* const& tr,Key const& mapPrefix,KeyRange const& keys,int const& limit,int const& limitBytes) 
-															#line 256 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 279 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 		 : Actor<RangeResult>(),
 		   KrmGetRangesActorState<KrmGetRangesActor>(tr, mapPrefix, keys, limit, limitBytes)
 	{
@@ -277,38 +300,38 @@ friend struct ActorCallback< KrmGetRangesActor, 0, RangeResult >;
 	}
 };
 }
-															#line 70 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 93 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 [[nodiscard]] Future<RangeResult> krmGetRanges( Transaction* const& tr, Key const& mapPrefix, KeyRange const& keys, int const& limit, int const& limitBytes ) {
-															#line 70 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 93 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 	return Future<RangeResult>(new KrmGetRangesActor(tr, mapPrefix, keys, limit, limitBytes));
-															#line 284 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 307 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 }
 
-#line 80 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+#line 103 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 
-															#line 289 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 312 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 namespace {
 // This generated class is to be used only via krmGetRanges()
-															#line 81 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 template <class KrmGetRangesActor1>
-															#line 81 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 class KrmGetRangesActor1State {
-															#line 296 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 319 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 public:
-															#line 81 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 	KrmGetRangesActor1State(Reference<ReadYourWritesTransaction> const& tr,Key const& mapPrefix,KeyRange const& keys,int const& limit,int const& limitBytes) 
-															#line 81 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
-															#line 81 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		 : tr(tr),
-															#line 81 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		   mapPrefix(mapPrefix),
-															#line 81 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		   keys(keys),
-															#line 81 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		   limit(limit),
-															#line 81 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		   limitBytes(limitBytes)
-															#line 311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 334 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 	{
 		fdb_probe_actor_create("krmGetRanges", reinterpret_cast<unsigned long>(this));
 
@@ -321,22 +344,22 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 86 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 109 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 			KeyRange withPrefix = KeyRangeRef(mapPrefix.toString() + keys.begin.toString(), mapPrefix.toString() + keys.end.toString());
-															#line 89 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 112 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 			limits = GetRangeLimits(limit, limitBytes);
-															#line 90 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 113 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 			limits.minRows = 2;
-															#line 91 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 114 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 			StrictFuture<RangeResult> __when_expr_0 = tr->getRange(lastLessOrEqual(withPrefix.begin), firstGreaterThan(withPrefix.end), limits);
-															#line 91 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 114 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 			if (static_cast<KrmGetRangesActor1*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 334 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 357 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<KrmGetRangesActor1*>(this)->actor_wait_state = 1;
-															#line 91 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 114 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< KrmGetRangesActor1, 0, RangeResult >*>(static_cast<KrmGetRangesActor1*>(this)));
-															#line 339 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 362 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -357,9 +380,9 @@ public:
 	}
 	int a_body1cont1(RangeResult const& kv,int loopDepth) 
 	{
-															#line 93 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 116 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		if (!static_cast<KrmGetRangesActor1*>(this)->SAV<RangeResult>::futures) { (void)(krmDecodeRanges(mapPrefix, keys, kv)); this->~KrmGetRangesActor1State(); static_cast<KrmGetRangesActor1*>(this)->destroy(); return 0; }
-															#line 362 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 385 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 		new (&static_cast<KrmGetRangesActor1*>(this)->SAV< RangeResult >::value()) RangeResult(krmDecodeRanges(mapPrefix, keys, kv));
 		this->~KrmGetRangesActor1State();
 		static_cast<KrmGetRangesActor1*>(this)->finishSendAndDelPromiseRef();
@@ -369,9 +392,9 @@ public:
 	}
 	int a_body1cont1(RangeResult && kv,int loopDepth) 
 	{
-															#line 93 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 116 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		if (!static_cast<KrmGetRangesActor1*>(this)->SAV<RangeResult>::futures) { (void)(krmDecodeRanges(mapPrefix, keys, kv)); this->~KrmGetRangesActor1State(); static_cast<KrmGetRangesActor1*>(this)->destroy(); return 0; }
-															#line 374 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 397 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 		new (&static_cast<KrmGetRangesActor1*>(this)->SAV< RangeResult >::value()) RangeResult(krmDecodeRanges(mapPrefix, keys, kv));
 		this->~KrmGetRangesActor1State();
 		static_cast<KrmGetRangesActor1*>(this)->finishSendAndDelPromiseRef();
@@ -442,24 +465,24 @@ public:
 		fdb_probe_actor_exit("krmGetRanges", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 81 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 	Reference<ReadYourWritesTransaction> tr;
-															#line 81 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 	Key mapPrefix;
-															#line 81 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 	KeyRange keys;
-															#line 81 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 	int limit;
-															#line 81 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 	int limitBytes;
-															#line 89 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 112 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 	GetRangeLimits limits;
-															#line 457 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 480 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 };
 // This generated class is to be used only via krmGetRanges()
-															#line 81 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 class KrmGetRangesActor1 final : public Actor<RangeResult>, public ActorCallback< KrmGetRangesActor1, 0, RangeResult >, public FastAllocated<KrmGetRangesActor1>, public KrmGetRangesActor1State<KrmGetRangesActor1> {
-															#line 462 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 485 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 public:
 	using FastAllocated<KrmGetRangesActor1>::operator new;
 	using FastAllocated<KrmGetRangesActor1>::operator delete;
@@ -468,9 +491,9 @@ public:
 	void destroy() override { ((Actor<RangeResult>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< KrmGetRangesActor1, 0, RangeResult >;
-															#line 81 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 	KrmGetRangesActor1(Reference<ReadYourWritesTransaction> const& tr,Key const& mapPrefix,KeyRange const& keys,int const& limit,int const& limitBytes) 
-															#line 473 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 496 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 		 : Actor<RangeResult>(),
 		   KrmGetRangesActor1State<KrmGetRangesActor1>(tr, mapPrefix, keys, limit, limitBytes)
 	{
@@ -494,14 +517,449 @@ friend struct ActorCallback< KrmGetRangesActor1, 0, RangeResult >;
 	}
 };
 }
-															#line 81 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 [[nodiscard]] Future<RangeResult> krmGetRanges( Reference<ReadYourWritesTransaction> const& tr, Key const& mapPrefix, KeyRange const& keys, int const& limit, int const& limitBytes ) {
-															#line 81 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 	return Future<RangeResult>(new KrmGetRangesActor1(tr, mapPrefix, keys, limit, limitBytes));
-															#line 501 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 524 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 }
 
-#line 95 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+#line 118 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+
+// Returns keys.begin, all transitional points in keys, and keys.end, and their values
+															#line 530 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+namespace {
+// This generated class is to be used only via krmGetRangesUnaligned()
+															#line 120 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+template <class KrmGetRangesUnalignedActor>
+															#line 120 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+class KrmGetRangesUnalignedActorState {
+															#line 537 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+public:
+															#line 120 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+	KrmGetRangesUnalignedActorState(Transaction* const& tr,Key const& mapPrefix,KeyRange const& keys,int const& limit,int const& limitBytes) 
+															#line 120 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 120 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+		 : tr(tr),
+															#line 120 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+		   mapPrefix(mapPrefix),
+															#line 120 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+		   keys(keys),
+															#line 120 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+		   limit(limit),
+															#line 120 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+		   limitBytes(limitBytes)
+															#line 552 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+	{
+		fdb_probe_actor_create("krmGetRangesUnaligned", reinterpret_cast<unsigned long>(this));
+
+	}
+	~KrmGetRangesUnalignedActorState() 
+	{
+		fdb_probe_actor_destroy("krmGetRangesUnaligned", reinterpret_cast<unsigned long>(this));
+
+	}
+	int a_body1(int loopDepth=0) 
+	{
+		try {
+															#line 125 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			KeyRange withPrefix = KeyRangeRef(mapPrefix.toString() + keys.begin.toString(), mapPrefix.toString() + keys.end.toString());
+															#line 128 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			limits = GetRangeLimits(limit, limitBytes);
+															#line 129 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			limits.minRows = 2;
+															#line 132 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			StrictFuture<RangeResult> __when_expr_0 = tr->getRange(lastLessOrEqual(withPrefix.begin), KeySelectorRef(withPrefix.end, false, +2), limits);
+															#line 132 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			if (static_cast<KrmGetRangesUnalignedActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
+															#line 575 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
+			static_cast<KrmGetRangesUnalignedActor*>(this)->actor_wait_state = 1;
+															#line 132 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< KrmGetRangesUnalignedActor, 0, RangeResult >*>(static_cast<KrmGetRangesUnalignedActor*>(this)));
+															#line 580 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+			loopDepth = 0;
+		}
+		catch (Error& error) {
+			loopDepth = a_body1Catch1(error, loopDepth);
+		} catch (...) {
+			loopDepth = a_body1Catch1(unknown_error(), loopDepth);
+		}
+
+		return loopDepth;
+	}
+	int a_body1Catch1(Error error,int loopDepth=0) 
+	{
+		this->~KrmGetRangesUnalignedActorState();
+		static_cast<KrmGetRangesUnalignedActor*>(this)->sendErrorAndDelPromiseRef(error);
+		loopDepth = 0;
+
+		return loopDepth;
+	}
+	int a_body1cont1(RangeResult const& kv,int loopDepth) 
+	{
+															#line 135 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+		if (!static_cast<KrmGetRangesUnalignedActor*>(this)->SAV<RangeResult>::futures) { (void)(krmDecodeRanges(mapPrefix, keys, kv, false)); this->~KrmGetRangesUnalignedActorState(); static_cast<KrmGetRangesUnalignedActor*>(this)->destroy(); return 0; }
+															#line 603 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+		new (&static_cast<KrmGetRangesUnalignedActor*>(this)->SAV< RangeResult >::value()) RangeResult(krmDecodeRanges(mapPrefix, keys, kv, false));
+		this->~KrmGetRangesUnalignedActorState();
+		static_cast<KrmGetRangesUnalignedActor*>(this)->finishSendAndDelPromiseRef();
+		return 0;
+
+		return loopDepth;
+	}
+	int a_body1cont1(RangeResult && kv,int loopDepth) 
+	{
+															#line 135 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+		if (!static_cast<KrmGetRangesUnalignedActor*>(this)->SAV<RangeResult>::futures) { (void)(krmDecodeRanges(mapPrefix, keys, kv, false)); this->~KrmGetRangesUnalignedActorState(); static_cast<KrmGetRangesUnalignedActor*>(this)->destroy(); return 0; }
+															#line 615 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+		new (&static_cast<KrmGetRangesUnalignedActor*>(this)->SAV< RangeResult >::value()) RangeResult(krmDecodeRanges(mapPrefix, keys, kv, false));
+		this->~KrmGetRangesUnalignedActorState();
+		static_cast<KrmGetRangesUnalignedActor*>(this)->finishSendAndDelPromiseRef();
+		return 0;
+
+		return loopDepth;
+	}
+	int a_body1when1(RangeResult const& kv,int loopDepth) 
+	{
+		loopDepth = a_body1cont1(kv, loopDepth);
+
+		return loopDepth;
+	}
+	int a_body1when1(RangeResult && kv,int loopDepth) 
+	{
+		loopDepth = a_body1cont1(std::move(kv), loopDepth);
+
+		return loopDepth;
+	}
+	void a_exitChoose1() 
+	{
+		if (static_cast<KrmGetRangesUnalignedActor*>(this)->actor_wait_state > 0) static_cast<KrmGetRangesUnalignedActor*>(this)->actor_wait_state = 0;
+		static_cast<KrmGetRangesUnalignedActor*>(this)->ActorCallback< KrmGetRangesUnalignedActor, 0, RangeResult >::remove();
+
+	}
+	void a_callback_fire(ActorCallback< KrmGetRangesUnalignedActor, 0, RangeResult >*,RangeResult const& value) 
+	{
+		fdb_probe_actor_enter("krmGetRangesUnaligned", reinterpret_cast<unsigned long>(this), 0);
+		a_exitChoose1();
+		try {
+			a_body1when1(value, 0);
+		}
+		catch (Error& error) {
+			a_body1Catch1(error, 0);
+		} catch (...) {
+			a_body1Catch1(unknown_error(), 0);
+		}
+		fdb_probe_actor_exit("krmGetRangesUnaligned", reinterpret_cast<unsigned long>(this), 0);
+
+	}
+	void a_callback_fire(ActorCallback< KrmGetRangesUnalignedActor, 0, RangeResult >*,RangeResult && value) 
+	{
+		fdb_probe_actor_enter("krmGetRangesUnaligned", reinterpret_cast<unsigned long>(this), 0);
+		a_exitChoose1();
+		try {
+			a_body1when1(std::move(value), 0);
+		}
+		catch (Error& error) {
+			a_body1Catch1(error, 0);
+		} catch (...) {
+			a_body1Catch1(unknown_error(), 0);
+		}
+		fdb_probe_actor_exit("krmGetRangesUnaligned", reinterpret_cast<unsigned long>(this), 0);
+
+	}
+	void a_callback_error(ActorCallback< KrmGetRangesUnalignedActor, 0, RangeResult >*,Error err) 
+	{
+		fdb_probe_actor_enter("krmGetRangesUnaligned", reinterpret_cast<unsigned long>(this), 0);
+		a_exitChoose1();
+		try {
+			a_body1Catch1(err, 0);
+		}
+		catch (Error& error) {
+			a_body1Catch1(error, 0);
+		} catch (...) {
+			a_body1Catch1(unknown_error(), 0);
+		}
+		fdb_probe_actor_exit("krmGetRangesUnaligned", reinterpret_cast<unsigned long>(this), 0);
+
+	}
+															#line 120 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+	Transaction* tr;
+															#line 120 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+	Key mapPrefix;
+															#line 120 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+	KeyRange keys;
+															#line 120 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+	int limit;
+															#line 120 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+	int limitBytes;
+															#line 128 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+	GetRangeLimits limits;
+															#line 698 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+};
+// This generated class is to be used only via krmGetRangesUnaligned()
+															#line 120 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+class KrmGetRangesUnalignedActor final : public Actor<RangeResult>, public ActorCallback< KrmGetRangesUnalignedActor, 0, RangeResult >, public FastAllocated<KrmGetRangesUnalignedActor>, public KrmGetRangesUnalignedActorState<KrmGetRangesUnalignedActor> {
+															#line 703 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+public:
+	using FastAllocated<KrmGetRangesUnalignedActor>::operator new;
+	using FastAllocated<KrmGetRangesUnalignedActor>::operator delete;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdelete-non-virtual-dtor"
+	void destroy() override { ((Actor<RangeResult>*)this)->~Actor(); operator delete(this); }
+#pragma clang diagnostic pop
+friend struct ActorCallback< KrmGetRangesUnalignedActor, 0, RangeResult >;
+															#line 120 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+	KrmGetRangesUnalignedActor(Transaction* const& tr,Key const& mapPrefix,KeyRange const& keys,int const& limit,int const& limitBytes) 
+															#line 714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+		 : Actor<RangeResult>(),
+		   KrmGetRangesUnalignedActorState<KrmGetRangesUnalignedActor>(tr, mapPrefix, keys, limit, limitBytes)
+	{
+		fdb_probe_actor_enter("krmGetRangesUnaligned", reinterpret_cast<unsigned long>(this), -1);
+		#ifdef ENABLE_SAMPLING
+		this->lineage.setActorName("krmGetRangesUnaligned");
+		LineageScope _(&this->lineage);
+		#endif
+		this->a_body1();
+		fdb_probe_actor_exit("krmGetRangesUnaligned", reinterpret_cast<unsigned long>(this), -1);
+
+	}
+	void cancel() override
+	{
+		auto wait_state = this->actor_wait_state;
+		this->actor_wait_state = -1;
+		switch (wait_state) {
+		case 1: this->a_callback_error((ActorCallback< KrmGetRangesUnalignedActor, 0, RangeResult >*)0, actor_cancelled()); break;
+		}
+
+	}
+};
+}
+															#line 120 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+[[nodiscard]] Future<RangeResult> krmGetRangesUnaligned( Transaction* const& tr, Key const& mapPrefix, KeyRange const& keys, int const& limit, int const& limitBytes ) {
+															#line 120 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+	return Future<RangeResult>(new KrmGetRangesUnalignedActor(tr, mapPrefix, keys, limit, limitBytes));
+															#line 742 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+}
+
+#line 137 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+
+															#line 747 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+namespace {
+// This generated class is to be used only via krmGetRangesUnaligned()
+															#line 138 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+template <class KrmGetRangesUnalignedActor1>
+															#line 138 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+class KrmGetRangesUnalignedActor1State {
+															#line 754 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+public:
+															#line 138 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+	KrmGetRangesUnalignedActor1State(Reference<ReadYourWritesTransaction> const& tr,Key const& mapPrefix,KeyRange const& keys,int const& limit,int const& limitBytes) 
+															#line 138 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 138 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+		 : tr(tr),
+															#line 138 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+		   mapPrefix(mapPrefix),
+															#line 138 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+		   keys(keys),
+															#line 138 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+		   limit(limit),
+															#line 138 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+		   limitBytes(limitBytes)
+															#line 769 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+	{
+		fdb_probe_actor_create("krmGetRangesUnaligned", reinterpret_cast<unsigned long>(this));
+
+	}
+	~KrmGetRangesUnalignedActor1State() 
+	{
+		fdb_probe_actor_destroy("krmGetRangesUnaligned", reinterpret_cast<unsigned long>(this));
+
+	}
+	int a_body1(int loopDepth=0) 
+	{
+		try {
+															#line 143 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			KeyRange withPrefix = KeyRangeRef(mapPrefix.toString() + keys.begin.toString(), mapPrefix.toString() + keys.end.toString());
+															#line 146 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			limits = GetRangeLimits(limit, limitBytes);
+															#line 147 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			limits.minRows = 2;
+															#line 150 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			StrictFuture<RangeResult> __when_expr_0 = tr->getRange(lastLessOrEqual(withPrefix.begin), KeySelectorRef(withPrefix.end, false, +2), limits);
+															#line 150 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			if (static_cast<KrmGetRangesUnalignedActor1*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
+															#line 792 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
+			static_cast<KrmGetRangesUnalignedActor1*>(this)->actor_wait_state = 1;
+															#line 150 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< KrmGetRangesUnalignedActor1, 0, RangeResult >*>(static_cast<KrmGetRangesUnalignedActor1*>(this)));
+															#line 797 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+			loopDepth = 0;
+		}
+		catch (Error& error) {
+			loopDepth = a_body1Catch1(error, loopDepth);
+		} catch (...) {
+			loopDepth = a_body1Catch1(unknown_error(), loopDepth);
+		}
+
+		return loopDepth;
+	}
+	int a_body1Catch1(Error error,int loopDepth=0) 
+	{
+		this->~KrmGetRangesUnalignedActor1State();
+		static_cast<KrmGetRangesUnalignedActor1*>(this)->sendErrorAndDelPromiseRef(error);
+		loopDepth = 0;
+
+		return loopDepth;
+	}
+	int a_body1cont1(RangeResult const& kv,int loopDepth) 
+	{
+															#line 153 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+		if (!static_cast<KrmGetRangesUnalignedActor1*>(this)->SAV<RangeResult>::futures) { (void)(krmDecodeRanges(mapPrefix, keys, kv, false)); this->~KrmGetRangesUnalignedActor1State(); static_cast<KrmGetRangesUnalignedActor1*>(this)->destroy(); return 0; }
+															#line 820 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+		new (&static_cast<KrmGetRangesUnalignedActor1*>(this)->SAV< RangeResult >::value()) RangeResult(krmDecodeRanges(mapPrefix, keys, kv, false));
+		this->~KrmGetRangesUnalignedActor1State();
+		static_cast<KrmGetRangesUnalignedActor1*>(this)->finishSendAndDelPromiseRef();
+		return 0;
+
+		return loopDepth;
+	}
+	int a_body1cont1(RangeResult && kv,int loopDepth) 
+	{
+															#line 153 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+		if (!static_cast<KrmGetRangesUnalignedActor1*>(this)->SAV<RangeResult>::futures) { (void)(krmDecodeRanges(mapPrefix, keys, kv, false)); this->~KrmGetRangesUnalignedActor1State(); static_cast<KrmGetRangesUnalignedActor1*>(this)->destroy(); return 0; }
+															#line 832 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+		new (&static_cast<KrmGetRangesUnalignedActor1*>(this)->SAV< RangeResult >::value()) RangeResult(krmDecodeRanges(mapPrefix, keys, kv, false));
+		this->~KrmGetRangesUnalignedActor1State();
+		static_cast<KrmGetRangesUnalignedActor1*>(this)->finishSendAndDelPromiseRef();
+		return 0;
+
+		return loopDepth;
+	}
+	int a_body1when1(RangeResult const& kv,int loopDepth) 
+	{
+		loopDepth = a_body1cont1(kv, loopDepth);
+
+		return loopDepth;
+	}
+	int a_body1when1(RangeResult && kv,int loopDepth) 
+	{
+		loopDepth = a_body1cont1(std::move(kv), loopDepth);
+
+		return loopDepth;
+	}
+	void a_exitChoose1() 
+	{
+		if (static_cast<KrmGetRangesUnalignedActor1*>(this)->actor_wait_state > 0) static_cast<KrmGetRangesUnalignedActor1*>(this)->actor_wait_state = 0;
+		static_cast<KrmGetRangesUnalignedActor1*>(this)->ActorCallback< KrmGetRangesUnalignedActor1, 0, RangeResult >::remove();
+
+	}
+	void a_callback_fire(ActorCallback< KrmGetRangesUnalignedActor1, 0, RangeResult >*,RangeResult const& value) 
+	{
+		fdb_probe_actor_enter("krmGetRangesUnaligned", reinterpret_cast<unsigned long>(this), 0);
+		a_exitChoose1();
+		try {
+			a_body1when1(value, 0);
+		}
+		catch (Error& error) {
+			a_body1Catch1(error, 0);
+		} catch (...) {
+			a_body1Catch1(unknown_error(), 0);
+		}
+		fdb_probe_actor_exit("krmGetRangesUnaligned", reinterpret_cast<unsigned long>(this), 0);
+
+	}
+	void a_callback_fire(ActorCallback< KrmGetRangesUnalignedActor1, 0, RangeResult >*,RangeResult && value) 
+	{
+		fdb_probe_actor_enter("krmGetRangesUnaligned", reinterpret_cast<unsigned long>(this), 0);
+		a_exitChoose1();
+		try {
+			a_body1when1(std::move(value), 0);
+		}
+		catch (Error& error) {
+			a_body1Catch1(error, 0);
+		} catch (...) {
+			a_body1Catch1(unknown_error(), 0);
+		}
+		fdb_probe_actor_exit("krmGetRangesUnaligned", reinterpret_cast<unsigned long>(this), 0);
+
+	}
+	void a_callback_error(ActorCallback< KrmGetRangesUnalignedActor1, 0, RangeResult >*,Error err) 
+	{
+		fdb_probe_actor_enter("krmGetRangesUnaligned", reinterpret_cast<unsigned long>(this), 0);
+		a_exitChoose1();
+		try {
+			a_body1Catch1(err, 0);
+		}
+		catch (Error& error) {
+			a_body1Catch1(error, 0);
+		} catch (...) {
+			a_body1Catch1(unknown_error(), 0);
+		}
+		fdb_probe_actor_exit("krmGetRangesUnaligned", reinterpret_cast<unsigned long>(this), 0);
+
+	}
+															#line 138 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+	Reference<ReadYourWritesTransaction> tr;
+															#line 138 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+	Key mapPrefix;
+															#line 138 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+	KeyRange keys;
+															#line 138 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+	int limit;
+															#line 138 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+	int limitBytes;
+															#line 146 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+	GetRangeLimits limits;
+															#line 915 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+};
+// This generated class is to be used only via krmGetRangesUnaligned()
+															#line 138 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+class KrmGetRangesUnalignedActor1 final : public Actor<RangeResult>, public ActorCallback< KrmGetRangesUnalignedActor1, 0, RangeResult >, public FastAllocated<KrmGetRangesUnalignedActor1>, public KrmGetRangesUnalignedActor1State<KrmGetRangesUnalignedActor1> {
+															#line 920 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+public:
+	using FastAllocated<KrmGetRangesUnalignedActor1>::operator new;
+	using FastAllocated<KrmGetRangesUnalignedActor1>::operator delete;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdelete-non-virtual-dtor"
+	void destroy() override { ((Actor<RangeResult>*)this)->~Actor(); operator delete(this); }
+#pragma clang diagnostic pop
+friend struct ActorCallback< KrmGetRangesUnalignedActor1, 0, RangeResult >;
+															#line 138 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+	KrmGetRangesUnalignedActor1(Reference<ReadYourWritesTransaction> const& tr,Key const& mapPrefix,KeyRange const& keys,int const& limit,int const& limitBytes) 
+															#line 931 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+		 : Actor<RangeResult>(),
+		   KrmGetRangesUnalignedActor1State<KrmGetRangesUnalignedActor1>(tr, mapPrefix, keys, limit, limitBytes)
+	{
+		fdb_probe_actor_enter("krmGetRangesUnaligned", reinterpret_cast<unsigned long>(this), -1);
+		#ifdef ENABLE_SAMPLING
+		this->lineage.setActorName("krmGetRangesUnaligned");
+		LineageScope _(&this->lineage);
+		#endif
+		this->a_body1();
+		fdb_probe_actor_exit("krmGetRangesUnaligned", reinterpret_cast<unsigned long>(this), -1);
+
+	}
+	void cancel() override
+	{
+		auto wait_state = this->actor_wait_state;
+		this->actor_wait_state = -1;
+		switch (wait_state) {
+		case 1: this->a_callback_error((ActorCallback< KrmGetRangesUnalignedActor1, 0, RangeResult >*)0, actor_cancelled()); break;
+		}
+
+	}
+};
+}
+															#line 138 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+[[nodiscard]] Future<RangeResult> krmGetRangesUnaligned( Reference<ReadYourWritesTransaction> const& tr, Key const& mapPrefix, KeyRange const& keys, int const& limit, int const& limitBytes ) {
+															#line 138 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+	return Future<RangeResult>(new KrmGetRangesUnalignedActor1(tr, mapPrefix, keys, limit, limitBytes));
+															#line 959 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+}
+
+#line 155 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 
 void krmSetPreviouslyEmptyRange(Transaction* tr,
                                 const KeyRef& mapPrefix,
@@ -526,29 +984,29 @@ void krmSetPreviouslyEmptyRange(CommitTransactionRef& tr,
 	tr.set(trArena, withPrefix.end, oldEndValue);
 }
 
-															#line 529 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 987 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 namespace {
 // This generated class is to be used only via krmSetRange()
-															#line 119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 179 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 template <class KrmSetRangeActor>
-															#line 119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 179 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 class KrmSetRangeActorState {
-															#line 536 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 994 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 public:
-															#line 119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 179 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 	KrmSetRangeActorState(Transaction* const& tr,Key const& mapPrefix,KeyRange const& range,Value const& value) 
-															#line 119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
-															#line 119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 179 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 179 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		 : tr(tr),
-															#line 119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 179 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		   mapPrefix(mapPrefix),
-															#line 119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 179 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		   range(range),
-															#line 119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 179 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		   value(value),
-															#line 120 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		   withPrefix(KeyRangeRef(mapPrefix.toString() + range.begin.toString(), mapPrefix.toString() + range.end.toString()))
-															#line 551 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1009 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 	{
 		fdb_probe_actor_create("krmSetRange", reinterpret_cast<unsigned long>(this));
 
@@ -561,16 +1019,16 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 122 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 182 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 			StrictFuture<RangeResult> __when_expr_0 = tr->getRange(lastLessOrEqual(withPrefix.end), firstGreaterThan(withPrefix.end), 1, Snapshot::True);
-															#line 122 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 182 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 			if (static_cast<KrmSetRangeActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 568 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1026 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<KrmSetRangeActor*>(this)->actor_wait_state = 1;
-															#line 122 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 182 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< KrmSetRangeActor, 0, RangeResult >*>(static_cast<KrmSetRangeActor*>(this)));
-															#line 573 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1031 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -591,37 +1049,37 @@ public:
 	}
 	int a_body1cont1(RangeResult const& old,int loopDepth) 
 	{
-															#line 125 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 185 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		Value oldValue;
-															#line 126 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 186 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		bool hasResult = old.size() > 0 && old[0].key.startsWith(mapPrefix);
-															#line 127 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 187 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		if (hasResult)
-															#line 600 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1058 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 		{
-															#line 128 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 188 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 			oldValue = old[0].value;
-															#line 604 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1062 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 		}
-															#line 130 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 190 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		KeyRange conflictRange = KeyRangeRef(hasResult ? old[0].key : mapPrefix.toString(), keyAfter(withPrefix.end));
-															#line 131 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 191 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		if (!conflictRange.empty())
-															#line 610 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1068 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 		{
-															#line 132 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 192 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 			tr->addReadConflictRange(conflictRange);
-															#line 614 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1072 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 		}
-															#line 134 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 194 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		tr->clear(withPrefix);
-															#line 135 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 195 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		tr->set(withPrefix.begin, value);
-															#line 136 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 196 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		tr->set(withPrefix.end, oldValue);
-															#line 138 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 198 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		if (!static_cast<KrmSetRangeActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~KrmSetRangeActorState(); static_cast<KrmSetRangeActor*>(this)->destroy(); return 0; }
-															#line 624 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1082 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 		new (&static_cast<KrmSetRangeActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~KrmSetRangeActorState();
 		static_cast<KrmSetRangeActor*>(this)->finishSendAndDelPromiseRef();
@@ -631,37 +1089,37 @@ public:
 	}
 	int a_body1cont1(RangeResult && old,int loopDepth) 
 	{
-															#line 125 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 185 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		Value oldValue;
-															#line 126 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 186 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		bool hasResult = old.size() > 0 && old[0].key.startsWith(mapPrefix);
-															#line 127 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 187 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		if (hasResult)
-															#line 640 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1098 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 		{
-															#line 128 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 188 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 			oldValue = old[0].value;
-															#line 644 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1102 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 		}
-															#line 130 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 190 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		KeyRange conflictRange = KeyRangeRef(hasResult ? old[0].key : mapPrefix.toString(), keyAfter(withPrefix.end));
-															#line 131 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 191 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		if (!conflictRange.empty())
-															#line 650 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1108 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 		{
-															#line 132 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 192 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 			tr->addReadConflictRange(conflictRange);
-															#line 654 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1112 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 		}
-															#line 134 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 194 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		tr->clear(withPrefix);
-															#line 135 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 195 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		tr->set(withPrefix.begin, value);
-															#line 136 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 196 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		tr->set(withPrefix.end, oldValue);
-															#line 138 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 198 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		if (!static_cast<KrmSetRangeActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~KrmSetRangeActorState(); static_cast<KrmSetRangeActor*>(this)->destroy(); return 0; }
-															#line 664 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1122 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 		new (&static_cast<KrmSetRangeActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~KrmSetRangeActorState();
 		static_cast<KrmSetRangeActor*>(this)->finishSendAndDelPromiseRef();
@@ -732,22 +1190,22 @@ public:
 		fdb_probe_actor_exit("krmSetRange", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 179 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 	Transaction* tr;
-															#line 119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 179 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 	Key mapPrefix;
-															#line 119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 179 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 	KeyRange range;
-															#line 119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 179 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 	Value value;
-															#line 120 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 	KeyRange withPrefix;
-															#line 745 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1203 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 };
 // This generated class is to be used only via krmSetRange()
-															#line 119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 179 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 class KrmSetRangeActor final : public Actor<Void>, public ActorCallback< KrmSetRangeActor, 0, RangeResult >, public FastAllocated<KrmSetRangeActor>, public KrmSetRangeActorState<KrmSetRangeActor> {
-															#line 750 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1208 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 public:
 	using FastAllocated<KrmSetRangeActor>::operator new;
 	using FastAllocated<KrmSetRangeActor>::operator delete;
@@ -756,9 +1214,9 @@ public:
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< KrmSetRangeActor, 0, RangeResult >;
-															#line 119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 179 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 	KrmSetRangeActor(Transaction* const& tr,Key const& mapPrefix,KeyRange const& range,Value const& value) 
-															#line 761 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1219 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 		 : Actor<Void>(),
 		   KrmSetRangeActorState<KrmSetRangeActor>(tr, mapPrefix, range, value)
 	{
@@ -782,38 +1240,38 @@ friend struct ActorCallback< KrmSetRangeActor, 0, RangeResult >;
 	}
 };
 }
-															#line 119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 179 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 [[nodiscard]] Future<Void> krmSetRange( Transaction* const& tr, Key const& mapPrefix, KeyRange const& range, Value const& value ) {
-															#line 119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 179 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 	return Future<Void>(new KrmSetRangeActor(tr, mapPrefix, range, value));
-															#line 789 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1247 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 }
 
-#line 140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+#line 200 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 
-															#line 794 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1252 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 namespace {
 // This generated class is to be used only via krmSetRange()
-															#line 141 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 201 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 template <class KrmSetRangeActor1>
-															#line 141 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 201 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 class KrmSetRangeActor1State {
-															#line 801 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1259 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 public:
-															#line 141 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 201 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 	KrmSetRangeActor1State(Reference<ReadYourWritesTransaction> const& tr,Key const& mapPrefix,KeyRange const& range,Value const& value) 
-															#line 141 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
-															#line 141 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 201 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 201 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		 : tr(tr),
-															#line 141 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 201 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		   mapPrefix(mapPrefix),
-															#line 141 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 201 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		   range(range),
-															#line 141 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 201 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		   value(value),
-															#line 142 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 202 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		   withPrefix(KeyRangeRef(mapPrefix.toString() + range.begin.toString(), mapPrefix.toString() + range.end.toString()))
-															#line 816 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1274 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 	{
 		fdb_probe_actor_create("krmSetRange", reinterpret_cast<unsigned long>(this));
 
@@ -826,16 +1284,16 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 144 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 204 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 			StrictFuture<RangeResult> __when_expr_0 = tr->getRange(lastLessOrEqual(withPrefix.end), firstGreaterThan(withPrefix.end), 1, Snapshot::True);
-															#line 144 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 204 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 			if (static_cast<KrmSetRangeActor1*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 833 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1291 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<KrmSetRangeActor1*>(this)->actor_wait_state = 1;
-															#line 144 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 204 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< KrmSetRangeActor1, 0, RangeResult >*>(static_cast<KrmSetRangeActor1*>(this)));
-															#line 838 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1296 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -856,37 +1314,37 @@ public:
 	}
 	int a_body1cont1(RangeResult const& old,int loopDepth) 
 	{
-															#line 147 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		Value oldValue;
-															#line 148 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 208 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		bool hasResult = old.size() > 0 && old[0].key.startsWith(mapPrefix);
-															#line 149 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 209 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		if (hasResult)
-															#line 865 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1323 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 		{
-															#line 150 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 210 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 			oldValue = old[0].value;
-															#line 869 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1327 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 		}
-															#line 152 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 212 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		KeyRange conflictRange = KeyRangeRef(hasResult ? old[0].key : mapPrefix.toString(), keyAfter(withPrefix.end));
-															#line 153 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 213 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		if (!conflictRange.empty())
-															#line 875 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1333 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 		{
-															#line 154 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 214 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 			tr->addReadConflictRange(conflictRange);
-															#line 879 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1337 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 		}
-															#line 156 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 216 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		tr->clear(withPrefix);
-															#line 157 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 217 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		tr->set(withPrefix.begin, value);
-															#line 158 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 218 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		tr->set(withPrefix.end, oldValue);
-															#line 160 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 220 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		if (!static_cast<KrmSetRangeActor1*>(this)->SAV<Void>::futures) { (void)(Void()); this->~KrmSetRangeActor1State(); static_cast<KrmSetRangeActor1*>(this)->destroy(); return 0; }
-															#line 889 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1347 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 		new (&static_cast<KrmSetRangeActor1*>(this)->SAV< Void >::value()) Void(Void());
 		this->~KrmSetRangeActor1State();
 		static_cast<KrmSetRangeActor1*>(this)->finishSendAndDelPromiseRef();
@@ -896,37 +1354,37 @@ public:
 	}
 	int a_body1cont1(RangeResult && old,int loopDepth) 
 	{
-															#line 147 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		Value oldValue;
-															#line 148 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 208 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		bool hasResult = old.size() > 0 && old[0].key.startsWith(mapPrefix);
-															#line 149 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 209 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		if (hasResult)
-															#line 905 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1363 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 		{
-															#line 150 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 210 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 			oldValue = old[0].value;
-															#line 909 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1367 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 		}
-															#line 152 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 212 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		KeyRange conflictRange = KeyRangeRef(hasResult ? old[0].key : mapPrefix.toString(), keyAfter(withPrefix.end));
-															#line 153 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 213 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		if (!conflictRange.empty())
-															#line 915 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1373 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 		{
-															#line 154 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 214 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 			tr->addReadConflictRange(conflictRange);
-															#line 919 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1377 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 		}
-															#line 156 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 216 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		tr->clear(withPrefix);
-															#line 157 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 217 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		tr->set(withPrefix.begin, value);
-															#line 158 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 218 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		tr->set(withPrefix.end, oldValue);
-															#line 160 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 220 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		if (!static_cast<KrmSetRangeActor1*>(this)->SAV<Void>::futures) { (void)(Void()); this->~KrmSetRangeActor1State(); static_cast<KrmSetRangeActor1*>(this)->destroy(); return 0; }
-															#line 929 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1387 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 		new (&static_cast<KrmSetRangeActor1*>(this)->SAV< Void >::value()) Void(Void());
 		this->~KrmSetRangeActor1State();
 		static_cast<KrmSetRangeActor1*>(this)->finishSendAndDelPromiseRef();
@@ -997,22 +1455,22 @@ public:
 		fdb_probe_actor_exit("krmSetRange", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 141 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 201 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 	Reference<ReadYourWritesTransaction> tr;
-															#line 141 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 201 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 	Key mapPrefix;
-															#line 141 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 201 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 	KeyRange range;
-															#line 141 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 201 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 	Value value;
-															#line 142 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 202 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 	KeyRange withPrefix;
-															#line 1010 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1468 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 };
 // This generated class is to be used only via krmSetRange()
-															#line 141 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 201 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 class KrmSetRangeActor1 final : public Actor<Void>, public ActorCallback< KrmSetRangeActor1, 0, RangeResult >, public FastAllocated<KrmSetRangeActor1>, public KrmSetRangeActor1State<KrmSetRangeActor1> {
-															#line 1015 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1473 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 public:
 	using FastAllocated<KrmSetRangeActor1>::operator new;
 	using FastAllocated<KrmSetRangeActor1>::operator delete;
@@ -1021,9 +1479,9 @@ public:
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< KrmSetRangeActor1, 0, RangeResult >;
-															#line 141 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 201 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 	KrmSetRangeActor1(Reference<ReadYourWritesTransaction> const& tr,Key const& mapPrefix,KeyRange const& range,Value const& value) 
-															#line 1026 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1484 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 		 : Actor<Void>(),
 		   KrmSetRangeActor1State<KrmSetRangeActor1>(tr, mapPrefix, range, value)
 	{
@@ -1047,41 +1505,41 @@ friend struct ActorCallback< KrmSetRangeActor1, 0, RangeResult >;
 	}
 };
 }
-															#line 141 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 201 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 [[nodiscard]] Future<Void> krmSetRange( Reference<ReadYourWritesTransaction> const& tr, Key const& mapPrefix, KeyRange const& range, Value const& value ) {
-															#line 141 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 201 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 	return Future<Void>(new KrmSetRangeActor1(tr, mapPrefix, range, value));
-															#line 1054 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1512 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 }
 
-#line 162 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+#line 222 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 
 // Sets a range of keys in a key range map, coalescing with adjacent regions if the values match
 // Ranges outside of maxRange will not be coalesced
 // CAUTION: use care when attempting to coalesce multiple ranges in the same prefix in a single transaction
-															#line 1062 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1520 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 namespace {
 // This generated class is to be used only via krmSetRangeCoalescing_()
-															#line 166 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 226 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 template <class Transaction, class KrmSetRangeCoalescing_Actor>
-															#line 166 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 226 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 class KrmSetRangeCoalescing_ActorState {
-															#line 1069 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1527 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 public:
-															#line 166 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 226 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 	KrmSetRangeCoalescing_ActorState(Transaction* const& tr,Key const& mapPrefix,KeyRange const& range,KeyRange const& maxRange,Value const& value) 
-															#line 166 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
-															#line 166 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 226 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 226 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		 : tr(tr),
-															#line 166 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 226 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		   mapPrefix(mapPrefix),
-															#line 166 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 226 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		   range(range),
-															#line 166 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 226 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		   maxRange(maxRange),
-															#line 166 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 226 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		   value(value)
-															#line 1084 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1542 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 	{
 		fdb_probe_actor_create("krmSetRangeCoalescing_", reinterpret_cast<unsigned long>(this));
 
@@ -1094,28 +1552,28 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 172 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 			ASSERT(maxRange.contains(range));
-															#line 174 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 234 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 			withPrefix = KeyRangeRef(mapPrefix.toString() + range.begin.toString(), mapPrefix.toString() + range.end.toString());
-															#line 176 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 236 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 			maxWithPrefix = KeyRangeRef(mapPrefix.toString() + maxRange.begin.toString(), mapPrefix.toString() + maxRange.end.toString());
-															#line 179 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 239 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 			keys = std::vector<Future<RangeResult>>();
-															#line 180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 240 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 			keys.push_back( tr->getRange(lastLessThan(withPrefix.begin), firstGreaterOrEqual(withPrefix.begin), 1, Snapshot::True));
-															#line 182 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 242 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 			keys.push_back( tr->getRange(lastLessOrEqual(withPrefix.end), firstGreaterThan(withPrefix.end) + 1, 2, Snapshot::True));
-															#line 184 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 244 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 			StrictFuture<Void> __when_expr_0 = waitForAll(keys);
-															#line 184 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 244 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 			if (static_cast<KrmSetRangeCoalescing_Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 1113 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1571 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<KrmSetRangeCoalescing_Actor*>(this)->actor_wait_state = 1;
-															#line 184 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 244 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< KrmSetRangeCoalescing_Actor, 0, Void >*>(static_cast<KrmSetRangeCoalescing_Actor*>(this)));
-															#line 1118 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1576 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -1136,100 +1594,100 @@ public:
 	}
 	int a_body1cont1(Void const& _,int loopDepth) 
 	{
-															#line 187 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 247 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		auto beginRange = keys[0].get();
-															#line 188 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 248 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		bool hasBegin = beginRange.size() > 0 && beginRange[0].key.startsWith(mapPrefix);
-															#line 189 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
-		Value beginValue = hasBegin ? beginRange[0].value : LiteralStringRef("");
-															#line 191 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 249 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+		Value beginValue = hasBegin ? beginRange[0].value : ""_sr;
+															#line 251 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		beginKey = withPrefix.begin;
-															#line 192 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 252 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		if (beginValue == value)
-															#line 1149 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1607 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 		{
-															#line 193 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 253 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 			bool outsideRange = !hasBegin || beginRange[0].key < maxWithPrefix.begin;
-															#line 194 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 254 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 			beginKey = outsideRange ? maxWithPrefix.begin : beginRange[0].key;
-															#line 1155 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1613 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 		}
-															#line 198 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 258 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		auto endRange = keys[1].get();
-															#line 199 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 259 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		bool hasEnd = endRange.size() >= 1 && endRange[0].key.startsWith(mapPrefix) && endRange[0].key <= withPrefix.end;
-															#line 200 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 260 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		bool hasNext = (endRange.size() == 2 && endRange[1].key.startsWith(mapPrefix)) || (endRange.size() == 1 && withPrefix.end < endRange[0].key && endRange[0].key.startsWith(mapPrefix));
-															#line 202 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
-		Value existingValue = hasEnd ? endRange[0].value : LiteralStringRef("");
-															#line 203 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 262 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+		Value existingValue = hasEnd ? endRange[0].value : ""_sr;
+															#line 263 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		bool valueMatches = value == existingValue;
-															#line 205 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 265 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		KeyRange conflictRange = KeyRangeRef(hasBegin ? beginRange[0].key : mapPrefix, withPrefix.begin);
-															#line 206 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 266 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		if (!conflictRange.empty())
-															#line 1171 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1629 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 		{
-															#line 207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 267 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 			tr->addReadConflictRange(conflictRange);
-															#line 1175 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1633 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 		}
-															#line 209 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 269 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		conflictRange = KeyRangeRef(hasEnd ? endRange[0].key : mapPrefix, hasNext ? keyAfter(endRange.end()[-1].key) : strinc(mapPrefix));
-															#line 211 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 271 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		if (!conflictRange.empty())
-															#line 1181 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1639 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 		{
-															#line 212 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 272 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 			tr->addReadConflictRange(conflictRange);
-															#line 1185 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1643 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 		}
-															#line 214 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 274 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		endKey = Key();
-															#line 215 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 275 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		endValue = Value();
-															#line 218 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 278 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		if (hasNext && endRange.end()[-1].key <= maxWithPrefix.end && valueMatches)
-															#line 1193 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1651 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 		{
-															#line 219 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 279 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 			endKey = endRange.end()[-1].key;
-															#line 220 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 280 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 			endValue = endRange.end()[-1].value;
-															#line 1199 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1657 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 		}
 		else
 		{
-															#line 224 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 284 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 			if (valueMatches)
-															#line 1205 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1663 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 			{
-															#line 225 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 285 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 				endKey = maxWithPrefix.end;
-															#line 226 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 286 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 				endValue = existingValue;
-															#line 1211 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1669 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 			}
 			else
 			{
-															#line 231 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 291 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 				endKey = withPrefix.end;
-															#line 232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 292 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 				endValue = existingValue;
-															#line 1219 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1677 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 			}
 		}
-															#line 235 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		tr->clear(KeyRangeRef(beginKey, endKey));
-															#line 237 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 297 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		ASSERT(value != endValue || endKey == maxWithPrefix.end);
-															#line 238 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 298 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		tr->set(beginKey, value);
-															#line 239 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 299 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		tr->set(endKey, endValue);
-															#line 241 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 301 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		if (!static_cast<KrmSetRangeCoalescing_Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~KrmSetRangeCoalescing_ActorState(); static_cast<KrmSetRangeCoalescing_Actor*>(this)->destroy(); return 0; }
-															#line 1232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1690 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 		new (&static_cast<KrmSetRangeCoalescing_Actor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~KrmSetRangeCoalescing_ActorState();
 		static_cast<KrmSetRangeCoalescing_Actor*>(this)->finishSendAndDelPromiseRef();
@@ -1239,100 +1697,100 @@ public:
 	}
 	int a_body1cont1(Void && _,int loopDepth) 
 	{
-															#line 187 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 247 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		auto beginRange = keys[0].get();
-															#line 188 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 248 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		bool hasBegin = beginRange.size() > 0 && beginRange[0].key.startsWith(mapPrefix);
-															#line 189 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
-		Value beginValue = hasBegin ? beginRange[0].value : LiteralStringRef("");
-															#line 191 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 249 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+		Value beginValue = hasBegin ? beginRange[0].value : ""_sr;
+															#line 251 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		beginKey = withPrefix.begin;
-															#line 192 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 252 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		if (beginValue == value)
-															#line 1252 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1710 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 		{
-															#line 193 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 253 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 			bool outsideRange = !hasBegin || beginRange[0].key < maxWithPrefix.begin;
-															#line 194 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 254 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 			beginKey = outsideRange ? maxWithPrefix.begin : beginRange[0].key;
-															#line 1258 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1716 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 		}
-															#line 198 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 258 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		auto endRange = keys[1].get();
-															#line 199 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 259 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		bool hasEnd = endRange.size() >= 1 && endRange[0].key.startsWith(mapPrefix) && endRange[0].key <= withPrefix.end;
-															#line 200 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 260 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		bool hasNext = (endRange.size() == 2 && endRange[1].key.startsWith(mapPrefix)) || (endRange.size() == 1 && withPrefix.end < endRange[0].key && endRange[0].key.startsWith(mapPrefix));
-															#line 202 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
-		Value existingValue = hasEnd ? endRange[0].value : LiteralStringRef("");
-															#line 203 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 262 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+		Value existingValue = hasEnd ? endRange[0].value : ""_sr;
+															#line 263 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		bool valueMatches = value == existingValue;
-															#line 205 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 265 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		KeyRange conflictRange = KeyRangeRef(hasBegin ? beginRange[0].key : mapPrefix, withPrefix.begin);
-															#line 206 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 266 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		if (!conflictRange.empty())
-															#line 1274 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1732 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 		{
-															#line 207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 267 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 			tr->addReadConflictRange(conflictRange);
-															#line 1278 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1736 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 		}
-															#line 209 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 269 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		conflictRange = KeyRangeRef(hasEnd ? endRange[0].key : mapPrefix, hasNext ? keyAfter(endRange.end()[-1].key) : strinc(mapPrefix));
-															#line 211 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 271 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		if (!conflictRange.empty())
-															#line 1284 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1742 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 		{
-															#line 212 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 272 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 			tr->addReadConflictRange(conflictRange);
-															#line 1288 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1746 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 		}
-															#line 214 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 274 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		endKey = Key();
-															#line 215 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 275 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		endValue = Value();
-															#line 218 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 278 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		if (hasNext && endRange.end()[-1].key <= maxWithPrefix.end && valueMatches)
-															#line 1296 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1754 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 		{
-															#line 219 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 279 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 			endKey = endRange.end()[-1].key;
-															#line 220 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 280 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 			endValue = endRange.end()[-1].value;
-															#line 1302 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1760 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 		}
 		else
 		{
-															#line 224 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 284 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 			if (valueMatches)
-															#line 1308 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1766 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 			{
-															#line 225 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 285 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 				endKey = maxWithPrefix.end;
-															#line 226 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 286 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 				endValue = existingValue;
-															#line 1314 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1772 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 			}
 			else
 			{
-															#line 231 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 291 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 				endKey = withPrefix.end;
-															#line 232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 292 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 				endValue = existingValue;
-															#line 1322 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1780 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 			}
 		}
-															#line 235 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		tr->clear(KeyRangeRef(beginKey, endKey));
-															#line 237 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 297 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		ASSERT(value != endValue || endKey == maxWithPrefix.end);
-															#line 238 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 298 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		tr->set(beginKey, value);
-															#line 239 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 299 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		tr->set(endKey, endValue);
-															#line 241 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 301 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 		if (!static_cast<KrmSetRangeCoalescing_Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~KrmSetRangeCoalescing_ActorState(); static_cast<KrmSetRangeCoalescing_Actor*>(this)->destroy(); return 0; }
-															#line 1335 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1793 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 		new (&static_cast<KrmSetRangeCoalescing_Actor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~KrmSetRangeCoalescing_ActorState();
 		static_cast<KrmSetRangeCoalescing_Actor*>(this)->finishSendAndDelPromiseRef();
@@ -1403,36 +1861,36 @@ public:
 		fdb_probe_actor_exit("krmSetRangeCoalescing_", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 166 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 226 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 	Transaction* tr;
-															#line 166 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 226 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 	Key mapPrefix;
-															#line 166 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 226 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 	KeyRange range;
-															#line 166 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 226 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 	KeyRange maxRange;
-															#line 166 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 226 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 	Value value;
-															#line 174 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 234 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 	KeyRange withPrefix;
-															#line 176 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 236 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 	KeyRange maxWithPrefix;
-															#line 179 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 239 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 	std::vector<Future<RangeResult>> keys;
-															#line 191 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 251 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 	Key beginKey;
-															#line 214 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 274 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 	Key endKey;
-															#line 215 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 275 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 	Value endValue;
-															#line 1428 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1886 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 };
 // This generated class is to be used only via krmSetRangeCoalescing_()
-															#line 166 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 226 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 template <class Transaction>
-															#line 166 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 226 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 class KrmSetRangeCoalescing_Actor final : public Actor<Void>, public ActorCallback< KrmSetRangeCoalescing_Actor<Transaction>, 0, Void >, public FastAllocated<KrmSetRangeCoalescing_Actor<Transaction>>, public KrmSetRangeCoalescing_ActorState<Transaction, KrmSetRangeCoalescing_Actor<Transaction>> {
-															#line 1435 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1893 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 public:
 	using FastAllocated<KrmSetRangeCoalescing_Actor<Transaction>>::operator new;
 	using FastAllocated<KrmSetRangeCoalescing_Actor<Transaction>>::operator delete;
@@ -1441,9 +1899,9 @@ public:
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< KrmSetRangeCoalescing_Actor<Transaction>, 0, Void >;
-															#line 166 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 226 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 	KrmSetRangeCoalescing_Actor(Transaction* const& tr,Key const& mapPrefix,KeyRange const& range,KeyRange const& maxRange,Value const& value) 
-															#line 1446 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1904 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 		 : Actor<Void>(),
 		   KrmSetRangeCoalescing_ActorState<Transaction, KrmSetRangeCoalescing_Actor<Transaction>>(tr, mapPrefix, range, maxRange, value)
 	{
@@ -1467,16 +1925,16 @@ friend struct ActorCallback< KrmSetRangeCoalescing_Actor<Transaction>, 0, Void >
 	}
 };
 }
-															#line 166 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 226 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 template <class Transaction>
-															#line 166 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 226 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 [[nodiscard]] static Future<Void> krmSetRangeCoalescing_( Transaction* const& tr, Key const& mapPrefix, KeyRange const& range, KeyRange const& maxRange, Value const& value ) {
-															#line 166 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 226 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 	return Future<Void>(new KrmSetRangeCoalescing_Actor<Transaction>(tr, mapPrefix, range, maxRange, value));
-															#line 1476 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+															#line 1934 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
 }
 
-#line 243 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+#line 303 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
 Future<Void> krmSetRangeCoalescing(Transaction* const& tr,
                                    Key const& mapPrefix,
                                    KeyRange const& range,
@@ -1491,3 +1949,352 @@ Future<Void> krmSetRangeCoalescing(Reference<ReadYourWritesTransaction> const& t
                                    Value const& value) {
 	return holdWhile(tr, krmSetRangeCoalescing_(tr.getPtr(), mapPrefix, range, maxRange, value));
 }
+
+															#line 1953 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+namespace {
+// This generated class is to be used only via flowTestCase318()
+															#line 318 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+template <class FlowTestCase318Actor>
+															#line 318 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+class FlowTestCase318ActorState {
+															#line 1960 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+public:
+															#line 318 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+	FlowTestCase318ActorState(UnitTestParameters const& params) 
+															#line 318 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 318 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+		 : params(params)
+															#line 1967 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+	{
+		fdb_probe_actor_create("flowTestCase318", reinterpret_cast<unsigned long>(this));
+
+	}
+	~FlowTestCase318ActorState() 
+	{
+		fdb_probe_actor_destroy("flowTestCase318", reinterpret_cast<unsigned long>(this));
+
+	}
+	int a_body1(int loopDepth=0) 
+	{
+		try {
+															#line 319 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			Arena arena;
+															#line 320 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			Key prefix = "/prefix/"_sr;
+															#line 321 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			StringRef fullKeyA = StringRef(arena, "/prefix/a"_sr);
+															#line 322 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			StringRef fullKeyB = StringRef(arena, "/prefix/b"_sr);
+															#line 323 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			StringRef fullKeyC = StringRef(arena, "/prefix/c"_sr);
+															#line 324 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			StringRef fullKeyD = StringRef(arena, "/prefix/d"_sr);
+															#line 326 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			StringRef keyA = StringRef(arena, "a"_sr);
+															#line 327 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			StringRef keyB = StringRef(arena, "b"_sr);
+															#line 328 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			StringRef keyC = StringRef(arena, "c"_sr);
+															#line 329 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			StringRef keyD = StringRef(arena, "d"_sr);
+															#line 330 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			StringRef keyE = StringRef(arena, "e"_sr);
+															#line 331 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			StringRef keyAB = StringRef(arena, "ab"_sr);
+															#line 332 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			StringRef keyAC = StringRef(arena, "ac"_sr);
+															#line 333 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			StringRef keyCD = StringRef(arena, "cd"_sr);
+															#line 336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			RangeResult kv;
+															#line 337 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			kv.push_back(arena, KeyValueRef(fullKeyA, keyA));
+															#line 338 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			kv.push_back(arena, KeyValueRef(fullKeyB, keyB));
+															#line 341 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			RangeResult decodedRanges = krmDecodeRanges(prefix, KeyRangeRef(keyAB, keyAC), kv);
+															#line 342 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			ASSERT(decodedRanges.size() == 2);
+															#line 343 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			ASSERT(decodedRanges.front().key == keyAB);
+															#line 344 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			ASSERT(decodedRanges.front().value == keyA);
+															#line 345 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			ASSERT(decodedRanges.back().key == keyAC);
+															#line 346 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			ASSERT(decodedRanges.back().value == keyA);
+															#line 348 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			kv.push_back(arena, KeyValueRef(fullKeyC, keyC));
+															#line 349 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			kv.push_back(arena, KeyValueRef(fullKeyD, keyD));
+															#line 352 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			decodedRanges = krmDecodeRanges(prefix, KeyRangeRef(keyAB, keyCD), kv);
+															#line 353 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			ASSERT(decodedRanges.size() == 4);
+															#line 354 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			ASSERT(decodedRanges.front().key == keyAB);
+															#line 355 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			ASSERT(decodedRanges.front().value == keyA);
+															#line 356 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			ASSERT(decodedRanges.back().key == keyCD);
+															#line 357 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			ASSERT(decodedRanges.back().value == keyC);
+															#line 360 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			decodedRanges = krmDecodeRanges(prefix, KeyRangeRef(StringRef(), keyE), kv);
+															#line 361 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			ASSERT(decodedRanges.size() == 6);
+															#line 362 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			ASSERT(decodedRanges.front().key == StringRef());
+															#line 363 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			ASSERT(decodedRanges.front().value == StringRef());
+															#line 364 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			ASSERT(decodedRanges.back().key == keyE);
+															#line 365 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			ASSERT(decodedRanges.back().value == keyD);
+															#line 367 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			if (!static_cast<FlowTestCase318Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~FlowTestCase318ActorState(); static_cast<FlowTestCase318Actor*>(this)->destroy(); return 0; }
+															#line 2056 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+			new (&static_cast<FlowTestCase318Actor*>(this)->SAV< Void >::value()) Void(Void());
+			this->~FlowTestCase318ActorState();
+			static_cast<FlowTestCase318Actor*>(this)->finishSendAndDelPromiseRef();
+			return 0;
+		}
+		catch (Error& error) {
+			loopDepth = a_body1Catch1(error, loopDepth);
+		} catch (...) {
+			loopDepth = a_body1Catch1(unknown_error(), loopDepth);
+		}
+
+		return loopDepth;
+	}
+	int a_body1Catch1(Error error,int loopDepth=0) 
+	{
+		this->~FlowTestCase318ActorState();
+		static_cast<FlowTestCase318Actor*>(this)->sendErrorAndDelPromiseRef(error);
+		loopDepth = 0;
+
+		return loopDepth;
+	}
+															#line 318 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+	UnitTestParameters params;
+															#line 2080 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+};
+// This generated class is to be used only via flowTestCase318()
+															#line 318 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+class FlowTestCase318Actor final : public Actor<Void>, public FastAllocated<FlowTestCase318Actor>, public FlowTestCase318ActorState<FlowTestCase318Actor> {
+															#line 2085 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+public:
+	using FastAllocated<FlowTestCase318Actor>::operator new;
+	using FastAllocated<FlowTestCase318Actor>::operator delete;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdelete-non-virtual-dtor"
+	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
+#pragma clang diagnostic pop
+															#line 318 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+	FlowTestCase318Actor(UnitTestParameters const& params) 
+															#line 2095 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+		 : Actor<Void>(),
+		   FlowTestCase318ActorState<FlowTestCase318Actor>(params)
+	{
+		fdb_probe_actor_enter("flowTestCase318", reinterpret_cast<unsigned long>(this), -1);
+		#ifdef ENABLE_SAMPLING
+		this->lineage.setActorName("flowTestCase318");
+		LineageScope _(&this->lineage);
+		#endif
+		this->a_body1();
+		fdb_probe_actor_exit("flowTestCase318", reinterpret_cast<unsigned long>(this), -1);
+
+	}
+	void cancel() override
+	{
+		auto wait_state = this->actor_wait_state;
+		this->actor_wait_state = -1;
+		switch (wait_state) {
+		}
+
+	}
+};
+}
+															#line 318 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+static Future<Void> flowTestCase318( UnitTestParameters const& params ) {
+															#line 318 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+	return Future<Void>(new FlowTestCase318Actor(params));
+															#line 2122 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+}
+ACTOR_TEST_CASE(flowTestCase318, "/keyrangemap/decoderange/aligned")
+
+#line 369 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+
+															#line 2128 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+namespace {
+// This generated class is to be used only via flowTestCase370()
+															#line 370 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+template <class FlowTestCase370Actor>
+															#line 370 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+class FlowTestCase370ActorState {
+															#line 2135 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+public:
+															#line 370 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+	FlowTestCase370ActorState(UnitTestParameters const& params) 
+															#line 370 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+															#line 370 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+		 : params(params)
+															#line 2142 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+	{
+		fdb_probe_actor_create("flowTestCase370", reinterpret_cast<unsigned long>(this));
+
+	}
+	~FlowTestCase370ActorState() 
+	{
+		fdb_probe_actor_destroy("flowTestCase370", reinterpret_cast<unsigned long>(this));
+
+	}
+	int a_body1(int loopDepth=0) 
+	{
+		try {
+															#line 371 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			Arena arena;
+															#line 372 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			Key prefix = "/prefix/"_sr;
+															#line 373 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			StringRef fullKeyA = StringRef(arena, "/prefix/a"_sr);
+															#line 374 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			StringRef fullKeyB = StringRef(arena, "/prefix/b"_sr);
+															#line 375 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			StringRef fullKeyC = StringRef(arena, "/prefix/c"_sr);
+															#line 376 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			StringRef fullKeyD = StringRef(arena, "/prefix/d"_sr);
+															#line 378 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			StringRef keyA = StringRef(arena, "a"_sr);
+															#line 379 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			StringRef keyB = StringRef(arena, "b"_sr);
+															#line 380 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			StringRef keyC = StringRef(arena, "c"_sr);
+															#line 381 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			StringRef keyD = StringRef(arena, "d"_sr);
+															#line 382 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			StringRef keyE = StringRef(arena, "e"_sr);
+															#line 383 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			StringRef keyAB = StringRef(arena, "ab"_sr);
+															#line 384 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			StringRef keyAC = StringRef(arena, "ac"_sr);
+															#line 385 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			StringRef keyCD = StringRef(arena, "cd"_sr);
+															#line 388 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			RangeResult kv;
+															#line 389 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			kv.push_back(arena, KeyValueRef(fullKeyA, keyA));
+															#line 390 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			kv.push_back(arena, KeyValueRef(fullKeyB, keyB));
+															#line 393 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			RangeResult decodedRanges = krmDecodeRanges(prefix, KeyRangeRef(keyAB, keyAC), kv, false);
+															#line 394 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			ASSERT(decodedRanges.size() == 2);
+															#line 395 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			ASSERT(decodedRanges.front().key == keyA);
+															#line 396 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			ASSERT(decodedRanges.front().value == keyA);
+															#line 397 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			ASSERT(decodedRanges.back().key == keyB);
+															#line 398 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			ASSERT(decodedRanges.back().value == keyB);
+															#line 400 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			kv.push_back(arena, KeyValueRef(fullKeyC, keyC));
+															#line 401 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			kv.push_back(arena, KeyValueRef(fullKeyD, keyD));
+															#line 404 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			decodedRanges = krmDecodeRanges(prefix, KeyRangeRef(keyAB, keyCD), kv, false);
+															#line 405 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			ASSERT(decodedRanges.size() == 4);
+															#line 406 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			ASSERT(decodedRanges.front().key == keyA);
+															#line 407 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			ASSERT(decodedRanges.front().value == keyA);
+															#line 408 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			ASSERT(decodedRanges.back().key == keyD);
+															#line 409 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			ASSERT(decodedRanges.back().value == keyD);
+															#line 412 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			decodedRanges = krmDecodeRanges(prefix, KeyRangeRef(StringRef(), keyE), kv, false);
+															#line 413 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			ASSERT(decodedRanges.size() == 6);
+															#line 414 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			ASSERT(decodedRanges.front().key == StringRef());
+															#line 415 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			ASSERT(decodedRanges.front().value == StringRef());
+															#line 416 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			ASSERT(decodedRanges.back().key == keyE);
+															#line 417 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			ASSERT(decodedRanges.back().value == keyD);
+															#line 419 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+			if (!static_cast<FlowTestCase370Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~FlowTestCase370ActorState(); static_cast<FlowTestCase370Actor*>(this)->destroy(); return 0; }
+															#line 2231 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+			new (&static_cast<FlowTestCase370Actor*>(this)->SAV< Void >::value()) Void(Void());
+			this->~FlowTestCase370ActorState();
+			static_cast<FlowTestCase370Actor*>(this)->finishSendAndDelPromiseRef();
+			return 0;
+		}
+		catch (Error& error) {
+			loopDepth = a_body1Catch1(error, loopDepth);
+		} catch (...) {
+			loopDepth = a_body1Catch1(unknown_error(), loopDepth);
+		}
+
+		return loopDepth;
+	}
+	int a_body1Catch1(Error error,int loopDepth=0) 
+	{
+		this->~FlowTestCase370ActorState();
+		static_cast<FlowTestCase370Actor*>(this)->sendErrorAndDelPromiseRef(error);
+		loopDepth = 0;
+
+		return loopDepth;
+	}
+															#line 370 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+	UnitTestParameters params;
+															#line 2255 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+};
+// This generated class is to be used only via flowTestCase370()
+															#line 370 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+class FlowTestCase370Actor final : public Actor<Void>, public FastAllocated<FlowTestCase370Actor>, public FlowTestCase370ActorState<FlowTestCase370Actor> {
+															#line 2260 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+public:
+	using FastAllocated<FlowTestCase370Actor>::operator new;
+	using FastAllocated<FlowTestCase370Actor>::operator delete;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdelete-non-virtual-dtor"
+	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
+#pragma clang diagnostic pop
+															#line 370 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+	FlowTestCase370Actor(UnitTestParameters const& params) 
+															#line 2270 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+		 : Actor<Void>(),
+		   FlowTestCase370ActorState<FlowTestCase370Actor>(params)
+	{
+		fdb_probe_actor_enter("flowTestCase370", reinterpret_cast<unsigned long>(this), -1);
+		#ifdef ENABLE_SAMPLING
+		this->lineage.setActorName("flowTestCase370");
+		LineageScope _(&this->lineage);
+		#endif
+		this->a_body1();
+		fdb_probe_actor_exit("flowTestCase370", reinterpret_cast<unsigned long>(this), -1);
+
+	}
+	void cancel() override
+	{
+		auto wait_state = this->actor_wait_state;
+		this->actor_wait_state = -1;
+		switch (wait_state) {
+		}
+
+	}
+};
+}
+															#line 370 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+static Future<Void> flowTestCase370( UnitTestParameters const& params ) {
+															#line 370 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.cpp"
+	return Future<Void>(new FlowTestCase370Actor(params));
+															#line 2297 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/KeyRangeMap.actor.g.cpp"
+}
+ACTOR_TEST_CASE(flowTestCase370, "/keyrangemap/decoderange/unaligned")
+

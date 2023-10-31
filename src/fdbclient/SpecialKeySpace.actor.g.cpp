@@ -59,84 +59,63 @@ static bool isAlphaNumeric(const std::string& key) {
 }
 } // namespace
 
-const KeyRangeRef TenantMapRangeImpl::submoduleRange = KeyRangeRef("tenant_map/"_sr, "tenant_map0"_sr);
-
 std::unordered_map<SpecialKeySpace::MODULE, KeyRange> SpecialKeySpace::moduleToBoundary = {
-	{ SpecialKeySpace::MODULE::TRANSACTION,
-	  KeyRangeRef(LiteralStringRef("\xff\xff/transaction/"), LiteralStringRef("\xff\xff/transaction0")) },
+	{ SpecialKeySpace::MODULE::TRANSACTION, KeyRangeRef("\xff\xff/transaction/"_sr, "\xff\xff/transaction0"_sr) },
 	{ SpecialKeySpace::MODULE::WORKERINTERFACE,
-	  KeyRangeRef(LiteralStringRef("\xff\xff/worker_interfaces/"), LiteralStringRef("\xff\xff/worker_interfaces0")) },
-	{ SpecialKeySpace::MODULE::STATUSJSON, singleKeyRange(LiteralStringRef("\xff\xff/status/json")) },
-	{ SpecialKeySpace::MODULE::CONNECTIONSTRING, singleKeyRange(LiteralStringRef("\xff\xff/connection_string")) },
-	{ SpecialKeySpace::MODULE::CLUSTERFILEPATH, singleKeyRange(LiteralStringRef("\xff\xff/cluster_file_path")) },
-	{ SpecialKeySpace::MODULE::METRICS,
-	  KeyRangeRef(LiteralStringRef("\xff\xff/metrics/"), LiteralStringRef("\xff\xff/metrics0")) },
-	{ SpecialKeySpace::MODULE::MANAGEMENT,
-	  KeyRangeRef(LiteralStringRef("\xff\xff/management/"), LiteralStringRef("\xff\xff/management0")) },
-	{ SpecialKeySpace::MODULE::ERRORMSG, singleKeyRange(LiteralStringRef("\xff\xff/error_message")) },
-	{ SpecialKeySpace::MODULE::CONFIGURATION,
-	  KeyRangeRef(LiteralStringRef("\xff\xff/configuration/"), LiteralStringRef("\xff\xff/configuration0")) },
-	{ SpecialKeySpace::MODULE::GLOBALCONFIG,
-	  KeyRangeRef(LiteralStringRef("\xff\xff/global_config/"), LiteralStringRef("\xff\xff/global_config0")) },
-	{ SpecialKeySpace::MODULE::TRACING,
-	  KeyRangeRef(LiteralStringRef("\xff\xff/tracing/"), LiteralStringRef("\xff\xff/tracing0")) },
-	{ SpecialKeySpace::MODULE::ACTORLINEAGE,
-	  KeyRangeRef(LiteralStringRef("\xff\xff/actor_lineage/"), LiteralStringRef("\xff\xff/actor_lineage0")) },
+	  KeyRangeRef("\xff\xff/worker_interfaces/"_sr, "\xff\xff/worker_interfaces0"_sr) },
+	{ SpecialKeySpace::MODULE::STATUSJSON, singleKeyRange("\xff\xff/status/json"_sr) },
+	{ SpecialKeySpace::MODULE::CONNECTIONSTRING, singleKeyRange("\xff\xff/connection_string"_sr) },
+	{ SpecialKeySpace::MODULE::CLUSTERFILEPATH, singleKeyRange("\xff\xff/cluster_file_path"_sr) },
+	{ SpecialKeySpace::MODULE::METRICS, KeyRangeRef("\xff\xff/metrics/"_sr, "\xff\xff/metrics0"_sr) },
+	{ SpecialKeySpace::MODULE::MANAGEMENT, KeyRangeRef("\xff\xff/management/"_sr, "\xff\xff/management0"_sr) },
+	{ SpecialKeySpace::MODULE::ERRORMSG, singleKeyRange("\xff\xff/error_message"_sr) },
+	{ SpecialKeySpace::MODULE::CONFIGURATION, KeyRangeRef("\xff\xff/configuration/"_sr, "\xff\xff/configuration0"_sr) },
+	{ SpecialKeySpace::MODULE::GLOBALCONFIG, KeyRangeRef("\xff\xff/global_config/"_sr, "\xff\xff/global_config0"_sr) },
+	{ SpecialKeySpace::MODULE::TRACING, KeyRangeRef("\xff\xff/tracing/"_sr, "\xff\xff/tracing0"_sr) },
+	{ SpecialKeySpace::MODULE::ACTORLINEAGE, KeyRangeRef("\xff\xff/actor_lineage/"_sr, "\xff\xff/actor_lineage0"_sr) },
 	{ SpecialKeySpace::MODULE::ACTOR_PROFILER_CONF,
-	  KeyRangeRef(LiteralStringRef("\xff\xff/actor_profiler_conf/"),
-	              LiteralStringRef("\xff\xff/actor_profiler_conf0")) }
+	  KeyRangeRef("\xff\xff/actor_profiler_conf/"_sr, "\xff\xff/actor_profiler_conf0"_sr) },
+	{ SpecialKeySpace::MODULE::CLUSTERID, singleKeyRange("\xff\xff/cluster_id"_sr) },
 };
 
 std::unordered_map<std::string, KeyRange> SpecialKeySpace::managementApiCommandToRange = {
-	{ "exclude",
-	  KeyRangeRef(LiteralStringRef("excluded/"), LiteralStringRef("excluded0"))
-	      .withPrefix(moduleToBoundary[MODULE::MANAGEMENT].begin) },
-	{ "failed",
-	  KeyRangeRef(LiteralStringRef("failed/"), LiteralStringRef("failed0"))
-	      .withPrefix(moduleToBoundary[MODULE::MANAGEMENT].begin) },
+	{ "exclude", KeyRangeRef("excluded/"_sr, "excluded0"_sr).withPrefix(moduleToBoundary[MODULE::MANAGEMENT].begin) },
+	{ "failed", KeyRangeRef("failed/"_sr, "failed0"_sr).withPrefix(moduleToBoundary[MODULE::MANAGEMENT].begin) },
 	{ "excludedlocality",
-	  KeyRangeRef(LiteralStringRef("excluded_locality/"), LiteralStringRef("excluded_locality0"))
+	  KeyRangeRef("excluded_locality/"_sr, "excluded_locality0"_sr)
 	      .withPrefix(moduleToBoundary[MODULE::MANAGEMENT].begin) },
 	{ "failedlocality",
-	  KeyRangeRef(LiteralStringRef("failed_locality/"), LiteralStringRef("failed_locality0"))
+	  KeyRangeRef("failed_locality/"_sr, "failed_locality0"_sr)
 	      .withPrefix(moduleToBoundary[MODULE::MANAGEMENT].begin) },
-	{ "lock", singleKeyRange(LiteralStringRef("db_locked")).withPrefix(moduleToBoundary[MODULE::MANAGEMENT].begin) },
+	{ "lock", singleKeyRange("db_locked"_sr).withPrefix(moduleToBoundary[MODULE::MANAGEMENT].begin) },
 	{ "consistencycheck",
-	  singleKeyRange(LiteralStringRef("consistency_check_suspended"))
-	      .withPrefix(moduleToBoundary[MODULE::MANAGEMENT].begin) },
+	  singleKeyRange("consistency_check_suspended"_sr).withPrefix(moduleToBoundary[MODULE::MANAGEMENT].begin) },
 	{ "coordinators",
-	  KeyRangeRef(LiteralStringRef("coordinators/"), LiteralStringRef("coordinators0"))
-	      .withPrefix(moduleToBoundary[MODULE::CONFIGURATION].begin) },
+	  KeyRangeRef("coordinators/"_sr, "coordinators0"_sr).withPrefix(moduleToBoundary[MODULE::CONFIGURATION].begin) },
 	{ "advanceversion",
-	  singleKeyRange(LiteralStringRef("min_required_commit_version"))
-	      .withPrefix(moduleToBoundary[MODULE::MANAGEMENT].begin) },
-	{ "versionepoch",
-	  singleKeyRange(LiteralStringRef("version_epoch")).withPrefix(moduleToBoundary[MODULE::MANAGEMENT].begin) },
-	{ "profile",
-	  KeyRangeRef(LiteralStringRef("profiling/"), LiteralStringRef("profiling0"))
-	      .withPrefix(moduleToBoundary[MODULE::MANAGEMENT].begin) },
+	  singleKeyRange("min_required_commit_version"_sr).withPrefix(moduleToBoundary[MODULE::MANAGEMENT].begin) },
+	{ "versionepoch", singleKeyRange("version_epoch"_sr).withPrefix(moduleToBoundary[MODULE::MANAGEMENT].begin) },
+	{ "profile", KeyRangeRef("profiling/"_sr, "profiling0"_sr).withPrefix(moduleToBoundary[MODULE::MANAGEMENT].begin) },
 	{ "maintenance",
-	  KeyRangeRef(LiteralStringRef("maintenance/"), LiteralStringRef("maintenance0"))
-	      .withPrefix(moduleToBoundary[MODULE::MANAGEMENT].begin) },
+	  KeyRangeRef("maintenance/"_sr, "maintenance0"_sr).withPrefix(moduleToBoundary[MODULE::MANAGEMENT].begin) },
 	{ "datadistribution",
-	  KeyRangeRef(LiteralStringRef("data_distribution/"), LiteralStringRef("data_distribution0"))
+	  KeyRangeRef("data_distribution/"_sr, "data_distribution0"_sr)
 	      .withPrefix(moduleToBoundary[MODULE::MANAGEMENT].begin) },
-	{ "tenantmap", TenantMapRangeImpl::submoduleRange.withPrefix(moduleToBoundary[MODULE::MANAGEMENT].begin) }
+	{ "tenant", KeyRangeRef("tenant/"_sr, "tenant0"_sr).withPrefix(moduleToBoundary[MODULE::MANAGEMENT].begin) },
+	{ "tenantmap",
+	  KeyRangeRef("tenant_map/"_sr, "tenant_map0"_sr).withPrefix(moduleToBoundary[MODULE::MANAGEMENT].begin) }
 };
 
 std::unordered_map<std::string, KeyRange> SpecialKeySpace::actorLineageApiCommandToRange = {
-	{ "state",
-	  KeyRangeRef(LiteralStringRef("state/"), LiteralStringRef("state0"))
-	      .withPrefix(moduleToBoundary[MODULE::ACTORLINEAGE].begin) },
-	{ "time",
-	  KeyRangeRef(LiteralStringRef("time/"), LiteralStringRef("time0"))
-	      .withPrefix(moduleToBoundary[MODULE::ACTORLINEAGE].begin) }
+	{ "state", KeyRangeRef("state/"_sr, "state0"_sr).withPrefix(moduleToBoundary[MODULE::ACTORLINEAGE].begin) },
+	{ "time", KeyRangeRef("time/"_sr, "time0"_sr).withPrefix(moduleToBoundary[MODULE::ACTORLINEAGE].begin) }
 };
 
 std::set<std::string> SpecialKeySpace::options = { "excluded/force",
 	                                               "failed/force",
 	                                               "excluded_locality/force",
-	                                               "failed_locality/force" };
+	                                               "failed_locality/force",
+	                                               "worker_interfaces/verify" };
 
 std::set<std::string> SpecialKeySpace::tracingOptions = { kTracingTransactionIdKey, kTracingTokenKey };
 
@@ -148,27 +127,27 @@ RangeResult rywGetRange(ReadYourWritesTransaction* ryw, const KeyRangeRef& kr, c
 // The cache object is used to cache the first read result from the rpc call during the key resolution,
 // then when we need to do key resolution or result filtering,
 // we, instead of rpc call, read from this cache object have consistent results
-															#line 151 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 130 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 namespace {
 // This generated class is to be used only via moveKeySelectorOverRangeActor()
-															#line 149 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 128 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 template <class MoveKeySelectorOverRangeActorActor>
-															#line 149 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 128 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class MoveKeySelectorOverRangeActorActorState {
-															#line 158 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 137 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
-															#line 149 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 128 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	MoveKeySelectorOverRangeActorActorState(const SpecialKeyRangeReadImpl* const& skrImpl,ReadYourWritesTransaction* const& ryw,KeySelector* const& ks,KeyRangeMap<Optional<RangeResult>>* const& cache) 
-															#line 149 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-															#line 149 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 128 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 128 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		 : skrImpl(skrImpl),
-															#line 149 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 128 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   ryw(ryw),
-															#line 149 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 128 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   ks(ks),
-															#line 149 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 128 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   cache(cache)
-															#line 171 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 150 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 	{
 		fdb_probe_actor_create("moveKeySelectorOverRangeActor", reinterpret_cast<unsigned long>(this));
 
@@ -181,76 +160,84 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 154 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 133 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			ASSERT(!ks->orEqual);
-															#line 157 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 136 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			ASSERT(ks->offset != 1);
-															#line 159 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			startKey = Key(skrImpl->getKeyRange().begin);
-															#line 160 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			endKey = Key(skrImpl->getKeyRange().end);
-															#line 161 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			result = RangeResult();
-															#line 163 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			if (ks->offset < 1)
-															#line 196 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 139 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			if (ryw->getTenant().present() && !skrImpl->supportsTenants())
+															#line 169 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
-															#line 165 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+				return a_body1Catch1(illegal_tenant_access(), loopDepth);
+															#line 173 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+			}
+															#line 143 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			startKey = Key(skrImpl->getKeyRange().begin);
+															#line 144 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			endKey = Key(skrImpl->getKeyRange().end);
+															#line 145 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			result = RangeResult();
+															#line 147 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			if (ks->offset < 1)
+															#line 183 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+			{
+															#line 149 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				if (skrImpl->getKeyRange().contains(ks->getKey()))
-															#line 200 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 187 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				{
-															#line 166 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 150 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					endKey = ks->getKey();
-															#line 204 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 191 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				}
 			}
 			else
 			{
-															#line 169 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 153 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				if (skrImpl->getKeyRange().contains(ks->getKey()))
-															#line 211 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 198 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				{
-															#line 170 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 154 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					startKey = ks->getKey();
-															#line 215 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 202 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				}
 			}
-															#line 174 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 158 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			ASSERT(startKey < endKey);
-															#line 176 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 160 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			DisabledTraceEvent(SevDebug, "NormalizeKeySelector") .detail("OriginalKey", ks->getKey()) .detail("OriginalOffset", ks->offset) .detail("SpecialKeyRangeStart", skrImpl->getKeyRange().begin) .detail("SpecialKeyRangeEnd", skrImpl->getKeyRange().end);
-															#line 182 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 166 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			GetRangeLimits limitsHint(ks->offset >= 1 ? ks->offset : 1 - ks->offset);
-															#line 184 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 168 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (skrImpl->isAsync())
-															#line 226 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 213 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
-															#line 185 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 169 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				const SpecialKeyRangeAsyncImpl* ptr = dynamic_cast<const SpecialKeyRangeAsyncImpl*>(skrImpl);
-															#line 186 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 170 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				StrictFuture<RangeResult> __when_expr_0 = ptr->getRange(ryw, KeyRangeRef(startKey, endKey), limitsHint, cache);
-															#line 186 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 170 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				if (static_cast<MoveKeySelectorOverRangeActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 234 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 221 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 				static_cast<MoveKeySelectorOverRangeActorActor*>(this)->actor_wait_state = 1;
-															#line 186 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 170 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< MoveKeySelectorOverRangeActorActor, 0, RangeResult >*>(static_cast<MoveKeySelectorOverRangeActorActor*>(this)));
-															#line 239 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 226 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				loopDepth = 0;
 			}
 			else
 			{
-															#line 189 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 173 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				StrictFuture<RangeResult> __when_expr_1 = skrImpl->getRange(ryw, KeyRangeRef(startKey, endKey), limitsHint);
-															#line 189 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 173 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				if (static_cast<MoveKeySelectorOverRangeActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 248 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 235 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1when2(__when_expr_1.get(), loopDepth); };
 				static_cast<MoveKeySelectorOverRangeActorActor*>(this)->actor_wait_state = 2;
-															#line 189 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 173 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< MoveKeySelectorOverRangeActorActor, 1, RangeResult >*>(static_cast<MoveKeySelectorOverRangeActorActor*>(this)));
-															#line 253 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 240 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				loopDepth = 0;
 			}
 		}
@@ -272,69 +259,69 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 193 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 177 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (result.size() == 0)
-															#line 277 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 264 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 194 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 178 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			TraceEvent(SevDebug, "ZeroElementsIntheRange").detail("Start", startKey).detail("End", endKey);
-															#line 195 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 179 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (!static_cast<MoveKeySelectorOverRangeActorActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~MoveKeySelectorOverRangeActorActorState(); static_cast<MoveKeySelectorOverRangeActorActor*>(this)->destroy(); return 0; }
-															#line 283 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 270 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			new (&static_cast<MoveKeySelectorOverRangeActorActor*>(this)->SAV< Void >::value()) Void(Void());
 			this->~MoveKeySelectorOverRangeActorActorState();
 			static_cast<MoveKeySelectorOverRangeActorActor*>(this)->finishSendAndDelPromiseRef();
 			return 0;
 		}
-															#line 198 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 182 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (ks->offset < 1)
-															#line 291 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 278 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 199 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 183 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (result.size() >= 1 - ks->offset)
-															#line 295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 282 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
-															#line 200 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 184 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				ks->setKey(KeyRef(ks->arena(), result[result.size() - (1 - ks->offset)].key));
-															#line 201 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 185 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				ks->offset = 1;
-															#line 301 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 288 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			}
 			else
 			{
-															#line 203 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 187 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				ks->setKey(KeyRef(ks->arena(), result[0].key));
-															#line 204 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 188 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				ks->offset += result.size();
-															#line 309 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 296 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			}
 		}
 		else
 		{
-															#line 207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 191 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (result.size() >= ks->offset)
-															#line 316 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 303 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
-															#line 208 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 192 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				ks->setKey(KeyRef(ks->arena(), result[ks->offset - 1].key));
-															#line 209 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 193 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				ks->offset = 1;
-															#line 322 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 309 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			}
 			else
 			{
-															#line 212 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 196 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				ks->setKey(KeyRef(ks->arena(), keyAfter(result[result.size() - 1].key)));
-															#line 213 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 197 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				ks->offset -= result.size();
-															#line 330 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 317 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			}
 		}
-															#line 216 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 200 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		DisabledTraceEvent(SevDebug, "NormalizeKeySelector") .detail("NormalizedKey", ks->getKey()) .detail("NormalizedOffset", ks->offset) .detail("SpecialKeyRangeStart", skrImpl->getKeyRange().begin) .detail("SpecialKeyRangeEnd", skrImpl->getKeyRange().end);
-															#line 221 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 205 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<MoveKeySelectorOverRangeActorActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~MoveKeySelectorOverRangeActorActorState(); static_cast<MoveKeySelectorOverRangeActorActor*>(this)->destroy(); return 0; }
-															#line 337 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 324 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<MoveKeySelectorOverRangeActorActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~MoveKeySelectorOverRangeActorActorState();
 		static_cast<MoveKeySelectorOverRangeActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -342,33 +329,33 @@ public:
 
 		return loopDepth;
 	}
-	int a_body1cont6(RangeResult const& result_,int loopDepth) 
+	int a_body1cont7(RangeResult const& result_,int loopDepth) 
 	{
-															#line 187 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 171 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		result = result_;
-															#line 349 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		loopDepth = a_body1cont1(loopDepth);
 
 		return loopDepth;
 	}
-	int a_body1cont6(RangeResult && result_,int loopDepth) 
+	int a_body1cont7(RangeResult && result_,int loopDepth) 
 	{
-															#line 187 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 171 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		result = result_;
-															#line 358 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 345 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		loopDepth = a_body1cont1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1when1(RangeResult const& result_,int loopDepth) 
 	{
-		loopDepth = a_body1cont6(result_, loopDepth);
+		loopDepth = a_body1cont7(result_, loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1when1(RangeResult && result_,int loopDepth) 
 	{
-		loopDepth = a_body1cont6(std::move(result_), loopDepth);
+		loopDepth = a_body1cont7(std::move(result_), loopDepth);
 
 		return loopDepth;
 	}
@@ -423,33 +410,33 @@ public:
 		fdb_probe_actor_exit("moveKeySelectorOverRangeActor", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-	int a_body1cont8(RangeResult const& result_,int loopDepth) 
+	int a_body1cont9(RangeResult const& result_,int loopDepth) 
 	{
-															#line 190 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 174 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		result = result_;
-															#line 430 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 417 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		loopDepth = a_body1cont1(loopDepth);
 
 		return loopDepth;
 	}
-	int a_body1cont8(RangeResult && result_,int loopDepth) 
+	int a_body1cont9(RangeResult && result_,int loopDepth) 
 	{
-															#line 190 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 174 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		result = result_;
-															#line 439 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 426 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		loopDepth = a_body1cont1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1when2(RangeResult const& result_,int loopDepth) 
 	{
-		loopDepth = a_body1cont8(result_, loopDepth);
+		loopDepth = a_body1cont9(result_, loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1when2(RangeResult && result_,int loopDepth) 
 	{
-		loopDepth = a_body1cont8(std::move(result_), loopDepth);
+		loopDepth = a_body1cont9(std::move(result_), loopDepth);
 
 		return loopDepth;
 	}
@@ -504,26 +491,26 @@ public:
 		fdb_probe_actor_exit("moveKeySelectorOverRangeActor", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 149 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 128 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	const SpecialKeyRangeReadImpl* skrImpl;
-															#line 149 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 128 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	ReadYourWritesTransaction* ryw;
-															#line 149 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 128 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	KeySelector* ks;
-															#line 149 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 128 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	KeyRangeMap<Optional<RangeResult>>* cache;
-															#line 159 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 143 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	Key startKey;
-															#line 160 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 144 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	Key endKey;
-															#line 161 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 145 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	RangeResult result;
-															#line 521 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 508 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 };
 // This generated class is to be used only via moveKeySelectorOverRangeActor()
-															#line 149 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 128 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class MoveKeySelectorOverRangeActorActor final : public Actor<Void>, public ActorCallback< MoveKeySelectorOverRangeActorActor, 0, RangeResult >, public ActorCallback< MoveKeySelectorOverRangeActorActor, 1, RangeResult >, public FastAllocated<MoveKeySelectorOverRangeActorActor>, public MoveKeySelectorOverRangeActorActorState<MoveKeySelectorOverRangeActorActor> {
-															#line 526 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 513 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
 	using FastAllocated<MoveKeySelectorOverRangeActorActor>::operator new;
 	using FastAllocated<MoveKeySelectorOverRangeActorActor>::operator delete;
@@ -533,9 +520,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< MoveKeySelectorOverRangeActorActor, 0, RangeResult >;
 friend struct ActorCallback< MoveKeySelectorOverRangeActorActor, 1, RangeResult >;
-															#line 149 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 128 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	MoveKeySelectorOverRangeActorActor(const SpecialKeyRangeReadImpl* const& skrImpl,ReadYourWritesTransaction* const& ryw,KeySelector* const& ks,KeyRangeMap<Optional<RangeResult>>* const& cache) 
-															#line 538 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 525 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		 : Actor<Void>(),
 		   MoveKeySelectorOverRangeActorActorState<MoveKeySelectorOverRangeActorActor>(skrImpl, ryw, ks, cache)
 	{
@@ -560,14 +547,14 @@ friend struct ActorCallback< MoveKeySelectorOverRangeActorActor, 1, RangeResult 
 	}
 };
 }
-															#line 149 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 128 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 [[nodiscard]] Future<Void> moveKeySelectorOverRangeActor( const SpecialKeyRangeReadImpl* const& skrImpl, ReadYourWritesTransaction* const& ryw, KeySelector* const& ks, KeyRangeMap<Optional<RangeResult>>* const& cache ) {
-															#line 149 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 128 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	return Future<Void>(new MoveKeySelectorOverRangeActorActor(skrImpl, ryw, ks, cache));
-															#line 567 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 554 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 }
 
-#line 223 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+#line 207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 
 // This function will normalize the given KeySelector to a standard KeySelector:
 // orEqual == false && offset == 1 (Standard form)
@@ -577,35 +564,35 @@ friend struct ActorCallback< MoveKeySelectorOverRangeActorActor, 1, RangeResult 
 // to maintain; Thus, separate each part to make the code easy to understand and more compact
 // Boundary is the range of the legal key space, which, by default is the range of the module
 // And (\xff\xff, \xff\xff\xff) if SPECIAL_KEY_SPACE_RELAXED is turned on
-															#line 580 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 567 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 namespace {
 // This generated class is to be used only via normalizeKeySelectorActor()
-															#line 232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 216 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 template <class NormalizeKeySelectorActorActor>
-															#line 232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 216 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class NormalizeKeySelectorActorActorState {
-															#line 587 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 574 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
-															#line 232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 216 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	NormalizeKeySelectorActorActorState(SpecialKeySpace* const& sks,ReadYourWritesTransaction* const& ryw,KeySelector* const& ks,KeyRangeRef const& boundary,int* const& actualOffset,RangeResult* const& result,KeyRangeMap<Optional<RangeResult>>* const& cache) 
-															#line 232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-															#line 232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 216 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 216 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		 : sks(sks),
-															#line 232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 216 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   ryw(ryw),
-															#line 232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 216 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   ks(ks),
-															#line 232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 216 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   boundary(boundary),
-															#line 232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 216 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   actualOffset(actualOffset),
-															#line 232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 216 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   result(result),
-															#line 232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 216 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   cache(cache),
-															#line 244 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 228 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   iter(ks->offset < 1 ? sks->getReadImpls().rangeContainingKeyBefore(ks->getKey()) : sks->getReadImpls().rangeContaining(ks->getKey()))
-															#line 608 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 595 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 	{
 		fdb_probe_actor_create("normalizeKeySelectorActor", reinterpret_cast<unsigned long>(this));
 
@@ -618,9 +605,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 247 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 231 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			;
-															#line 623 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 610 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -641,39 +628,39 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 263 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 247 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		*actualOffset = ks->offset;
-															#line 265 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 249 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!ks->isFirstGreaterOrEqual())
-															#line 648 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 635 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 266 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 250 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			TraceEvent(SevDebug, "ReadToBoundary") .detail("TerminateKey", ks->getKey()) .detail("TerminateOffset", ks->offset);
-															#line 271 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 255 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (ks->offset < 1)
-															#line 654 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 641 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
-															#line 272 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 256 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				result->readToBegin = true;
-															#line 273 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 257 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				ks->setKey(boundary.begin);
-															#line 660 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 647 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			}
 			else
 			{
-															#line 275 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 259 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				result->readThroughEnd = true;
-															#line 276 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 260 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				ks->setKey(boundary.end);
-															#line 668 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 655 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			}
-															#line 278 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 262 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			ks->offset = 1;
-															#line 672 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 659 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		}
-															#line 280 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 264 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<NormalizeKeySelectorActorActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~NormalizeKeySelectorActorActorState(); static_cast<NormalizeKeySelectorActorActor*>(this)->destroy(); return 0; }
-															#line 676 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 663 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<NormalizeKeySelectorActorActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~NormalizeKeySelectorActorActorState();
 		static_cast<NormalizeKeySelectorActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -690,26 +677,26 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 247 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 231 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!((ks->offset < 1 && iter->begin() >= boundary.begin) || (ks->offset > 1 && iter->begin() < boundary.end)))
-															#line 695 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 682 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
 			return a_body1break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 248 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (iter->value() != nullptr)
-															#line 701 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 688 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 249 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 233 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			StrictFuture<Void> __when_expr_0 = moveKeySelectorOverRangeActor(iter->value(), ryw, ks, cache);
-															#line 249 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 233 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (static_cast<NormalizeKeySelectorActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 707 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 694 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<NormalizeKeySelectorActorActor*>(this)->actor_wait_state = 1;
-															#line 249 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 233 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< NormalizeKeySelectorActorActor, 0, Void >*>(static_cast<NormalizeKeySelectorActorActor*>(this)));
-															#line 712 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 699 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			loopDepth = 0;
 		}
 		else
@@ -734,32 +721,32 @@ public:
 	}
 	int a_body1loopBody1cont1(int loopDepth) 
 	{
-															#line 252 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 236 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (ks->offset < 1)
-															#line 739 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 726 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 253 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 237 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (iter == sks->getReadImpls().ranges().begin())
-															#line 743 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 730 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
 				return a_body1break1(loopDepth==0?0:loopDepth-1); // break
 			}
 			else
 			{
-															#line 256 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 240 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				--iter;
-															#line 751 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 738 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			}
 		}
 		else
 		{
-															#line 258 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 242 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (ks->offset > 1)
-															#line 758 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 745 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
-															#line 260 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 244 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				++iter;
-															#line 762 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 749 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			}
 		}
 		if (loopDepth == 0) return a_body1loopHead1(0);
@@ -841,28 +828,28 @@ public:
 		fdb_probe_actor_exit("normalizeKeySelectorActor", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 216 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	SpecialKeySpace* sks;
-															#line 232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 216 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	ReadYourWritesTransaction* ryw;
-															#line 232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 216 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	KeySelector* ks;
-															#line 232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 216 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	KeyRangeRef boundary;
-															#line 232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 216 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	int* actualOffset;
-															#line 232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 216 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	RangeResult* result;
-															#line 232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 216 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	KeyRangeMap<Optional<RangeResult>>* cache;
-															#line 244 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 228 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	RangeMap<Key, SpecialKeyRangeReadImpl*, KeyRangeRef>::iterator iter;
-															#line 860 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 847 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 };
 // This generated class is to be used only via normalizeKeySelectorActor()
-															#line 232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 216 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class NormalizeKeySelectorActorActor final : public Actor<Void>, public ActorCallback< NormalizeKeySelectorActorActor, 0, Void >, public FastAllocated<NormalizeKeySelectorActorActor>, public NormalizeKeySelectorActorActorState<NormalizeKeySelectorActorActor> {
-															#line 865 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 852 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
 	using FastAllocated<NormalizeKeySelectorActorActor>::operator new;
 	using FastAllocated<NormalizeKeySelectorActorActor>::operator delete;
@@ -871,9 +858,9 @@ public:
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< NormalizeKeySelectorActorActor, 0, Void >;
-															#line 232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 216 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	NormalizeKeySelectorActorActor(SpecialKeySpace* const& sks,ReadYourWritesTransaction* const& ryw,KeySelector* const& ks,KeyRangeRef const& boundary,int* const& actualOffset,RangeResult* const& result,KeyRangeMap<Optional<RangeResult>>* const& cache) 
-															#line 876 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 863 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		 : Actor<Void>(),
 		   NormalizeKeySelectorActorActorState<NormalizeKeySelectorActorActor>(sks, ryw, ks, boundary, actualOffset, result, cache)
 	{
@@ -897,14 +884,14 @@ friend struct ActorCallback< NormalizeKeySelectorActorActor, 0, Void >;
 	}
 };
 }
-															#line 232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 216 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 [[nodiscard]] Future<Void> normalizeKeySelectorActor( SpecialKeySpace* const& sks, ReadYourWritesTransaction* const& ryw, KeySelector* const& ks, KeyRangeRef const& boundary, int* const& actualOffset, RangeResult* const& result, KeyRangeMap<Optional<RangeResult>>* const& cache ) {
-															#line 232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 216 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	return Future<Void>(new NormalizeKeySelectorActorActor(sks, ryw, ks, boundary, actualOffset, result, cache));
-															#line 904 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 891 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 }
 
-#line 282 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+#line 266 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 
 SpecialKeySpace::SpecialKeySpace(KeyRef spaceStartKey, KeyRef spaceEndKey, bool testOnly)
   : readImpls(nullptr, spaceEndKey),
@@ -934,30 +921,30 @@ void SpecialKeySpace::modulesBoundaryInit() {
 	}
 }
 
-															#line 937 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 924 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 // This generated class is to be used only via checkRYWValid()
-															#line 311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 template <class SpecialKeySpace_CheckRYWValidActor>
-															#line 311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class SpecialKeySpace_CheckRYWValidActorState {
-															#line 943 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 930 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
-															#line 311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	SpecialKeySpace_CheckRYWValidActorState(SpecialKeySpace* const& sks,ReadYourWritesTransaction* const& ryw,KeySelector const& begin,KeySelector const& end,GetRangeLimits const& limits,Reverse const& reverse) 
-															#line 311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-															#line 311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		 : sks(sks),
-															#line 311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   ryw(ryw),
-															#line 311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   begin(begin),
-															#line 311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   end(end),
-															#line 311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   limits(limits),
-															#line 311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   reverse(reverse)
-															#line 960 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 947 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 	{
 		fdb_probe_actor_create("checkRYWValid", reinterpret_cast<unsigned long>(this));
 
@@ -970,24 +957,24 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 317 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 301 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			ASSERT(ryw);
-															#line 319 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 303 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			StrictFuture<RangeResult> __when_expr_0 = SpecialKeySpace::getRangeAggregationActor(sks, ryw, begin, end, limits, reverse);
-															#line 318 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 302 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (static_cast<SpecialKeySpace_CheckRYWValidActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 979 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 966 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
-															#line 323 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 307 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			StrictFuture<Void> __when_expr_1 = ryw->resetFuture();
-															#line 983 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 970 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1when2(__when_expr_1.get(), loopDepth); };
 			static_cast<SpecialKeySpace_CheckRYWValidActor*>(this)->actor_wait_state = 1;
-															#line 319 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 303 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< SpecialKeySpace_CheckRYWValidActor, 0, RangeResult >*>(static_cast<SpecialKeySpace_CheckRYWValidActor*>(this)));
-															#line 323 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 307 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< SpecialKeySpace_CheckRYWValidActor, 1, Void >*>(static_cast<SpecialKeySpace_CheckRYWValidActor*>(this)));
-															#line 990 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 977 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -1008,9 +995,9 @@ public:
 	}
 	int a_body1when1(RangeResult const& result,int loopDepth) 
 	{
-															#line 321 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 305 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<SpecialKeySpace_CheckRYWValidActor*>(this)->SAV<RangeResult>::futures) { (void)(result); this->~SpecialKeySpace_CheckRYWValidActorState(); static_cast<SpecialKeySpace_CheckRYWValidActor*>(this)->destroy(); return 0; }
-															#line 1013 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1000 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<SpecialKeySpace_CheckRYWValidActor*>(this)->SAV< RangeResult >::value()) RangeResult(result);
 		this->~SpecialKeySpace_CheckRYWValidActorState();
 		static_cast<SpecialKeySpace_CheckRYWValidActor*>(this)->finishSendAndDelPromiseRef();
@@ -1020,9 +1007,9 @@ public:
 	}
 	int a_body1when1(RangeResult && result,int loopDepth) 
 	{
-															#line 321 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 305 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<SpecialKeySpace_CheckRYWValidActor*>(this)->SAV<RangeResult>::futures) { (void)(result); this->~SpecialKeySpace_CheckRYWValidActorState(); static_cast<SpecialKeySpace_CheckRYWValidActor*>(this)->destroy(); return 0; }
-															#line 1025 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1012 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<SpecialKeySpace_CheckRYWValidActor*>(this)->SAV< RangeResult >::value()) RangeResult(result);
 		this->~SpecialKeySpace_CheckRYWValidActorState();
 		static_cast<SpecialKeySpace_CheckRYWValidActor*>(this)->finishSendAndDelPromiseRef();
@@ -1032,17 +1019,17 @@ public:
 	}
 	int a_body1when2(Void const& _,int loopDepth) 
 	{
-															#line 324 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 308 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		return a_body1Catch1(internal_error(), loopDepth);
-															#line 1037 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1024 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 
 		return loopDepth;
 	}
 	int a_body1when2(Void && _,int loopDepth) 
 	{
-															#line 324 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 308 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		return a_body1Catch1(internal_error(), loopDepth);
-															#line 1045 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1032 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 
 		return loopDepth;
 	}
@@ -1143,24 +1130,24 @@ public:
 		fdb_probe_actor_exit("checkRYWValid", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	SpecialKeySpace* sks;
-															#line 311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	ReadYourWritesTransaction* ryw;
-															#line 311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	KeySelector begin;
-															#line 311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	KeySelector end;
-															#line 311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	GetRangeLimits limits;
-															#line 311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	Reverse reverse;
-															#line 1158 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1145 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 };
 // This generated class is to be used only via checkRYWValid()
-															#line 311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class SpecialKeySpace_CheckRYWValidActor final : public Actor<RangeResult>, public ActorCallback< SpecialKeySpace_CheckRYWValidActor, 0, RangeResult >, public ActorCallback< SpecialKeySpace_CheckRYWValidActor, 1, Void >, public FastAllocated<SpecialKeySpace_CheckRYWValidActor>, public SpecialKeySpace_CheckRYWValidActorState<SpecialKeySpace_CheckRYWValidActor> {
-															#line 1163 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1150 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
 	using FastAllocated<SpecialKeySpace_CheckRYWValidActor>::operator new;
 	using FastAllocated<SpecialKeySpace_CheckRYWValidActor>::operator delete;
@@ -1170,9 +1157,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< SpecialKeySpace_CheckRYWValidActor, 0, RangeResult >;
 friend struct ActorCallback< SpecialKeySpace_CheckRYWValidActor, 1, Void >;
-															#line 311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	SpecialKeySpace_CheckRYWValidActor(SpecialKeySpace* const& sks,ReadYourWritesTransaction* const& ryw,KeySelector const& begin,KeySelector const& end,GetRangeLimits const& limits,Reverse const& reverse) 
-															#line 1175 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1162 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		 : Actor<RangeResult>(),
 		   SpecialKeySpace_CheckRYWValidActorState<SpecialKeySpace_CheckRYWValidActor>(sks, ryw, begin, end, limits, reverse)
 	{
@@ -1195,53 +1182,53 @@ friend struct ActorCallback< SpecialKeySpace_CheckRYWValidActor, 1, Void >;
 
 	}
 };
-															#line 311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 [[nodiscard]] Future<RangeResult> SpecialKeySpace::checkRYWValid( SpecialKeySpace* const& sks, ReadYourWritesTransaction* const& ryw, KeySelector const& begin, KeySelector const& end, GetRangeLimits const& limits, Reverse const& reverse ) {
-															#line 311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	return Future<RangeResult>(new SpecialKeySpace_CheckRYWValidActor(sks, ryw, begin, end, limits, reverse));
-															#line 1202 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1189 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 }
 
-#line 328 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+#line 312 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 
-															#line 1207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1194 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 // This generated class is to be used only via getRangeAggregationActor()
-															#line 329 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 template <class SpecialKeySpace_GetRangeAggregationActorActor>
-															#line 329 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class SpecialKeySpace_GetRangeAggregationActorActorState {
-															#line 1213 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1200 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
-															#line 329 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	SpecialKeySpace_GetRangeAggregationActorActorState(SpecialKeySpace* const& sks,ReadYourWritesTransaction* const& ryw,KeySelector const& begin,KeySelector const& end,GetRangeLimits const& limits,Reverse const& reverse) 
-															#line 329 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-															#line 329 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		 : sks(sks),
-															#line 329 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   ryw(ryw),
-															#line 329 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   begin(begin),
-															#line 329 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   end(end),
-															#line 329 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   limits(limits),
-															#line 329 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   reverse(reverse),
-															#line 337 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 321 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   result(),
-															#line 338 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 322 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   pairs(),
-															#line 339 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 323 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   iter(),
-															#line 340 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 324 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   actualBeginOffset(),
-															#line 341 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 325 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   actualEndOffset(),
-															#line 342 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 326 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   moduleBoundary(),
-															#line 345 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 329 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   cache(Optional<RangeResult>(), specialKeys.end)
-															#line 1244 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1231 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 	{
 		fdb_probe_actor_create("getRangeAggregationActor", reinterpret_cast<unsigned long>(this));
 
@@ -1254,56 +1241,56 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 347 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 331 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (ryw->specialKeySpaceRelaxed())
-															#line 1259 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1246 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
-															#line 348 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 332 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				moduleBoundary = sks->range;
-															#line 1263 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1250 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			}
 			else
 			{
-															#line 350 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 334 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				auto beginIter = sks->getModules().rangeContaining(begin.getKey());
-															#line 351 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 335 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				if (beginIter->begin() <= end.getKey() && end.getKey() <= beginIter->end())
-															#line 1271 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1258 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				{
-															#line 352 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					if (beginIter->value() == SpecialKeySpace::MODULE::UNKNOWN)
-															#line 1275 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1262 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 					{
-															#line 353 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 337 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 						return a_body1Catch1(special_keys_no_module_found(), loopDepth);
-															#line 1279 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1266 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 					}
 					else
 					{
-															#line 355 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 339 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 						moduleBoundary = beginIter->range();
-															#line 1285 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1272 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 					}
 				}
 				else
 				{
-															#line 357 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 341 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					TraceEvent(SevInfo, "SpecialKeyCrossModuleRead") .detail("Begin", begin) .detail("End", end) .detail("BoundaryBegin", beginIter->begin()) .detail("BoundaryEnd", beginIter->end());
-															#line 362 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 346 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					return a_body1Catch1(special_keys_cross_module_read(), loopDepth);
-															#line 1294 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1281 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				}
 			}
-															#line 366 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 350 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			StrictFuture<Void> __when_expr_0 = normalizeKeySelectorActor(sks, ryw, &begin, moduleBoundary, &actualBeginOffset, &result, &cache);
-															#line 366 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 350 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (static_cast<SpecialKeySpace_GetRangeAggregationActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 1301 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1288 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<SpecialKeySpace_GetRangeAggregationActorActor*>(this)->actor_wait_state = 1;
-															#line 366 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 350 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< SpecialKeySpace_GetRangeAggregationActorActor, 0, Void >*>(static_cast<SpecialKeySpace_GetRangeAggregationActorActor*>(this)));
-															#line 1306 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1293 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -1324,32 +1311,32 @@ public:
 	}
 	int a_body1cont1(Void const& _,int loopDepth) 
 	{
-															#line 367 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 351 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = normalizeKeySelectorActor(sks, ryw, &end, moduleBoundary, &actualEndOffset, &result, &cache);
-															#line 367 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 351 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (static_cast<SpecialKeySpace_GetRangeAggregationActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 1331 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1318 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<SpecialKeySpace_GetRangeAggregationActorActor*>(this)->actor_wait_state = 2;
-															#line 367 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 351 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< SpecialKeySpace_GetRangeAggregationActorActor, 1, Void >*>(static_cast<SpecialKeySpace_GetRangeAggregationActorActor*>(this)));
-															#line 1336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1323 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont1(Void && _,int loopDepth) 
 	{
-															#line 367 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 351 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = normalizeKeySelectorActor(sks, ryw, &end, moduleBoundary, &actualEndOffset, &result, &cache);
-															#line 367 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 351 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (static_cast<SpecialKeySpace_GetRangeAggregationActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 1347 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1334 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<SpecialKeySpace_GetRangeAggregationActorActor*>(this)->actor_wait_state = 2;
-															#line 367 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 351 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< SpecialKeySpace_GetRangeAggregationActorActor, 1, Void >*>(static_cast<SpecialKeySpace_GetRangeAggregationActorActor*>(this)));
-															#line 1352 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1339 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -1419,52 +1406,74 @@ public:
 	}
 	int a_body1cont8(Void const& _,int loopDepth) 
 	{
-															#line 370 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 354 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (actualBeginOffset >= actualEndOffset && begin.getKey() >= end.getKey())
-															#line 1424 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1411 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 371 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			TEST(true);
-															#line 372 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 355 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			CODE_PROBE(true, "inverted range");
+															#line 356 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (!static_cast<SpecialKeySpace_GetRangeAggregationActorActor*>(this)->SAV<RangeResult>::futures) { (void)(RangeResultRef(false, false)); this->~SpecialKeySpace_GetRangeAggregationActorActorState(); static_cast<SpecialKeySpace_GetRangeAggregationActorActor*>(this)->destroy(); return 0; }
-															#line 1430 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1417 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			new (&static_cast<SpecialKeySpace_GetRangeAggregationActorActor*>(this)->SAV< RangeResult >::value()) RangeResult(RangeResultRef(false, false));
 			this->~SpecialKeySpace_GetRangeAggregationActorActorState();
 			static_cast<SpecialKeySpace_GetRangeAggregationActorActor*>(this)->finishSendAndDelPromiseRef();
 			return 0;
 		}
-															#line 375 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 359 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (begin.getKey() == moduleBoundary.end || end.getKey() == moduleBoundary.begin)
-															#line 1438 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1425 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 376 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			TEST(true);
-															#line 377 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 360 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			CODE_PROBE(true, "query touches begin or end");
+															#line 361 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (!static_cast<SpecialKeySpace_GetRangeAggregationActorActor*>(this)->SAV<RangeResult>::futures) { (void)(result); this->~SpecialKeySpace_GetRangeAggregationActorActorState(); static_cast<SpecialKeySpace_GetRangeAggregationActorActor*>(this)->destroy(); return 0; }
-															#line 1444 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1431 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			new (&static_cast<SpecialKeySpace_GetRangeAggregationActorActor*>(this)->SAV< RangeResult >::value()) RangeResult(std::move(result)); // state_var_RVO
 			this->~SpecialKeySpace_GetRangeAggregationActorActorState();
 			static_cast<SpecialKeySpace_GetRangeAggregationActorActor*>(this)->finishSendAndDelPromiseRef();
 			return 0;
 		}
-															#line 379 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 363 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		ranges = sks->getReadImpls().intersectingRanges(KeyRangeRef(begin.getKey(), end.getKey()));
-															#line 383 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		iter = reverse ? ranges.end() : ranges.begin();
-															#line 384 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		if (reverse)
-															#line 1456 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 369 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		if (ryw->getTenant().present())
+															#line 1441 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 385 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 370 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			for( auto iter : ranges ) {
+															#line 371 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+				if (iter->value() == nullptr)
+															#line 1447 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+				{
+					continue;
+				}
+															#line 374 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+				if (!iter->value()->supportsTenants())
+															#line 1453 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+				{
+															#line 375 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+					return a_body1Catch1(illegal_tenant_access(), loopDepth);
+															#line 1457 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+				}
+			}
+		}
+															#line 382 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		iter = reverse ? ranges.end() : ranges.begin();
+															#line 383 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		if (reverse)
+															#line 1465 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+		{
+															#line 384 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			;
-															#line 1460 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1469 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			loopDepth = a_body1cont8loopHead1(loopDepth);
 		}
 		else
 		{
-															#line 417 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 416 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			iter = ranges.begin();
-															#line 1467 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1476 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			loopDepth = a_body1cont8loopHead2(loopDepth);
 		}
 
@@ -1472,52 +1481,74 @@ public:
 	}
 	int a_body1cont8(Void && _,int loopDepth) 
 	{
-															#line 370 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 354 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (actualBeginOffset >= actualEndOffset && begin.getKey() >= end.getKey())
-															#line 1477 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1486 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 371 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			TEST(true);
-															#line 372 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 355 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			CODE_PROBE(true, "inverted range");
+															#line 356 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (!static_cast<SpecialKeySpace_GetRangeAggregationActorActor*>(this)->SAV<RangeResult>::futures) { (void)(RangeResultRef(false, false)); this->~SpecialKeySpace_GetRangeAggregationActorActorState(); static_cast<SpecialKeySpace_GetRangeAggregationActorActor*>(this)->destroy(); return 0; }
-															#line 1483 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1492 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			new (&static_cast<SpecialKeySpace_GetRangeAggregationActorActor*>(this)->SAV< RangeResult >::value()) RangeResult(RangeResultRef(false, false));
 			this->~SpecialKeySpace_GetRangeAggregationActorActorState();
 			static_cast<SpecialKeySpace_GetRangeAggregationActorActor*>(this)->finishSendAndDelPromiseRef();
 			return 0;
 		}
-															#line 375 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 359 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (begin.getKey() == moduleBoundary.end || end.getKey() == moduleBoundary.begin)
-															#line 1491 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1500 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 376 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			TEST(true);
-															#line 377 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 360 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			CODE_PROBE(true, "query touches begin or end");
+															#line 361 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (!static_cast<SpecialKeySpace_GetRangeAggregationActorActor*>(this)->SAV<RangeResult>::futures) { (void)(result); this->~SpecialKeySpace_GetRangeAggregationActorActorState(); static_cast<SpecialKeySpace_GetRangeAggregationActorActor*>(this)->destroy(); return 0; }
-															#line 1497 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1506 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			new (&static_cast<SpecialKeySpace_GetRangeAggregationActorActor*>(this)->SAV< RangeResult >::value()) RangeResult(std::move(result)); // state_var_RVO
 			this->~SpecialKeySpace_GetRangeAggregationActorActorState();
 			static_cast<SpecialKeySpace_GetRangeAggregationActorActor*>(this)->finishSendAndDelPromiseRef();
 			return 0;
 		}
-															#line 379 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 363 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		ranges = sks->getReadImpls().intersectingRanges(KeyRangeRef(begin.getKey(), end.getKey()));
-															#line 383 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		iter = reverse ? ranges.end() : ranges.begin();
-															#line 384 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		if (reverse)
-															#line 1509 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 369 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		if (ryw->getTenant().present())
+															#line 1516 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 385 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 370 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			for( auto iter : ranges ) {
+															#line 371 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+				if (iter->value() == nullptr)
+															#line 1522 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+				{
+					continue;
+				}
+															#line 374 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+				if (!iter->value()->supportsTenants())
+															#line 1528 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+				{
+															#line 375 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+					return a_body1Catch1(illegal_tenant_access(), loopDepth);
+															#line 1532 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+				}
+			}
+		}
+															#line 382 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		iter = reverse ? ranges.end() : ranges.begin();
+															#line 383 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		if (reverse)
+															#line 1540 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+		{
+															#line 384 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			;
-															#line 1513 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1544 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			loopDepth = a_body1cont8loopHead1(loopDepth);
 		}
 		else
 		{
-															#line 417 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 416 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			iter = ranges.begin();
-															#line 1520 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1551 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			loopDepth = a_body1cont8loopHead2(loopDepth);
 		}
 
@@ -1588,9 +1619,9 @@ public:
 	}
 	int a_body1cont9(int loopDepth) 
 	{
-															#line 448 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 447 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<SpecialKeySpace_GetRangeAggregationActorActor*>(this)->SAV<RangeResult>::futures) { (void)(result); this->~SpecialKeySpace_GetRangeAggregationActorActorState(); static_cast<SpecialKeySpace_GetRangeAggregationActorActor*>(this)->destroy(); return 0; }
-															#line 1593 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1624 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<SpecialKeySpace_GetRangeAggregationActorActor*>(this)->SAV< RangeResult >::value()) RangeResult(std::move(result)); // state_var_RVO
 		this->~SpecialKeySpace_GetRangeAggregationActorActorState();
 		static_cast<SpecialKeySpace_GetRangeAggregationActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -1598,7 +1629,7 @@ public:
 
 		return loopDepth;
 	}
-	int a_body1cont12(int loopDepth) 
+	int a_body1cont16(int loopDepth) 
 	{
 		loopDepth = a_body1cont9(loopDepth);
 
@@ -1613,56 +1644,56 @@ public:
 	}
 	int a_body1cont8loopBody1(int loopDepth) 
 	{
-															#line 385 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 384 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!(iter != ranges.begin()))
-															#line 1618 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1649 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
 			return a_body1cont8break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 386 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 385 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		--iter;
-															#line 387 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 386 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (iter->value() == nullptr)
-															#line 1626 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1657 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
 			return a_body1cont8loopHead1(loopDepth); // continue
 		}
-															#line 389 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 388 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		KeyRangeRef kr = iter->range();
-															#line 390 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 389 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		KeyRef keyStart = kr.contains(begin.getKey()) ? begin.getKey() : kr.begin;
-															#line 391 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 390 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		KeyRef keyEnd = kr.contains(end.getKey()) ? end.getKey() : kr.end;
-															#line 392 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 391 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (iter->value()->isAsync() && cache.rangeContaining(keyStart).value().present())
-															#line 1638 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1669 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 393 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 392 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			const SpecialKeyRangeAsyncImpl* ptr = dynamic_cast<const SpecialKeyRangeAsyncImpl*>(iter->value());
-															#line 394 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 393 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			StrictFuture<RangeResult> __when_expr_2 = ptr->getRange(ryw, KeyRangeRef(keyStart, keyEnd), limits, &cache);
-															#line 394 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 393 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (static_cast<SpecialKeySpace_GetRangeAggregationActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 1646 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1677 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), std::max(0, loopDepth - 1)); else return a_body1cont8loopBody1when1(__when_expr_2.get(), loopDepth); };
 			static_cast<SpecialKeySpace_GetRangeAggregationActorActor*>(this)->actor_wait_state = 3;
-															#line 394 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 393 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< SpecialKeySpace_GetRangeAggregationActorActor, 2, RangeResult >*>(static_cast<SpecialKeySpace_GetRangeAggregationActorActor*>(this)));
-															#line 1651 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1682 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			loopDepth = 0;
 		}
 		else
 		{
-															#line 397 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 396 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			StrictFuture<RangeResult> __when_expr_3 = iter->value()->getRange(ryw, KeyRangeRef(keyStart, keyEnd), limits);
-															#line 397 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 396 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (static_cast<SpecialKeySpace_GetRangeAggregationActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 1660 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1691 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			if (__when_expr_3.isReady()) { if (__when_expr_3.isError()) return a_body1Catch1(__when_expr_3.getError(), std::max(0, loopDepth - 1)); else return a_body1cont8loopBody1when2(__when_expr_3.get(), loopDepth); };
 			static_cast<SpecialKeySpace_GetRangeAggregationActorActor*>(this)->actor_wait_state = 4;
-															#line 397 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 396 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			__when_expr_3.addCallbackAndClear(static_cast<ActorCallback< SpecialKeySpace_GetRangeAggregationActorActor, 3, RangeResult >*>(static_cast<SpecialKeySpace_GetRangeAggregationActorActor*>(this)));
-															#line 1665 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1696 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			loopDepth = 0;
 		}
 
@@ -1671,7 +1702,7 @@ public:
 	int a_body1cont8break1(int loopDepth) 
 	{
 		try {
-			return a_body1cont12(loopDepth);
+			return a_body1cont16(loopDepth);
 		}
 		catch (Error& error) {
 			loopDepth = a_body1Catch1(error, loopDepth);
@@ -1683,27 +1714,27 @@ public:
 	}
 	int a_body1cont8loopBody1cont1(int loopDepth) 
 	{
-															#line 400 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 399 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		result.arena().dependsOn(pairs.arena());
-															#line 402 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 401 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		for(int i = pairs.size() - 1;i >= 0;--i) {
-															#line 403 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 402 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			ASSERT(iter->range().contains(pairs[i].key));
-															#line 404 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 403 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			result.push_back(result.arena(), pairs[i]);
-															#line 408 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 407 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			limits.decrement(pairs[i]);
-															#line 409 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 408 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (limits.isReached())
-															#line 1698 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1729 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
-															#line 410 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 409 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				result.more = true;
-															#line 411 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 410 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				result.readToBegin = false;
-															#line 412 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 411 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				if (!static_cast<SpecialKeySpace_GetRangeAggregationActorActor*>(this)->SAV<RangeResult>::futures) { (void)(result); this->~SpecialKeySpace_GetRangeAggregationActorActorState(); static_cast<SpecialKeySpace_GetRangeAggregationActorActor*>(this)->destroy(); return 0; }
-															#line 1706 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1737 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				new (&static_cast<SpecialKeySpace_GetRangeAggregationActorActor*>(this)->SAV< RangeResult >::value()) RangeResult(std::move(result)); // state_var_RVO
 				this->~SpecialKeySpace_GetRangeAggregationActorActorState();
 				static_cast<SpecialKeySpace_GetRangeAggregationActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -1716,18 +1747,18 @@ public:
 	}
 	int a_body1cont8loopBody1cont4(RangeResult const& pairs_,int loopDepth) 
 	{
-															#line 395 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 394 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		pairs = pairs_;
-															#line 1721 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1752 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		loopDepth = a_body1cont8loopBody1cont1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1cont8loopBody1cont4(RangeResult && pairs_,int loopDepth) 
 	{
-															#line 395 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 394 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		pairs = pairs_;
-															#line 1730 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1761 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		loopDepth = a_body1cont8loopBody1cont1(loopDepth);
 
 		return loopDepth;
@@ -1797,18 +1828,18 @@ public:
 	}
 	int a_body1cont8loopBody1cont6(RangeResult const& pairs_,int loopDepth) 
 	{
-															#line 398 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 397 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		pairs = pairs_;
-															#line 1802 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1833 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		loopDepth = a_body1cont8loopBody1cont1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1cont8loopBody1cont6(RangeResult && pairs_,int loopDepth) 
 	{
-															#line 398 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 397 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		pairs = pairs_;
-															#line 1811 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1842 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		loopDepth = a_body1cont8loopBody1cont1(loopDepth);
 
 		return loopDepth;
@@ -1876,7 +1907,7 @@ public:
 		fdb_probe_actor_exit("getRangeAggregationActor", reinterpret_cast<unsigned long>(this), 3);
 
 	}
-	int a_body1cont13(int loopDepth) 
+	int a_body1cont17(int loopDepth) 
 	{
 		loopDepth = a_body1cont9(loopDepth);
 
@@ -1891,54 +1922,54 @@ public:
 	}
 	int a_body1cont8loopBody2(int loopDepth) 
 	{
-															#line 417 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 416 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!(iter != ranges.end()))
-															#line 1896 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1927 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
 			return a_body1cont8break2(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 418 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 417 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (iter->value() == nullptr)
-															#line 1902 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1933 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
 			return a_body1cont8continue1(loopDepth); // continue
 		}
-															#line 420 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 419 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		KeyRangeRef kr = iter->range();
-															#line 421 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 420 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		KeyRef keyStart = kr.contains(begin.getKey()) ? begin.getKey() : kr.begin;
-															#line 422 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 421 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		KeyRef keyEnd = kr.contains(end.getKey()) ? end.getKey() : kr.end;
-															#line 423 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 422 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (iter->value()->isAsync() && cache.rangeContaining(keyStart).value().present())
-															#line 1914 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1945 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 424 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 423 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			const SpecialKeyRangeAsyncImpl* ptr = dynamic_cast<const SpecialKeyRangeAsyncImpl*>(iter->value());
-															#line 425 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 424 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			StrictFuture<RangeResult> __when_expr_4 = ptr->getRange(ryw, KeyRangeRef(keyStart, keyEnd), limits, &cache);
-															#line 425 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 424 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (static_cast<SpecialKeySpace_GetRangeAggregationActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 1922 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1953 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			if (__when_expr_4.isReady()) { if (__when_expr_4.isError()) return a_body1Catch1(__when_expr_4.getError(), std::max(0, loopDepth - 1)); else return a_body1cont8loopBody2when1(__when_expr_4.get(), loopDepth); };
 			static_cast<SpecialKeySpace_GetRangeAggregationActorActor*>(this)->actor_wait_state = 5;
-															#line 425 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 424 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			__when_expr_4.addCallbackAndClear(static_cast<ActorCallback< SpecialKeySpace_GetRangeAggregationActorActor, 4, RangeResult >*>(static_cast<SpecialKeySpace_GetRangeAggregationActorActor*>(this)));
-															#line 1927 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1958 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			loopDepth = 0;
 		}
 		else
 		{
-															#line 428 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 427 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			StrictFuture<RangeResult> __when_expr_5 = iter->value()->getRange(ryw, KeyRangeRef(keyStart, keyEnd), limits);
-															#line 428 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 427 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (static_cast<SpecialKeySpace_GetRangeAggregationActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 1936 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1967 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			if (__when_expr_5.isReady()) { if (__when_expr_5.isError()) return a_body1Catch1(__when_expr_5.getError(), std::max(0, loopDepth - 1)); else return a_body1cont8loopBody2when2(__when_expr_5.get(), loopDepth); };
 			static_cast<SpecialKeySpace_GetRangeAggregationActorActor*>(this)->actor_wait_state = 6;
-															#line 428 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 427 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			__when_expr_5.addCallbackAndClear(static_cast<ActorCallback< SpecialKeySpace_GetRangeAggregationActorActor, 5, RangeResult >*>(static_cast<SpecialKeySpace_GetRangeAggregationActorActor*>(this)));
-															#line 1941 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1972 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			loopDepth = 0;
 		}
 
@@ -1947,7 +1978,7 @@ public:
 	int a_body1cont8break2(int loopDepth) 
 	{
 		try {
-			return a_body1cont13(loopDepth);
+			return a_body1cont17(loopDepth);
 		}
 		catch (Error& error) {
 			loopDepth = a_body1Catch1(error, loopDepth);
@@ -1959,63 +1990,63 @@ public:
 	}
 	int a_body1cont8continue1(int loopDepth) 
 	{
-															#line 417 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 416 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		++iter;
-															#line 1964 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1995 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		if (loopDepth == 0) return a_body1cont8loopHead2(0);
 
 		return loopDepth;
 	}
 	int a_body1cont8loopBody2cont1(int loopDepth) 
 	{
-															#line 431 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 430 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		result.arena().dependsOn(pairs.arena());
-															#line 433 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 432 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		for(int i = 0;i < pairs.size();++i) {
-															#line 434 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 433 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			ASSERT(iter->range().contains(pairs[i].key));
-															#line 435 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 434 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			result.push_back(result.arena(), pairs[i]);
-															#line 439 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 438 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			limits.decrement(pairs[i]);
-															#line 440 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 439 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (limits.isReached())
-															#line 1983 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2014 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
-															#line 441 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 440 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				result.more = true;
-															#line 442 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 441 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				result.readThroughEnd = false;
-															#line 443 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 442 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				if (!static_cast<SpecialKeySpace_GetRangeAggregationActorActor*>(this)->SAV<RangeResult>::futures) { (void)(result); this->~SpecialKeySpace_GetRangeAggregationActorActorState(); static_cast<SpecialKeySpace_GetRangeAggregationActorActor*>(this)->destroy(); return 0; }
-															#line 1991 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2022 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				new (&static_cast<SpecialKeySpace_GetRangeAggregationActorActor*>(this)->SAV< RangeResult >::value()) RangeResult(std::move(result)); // state_var_RVO
 				this->~SpecialKeySpace_GetRangeAggregationActorActorState();
 				static_cast<SpecialKeySpace_GetRangeAggregationActorActor*>(this)->finishSendAndDelPromiseRef();
 				return 0;
 			}
 		}
-															#line 417 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 416 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		++iter;
-															#line 2000 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2031 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		if (loopDepth == 0) return a_body1cont8loopHead2(0);
 
 		return loopDepth;
 	}
 	int a_body1cont8loopBody2cont4(RangeResult const& pairs_,int loopDepth) 
 	{
-															#line 426 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 425 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		pairs = pairs_;
-															#line 2009 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2040 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		loopDepth = a_body1cont8loopBody2cont1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1cont8loopBody2cont4(RangeResult && pairs_,int loopDepth) 
 	{
-															#line 426 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 425 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		pairs = pairs_;
-															#line 2018 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2049 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		loopDepth = a_body1cont8loopBody2cont1(loopDepth);
 
 		return loopDepth;
@@ -2085,18 +2116,18 @@ public:
 	}
 	int a_body1cont8loopBody2cont6(RangeResult const& pairs_,int loopDepth) 
 	{
-															#line 429 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 428 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		pairs = pairs_;
-															#line 2090 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2121 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		loopDepth = a_body1cont8loopBody2cont1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1cont8loopBody2cont6(RangeResult && pairs_,int loopDepth) 
 	{
-															#line 429 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 428 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		pairs = pairs_;
-															#line 2099 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2130 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		loopDepth = a_body1cont8loopBody2cont1(loopDepth);
 
 		return loopDepth;
@@ -2164,40 +2195,40 @@ public:
 		fdb_probe_actor_exit("getRangeAggregationActor", reinterpret_cast<unsigned long>(this), 5);
 
 	}
-															#line 329 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	SpecialKeySpace* sks;
-															#line 329 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	ReadYourWritesTransaction* ryw;
-															#line 329 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	KeySelector begin;
-															#line 329 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	KeySelector end;
-															#line 329 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	GetRangeLimits limits;
-															#line 329 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	Reverse reverse;
-															#line 337 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 321 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	RangeResult result;
-															#line 338 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 322 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	RangeResult pairs;
-															#line 339 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 323 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	RangeMap<Key, SpecialKeyRangeReadImpl*, KeyRangeRef>::iterator iter;
-															#line 340 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 324 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	int actualBeginOffset;
-															#line 341 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 325 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	int actualEndOffset;
-															#line 342 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 326 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	KeyRangeRef moduleBoundary;
-															#line 345 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 329 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	KeyRangeMap<Optional<RangeResult>> cache;
-															#line 379 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 363 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	RangeMap<Key, SpecialKeyRangeReadImpl*, KeyRangeRef>::Ranges ranges;
-															#line 2195 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2226 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 };
 // This generated class is to be used only via getRangeAggregationActor()
-															#line 329 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class SpecialKeySpace_GetRangeAggregationActorActor final : public Actor<RangeResult>, public ActorCallback< SpecialKeySpace_GetRangeAggregationActorActor, 0, Void >, public ActorCallback< SpecialKeySpace_GetRangeAggregationActorActor, 1, Void >, public ActorCallback< SpecialKeySpace_GetRangeAggregationActorActor, 2, RangeResult >, public ActorCallback< SpecialKeySpace_GetRangeAggregationActorActor, 3, RangeResult >, public ActorCallback< SpecialKeySpace_GetRangeAggregationActorActor, 4, RangeResult >, public ActorCallback< SpecialKeySpace_GetRangeAggregationActorActor, 5, RangeResult >, public FastAllocated<SpecialKeySpace_GetRangeAggregationActorActor>, public SpecialKeySpace_GetRangeAggregationActorActorState<SpecialKeySpace_GetRangeAggregationActorActor> {
-															#line 2200 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2231 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
 	using FastAllocated<SpecialKeySpace_GetRangeAggregationActorActor>::operator new;
 	using FastAllocated<SpecialKeySpace_GetRangeAggregationActorActor>::operator delete;
@@ -2211,9 +2242,9 @@ friend struct ActorCallback< SpecialKeySpace_GetRangeAggregationActorActor, 2, R
 friend struct ActorCallback< SpecialKeySpace_GetRangeAggregationActorActor, 3, RangeResult >;
 friend struct ActorCallback< SpecialKeySpace_GetRangeAggregationActorActor, 4, RangeResult >;
 friend struct ActorCallback< SpecialKeySpace_GetRangeAggregationActorActor, 5, RangeResult >;
-															#line 329 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	SpecialKeySpace_GetRangeAggregationActorActor(SpecialKeySpace* const& sks,ReadYourWritesTransaction* const& ryw,KeySelector const& begin,KeySelector const& end,GetRangeLimits const& limits,Reverse const& reverse) 
-															#line 2216 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2247 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		 : Actor<RangeResult>(),
 		   SpecialKeySpace_GetRangeAggregationActorActorState<SpecialKeySpace_GetRangeAggregationActorActor>(sks, ryw, begin, end, limits, reverse)
 	{
@@ -2241,14 +2272,14 @@ friend struct ActorCallback< SpecialKeySpace_GetRangeAggregationActorActor, 5, R
 
 	}
 };
-															#line 329 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 [[nodiscard]] Future<RangeResult> SpecialKeySpace::getRangeAggregationActor( SpecialKeySpace* const& sks, ReadYourWritesTransaction* const& ryw, KeySelector const& begin, KeySelector const& end, GetRangeLimits const& limits, Reverse const& reverse ) {
-															#line 329 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	return Future<RangeResult>(new SpecialKeySpace_GetRangeAggregationActorActor(sks, ryw, begin, end, limits, reverse));
-															#line 2248 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2279 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 }
 
-#line 450 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+#line 449 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 
 Future<RangeResult> SpecialKeySpace::getRange(ReadYourWritesTransaction* ryw,
                                               KeySelector begin,
@@ -2259,7 +2290,7 @@ Future<RangeResult> SpecialKeySpace::getRange(ReadYourWritesTransaction* ryw,
 	if (!limits.isValid())
 		return range_limits_invalid();
 	if (limits.isReached()) {
-		TEST(true); // read limit 0
+		CODE_PROBE(true, "Special Key Space range read limit 0");
 		return RangeResult();
 	}
 	// make sure orEqual == false
@@ -2267,31 +2298,31 @@ Future<RangeResult> SpecialKeySpace::getRange(ReadYourWritesTransaction* ryw,
 	end.removeOrEqual(end.arena());
 
 	if (begin.offset >= end.offset && begin.getKey() >= end.getKey()) {
-		TEST(true); // range inverted
+		CODE_PROBE(true, "range inverted");
 		return RangeResult();
 	}
 
 	return checkRYWValid(this, ryw, begin, end, limits, reverse);
 }
 
-															#line 2277 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2308 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 // This generated class is to be used only via getActor()
-															#line 475 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 474 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 template <class SpecialKeySpace_GetActorActor>
-															#line 475 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 474 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class SpecialKeySpace_GetActorActorState {
-															#line 2283 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2314 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
-															#line 475 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 474 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	SpecialKeySpace_GetActorActorState(SpecialKeySpace* const& sks,ReadYourWritesTransaction* const& ryw,KeyRef const& key) 
-															#line 475 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-															#line 475 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 474 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 474 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		 : sks(sks),
-															#line 475 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 474 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   ryw(ryw),
-															#line 475 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 474 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   key(key)
-															#line 2294 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2325 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 	{
 		fdb_probe_actor_create("getActor", reinterpret_cast<unsigned long>(this));
 
@@ -2304,16 +2335,16 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 479 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 478 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			StrictFuture<RangeResult> __when_expr_0 = sks->getRange(ryw, KeySelector(firstGreaterOrEqual(key)), KeySelector(firstGreaterOrEqual(keyAfter(key))), GetRangeLimits(CLIENT_KNOBS->TOO_MANY), Reverse::False);
-															#line 479 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 478 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (static_cast<SpecialKeySpace_GetActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 2311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2342 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<SpecialKeySpace_GetActorActor*>(this)->actor_wait_state = 1;
-															#line 479 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 478 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< SpecialKeySpace_GetActorActor, 0, RangeResult >*>(static_cast<SpecialKeySpace_GetActorActor*>(this)));
-															#line 2316 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2347 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -2334,15 +2365,15 @@ public:
 	}
 	int a_body1cont1(RangeResult const& result,int loopDepth) 
 	{
-															#line 484 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 483 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		ASSERT(result.size() <= 1);
-															#line 485 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 484 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (result.size())
-															#line 2341 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2372 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 486 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 485 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (!static_cast<SpecialKeySpace_GetActorActor*>(this)->SAV<Optional<Value>>::futures) { (void)(Optional<Value>(result[0].value)); this->~SpecialKeySpace_GetActorActorState(); static_cast<SpecialKeySpace_GetActorActor*>(this)->destroy(); return 0; }
-															#line 2345 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2376 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			new (&static_cast<SpecialKeySpace_GetActorActor*>(this)->SAV< Optional<Value> >::value()) Optional<Value>(Optional<Value>(result[0].value));
 			this->~SpecialKeySpace_GetActorActorState();
 			static_cast<SpecialKeySpace_GetActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -2350,9 +2381,9 @@ public:
 		}
 		else
 		{
-															#line 488 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 487 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (!static_cast<SpecialKeySpace_GetActorActor*>(this)->SAV<Optional<Value>>::futures) { (void)(Optional<Value>()); this->~SpecialKeySpace_GetActorActorState(); static_cast<SpecialKeySpace_GetActorActor*>(this)->destroy(); return 0; }
-															#line 2355 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2386 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			new (&static_cast<SpecialKeySpace_GetActorActor*>(this)->SAV< Optional<Value> >::value()) Optional<Value>(Optional<Value>());
 			this->~SpecialKeySpace_GetActorActorState();
 			static_cast<SpecialKeySpace_GetActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -2363,15 +2394,15 @@ public:
 	}
 	int a_body1cont1(RangeResult && result,int loopDepth) 
 	{
-															#line 484 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 483 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		ASSERT(result.size() <= 1);
-															#line 485 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 484 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (result.size())
-															#line 2370 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2401 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 486 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 485 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (!static_cast<SpecialKeySpace_GetActorActor*>(this)->SAV<Optional<Value>>::futures) { (void)(Optional<Value>(result[0].value)); this->~SpecialKeySpace_GetActorActorState(); static_cast<SpecialKeySpace_GetActorActor*>(this)->destroy(); return 0; }
-															#line 2374 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2405 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			new (&static_cast<SpecialKeySpace_GetActorActor*>(this)->SAV< Optional<Value> >::value()) Optional<Value>(Optional<Value>(result[0].value));
 			this->~SpecialKeySpace_GetActorActorState();
 			static_cast<SpecialKeySpace_GetActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -2379,9 +2410,9 @@ public:
 		}
 		else
 		{
-															#line 488 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 487 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (!static_cast<SpecialKeySpace_GetActorActor*>(this)->SAV<Optional<Value>>::futures) { (void)(Optional<Value>()); this->~SpecialKeySpace_GetActorActorState(); static_cast<SpecialKeySpace_GetActorActor*>(this)->destroy(); return 0; }
-															#line 2384 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2415 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			new (&static_cast<SpecialKeySpace_GetActorActor*>(this)->SAV< Optional<Value> >::value()) Optional<Value>(Optional<Value>());
 			this->~SpecialKeySpace_GetActorActorState();
 			static_cast<SpecialKeySpace_GetActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -2453,18 +2484,18 @@ public:
 		fdb_probe_actor_exit("getActor", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 475 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 474 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	SpecialKeySpace* sks;
-															#line 475 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 474 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	ReadYourWritesTransaction* ryw;
-															#line 475 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 474 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	KeyRef key;
-															#line 2462 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2493 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 };
 // This generated class is to be used only via getActor()
-															#line 475 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 474 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class SpecialKeySpace_GetActorActor final : public Actor<Optional<Value>>, public ActorCallback< SpecialKeySpace_GetActorActor, 0, RangeResult >, public FastAllocated<SpecialKeySpace_GetActorActor>, public SpecialKeySpace_GetActorActorState<SpecialKeySpace_GetActorActor> {
-															#line 2467 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2498 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
 	using FastAllocated<SpecialKeySpace_GetActorActor>::operator new;
 	using FastAllocated<SpecialKeySpace_GetActorActor>::operator delete;
@@ -2473,9 +2504,9 @@ public:
 	void destroy() override { ((Actor<Optional<Value>>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< SpecialKeySpace_GetActorActor, 0, RangeResult >;
-															#line 475 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 474 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	SpecialKeySpace_GetActorActor(SpecialKeySpace* const& sks,ReadYourWritesTransaction* const& ryw,KeyRef const& key) 
-															#line 2478 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2509 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		 : Actor<Optional<Value>>(),
 		   SpecialKeySpace_GetActorActorState<SpecialKeySpace_GetActorActor>(sks, ryw, key)
 	{
@@ -2498,14 +2529,14 @@ friend struct ActorCallback< SpecialKeySpace_GetActorActor, 0, RangeResult >;
 
 	}
 };
-															#line 475 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 474 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 [[nodiscard]] Future<Optional<Value>> SpecialKeySpace::getActor( SpecialKeySpace* const& sks, ReadYourWritesTransaction* const& ryw, KeyRef const& key ) {
-															#line 475 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 474 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	return Future<Optional<Value>>(new SpecialKeySpace_GetActorActor(sks, ryw, key));
-															#line 2505 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2536 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 }
 
-#line 491 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+#line 490 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 
 Future<Optional<Value>> SpecialKeySpace::get(ReadYourWritesTransaction* ryw, const Key& key) {
 	return getActor(this, ryw, key);
@@ -2520,6 +2551,9 @@ void SpecialKeySpace::set(ReadYourWritesTransaction* ryw, const KeyRef& key, con
 		    .detail("Key", key.toString())
 		    .detail("Value", value.toString());
 		throw special_keys_no_write_module_found();
+	}
+	if (!impl->supportsTenants() && ryw->getTenant().present()) {
+		throw illegal_tenant_access();
 	}
 	return impl->set(ryw, key, value);
 }
@@ -2538,6 +2572,9 @@ void SpecialKeySpace::clear(ReadYourWritesTransaction* ryw, const KeyRangeRef& r
 		TraceEvent(SevDebug, "SpecialKeySpaceNoWriteModuleFound").detail("Range", range);
 		throw special_keys_no_write_module_found();
 	}
+	if (!begin->supportsTenants() && ryw->getTenant().present()) {
+		throw illegal_tenant_access();
+	}
 	return begin->clear(ryw, range);
 }
 
@@ -2547,6 +2584,9 @@ void SpecialKeySpace::clear(ReadYourWritesTransaction* ryw, const KeyRef& key) {
 	auto impl = writeImpls[key];
 	if (impl == nullptr)
 		throw special_keys_no_write_module_found();
+	if (!impl->supportsTenants() && ryw->getTenant().present()) {
+		throw illegal_tenant_access();
+	}
 	return impl->clear(ryw, key);
 }
 
@@ -2558,8 +2598,8 @@ bool validateSnakeCaseNaming(const KeyRef& k) {
 	// Suffix can be \xff\xff or \x00 in single key range
 	if (key.endsWith(specialKeys.begin))
 		key = key.removeSuffix(specialKeys.end);
-	else if (key.endsWith(LiteralStringRef("\x00")))
-		key = key.removeSuffix(LiteralStringRef("\x00"));
+	else if (key.endsWith("\x00"_sr))
+		key = key.removeSuffix("\x00"_sr);
 	for (const char& c : key.toString()) {
 		// only small letters, numbers, '/', '_' is allowed
 		ASSERT((c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '/' || c == '_');
@@ -2571,6 +2611,8 @@ void SpecialKeySpace::registerKeyRange(SpecialKeySpace::MODULE module,
                                        SpecialKeySpace::IMPLTYPE type,
                                        const KeyRangeRef& kr,
                                        SpecialKeyRangeReadImpl* impl) {
+	// Not allowed to register an empty range
+	ASSERT(!kr.empty());
 	// module boundary check
 	if (module == SpecialKeySpace::MODULE::TESTONLY) {
 		ASSERT(normalKeys.contains(kr));
@@ -2614,29 +2656,29 @@ KeyRange SpecialKeySpace::decode(const KeyRangeRef& kr) {
 	return KeyRangeRef(begin->value()->decode(kr.begin), begin->value()->decode(kr.end));
 }
 
-															#line 2617 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2659 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 namespace {
 // This generated class is to be used only via commitActor()
-															#line 599 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 609 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 template <class CommitActorActor>
-															#line 599 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 609 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class CommitActorActorState {
-															#line 2624 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2666 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
-															#line 599 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 609 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	CommitActorActorState(SpecialKeySpace* const& sks,ReadYourWritesTransaction* const& ryw) 
-															#line 599 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-															#line 599 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 609 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 609 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		 : sks(sks),
-															#line 599 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 609 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   ryw(ryw),
-															#line 600 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 610 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   ranges(ryw->getSpecialKeySpaceWriteMap().containedRanges(specialKeys)),
-															#line 602 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 612 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   iter(ranges.begin()),
-															#line 603 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 613 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   writeModulePtrs()
-															#line 2639 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2681 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 	{
 		fdb_probe_actor_create("commitActor", reinterpret_cast<unsigned long>(this));
 
@@ -2649,38 +2691,54 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 604 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 614 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			std::unordered_set<SpecialKeyRangeRWImpl*> deduplicate;
-															#line 605 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 615 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			for(;iter != ranges.end();) {
-															#line 606 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 616 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				std::pair<bool, Optional<Value>> entry = iter->value();
-															#line 607 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 617 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				if (entry.first)
-															#line 2660 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2702 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				{
-															#line 608 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 618 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					auto modulePtr = sks->getRWImpls().rangeContaining(iter->begin())->value();
-															#line 609 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 619 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					auto [_, inserted] = deduplicate.insert(modulePtr);
-															#line 610 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 620 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					if (inserted)
-															#line 2668 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2710 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 					{
-															#line 611 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 621 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 						writeModulePtrs.push_back(modulePtr);
-															#line 2672 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 					}
 				}
-															#line 614 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 624 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				++iter;
-															#line 2677 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2719 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			}
-															#line 616 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 626 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			it = std::vector<SpecialKeyRangeRWImpl*>::const_iterator();
-															#line 617 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 629 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			if (ryw->getTenant().present())
+															#line 2725 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+			{
+															#line 630 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+				for(it = writeModulePtrs.begin();it != writeModulePtrs.end();++it) {
+															#line 631 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+					if (!(*it)->supportsTenants())
+															#line 2731 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+					{
+															#line 632 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+						return a_body1Catch1(illegal_tenant_access(), loopDepth);
+															#line 2735 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+					}
+				}
+			}
+															#line 637 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			it = writeModulePtrs.begin();
-															#line 2683 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2741 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -2701,9 +2759,9 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 627 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 647 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<CommitActorActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~CommitActorActorState(); static_cast<CommitActorActor*>(this)->destroy(); return 0; }
-															#line 2706 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2764 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<CommitActorActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~CommitActorActorState();
 		static_cast<CommitActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -2720,22 +2778,22 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 617 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 637 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!(it != writeModulePtrs.end()))
-															#line 2725 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2783 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
 			return a_body1break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 618 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 638 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		StrictFuture<Optional<std::string>> __when_expr_0 = (*it)->commit(ryw);
-															#line 618 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 638 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (static_cast<CommitActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 2733 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2791 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 		static_cast<CommitActorActor*>(this)->actor_wait_state = 1;
-															#line 618 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 638 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< CommitActorActor, 0, Optional<std::string> >*>(static_cast<CommitActorActor*>(this)));
-															#line 2738 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2796 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -2755,42 +2813,42 @@ public:
 	}
 	int a_body1loopBody1cont1(Optional<std::string> const& msg,int loopDepth) 
 	{
-															#line 619 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 639 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (msg.present())
-															#line 2760 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2818 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 620 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 640 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			ryw->setSpecialKeySpaceErrorMsg(msg.get());
-															#line 621 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 641 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			TraceEvent(SevDebug, "SpecialKeySpaceManagementAPIError") .detail("Reason", msg.get()) .detail("Range", (*it)->getKeyRange().toString());
-															#line 624 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 644 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			return a_body1Catch1(special_keys_api_failure(), std::max(0, loopDepth - 1));
-															#line 2768 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2826 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		}
-															#line 617 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 637 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		++it;
-															#line 2772 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2830 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		if (loopDepth == 0) return a_body1loopHead1(0);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont1(Optional<std::string> && msg,int loopDepth) 
 	{
-															#line 619 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 639 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (msg.present())
-															#line 2781 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2839 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 620 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 640 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			ryw->setSpecialKeySpaceErrorMsg(msg.get());
-															#line 621 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 641 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			TraceEvent(SevDebug, "SpecialKeySpaceManagementAPIError") .detail("Reason", msg.get()) .detail("Range", (*it)->getKeyRange().toString());
-															#line 624 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 644 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			return a_body1Catch1(special_keys_api_failure(), std::max(0, loopDepth - 1));
-															#line 2789 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2847 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		}
-															#line 617 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 637 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		++it;
-															#line 2793 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2851 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		if (loopDepth == 0) return a_body1loopHead1(0);
 
 		return loopDepth;
@@ -2858,24 +2916,24 @@ public:
 		fdb_probe_actor_exit("commitActor", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 599 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 609 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	SpecialKeySpace* sks;
-															#line 599 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 609 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	ReadYourWritesTransaction* ryw;
-															#line 600 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 610 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	RangeMap<Key, std::pair<bool, Optional<Value>>, KeyRangeRef>::Ranges ranges;
-															#line 602 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 612 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	RangeMap<Key, std::pair<bool, Optional<Value>>, KeyRangeRef>::iterator iter;
-															#line 603 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 613 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	std::vector<SpecialKeyRangeRWImpl*> writeModulePtrs;
-															#line 616 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 626 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	std::vector<SpecialKeyRangeRWImpl*>::const_iterator it;
-															#line 2873 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2931 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 };
 // This generated class is to be used only via commitActor()
-															#line 599 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 609 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class CommitActorActor final : public Actor<Void>, public ActorCallback< CommitActorActor, 0, Optional<std::string> >, public FastAllocated<CommitActorActor>, public CommitActorActorState<CommitActorActor> {
-															#line 2878 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2936 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
 	using FastAllocated<CommitActorActor>::operator new;
 	using FastAllocated<CommitActorActor>::operator delete;
@@ -2884,9 +2942,9 @@ public:
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< CommitActorActor, 0, Optional<std::string> >;
-															#line 599 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 609 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	CommitActorActor(SpecialKeySpace* const& sks,ReadYourWritesTransaction* const& ryw) 
-															#line 2889 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2947 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		 : Actor<Void>(),
 		   CommitActorActorState<CommitActorActor>(sks, ryw)
 	{
@@ -2910,14 +2968,14 @@ friend struct ActorCallback< CommitActorActor, 0, Optional<std::string> >;
 	}
 };
 }
-															#line 599 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 609 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 [[nodiscard]] Future<Void> commitActor( SpecialKeySpace* const& sks, ReadYourWritesTransaction* const& ryw ) {
-															#line 599 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 609 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	return Future<Void>(new CommitActorActor(sks, ryw));
-															#line 2917 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2975 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 }
 
-#line 629 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+#line 649 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 
 Future<Void> SpecialKeySpace::commit(ReadYourWritesTransaction* ryw) {
 	return commitActor(this, ryw);
@@ -2959,23 +3017,23 @@ Future<RangeResult> SKSCTestAsyncReadImpl::getRange(ReadYourWritesTransaction* r
 
 ReadConflictRangeImpl::ReadConflictRangeImpl(KeyRangeRef kr) : SpecialKeyRangeReadImpl(kr) {}
 
-															#line 2962 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 3020 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 namespace {
 // This generated class is to be used only via getReadConflictRangeImpl()
-															#line 670 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 690 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 template <class GetReadConflictRangeImplActor>
-															#line 670 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 690 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class GetReadConflictRangeImplActorState {
-															#line 2969 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 3027 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
-															#line 670 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 690 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	GetReadConflictRangeImplActorState(ReadYourWritesTransaction* const& ryw,KeyRange const& kr) 
-															#line 670 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-															#line 670 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 690 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 690 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		 : ryw(ryw),
-															#line 670 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 690 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   kr(kr)
-															#line 2978 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 3036 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 	{
 		fdb_probe_actor_create("getReadConflictRangeImpl", reinterpret_cast<unsigned long>(this));
 
@@ -2988,16 +3046,16 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 671 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 691 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			StrictFuture<Void> __when_expr_0 = ryw->pendingReads();
-															#line 671 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 691 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (static_cast<GetReadConflictRangeImplActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 2995 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 3053 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<GetReadConflictRangeImplActor*>(this)->actor_wait_state = 1;
-															#line 671 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 691 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< GetReadConflictRangeImplActor, 0, Void >*>(static_cast<GetReadConflictRangeImplActor*>(this)));
-															#line 3000 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 3058 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -3018,9 +3076,9 @@ public:
 	}
 	int a_body1cont1(Void const& _,int loopDepth) 
 	{
-															#line 672 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 692 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<GetReadConflictRangeImplActor*>(this)->SAV<RangeResult>::futures) { (void)(ryw->getReadConflictRangeIntersecting(kr)); this->~GetReadConflictRangeImplActorState(); static_cast<GetReadConflictRangeImplActor*>(this)->destroy(); return 0; }
-															#line 3023 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 3081 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<GetReadConflictRangeImplActor*>(this)->SAV< RangeResult >::value()) RangeResult(ryw->getReadConflictRangeIntersecting(kr));
 		this->~GetReadConflictRangeImplActorState();
 		static_cast<GetReadConflictRangeImplActor*>(this)->finishSendAndDelPromiseRef();
@@ -3030,9 +3088,9 @@ public:
 	}
 	int a_body1cont1(Void && _,int loopDepth) 
 	{
-															#line 672 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 692 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<GetReadConflictRangeImplActor*>(this)->SAV<RangeResult>::futures) { (void)(ryw->getReadConflictRangeIntersecting(kr)); this->~GetReadConflictRangeImplActorState(); static_cast<GetReadConflictRangeImplActor*>(this)->destroy(); return 0; }
-															#line 3035 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 3093 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<GetReadConflictRangeImplActor*>(this)->SAV< RangeResult >::value()) RangeResult(ryw->getReadConflictRangeIntersecting(kr));
 		this->~GetReadConflictRangeImplActorState();
 		static_cast<GetReadConflictRangeImplActor*>(this)->finishSendAndDelPromiseRef();
@@ -3103,16 +3161,16 @@ public:
 		fdb_probe_actor_exit("getReadConflictRangeImpl", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 670 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 690 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	ReadYourWritesTransaction* ryw;
-															#line 670 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 690 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	KeyRange kr;
-															#line 3110 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 3168 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 };
 // This generated class is to be used only via getReadConflictRangeImpl()
-															#line 670 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 690 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class GetReadConflictRangeImplActor final : public Actor<RangeResult>, public ActorCallback< GetReadConflictRangeImplActor, 0, Void >, public FastAllocated<GetReadConflictRangeImplActor>, public GetReadConflictRangeImplActorState<GetReadConflictRangeImplActor> {
-															#line 3115 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 3173 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
 	using FastAllocated<GetReadConflictRangeImplActor>::operator new;
 	using FastAllocated<GetReadConflictRangeImplActor>::operator delete;
@@ -3121,9 +3179,9 @@ public:
 	void destroy() override { ((Actor<RangeResult>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< GetReadConflictRangeImplActor, 0, Void >;
-															#line 670 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 690 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	GetReadConflictRangeImplActor(ReadYourWritesTransaction* const& ryw,KeyRange const& kr) 
-															#line 3126 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 3184 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		 : Actor<RangeResult>(),
 		   GetReadConflictRangeImplActorState<GetReadConflictRangeImplActor>(ryw, kr)
 	{
@@ -3147,14 +3205,14 @@ friend struct ActorCallback< GetReadConflictRangeImplActor, 0, Void >;
 	}
 };
 }
-															#line 670 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 690 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 [[nodiscard]] static Future<RangeResult> getReadConflictRangeImpl( ReadYourWritesTransaction* const& ryw, KeyRange const& kr ) {
-															#line 670 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 690 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	return Future<RangeResult>(new GetReadConflictRangeImplActor(ryw, kr));
-															#line 3154 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 3212 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 }
 
-#line 674 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+#line 694 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 
 Future<RangeResult> ReadConflictRangeImpl::getRange(ReadYourWritesTransaction* ryw,
                                                     KeyRangeRef kr,
@@ -3192,23 +3250,23 @@ Future<RangeResult> ConflictingKeysImpl::getRange(ReadYourWritesTransaction* ryw
 	return result;
 }
 
-															#line 3195 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 3253 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 namespace {
 // This generated class is to be used only via ddMetricsGetRangeActor()
-															#line 711 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 731 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 template <class DdMetricsGetRangeActorActor>
-															#line 711 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 731 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class DdMetricsGetRangeActorActorState {
-															#line 3202 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 3260 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
-															#line 711 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 731 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	DdMetricsGetRangeActorActorState(ReadYourWritesTransaction* const& ryw,KeyRangeRef const& kr) 
-															#line 711 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-															#line 711 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 731 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 731 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		 : ryw(ryw),
-															#line 711 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 731 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   kr(kr)
-															#line 3211 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 3269 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 	{
 		fdb_probe_actor_create("ddMetricsGetRangeActor", reinterpret_cast<unsigned long>(this));
 
@@ -3221,9 +3279,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 712 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 732 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			;
-															#line 3226 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 3284 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -3252,18 +3310,18 @@ public:
 	int a_body1loopBody1(int loopDepth) 
 	{
 		try {
-															#line 714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 734 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			auto keys = kr.removePrefix(ddStatsRange.begin);
-															#line 715 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			StrictFuture<Standalone<VectorRef<DDMetricsRef>>> __when_expr_0 = waitDataDistributionMetricsList(ryw->getDatabase(), keys, CLIENT_KNOBS->STORAGE_METRICS_SHARD_LIMIT);
-															#line 715 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 735 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			StrictFuture<Standalone<VectorRef<DDMetricsRef>>> __when_expr_0 = waitDataDistributionMetricsList(ryw->getDatabase(), keys, CLIENT_KNOBS->TOO_MANY);
+															#line 735 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (static_cast<DdMetricsGetRangeActorActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 3261 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 3319 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1loopBody1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<DdMetricsGetRangeActorActor*>(this)->actor_wait_state = 1;
-															#line 715 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 735 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< DdMetricsGetRangeActorActor, 0, Standalone<VectorRef<DDMetricsRef>> >*>(static_cast<DdMetricsGetRangeActorActor*>(this)));
-															#line 3266 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 3324 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -3277,24 +3335,24 @@ public:
 	int a_body1loopBody1Catch1(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 731 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 751 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			err = Error(e);
-															#line 732 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 752 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (e.code() == error_code_dd_not_found)
-															#line 3284 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 3342 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
-															#line 733 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 753 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				TraceEvent(SevWarnAlways, "DataDistributorNotPresent") .detail("Operation", "DDMetricsReqestThroughSpecialKeys");
-															#line 735 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 755 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				StrictFuture<Void> __when_expr_1 = delayJittered(FLOW_KNOBS->PREVENT_FAST_SPIN_DELAY);
-															#line 735 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 755 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				if (static_cast<DdMetricsGetRangeActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 3292 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 3350 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1Catch1when1(__when_expr_1.get(), loopDepth); };
 				static_cast<DdMetricsGetRangeActorActor*>(this)->actor_wait_state = 2;
-															#line 735 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 755 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< DdMetricsGetRangeActorActor, 1, Void >*>(static_cast<DdMetricsGetRangeActorActor*>(this)));
-															#line 3297 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 3355 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				loopDepth = 0;
 			}
 			else
@@ -3312,27 +3370,27 @@ public:
 	}
 	int a_body1loopBody1cont2(Standalone<VectorRef<DDMetricsRef>> const& resultWithoutPrefix,int loopDepth) 
 	{
-															#line 717 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 737 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		RangeResult result;
-															#line 718 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 738 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		for( const auto& ddMetricsRef : resultWithoutPrefix ) {
-															#line 720 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 740 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			KeyRef beginKey = ddMetricsRef.beginKey.withPrefix(ddStatsRange.begin, result.arena());
-															#line 722 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 742 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			json_spirit::mObject statsObj;
-															#line 723 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 743 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			statsObj["shard_bytes"] = ddMetricsRef.shardBytes;
-															#line 724 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 744 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			std::string statsString = json_spirit::write_string(json_spirit::mValue(statsObj), json_spirit::Output_options::raw_utf8);
-															#line 726 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 746 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			ValueRef bytes(result.arena(), statsString);
-															#line 727 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 747 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			result.push_back(result.arena(), KeyValueRef(beginKey, bytes));
-															#line 3331 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 3389 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		}
-															#line 729 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 749 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<DdMetricsGetRangeActorActor*>(this)->SAV<RangeResult>::futures) { (void)(result); this->~DdMetricsGetRangeActorActorState(); static_cast<DdMetricsGetRangeActorActor*>(this)->destroy(); return 0; }
-															#line 3335 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 3393 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<DdMetricsGetRangeActorActor*>(this)->SAV< RangeResult >::value()) RangeResult(result);
 		this->~DdMetricsGetRangeActorActorState();
 		static_cast<DdMetricsGetRangeActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -3342,27 +3400,27 @@ public:
 	}
 	int a_body1loopBody1cont2(Standalone<VectorRef<DDMetricsRef>> && resultWithoutPrefix,int loopDepth) 
 	{
-															#line 717 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 737 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		RangeResult result;
-															#line 718 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 738 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		for( const auto& ddMetricsRef : resultWithoutPrefix ) {
-															#line 720 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 740 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			KeyRef beginKey = ddMetricsRef.beginKey.withPrefix(ddStatsRange.begin, result.arena());
-															#line 722 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 742 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			json_spirit::mObject statsObj;
-															#line 723 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 743 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			statsObj["shard_bytes"] = ddMetricsRef.shardBytes;
-															#line 724 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 744 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			std::string statsString = json_spirit::write_string(json_spirit::mValue(statsObj), json_spirit::Output_options::raw_utf8);
-															#line 726 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 746 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			ValueRef bytes(result.arena(), statsString);
-															#line 727 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 747 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			result.push_back(result.arena(), KeyValueRef(beginKey, bytes));
-															#line 3361 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 3419 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		}
-															#line 729 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 749 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<DdMetricsGetRangeActorActor*>(this)->SAV<RangeResult>::futures) { (void)(result); this->~DdMetricsGetRangeActorActorState(); static_cast<DdMetricsGetRangeActorActor*>(this)->destroy(); return 0; }
-															#line 3365 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 3423 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<DdMetricsGetRangeActorActor*>(this)->SAV< RangeResult >::value()) RangeResult(result);
 		this->~DdMetricsGetRangeActorActorState();
 		static_cast<DdMetricsGetRangeActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -3435,9 +3493,9 @@ public:
 	}
 	int a_body1loopBody1Catch1cont1(int loopDepth) 
 	{
-															#line 738 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 758 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		return a_body1Catch1(err, std::max(0, loopDepth - 1));
-															#line 3440 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 3498 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 
 		return loopDepth;
 	}
@@ -3516,18 +3574,18 @@ public:
 		fdb_probe_actor_exit("ddMetricsGetRangeActor", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 711 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-	ReadYourWritesTransaction* ryw;
-															#line 711 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-	KeyRangeRef kr;
 															#line 731 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+	ReadYourWritesTransaction* ryw;
+															#line 731 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+	KeyRangeRef kr;
+															#line 751 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	Error err;
-															#line 3525 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 3583 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 };
 // This generated class is to be used only via ddMetricsGetRangeActor()
-															#line 711 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 731 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class DdMetricsGetRangeActorActor final : public Actor<RangeResult>, public ActorCallback< DdMetricsGetRangeActorActor, 0, Standalone<VectorRef<DDMetricsRef>> >, public ActorCallback< DdMetricsGetRangeActorActor, 1, Void >, public FastAllocated<DdMetricsGetRangeActorActor>, public DdMetricsGetRangeActorActorState<DdMetricsGetRangeActorActor> {
-															#line 3530 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 3588 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
 	using FastAllocated<DdMetricsGetRangeActorActor>::operator new;
 	using FastAllocated<DdMetricsGetRangeActorActor>::operator delete;
@@ -3537,9 +3595,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< DdMetricsGetRangeActorActor, 0, Standalone<VectorRef<DDMetricsRef>> >;
 friend struct ActorCallback< DdMetricsGetRangeActorActor, 1, Void >;
-															#line 711 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 731 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	DdMetricsGetRangeActorActor(ReadYourWritesTransaction* const& ryw,KeyRangeRef const& kr) 
-															#line 3542 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 3600 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		 : Actor<RangeResult>(),
 		   DdMetricsGetRangeActorActorState<DdMetricsGetRangeActorActor>(ryw, kr)
 	{
@@ -3564,14 +3622,14 @@ friend struct ActorCallback< DdMetricsGetRangeActorActor, 1, Void >;
 	}
 };
 }
-															#line 711 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 731 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 [[nodiscard]] Future<RangeResult> ddMetricsGetRangeActor( ReadYourWritesTransaction* const& ryw, KeyRangeRef const& kr ) {
-															#line 711 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 731 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	return Future<RangeResult>(new DdMetricsGetRangeActorActor(ryw, kr));
-															#line 3571 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 3629 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 }
 
-#line 742 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+#line 762 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 
 DDStatsRangeImpl::DDStatsRangeImpl(KeyRangeRef kr) : SpecialKeyRangeAsyncImpl(kr) {}
 
@@ -3582,7 +3640,7 @@ Future<RangeResult> DDStatsRangeImpl::getRange(ReadYourWritesTransaction* ryw,
 }
 
 Key SpecialKeySpace::getManagementApiCommandOptionSpecialKey(const std::string& command, const std::string& option) {
-	Key prefix = LiteralStringRef("options/").withPrefix(moduleToBoundary[MODULE::MANAGEMENT].begin);
+	Key prefix = "options/"_sr.withPrefix(moduleToBoundary[MODULE::MANAGEMENT].begin);
 	auto pair = command + "/" + option;
 	ASSERT(options.find(pair) != options.end());
 	return prefix.withSuffix(pair);
@@ -3685,25 +3743,25 @@ RangeResult rywGetRange(ReadYourWritesTransaction* ryw, const KeyRangeRef& kr, c
 }
 
 // read from those readwrite modules in which special keys have one-to-one mapping with real persisted keys
-															#line 3688 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 3746 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 namespace {
 // This generated class is to be used only via rwModuleWithMappingGetRangeActor()
-															#line 855 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 875 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 template <class RwModuleWithMappingGetRangeActorActor>
-															#line 855 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 875 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class RwModuleWithMappingGetRangeActorActorState {
-															#line 3695 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 3753 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
-															#line 855 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 875 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	RwModuleWithMappingGetRangeActorActorState(ReadYourWritesTransaction* const& ryw,const SpecialKeyRangeRWImpl* const& impl,KeyRangeRef const& kr) 
-															#line 855 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-															#line 855 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 875 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 875 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		 : ryw(ryw),
-															#line 855 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 875 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   impl(impl),
-															#line 855 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 875 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   kr(kr)
-															#line 3706 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 3764 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 	{
 		fdb_probe_actor_create("rwModuleWithMappingGetRangeActor", reinterpret_cast<unsigned long>(this));
 
@@ -3716,16 +3774,16 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 858 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 878 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			StrictFuture<RangeResult> __when_expr_0 = ryw->getTransaction().getRange(ryw->getDatabase()->specialKeySpace->decode(kr), CLIENT_KNOBS->TOO_MANY);
-															#line 858 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 878 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (static_cast<RwModuleWithMappingGetRangeActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 3723 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 3781 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<RwModuleWithMappingGetRangeActorActor*>(this)->actor_wait_state = 1;
-															#line 858 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 878 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< RwModuleWithMappingGetRangeActorActor, 0, RangeResult >*>(static_cast<RwModuleWithMappingGetRangeActorActor*>(this)));
-															#line 3728 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 3786 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -3746,19 +3804,19 @@ public:
 	}
 	int a_body1cont1(RangeResult const& resultWithoutPrefix,int loopDepth) 
 	{
-															#line 860 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 880 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		ASSERT(!resultWithoutPrefix.more && resultWithoutPrefix.size() < CLIENT_KNOBS->TOO_MANY);
-															#line 861 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 881 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		RangeResult result;
-															#line 862 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 882 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		for( const KeyValueRef& kv : resultWithoutPrefix ) {
-															#line 863 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 883 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			result.push_back_deep(result.arena(), KeyValueRef(impl->encode(kv.key), kv.value));
-															#line 3757 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 3815 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		}
-															#line 864 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 884 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<RwModuleWithMappingGetRangeActorActor*>(this)->SAV<RangeResult>::futures) { (void)(rywGetRange(ryw, kr, result)); this->~RwModuleWithMappingGetRangeActorActorState(); static_cast<RwModuleWithMappingGetRangeActorActor*>(this)->destroy(); return 0; }
-															#line 3761 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 3819 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<RwModuleWithMappingGetRangeActorActor*>(this)->SAV< RangeResult >::value()) RangeResult(rywGetRange(ryw, kr, result));
 		this->~RwModuleWithMappingGetRangeActorActorState();
 		static_cast<RwModuleWithMappingGetRangeActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -3768,19 +3826,19 @@ public:
 	}
 	int a_body1cont1(RangeResult && resultWithoutPrefix,int loopDepth) 
 	{
-															#line 860 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 880 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		ASSERT(!resultWithoutPrefix.more && resultWithoutPrefix.size() < CLIENT_KNOBS->TOO_MANY);
-															#line 861 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 881 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		RangeResult result;
-															#line 862 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 882 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		for( const KeyValueRef& kv : resultWithoutPrefix ) {
-															#line 863 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 883 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			result.push_back_deep(result.arena(), KeyValueRef(impl->encode(kv.key), kv.value));
-															#line 3779 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 3837 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		}
-															#line 864 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 884 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<RwModuleWithMappingGetRangeActorActor*>(this)->SAV<RangeResult>::futures) { (void)(rywGetRange(ryw, kr, result)); this->~RwModuleWithMappingGetRangeActorActorState(); static_cast<RwModuleWithMappingGetRangeActorActor*>(this)->destroy(); return 0; }
-															#line 3783 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 3841 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<RwModuleWithMappingGetRangeActorActor*>(this)->SAV< RangeResult >::value()) RangeResult(rywGetRange(ryw, kr, result));
 		this->~RwModuleWithMappingGetRangeActorActorState();
 		static_cast<RwModuleWithMappingGetRangeActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -3851,18 +3909,18 @@ public:
 		fdb_probe_actor_exit("rwModuleWithMappingGetRangeActor", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 855 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 875 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	ReadYourWritesTransaction* ryw;
-															#line 855 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 875 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	const SpecialKeyRangeRWImpl* impl;
-															#line 855 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 875 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	KeyRangeRef kr;
-															#line 3860 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 3918 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 };
 // This generated class is to be used only via rwModuleWithMappingGetRangeActor()
-															#line 855 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 875 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class RwModuleWithMappingGetRangeActorActor final : public Actor<RangeResult>, public ActorCallback< RwModuleWithMappingGetRangeActorActor, 0, RangeResult >, public FastAllocated<RwModuleWithMappingGetRangeActorActor>, public RwModuleWithMappingGetRangeActorActorState<RwModuleWithMappingGetRangeActorActor> {
-															#line 3865 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 3923 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
 	using FastAllocated<RwModuleWithMappingGetRangeActorActor>::operator new;
 	using FastAllocated<RwModuleWithMappingGetRangeActorActor>::operator delete;
@@ -3871,9 +3929,9 @@ public:
 	void destroy() override { ((Actor<RangeResult>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< RwModuleWithMappingGetRangeActorActor, 0, RangeResult >;
-															#line 855 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 875 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	RwModuleWithMappingGetRangeActorActor(ReadYourWritesTransaction* const& ryw,const SpecialKeyRangeRWImpl* const& impl,KeyRangeRef const& kr) 
-															#line 3876 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 3934 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		 : Actor<RangeResult>(),
 		   RwModuleWithMappingGetRangeActorActorState<RwModuleWithMappingGetRangeActorActor>(ryw, impl, kr)
 	{
@@ -3897,14 +3955,14 @@ friend struct ActorCallback< RwModuleWithMappingGetRangeActorActor, 0, RangeResu
 	}
 };
 }
-															#line 855 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 875 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 [[nodiscard]] Future<RangeResult> rwModuleWithMappingGetRangeActor( ReadYourWritesTransaction* const& ryw, const SpecialKeyRangeRWImpl* const& impl, KeyRangeRef const& kr ) {
-															#line 855 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 875 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	return Future<RangeResult>(new RwModuleWithMappingGetRangeActorActor(ryw, impl, kr));
-															#line 3904 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 3962 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 }
 
-#line 866 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+#line 886 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 
 ExcludeServersRangeImpl::ExcludeServersRangeImpl(KeyRangeRef kr) : SpecialKeyRangeRWImpl(kr) {}
 
@@ -3922,11 +3980,11 @@ void ExcludeServersRangeImpl::set(ReadYourWritesTransaction* ryw, const KeyRef& 
 
 Key ExcludeServersRangeImpl::decode(const KeyRef& key) const {
 	return key.removePrefix(SpecialKeySpace::getModuleRange(SpecialKeySpace::MODULE::MANAGEMENT).begin)
-	    .withPrefix(LiteralStringRef("\xff/conf/"));
+	    .withPrefix("\xff/conf/"_sr);
 }
 
 Key ExcludeServersRangeImpl::encode(const KeyRef& key) const {
-	return key.removePrefix(LiteralStringRef("\xff/conf/"))
+	return key.removePrefix("\xff/conf/"_sr)
 	    .withPrefix(SpecialKeySpace::getModuleRange(SpecialKeySpace::MODULE::MANAGEMENT).begin);
 }
 
@@ -3965,29 +4023,29 @@ bool parseNetWorkAddrFromKeys(ReadYourWritesTransaction* ryw,
 	return true;
 }
 
-															#line 3968 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 4026 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 namespace {
 // This generated class is to be used only via checkExclusion()
-															#line 926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 946 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 template <class CheckExclusionActor>
-															#line 926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 946 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class CheckExclusionActorState {
-															#line 3975 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 4033 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
-															#line 926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 946 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	CheckExclusionActorState(Database const& db,std::vector<AddressExclusion>* const& addresses,std::set<AddressExclusion>* const& exclusions,bool const& markFailed,Optional<std::string>* const& msg) 
-															#line 926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-															#line 926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 946 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 946 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		 : db(db),
-															#line 926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 946 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   addresses(addresses),
-															#line 926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 946 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   exclusions(exclusions),
-															#line 926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 946 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   markFailed(markFailed),
-															#line 926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 946 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   msg(msg)
-															#line 3990 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 4048 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 	{
 		fdb_probe_actor_create("checkExclusion", reinterpret_cast<unsigned long>(this));
 
@@ -4000,24 +4058,24 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 932 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 952 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (markFailed)
-															#line 4005 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 4063 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
-															#line 933 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 953 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				safe = bool();
-															#line 4009 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 4067 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				try {
-															#line 935 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 955 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					StrictFuture<bool> __when_expr_0 = checkSafeExclusions(db, *addresses);
-															#line 935 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 955 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					if (static_cast<CheckExclusionActor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), loopDepth);
-															#line 4015 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 4073 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 					if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch2(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 					static_cast<CheckExclusionActor*>(this)->actor_wait_state = 1;
-															#line 935 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 955 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< CheckExclusionActor, 0, bool >*>(static_cast<CheckExclusionActor*>(this)));
-															#line 4020 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 4078 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 					loopDepth = 0;
 				}
 				catch (Error& error) {
@@ -4049,33 +4107,33 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 954 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 974 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		StrictFuture<StatusObject> __when_expr_1 = StatusClient::statusFetcher(db);
-															#line 954 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 974 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (static_cast<CheckExclusionActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 4056 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 4114 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<CheckExclusionActor*>(this)->actor_wait_state = 2;
-															#line 954 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 974 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< CheckExclusionActor, 1, StatusObject >*>(static_cast<CheckExclusionActor*>(this)));
-															#line 4061 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 4119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont2(int loopDepth) 
 	{
-															#line 943 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 963 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!safe)
-															#line 4070 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 4128 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 944 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 964 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			std::string temp = "ERROR: It is unsafe to exclude the specified servers at this time.\n" "Please check that this exclusion does not bring down an entire storage team.\n" "Please also ensure that the exclusion will keep a majority of coordinators alive.\n" "You may add more storage processes or coordinators to make the operation safe.\n" "Call set(\"0xff0xff/management/failed/<ADDRESS...>\", ...) to exclude without " "performing safety checks.\n";
-															#line 950 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 970 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			*msg = ManagementAPIError::toJsonString(false, markFailed ? "exclude failed" : "exclude", temp);
-															#line 951 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 971 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (!static_cast<CheckExclusionActor*>(this)->SAV<bool>::futures) { (void)(false); this->~CheckExclusionActorState(); static_cast<CheckExclusionActor*>(this)->destroy(); return 0; }
-															#line 4078 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 4136 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			new (&static_cast<CheckExclusionActor*>(this)->SAV< bool >::value()) bool(false);
 			this->~CheckExclusionActorState();
 			static_cast<CheckExclusionActor*>(this)->finishSendAndDelPromiseRef();
@@ -4088,19 +4146,19 @@ public:
 	int a_body1Catch2(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 938 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 958 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (e.code() == error_code_actor_cancelled)
-															#line 4093 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 4151 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
-															#line 939 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 959 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				return a_body1Catch1(e, loopDepth);
-															#line 4097 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 4155 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			}
-															#line 940 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 960 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			TraceEvent("CheckSafeExclusionsError").error(e);
-															#line 941 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 961 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			safe = false;
-															#line 4103 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 4161 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			loopDepth = a_body1cont2(loopDepth);
 		}
 		catch (Error& error) {
@@ -4113,18 +4171,18 @@ public:
 	}
 	int a_body1cont3(bool const& _safe,int loopDepth) 
 	{
-															#line 936 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 956 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		safe = _safe;
-															#line 4118 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 4176 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		loopDepth = a_body1cont5(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1cont3(bool && _safe,int loopDepth) 
 	{
-															#line 936 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 956 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		safe = _safe;
-															#line 4127 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 4185 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		loopDepth = a_body1cont5(loopDepth);
 
 		return loopDepth;
@@ -4207,182 +4265,206 @@ public:
 	}
 	int a_body1cont8(StatusObject const& status,int loopDepth) 
 	{
-															#line 955 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		errorString = "ERROR: Could not calculate the impact of this exclude on the total free space in the cluster.\n" "Please try the exclude again in 30 seconds.\n" "Call set(\"0xff0xff/management/options/exclude/force\", ...) first to exclude without checking free " "space.\n";
-															#line 961 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		StatusObjectReader statusObj(status);
-															#line 963 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		StatusObjectReader statusObjCluster;
-															#line 964 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		if (!statusObj.get("cluster", statusObjCluster))
-															#line 4218 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-		{
-															#line 965 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			*msg = ManagementAPIError::toJsonString(false, markFailed ? "exclude failed" : "exclude", errorString);
-															#line 966 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			if (!static_cast<CheckExclusionActor*>(this)->SAV<bool>::futures) { (void)(false); this->~CheckExclusionActorState(); static_cast<CheckExclusionActor*>(this)->destroy(); return 0; }
-															#line 4224 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-			new (&static_cast<CheckExclusionActor*>(this)->SAV< bool >::value()) bool(false);
-			this->~CheckExclusionActorState();
-			static_cast<CheckExclusionActor*>(this)->finishSendAndDelPromiseRef();
-			return 0;
-		}
-															#line 969 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		StatusObjectReader processesMap;
-															#line 970 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		if (!statusObjCluster.get("processes", processesMap))
-															#line 4234 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-		{
-															#line 971 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			*msg = ManagementAPIError::toJsonString(false, markFailed ? "exclude failed" : "exclude", errorString);
-															#line 972 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			if (!static_cast<CheckExclusionActor*>(this)->SAV<bool>::futures) { (void)(false); this->~CheckExclusionActorState(); static_cast<CheckExclusionActor*>(this)->destroy(); return 0; }
-															#line 4240 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-			new (&static_cast<CheckExclusionActor*>(this)->SAV< bool >::value()) bool(false);
-			this->~CheckExclusionActorState();
-			static_cast<CheckExclusionActor*>(this)->finishSendAndDelPromiseRef();
-			return 0;
-		}
 															#line 975 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		ssTotalCount = 0;
-															#line 976 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		ssExcludedCount = 0;
-															#line 978 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		diskLocalities = std::unordered_set<std::string>();
-															#line 979 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		totalKvStoreFreeBytes = 0;
-															#line 980 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		totalKvStoreUsedBytes = 0;
+		errorString = "ERROR: Could not calculate the impact of this exclude on the total available space in the cluster.\n" "Please try the exclude again in 30 seconds.\n" "Call set(\"0xff0xff/management/options/exclude/force\", ...) first to exclude without checking available " "space.\n";
 															#line 981 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		totalKvStoreUsedBytesNonExcluded = 0;
+		StatusObjectReader statusObj(status);
 															#line 983 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		excludedAddressesContainsStorageRole = false;
-															#line 4260 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-		try {
-															#line 986 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			for( auto proc : processesMap.obj() ) {
-															#line 987 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-				StatusObjectReader process(proc.second);
-															#line 988 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-				std::string addrStr;
-															#line 989 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-				if (!process.get("address", addrStr))
-															#line 4270 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-				{
-															#line 990 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-					*msg = ManagementAPIError::toJsonString(false, markFailed ? "exclude failed" : "exclude", errorString);
-															#line 991 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-					if (!static_cast<CheckExclusionActor*>(this)->SAV<bool>::futures) { (void)(false); this->~CheckExclusionActorState(); static_cast<CheckExclusionActor*>(this)->destroy(); return 0; }
+		StatusObjectReader statusObjCluster;
+															#line 984 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		if (!statusObj.get("cluster", statusObjCluster))
 															#line 4276 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+		{
+															#line 985 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			*msg = ManagementAPIError::toJsonString(false, markFailed ? "exclude failed" : "exclude", errorString);
+															#line 986 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			if (!static_cast<CheckExclusionActor*>(this)->SAV<bool>::futures) { (void)(false); this->~CheckExclusionActorState(); static_cast<CheckExclusionActor*>(this)->destroy(); return 0; }
+															#line 4282 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+			new (&static_cast<CheckExclusionActor*>(this)->SAV< bool >::value()) bool(false);
+			this->~CheckExclusionActorState();
+			static_cast<CheckExclusionActor*>(this)->finishSendAndDelPromiseRef();
+			return 0;
+		}
+															#line 989 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		StatusObjectReader processesMap;
+															#line 990 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		if (!statusObjCluster.get("processes", processesMap))
+															#line 4292 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+		{
+															#line 991 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			*msg = ManagementAPIError::toJsonString(false, markFailed ? "exclude failed" : "exclude", errorString);
+															#line 992 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			if (!static_cast<CheckExclusionActor*>(this)->SAV<bool>::futures) { (void)(false); this->~CheckExclusionActorState(); static_cast<CheckExclusionActor*>(this)->destroy(); return 0; }
+															#line 4298 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+			new (&static_cast<CheckExclusionActor*>(this)->SAV< bool >::value()) bool(false);
+			this->~CheckExclusionActorState();
+			static_cast<CheckExclusionActor*>(this)->finishSendAndDelPromiseRef();
+			return 0;
+		}
+															#line 995 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		ssTotalCount = 0;
+															#line 996 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		ssExcludedCount = 0;
+															#line 998 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		diskLocalities = std::unordered_set<std::string>();
+															#line 999 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		totalKvStoreFreeBytes = 0;
+															#line 1000 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		totalKvStoreFreeBytesNotExcluded = 0;
+															#line 1001 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		totalKvStoreUsedBytes = 0;
+															#line 1002 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		totalKvStoreUsedBytesNotExcluded = 0;
+															#line 1003 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		totalKvStoreAvailableBytes = 0;
+															#line 1005 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		excludedAddressesContainsStorageRole = false;
+															#line 4322 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+		try {
+															#line 1008 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			for( auto proc : processesMap.obj() ) {
+															#line 1009 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+				StatusObjectReader process(proc.second);
+															#line 1010 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+				std::string addrStr;
+															#line 1011 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+				if (!process.get("address", addrStr))
+															#line 4332 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+				{
+															#line 1012 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+					*msg = ManagementAPIError::toJsonString(false, markFailed ? "exclude failed" : "exclude", errorString);
+															#line 1013 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+					if (!static_cast<CheckExclusionActor*>(this)->SAV<bool>::futures) { (void)(false); this->~CheckExclusionActorState(); static_cast<CheckExclusionActor*>(this)->destroy(); return 0; }
+															#line 4338 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 					new (&static_cast<CheckExclusionActor*>(this)->SAV< bool >::value()) bool(false);
 					this->~CheckExclusionActorState();
 					static_cast<CheckExclusionActor*>(this)->finishSendAndDelPromiseRef();
 					return 0;
 				}
-															#line 993 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-				NetworkAddress addr = NetworkAddress::parse(addrStr);
-															#line 994 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-				bool includedInExclusion = addressExcluded(*exclusions, addr);
-															#line 995 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-				bool excluded = (process.has("excluded") && process.last().get_bool()) || includedInExclusion;
-															#line 997 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-				StatusObjectReader localityObj;
-															#line 998 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-				std::string disk_id;
-															#line 999 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-				if (process.get("locality", localityObj))
-															#line 4294 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-				{
-															#line 1000 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-					process.get("disk_id", disk_id);
-															#line 4298 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-				}
-															#line 1003 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-				StatusArray rolesArray = proc.second.get_obj()["roles"].get_array();
-															#line 1004 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-				for( StatusObjectReader role : rolesArray ) {
-															#line 1005 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-					if (role["role"].get_str() == "storage")
-															#line 4306 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-					{
-															#line 1006 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-						ssTotalCount++;
-															#line 1010 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-						if (!excludedAddressesContainsStorageRole && includedInExclusion)
-															#line 4312 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-						{
-															#line 1011 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-							excludedAddressesContainsStorageRole = true;
-															#line 4316 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-						}
-															#line 1014 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-						int64_t used_bytes;
 															#line 1015 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-						if (!role.get("kvstore_used_bytes", used_bytes))
-															#line 4322 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-						{
+				NetworkAddress addr = NetworkAddress::parse(addrStr);
 															#line 1016 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-							*msg = ManagementAPIError::toJsonString( false, markFailed ? "exclude failed" : "exclude", errorString);
-															#line 1018 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-							if (!static_cast<CheckExclusionActor*>(this)->SAV<bool>::futures) { (void)(false); this->~CheckExclusionActorState(); static_cast<CheckExclusionActor*>(this)->destroy(); return 0; }
-															#line 4328 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-							new (&static_cast<CheckExclusionActor*>(this)->SAV< bool >::value()) bool(false);
-							this->~CheckExclusionActorState();
-							static_cast<CheckExclusionActor*>(this)->finishSendAndDelPromiseRef();
-							return 0;
-						}
+				bool includedInExclusion = addressExcluded(*exclusions, addr);
+															#line 1017 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+				bool excluded = (process.has("excluded") && process.last().get_bool()) || includedInExclusion;
+															#line 1019 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+				StatusObjectReader localityObj;
+															#line 1020 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+				std::string disk_id;
 															#line 1021 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-						int64_t free_bytes;
+				if (process.get("locality", localityObj))
+															#line 4356 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+				{
 															#line 1022 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-						if (!role.get("kvstore_free_bytes", free_bytes))
-															#line 4338 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-						{
-															#line 1023 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-							*msg = ManagementAPIError::toJsonString( false, markFailed ? "exclude failed" : "exclude", errorString);
+					process.get("disk_id", disk_id);
+															#line 4360 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+				}
 															#line 1025 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+				StatusArray rolesArray = proc.second.get_obj()["roles"].get_array();
+															#line 1026 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+				for( StatusObjectReader role : rolesArray ) {
+															#line 1027 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+					if (role["role"].get_str() == "storage")
+															#line 4368 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+					{
+															#line 1028 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+						ssTotalCount++;
+															#line 1029 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+						if (excluded)
+															#line 4374 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+						{
+															#line 1030 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+							ssExcludedCount++;
+															#line 4378 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+						}
+															#line 1035 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+						if (!excludedAddressesContainsStorageRole && includedInExclusion)
+															#line 4382 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+						{
+															#line 1036 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+							excludedAddressesContainsStorageRole = true;
+															#line 4386 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+						}
+															#line 1039 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+						int64_t used_bytes;
+															#line 1040 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+						if (!role.get("kvstore_used_bytes", used_bytes))
+															#line 4392 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+						{
+															#line 1041 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+							*msg = ManagementAPIError::toJsonString( false, markFailed ? "exclude failed" : "exclude", errorString);
+															#line 1043 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 							if (!static_cast<CheckExclusionActor*>(this)->SAV<bool>::futures) { (void)(false); this->~CheckExclusionActorState(); static_cast<CheckExclusionActor*>(this)->destroy(); return 0; }
-															#line 4344 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 4398 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 							new (&static_cast<CheckExclusionActor*>(this)->SAV< bool >::value()) bool(false);
 							this->~CheckExclusionActorState();
 							static_cast<CheckExclusionActor*>(this)->finishSendAndDelPromiseRef();
 							return 0;
 						}
-															#line 1028 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-						totalKvStoreUsedBytes += used_bytes;
-															#line 1030 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-						if (!excluded)
-															#line 4354 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1046 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+						int64_t free_bytes;
+															#line 1047 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+						if (!role.get("kvstore_free_bytes", free_bytes))
+															#line 4408 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 						{
-															#line 1031 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-							totalKvStoreUsedBytesNonExcluded += used_bytes;
-															#line 1033 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1048 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+							*msg = ManagementAPIError::toJsonString( false, markFailed ? "exclude failed" : "exclude", errorString);
+															#line 1050 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+							if (!static_cast<CheckExclusionActor*>(this)->SAV<bool>::futures) { (void)(false); this->~CheckExclusionActorState(); static_cast<CheckExclusionActor*>(this)->destroy(); return 0; }
+															#line 4414 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+							new (&static_cast<CheckExclusionActor*>(this)->SAV< bool >::value()) bool(false);
+							this->~CheckExclusionActorState();
+							static_cast<CheckExclusionActor*>(this)->finishSendAndDelPromiseRef();
+							return 0;
+						}
+															#line 1053 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+						int64_t available_bytes;
+															#line 1054 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+						if (!role.get("kvstore_available_bytes", available_bytes))
+															#line 4424 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+						{
+															#line 1055 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+							*msg = ManagementAPIError::toJsonString( false, markFailed ? "exclude failed" : "exclude", errorString);
+															#line 1057 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+							if (!static_cast<CheckExclusionActor*>(this)->SAV<bool>::futures) { (void)(false); this->~CheckExclusionActorState(); static_cast<CheckExclusionActor*>(this)->destroy(); return 0; }
+															#line 4430 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+							new (&static_cast<CheckExclusionActor*>(this)->SAV< bool >::value()) bool(false);
+							this->~CheckExclusionActorState();
+							static_cast<CheckExclusionActor*>(this)->finishSendAndDelPromiseRef();
+							return 0;
+						}
+															#line 1060 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+						totalKvStoreUsedBytes += used_bytes;
+															#line 1061 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+						totalKvStoreFreeBytes += free_bytes;
+															#line 1062 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+						totalKvStoreAvailableBytes += available_bytes;
+															#line 1064 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+						if (!excluded)
+															#line 4444 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+						{
+															#line 1065 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+							totalKvStoreUsedBytesNotExcluded += used_bytes;
+															#line 1067 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 							if (disk_id.empty() || diskLocalities.find(disk_id) == diskLocalities.end())
-															#line 4360 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 4450 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 							{
-															#line 1034 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-								totalKvStoreFreeBytes += free_bytes;
-															#line 1035 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1068 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+								totalKvStoreFreeBytesNotExcluded += free_bytes;
+															#line 1069 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 								if (!disk_id.empty())
-															#line 4366 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 4456 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 								{
-															#line 1036 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1070 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 									diskLocalities.insert(disk_id);
-															#line 4370 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 4460 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 								}
 							}
 						}
 					}
-															#line 1042 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-					if (excluded)
-															#line 4377 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-					{
-															#line 1043 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-						ssExcludedCount++;
-															#line 4381 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-					}
 				}
 			}
-			loopDepth = a_body1cont25(loopDepth);
+			loopDepth = a_body1cont26(loopDepth);
 		}
 		catch (Error& error) {
 			loopDepth = a_body1cont8Catch1(error, loopDepth);
@@ -4394,182 +4476,206 @@ public:
 	}
 	int a_body1cont8(StatusObject && status,int loopDepth) 
 	{
-															#line 955 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		errorString = "ERROR: Could not calculate the impact of this exclude on the total free space in the cluster.\n" "Please try the exclude again in 30 seconds.\n" "Call set(\"0xff0xff/management/options/exclude/force\", ...) first to exclude without checking free " "space.\n";
-															#line 961 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		StatusObjectReader statusObj(status);
-															#line 963 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		StatusObjectReader statusObjCluster;
-															#line 964 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		if (!statusObj.get("cluster", statusObjCluster))
-															#line 4405 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-		{
-															#line 965 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			*msg = ManagementAPIError::toJsonString(false, markFailed ? "exclude failed" : "exclude", errorString);
-															#line 966 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			if (!static_cast<CheckExclusionActor*>(this)->SAV<bool>::futures) { (void)(false); this->~CheckExclusionActorState(); static_cast<CheckExclusionActor*>(this)->destroy(); return 0; }
-															#line 4411 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-			new (&static_cast<CheckExclusionActor*>(this)->SAV< bool >::value()) bool(false);
-			this->~CheckExclusionActorState();
-			static_cast<CheckExclusionActor*>(this)->finishSendAndDelPromiseRef();
-			return 0;
-		}
-															#line 969 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		StatusObjectReader processesMap;
-															#line 970 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		if (!statusObjCluster.get("processes", processesMap))
-															#line 4421 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-		{
-															#line 971 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			*msg = ManagementAPIError::toJsonString(false, markFailed ? "exclude failed" : "exclude", errorString);
-															#line 972 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			if (!static_cast<CheckExclusionActor*>(this)->SAV<bool>::futures) { (void)(false); this->~CheckExclusionActorState(); static_cast<CheckExclusionActor*>(this)->destroy(); return 0; }
-															#line 4427 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-			new (&static_cast<CheckExclusionActor*>(this)->SAV< bool >::value()) bool(false);
-			this->~CheckExclusionActorState();
-			static_cast<CheckExclusionActor*>(this)->finishSendAndDelPromiseRef();
-			return 0;
-		}
 															#line 975 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		ssTotalCount = 0;
-															#line 976 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		ssExcludedCount = 0;
-															#line 978 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		diskLocalities = std::unordered_set<std::string>();
-															#line 979 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		totalKvStoreFreeBytes = 0;
-															#line 980 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		totalKvStoreUsedBytes = 0;
+		errorString = "ERROR: Could not calculate the impact of this exclude on the total available space in the cluster.\n" "Please try the exclude again in 30 seconds.\n" "Call set(\"0xff0xff/management/options/exclude/force\", ...) first to exclude without checking available " "space.\n";
 															#line 981 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		totalKvStoreUsedBytesNonExcluded = 0;
+		StatusObjectReader statusObj(status);
 															#line 983 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		excludedAddressesContainsStorageRole = false;
-															#line 4447 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-		try {
+		StatusObjectReader statusObjCluster;
+															#line 984 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		if (!statusObj.get("cluster", statusObjCluster))
+															#line 4487 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+		{
+															#line 985 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			*msg = ManagementAPIError::toJsonString(false, markFailed ? "exclude failed" : "exclude", errorString);
 															#line 986 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			for( auto proc : processesMap.obj() ) {
-															#line 987 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-				StatusObjectReader process(proc.second);
-															#line 988 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-				std::string addrStr;
+			if (!static_cast<CheckExclusionActor*>(this)->SAV<bool>::futures) { (void)(false); this->~CheckExclusionActorState(); static_cast<CheckExclusionActor*>(this)->destroy(); return 0; }
+															#line 4493 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+			new (&static_cast<CheckExclusionActor*>(this)->SAV< bool >::value()) bool(false);
+			this->~CheckExclusionActorState();
+			static_cast<CheckExclusionActor*>(this)->finishSendAndDelPromiseRef();
+			return 0;
+		}
 															#line 989 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-				if (!process.get("address", addrStr))
-															#line 4457 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-				{
+		StatusObjectReader processesMap;
 															#line 990 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-					*msg = ManagementAPIError::toJsonString(false, markFailed ? "exclude failed" : "exclude", errorString);
+		if (!statusObjCluster.get("processes", processesMap))
+															#line 4503 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+		{
 															#line 991 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			*msg = ManagementAPIError::toJsonString(false, markFailed ? "exclude failed" : "exclude", errorString);
+															#line 992 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			if (!static_cast<CheckExclusionActor*>(this)->SAV<bool>::futures) { (void)(false); this->~CheckExclusionActorState(); static_cast<CheckExclusionActor*>(this)->destroy(); return 0; }
+															#line 4509 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+			new (&static_cast<CheckExclusionActor*>(this)->SAV< bool >::value()) bool(false);
+			this->~CheckExclusionActorState();
+			static_cast<CheckExclusionActor*>(this)->finishSendAndDelPromiseRef();
+			return 0;
+		}
+															#line 995 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		ssTotalCount = 0;
+															#line 996 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		ssExcludedCount = 0;
+															#line 998 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		diskLocalities = std::unordered_set<std::string>();
+															#line 999 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		totalKvStoreFreeBytes = 0;
+															#line 1000 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		totalKvStoreFreeBytesNotExcluded = 0;
+															#line 1001 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		totalKvStoreUsedBytes = 0;
+															#line 1002 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		totalKvStoreUsedBytesNotExcluded = 0;
+															#line 1003 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		totalKvStoreAvailableBytes = 0;
+															#line 1005 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		excludedAddressesContainsStorageRole = false;
+															#line 4533 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+		try {
+															#line 1008 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			for( auto proc : processesMap.obj() ) {
+															#line 1009 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+				StatusObjectReader process(proc.second);
+															#line 1010 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+				std::string addrStr;
+															#line 1011 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+				if (!process.get("address", addrStr))
+															#line 4543 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+				{
+															#line 1012 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+					*msg = ManagementAPIError::toJsonString(false, markFailed ? "exclude failed" : "exclude", errorString);
+															#line 1013 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					if (!static_cast<CheckExclusionActor*>(this)->SAV<bool>::futures) { (void)(false); this->~CheckExclusionActorState(); static_cast<CheckExclusionActor*>(this)->destroy(); return 0; }
-															#line 4463 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 4549 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 					new (&static_cast<CheckExclusionActor*>(this)->SAV< bool >::value()) bool(false);
 					this->~CheckExclusionActorState();
 					static_cast<CheckExclusionActor*>(this)->finishSendAndDelPromiseRef();
 					return 0;
 				}
-															#line 993 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-				NetworkAddress addr = NetworkAddress::parse(addrStr);
-															#line 994 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-				bool includedInExclusion = addressExcluded(*exclusions, addr);
-															#line 995 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-				bool excluded = (process.has("excluded") && process.last().get_bool()) || includedInExclusion;
-															#line 997 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-				StatusObjectReader localityObj;
-															#line 998 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-				std::string disk_id;
-															#line 999 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-				if (process.get("locality", localityObj))
-															#line 4481 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-				{
-															#line 1000 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-					process.get("disk_id", disk_id);
-															#line 4485 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-				}
-															#line 1003 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-				StatusArray rolesArray = proc.second.get_obj()["roles"].get_array();
-															#line 1004 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-				for( StatusObjectReader role : rolesArray ) {
-															#line 1005 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-					if (role["role"].get_str() == "storage")
-															#line 4493 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-					{
-															#line 1006 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-						ssTotalCount++;
-															#line 1010 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-						if (!excludedAddressesContainsStorageRole && includedInExclusion)
-															#line 4499 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-						{
-															#line 1011 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-							excludedAddressesContainsStorageRole = true;
-															#line 4503 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-						}
-															#line 1014 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-						int64_t used_bytes;
 															#line 1015 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-						if (!role.get("kvstore_used_bytes", used_bytes))
-															#line 4509 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-						{
+				NetworkAddress addr = NetworkAddress::parse(addrStr);
 															#line 1016 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-							*msg = ManagementAPIError::toJsonString( false, markFailed ? "exclude failed" : "exclude", errorString);
-															#line 1018 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-							if (!static_cast<CheckExclusionActor*>(this)->SAV<bool>::futures) { (void)(false); this->~CheckExclusionActorState(); static_cast<CheckExclusionActor*>(this)->destroy(); return 0; }
-															#line 4515 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-							new (&static_cast<CheckExclusionActor*>(this)->SAV< bool >::value()) bool(false);
-							this->~CheckExclusionActorState();
-							static_cast<CheckExclusionActor*>(this)->finishSendAndDelPromiseRef();
-							return 0;
-						}
+				bool includedInExclusion = addressExcluded(*exclusions, addr);
+															#line 1017 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+				bool excluded = (process.has("excluded") && process.last().get_bool()) || includedInExclusion;
+															#line 1019 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+				StatusObjectReader localityObj;
+															#line 1020 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+				std::string disk_id;
 															#line 1021 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-						int64_t free_bytes;
+				if (process.get("locality", localityObj))
+															#line 4567 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+				{
 															#line 1022 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-						if (!role.get("kvstore_free_bytes", free_bytes))
-															#line 4525 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-						{
-															#line 1023 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-							*msg = ManagementAPIError::toJsonString( false, markFailed ? "exclude failed" : "exclude", errorString);
+					process.get("disk_id", disk_id);
+															#line 4571 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+				}
 															#line 1025 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+				StatusArray rolesArray = proc.second.get_obj()["roles"].get_array();
+															#line 1026 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+				for( StatusObjectReader role : rolesArray ) {
+															#line 1027 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+					if (role["role"].get_str() == "storage")
+															#line 4579 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+					{
+															#line 1028 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+						ssTotalCount++;
+															#line 1029 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+						if (excluded)
+															#line 4585 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+						{
+															#line 1030 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+							ssExcludedCount++;
+															#line 4589 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+						}
+															#line 1035 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+						if (!excludedAddressesContainsStorageRole && includedInExclusion)
+															#line 4593 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+						{
+															#line 1036 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+							excludedAddressesContainsStorageRole = true;
+															#line 4597 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+						}
+															#line 1039 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+						int64_t used_bytes;
+															#line 1040 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+						if (!role.get("kvstore_used_bytes", used_bytes))
+															#line 4603 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+						{
+															#line 1041 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+							*msg = ManagementAPIError::toJsonString( false, markFailed ? "exclude failed" : "exclude", errorString);
+															#line 1043 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 							if (!static_cast<CheckExclusionActor*>(this)->SAV<bool>::futures) { (void)(false); this->~CheckExclusionActorState(); static_cast<CheckExclusionActor*>(this)->destroy(); return 0; }
-															#line 4531 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 4609 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 							new (&static_cast<CheckExclusionActor*>(this)->SAV< bool >::value()) bool(false);
 							this->~CheckExclusionActorState();
 							static_cast<CheckExclusionActor*>(this)->finishSendAndDelPromiseRef();
 							return 0;
 						}
-															#line 1028 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-						totalKvStoreUsedBytes += used_bytes;
-															#line 1030 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-						if (!excluded)
-															#line 4541 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1046 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+						int64_t free_bytes;
+															#line 1047 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+						if (!role.get("kvstore_free_bytes", free_bytes))
+															#line 4619 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 						{
-															#line 1031 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-							totalKvStoreUsedBytesNonExcluded += used_bytes;
-															#line 1033 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1048 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+							*msg = ManagementAPIError::toJsonString( false, markFailed ? "exclude failed" : "exclude", errorString);
+															#line 1050 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+							if (!static_cast<CheckExclusionActor*>(this)->SAV<bool>::futures) { (void)(false); this->~CheckExclusionActorState(); static_cast<CheckExclusionActor*>(this)->destroy(); return 0; }
+															#line 4625 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+							new (&static_cast<CheckExclusionActor*>(this)->SAV< bool >::value()) bool(false);
+							this->~CheckExclusionActorState();
+							static_cast<CheckExclusionActor*>(this)->finishSendAndDelPromiseRef();
+							return 0;
+						}
+															#line 1053 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+						int64_t available_bytes;
+															#line 1054 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+						if (!role.get("kvstore_available_bytes", available_bytes))
+															#line 4635 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+						{
+															#line 1055 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+							*msg = ManagementAPIError::toJsonString( false, markFailed ? "exclude failed" : "exclude", errorString);
+															#line 1057 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+							if (!static_cast<CheckExclusionActor*>(this)->SAV<bool>::futures) { (void)(false); this->~CheckExclusionActorState(); static_cast<CheckExclusionActor*>(this)->destroy(); return 0; }
+															#line 4641 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+							new (&static_cast<CheckExclusionActor*>(this)->SAV< bool >::value()) bool(false);
+							this->~CheckExclusionActorState();
+							static_cast<CheckExclusionActor*>(this)->finishSendAndDelPromiseRef();
+							return 0;
+						}
+															#line 1060 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+						totalKvStoreUsedBytes += used_bytes;
+															#line 1061 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+						totalKvStoreFreeBytes += free_bytes;
+															#line 1062 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+						totalKvStoreAvailableBytes += available_bytes;
+															#line 1064 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+						if (!excluded)
+															#line 4655 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+						{
+															#line 1065 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+							totalKvStoreUsedBytesNotExcluded += used_bytes;
+															#line 1067 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 							if (disk_id.empty() || diskLocalities.find(disk_id) == diskLocalities.end())
-															#line 4547 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 4661 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 							{
-															#line 1034 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-								totalKvStoreFreeBytes += free_bytes;
-															#line 1035 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1068 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+								totalKvStoreFreeBytesNotExcluded += free_bytes;
+															#line 1069 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 								if (!disk_id.empty())
-															#line 4553 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 4667 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 								{
-															#line 1036 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1070 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 									diskLocalities.insert(disk_id);
-															#line 4557 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 4671 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 								}
 							}
 						}
 					}
-															#line 1042 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-					if (excluded)
-															#line 4564 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-					{
-															#line 1043 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-						ssExcludedCount++;
-															#line 4568 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-					}
 				}
 			}
-			loopDepth = a_body1cont25(loopDepth);
+			loopDepth = a_body1cont26(loopDepth);
 		}
 		catch (Error& error) {
 			loopDepth = a_body1cont8Catch1(error, loopDepth);
@@ -4644,39 +4750,41 @@ public:
 	}
 	int a_body1cont9(int loopDepth) 
 	{
-															#line 1055 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1085 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!excludedAddressesContainsStorageRole)
-															#line 4649 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 4755 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 1056 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1086 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (!static_cast<CheckExclusionActor*>(this)->SAV<bool>::futures) { (void)(true); this->~CheckExclusionActorState(); static_cast<CheckExclusionActor*>(this)->destroy(); return 0; }
-															#line 4653 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 4759 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			new (&static_cast<CheckExclusionActor*>(this)->SAV< bool >::value()) bool(true);
 			this->~CheckExclusionActorState();
 			static_cast<CheckExclusionActor*>(this)->finishSendAndDelPromiseRef();
 			return 0;
 		}
-															#line 1059 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		double finalFreeRatio = 1 - (totalKvStoreUsedBytes / (totalKvStoreUsedBytesNonExcluded + totalKvStoreFreeBytes));
-															#line 1060 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		if (ssExcludedCount == ssTotalCount || finalFreeRatio <= 0.1)
-															#line 4663 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1092 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		double finalUnavailableRatio = (double)(totalKvStoreUsedBytes + totalKvStoreFreeBytes - totalKvStoreAvailableBytes) / std::max((double)(totalKvStoreUsedBytesNotExcluded + totalKvStoreFreeBytesNotExcluded), (double)1);
+															#line 1096 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		TraceEvent(SevInfo, "CheckExclusionDetails") .detail("SsTotalCount", ssTotalCount) .detail("SsExcludedCount", ssExcludedCount) .detail("FinalUnavailableRatio", finalUnavailableRatio) .detail("TotalKvStoreUsedBytes", totalKvStoreUsedBytes) .detail("TotalKvStoreFreeBytes", totalKvStoreFreeBytes) .detail("TotalKvStoreAvailableBytes", totalKvStoreAvailableBytes) .detail("TotalKvStoreUsedBytesNotExcluded", totalKvStoreUsedBytesNotExcluded) .detail("TotalKvStoreFreeBytesNotExcluded", totalKvStoreFreeBytesNotExcluded);
+															#line 1106 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		if (ssExcludedCount == ssTotalCount || finalUnavailableRatio > 0.9)
+															#line 4771 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 1061 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			std::string temp = "ERROR: This exclude may cause the total free space in the cluster to drop below 10%.\n" "Call set(\"0xff0xff/management/options/exclude/force\", ...) first to exclude without " "checking free space.\n";
-															#line 1064 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1107 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			std::string temp = "ERROR: This exclude may cause the total available space in the cluster to drop below 10%.\n" "Call set(\"0xff0xff/management/options/exclude/force\", ...) first to exclude without " "checking available space.\n";
+															#line 1110 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			*msg = ManagementAPIError::toJsonString(false, markFailed ? "exclude failed" : "exclude", temp);
-															#line 1065 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1111 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (!static_cast<CheckExclusionActor*>(this)->SAV<bool>::futures) { (void)(false); this->~CheckExclusionActorState(); static_cast<CheckExclusionActor*>(this)->destroy(); return 0; }
-															#line 4671 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 4779 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			new (&static_cast<CheckExclusionActor*>(this)->SAV< bool >::value()) bool(false);
 			this->~CheckExclusionActorState();
 			static_cast<CheckExclusionActor*>(this)->finishSendAndDelPromiseRef();
 			return 0;
 		}
-															#line 1068 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1114 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<CheckExclusionActor*>(this)->SAV<bool>::futures) { (void)(true); this->~CheckExclusionActorState(); static_cast<CheckExclusionActor*>(this)->destroy(); return 0; }
-															#line 4679 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 4787 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<CheckExclusionActor*>(this)->SAV< bool >::value()) bool(true);
 		this->~CheckExclusionActorState();
 		static_cast<CheckExclusionActor*>(this)->finishSendAndDelPromiseRef();
@@ -4687,11 +4795,11 @@ public:
 	int a_body1cont8Catch1(const Error& __current_error,int loopDepth=0) 
 	{
 		try {
-															#line 1049 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1079 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			*msg = ManagementAPIError::toJsonString(false, markFailed ? "exclude failed" : "exclude", errorString);
-															#line 1050 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1080 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (!static_cast<CheckExclusionActor*>(this)->SAV<bool>::futures) { (void)(false); this->~CheckExclusionActorState(); static_cast<CheckExclusionActor*>(this)->destroy(); return 0; }
-															#line 4694 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 4802 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			new (&static_cast<CheckExclusionActor*>(this)->SAV< bool >::value()) bool(false);
 			this->~CheckExclusionActorState();
 			static_cast<CheckExclusionActor*>(this)->finishSendAndDelPromiseRef();
@@ -4705,7 +4813,7 @@ public:
 
 		return loopDepth;
 	}
-	int a_body1cont25(int loopDepth) 
+	int a_body1cont26(int loopDepth) 
 	{
 		try {
 			loopDepth = a_body1cont9(loopDepth);
@@ -4718,40 +4826,44 @@ public:
 
 		return loopDepth;
 	}
-															#line 926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 946 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	Database db;
-															#line 926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 946 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	std::vector<AddressExclusion>* addresses;
-															#line 926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 946 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	std::set<AddressExclusion>* exclusions;
-															#line 926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 946 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	bool markFailed;
-															#line 926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 946 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	Optional<std::string>* msg;
-															#line 933 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 953 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	bool safe;
-															#line 955 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-	std::string errorString;
 															#line 975 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+	std::string errorString;
+															#line 995 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	int ssTotalCount;
-															#line 976 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 996 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	int ssExcludedCount;
-															#line 978 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 998 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	std::unordered_set<std::string> diskLocalities;
-															#line 979 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 999 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	int64_t totalKvStoreFreeBytes;
-															#line 980 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1000 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+	int64_t totalKvStoreFreeBytesNotExcluded;
+															#line 1001 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	int64_t totalKvStoreUsedBytes;
-															#line 981 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-	int64_t totalKvStoreUsedBytesNonExcluded;
-															#line 983 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1002 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+	int64_t totalKvStoreUsedBytesNotExcluded;
+															#line 1003 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+	int64_t totalKvStoreAvailableBytes;
+															#line 1005 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	bool excludedAddressesContainsStorageRole;
-															#line 4749 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 4861 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 };
 // This generated class is to be used only via checkExclusion()
-															#line 926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 946 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class CheckExclusionActor final : public Actor<bool>, public ActorCallback< CheckExclusionActor, 0, bool >, public ActorCallback< CheckExclusionActor, 1, StatusObject >, public FastAllocated<CheckExclusionActor>, public CheckExclusionActorState<CheckExclusionActor> {
-															#line 4754 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 4866 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
 	using FastAllocated<CheckExclusionActor>::operator new;
 	using FastAllocated<CheckExclusionActor>::operator delete;
@@ -4761,9 +4873,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< CheckExclusionActor, 0, bool >;
 friend struct ActorCallback< CheckExclusionActor, 1, StatusObject >;
-															#line 926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 946 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	CheckExclusionActor(Database const& db,std::vector<AddressExclusion>* const& addresses,std::set<AddressExclusion>* const& exclusions,bool const& markFailed,Optional<std::string>* const& msg) 
-															#line 4766 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 4878 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		 : Actor<bool>(),
 		   CheckExclusionActorState<CheckExclusionActor>(db, addresses, exclusions, markFailed, msg)
 	{
@@ -4788,14 +4900,14 @@ friend struct ActorCallback< CheckExclusionActor, 1, StatusObject >;
 	}
 };
 }
-															#line 926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 946 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 [[nodiscard]] Future<bool> checkExclusion( Database const& db, std::vector<AddressExclusion>* const& addresses, std::set<AddressExclusion>* const& exclusions, bool const& markFailed, Optional<std::string>* const& msg ) {
-															#line 926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 946 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	return Future<bool>(new CheckExclusionActor(db, addresses, exclusions, markFailed, msg));
-															#line 4795 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 4907 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 }
 
-#line 1070 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+#line 1116 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 
 void includeServers(ReadYourWritesTransaction* ryw) {
 	ryw->setOption(FDBTransactionOptions::PRIORITY_SYSTEM_IMMEDIATE);
@@ -4834,29 +4946,29 @@ void includeServers(ReadYourWritesTransaction* ryw) {
 	}
 }
 
-															#line 4837 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 4949 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 namespace {
 // This generated class is to be used only via excludeCommitActor()
-															#line 1108 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1154 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 template <class ExcludeCommitActorActor>
-															#line 1108 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1154 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class ExcludeCommitActorActorState {
-															#line 4844 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 4956 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
-															#line 1108 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1154 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	ExcludeCommitActorActorState(ReadYourWritesTransaction* const& ryw,bool const& failed) 
-															#line 1108 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-															#line 1108 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1154 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1154 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		 : ryw(ryw),
-															#line 1108 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1154 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   failed(failed),
-															#line 1110 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1156 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   result(),
-															#line 1111 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1157 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   addresses(),
-															#line 1112 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1158 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   exclusions()
-															#line 4859 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 4971 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 	{
 		fdb_probe_actor_create("excludeCommitActor", reinterpret_cast<unsigned long>(this));
 
@@ -4869,34 +4981,34 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 1113 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1159 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (!parseNetWorkAddrFromKeys(ryw, failed, addresses, exclusions, result))
-															#line 4874 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 4986 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
-															#line 1114 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1160 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				if (!static_cast<ExcludeCommitActorActor*>(this)->SAV<Optional<std::string>>::futures) { (void)(result); this->~ExcludeCommitActorActorState(); static_cast<ExcludeCommitActorActor*>(this)->destroy(); return 0; }
-															#line 4878 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 4990 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				new (&static_cast<ExcludeCommitActorActor*>(this)->SAV< Optional<std::string> >::value()) Optional<std::string>(std::move(result)); // state_var_RVO
 				this->~ExcludeCommitActorActorState();
 				static_cast<ExcludeCommitActorActor*>(this)->finishSendAndDelPromiseRef();
 				return 0;
 			}
-															#line 1116 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1162 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			auto force = ryw->getSpecialKeySpaceWriteMap()[SpecialKeySpace::getManagementApiCommandOptionSpecialKey( failed ? "failed" : "excluded", "force")];
-															#line 1119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1165 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (addresses.size() && !(force.first && force.second.present()))
-															#line 4888 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5000 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
-															#line 1120 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1166 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				StrictFuture<bool> __when_expr_0 = checkExclusion(ryw->getDatabase(), &addresses, &exclusions, failed, &result);
-															#line 1120 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1166 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				if (static_cast<ExcludeCommitActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 4894 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5006 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 				static_cast<ExcludeCommitActorActor*>(this)->actor_wait_state = 1;
-															#line 1120 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1166 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ExcludeCommitActorActor, 0, bool >*>(static_cast<ExcludeCommitActorActor*>(this)));
-															#line 4899 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5011 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				loopDepth = 0;
 			}
 			else
@@ -4922,29 +5034,29 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 1124 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1170 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = excludeServers(&(ryw->getTransaction()), addresses, failed);
-															#line 1124 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1170 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (static_cast<ExcludeCommitActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 4929 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5041 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<ExcludeCommitActorActor*>(this)->actor_wait_state = 2;
-															#line 1124 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1170 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< ExcludeCommitActorActor, 1, Void >*>(static_cast<ExcludeCommitActorActor*>(this)));
-															#line 4934 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5046 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont3(bool const& safe,int loopDepth) 
 	{
-															#line 1121 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1167 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!safe)
-															#line 4943 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5055 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 1122 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1168 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (!static_cast<ExcludeCommitActorActor*>(this)->SAV<Optional<std::string>>::futures) { (void)(result); this->~ExcludeCommitActorActorState(); static_cast<ExcludeCommitActorActor*>(this)->destroy(); return 0; }
-															#line 4947 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5059 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			new (&static_cast<ExcludeCommitActorActor*>(this)->SAV< Optional<std::string> >::value()) Optional<std::string>(std::move(result)); // state_var_RVO
 			this->~ExcludeCommitActorActorState();
 			static_cast<ExcludeCommitActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -4956,13 +5068,13 @@ public:
 	}
 	int a_body1cont3(bool && safe,int loopDepth) 
 	{
-															#line 1121 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1167 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!safe)
-															#line 4961 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5073 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 1122 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1168 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (!static_cast<ExcludeCommitActorActor*>(this)->SAV<Optional<std::string>>::futures) { (void)(result); this->~ExcludeCommitActorActorState(); static_cast<ExcludeCommitActorActor*>(this)->destroy(); return 0; }
-															#line 4965 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5077 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			new (&static_cast<ExcludeCommitActorActor*>(this)->SAV< Optional<std::string> >::value()) Optional<std::string>(std::move(result)); // state_var_RVO
 			this->~ExcludeCommitActorActorState();
 			static_cast<ExcludeCommitActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -5037,11 +5149,11 @@ public:
 	}
 	int a_body1cont6(Void const& _,int loopDepth) 
 	{
-															#line 1125 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1171 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		includeServers(ryw);
-															#line 1127 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1173 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<ExcludeCommitActorActor*>(this)->SAV<Optional<std::string>>::futures) { (void)(result); this->~ExcludeCommitActorActorState(); static_cast<ExcludeCommitActorActor*>(this)->destroy(); return 0; }
-															#line 5044 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5156 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<ExcludeCommitActorActor*>(this)->SAV< Optional<std::string> >::value()) Optional<std::string>(std::move(result)); // state_var_RVO
 		this->~ExcludeCommitActorActorState();
 		static_cast<ExcludeCommitActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -5051,11 +5163,11 @@ public:
 	}
 	int a_body1cont6(Void && _,int loopDepth) 
 	{
-															#line 1125 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1171 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		includeServers(ryw);
-															#line 1127 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1173 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<ExcludeCommitActorActor*>(this)->SAV<Optional<std::string>>::futures) { (void)(result); this->~ExcludeCommitActorActorState(); static_cast<ExcludeCommitActorActor*>(this)->destroy(); return 0; }
-															#line 5058 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5170 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<ExcludeCommitActorActor*>(this)->SAV< Optional<std::string> >::value()) Optional<std::string>(std::move(result)); // state_var_RVO
 		this->~ExcludeCommitActorActorState();
 		static_cast<ExcludeCommitActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -5126,22 +5238,22 @@ public:
 		fdb_probe_actor_exit("excludeCommitActor", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 1108 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1154 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	ReadYourWritesTransaction* ryw;
-															#line 1108 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1154 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	bool failed;
-															#line 1110 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1156 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	Optional<std::string> result;
-															#line 1111 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1157 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	std::vector<AddressExclusion> addresses;
-															#line 1112 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1158 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	std::set<AddressExclusion> exclusions;
-															#line 5139 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5251 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 };
 // This generated class is to be used only via excludeCommitActor()
-															#line 1108 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1154 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class ExcludeCommitActorActor final : public Actor<Optional<std::string>>, public ActorCallback< ExcludeCommitActorActor, 0, bool >, public ActorCallback< ExcludeCommitActorActor, 1, Void >, public FastAllocated<ExcludeCommitActorActor>, public ExcludeCommitActorActorState<ExcludeCommitActorActor> {
-															#line 5144 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5256 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
 	using FastAllocated<ExcludeCommitActorActor>::operator new;
 	using FastAllocated<ExcludeCommitActorActor>::operator delete;
@@ -5151,9 +5263,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< ExcludeCommitActorActor, 0, bool >;
 friend struct ActorCallback< ExcludeCommitActorActor, 1, Void >;
-															#line 1108 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1154 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	ExcludeCommitActorActor(ReadYourWritesTransaction* const& ryw,bool const& failed) 
-															#line 5156 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5268 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		 : Actor<Optional<std::string>>(),
 		   ExcludeCommitActorActorState<ExcludeCommitActorActor>(ryw, failed)
 	{
@@ -5178,14 +5290,14 @@ friend struct ActorCallback< ExcludeCommitActorActor, 1, Void >;
 	}
 };
 }
-															#line 1108 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1154 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 [[nodiscard]] Future<Optional<std::string>> excludeCommitActor( ReadYourWritesTransaction* const& ryw, bool const& failed ) {
-															#line 1108 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1154 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	return Future<Optional<std::string>>(new ExcludeCommitActorActor(ryw, failed));
-															#line 5185 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5297 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 }
 
-#line 1129 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+#line 1175 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 
 Future<Optional<std::string>> ExcludeServersRangeImpl::commit(ReadYourWritesTransaction* ryw) {
 	return excludeCommitActor(ryw, false);
@@ -5207,11 +5319,11 @@ void FailedServersRangeImpl::set(ReadYourWritesTransaction* ryw, const KeyRef& k
 
 Key FailedServersRangeImpl::decode(const KeyRef& key) const {
 	return key.removePrefix(SpecialKeySpace::getModuleRange(SpecialKeySpace::MODULE::MANAGEMENT).begin)
-	    .withPrefix(LiteralStringRef("\xff/conf/"));
+	    .withPrefix("\xff/conf/"_sr);
 }
 
 Key FailedServersRangeImpl::encode(const KeyRef& key) const {
-	return key.removePrefix(LiteralStringRef("\xff/conf/"))
+	return key.removePrefix("\xff/conf/"_sr)
 	    .withPrefix(SpecialKeySpace::getModuleRange(SpecialKeySpace::MODULE::MANAGEMENT).begin);
 }
 
@@ -5219,29 +5331,29 @@ Future<Optional<std::string>> FailedServersRangeImpl::commit(ReadYourWritesTrans
 	return excludeCommitActor(ryw, true);
 }
 
-															#line 5222 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5334 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 namespace {
 // This generated class is to be used only via ExclusionInProgressActor()
-															#line 1162 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1208 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 template <class ExclusionInProgressActorActor>
-															#line 1162 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1208 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class ExclusionInProgressActorActorState {
-															#line 5229 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5341 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
-															#line 1162 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1208 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	ExclusionInProgressActorActorState(ReadYourWritesTransaction* const& ryw,KeyRef const& prefix,KeyRangeRef const& kr) 
-															#line 1162 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-															#line 1162 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1208 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1208 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		 : ryw(ryw),
-															#line 1162 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1208 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   prefix(prefix),
-															#line 1162 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1208 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   kr(kr),
-															#line 1163 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1209 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   result(),
-															#line 1164 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1210 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   tr(ryw->getTransaction())
-															#line 5244 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5356 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 	{
 		fdb_probe_actor_create("ExclusionInProgressActor", reinterpret_cast<unsigned long>(this));
 
@@ -5254,22 +5366,22 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 1165 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1211 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			tr.setOption(FDBTransactionOptions::RAW_ACCESS);
-															#line 1166 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1212 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			tr.setOption(FDBTransactionOptions::PRIORITY_SYSTEM_IMMEDIATE);
-															#line 1167 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1213 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			tr.setOption(FDBTransactionOptions::LOCK_AWARE);
-															#line 1169 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1215 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			StrictFuture<std::vector<AddressExclusion>> __when_expr_0 = (getAllExcludedServers(&tr));
-															#line 1169 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1215 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (static_cast<ExclusionInProgressActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 5267 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5379 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<ExclusionInProgressActorActor*>(this)->actor_wait_state = 1;
-															#line 1169 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1215 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ExclusionInProgressActorActor, 0, std::vector<AddressExclusion> >*>(static_cast<ExclusionInProgressActorActor*>(this)));
-															#line 5272 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5384 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -5290,29 +5402,29 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 1170 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1216 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		exclusions = std::set<AddressExclusion>(excl.begin(), excl.end());
-															#line 1171 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1217 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		inProgressExclusion = std::set<NetworkAddress>();
-															#line 1174 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1220 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		StrictFuture<RangeResult> __when_expr_1 = tr.getRange(serverListKeys, CLIENT_KNOBS->TOO_MANY);
-															#line 1174 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1220 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (static_cast<ExclusionInProgressActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 5301 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5413 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<ExclusionInProgressActorActor*>(this)->actor_wait_state = 2;
-															#line 1174 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1220 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< ExclusionInProgressActorActor, 1, RangeResult >*>(static_cast<ExclusionInProgressActorActor*>(this)));
-															#line 5306 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5418 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1when1(std::vector<AddressExclusion> const& __excl,int loopDepth) 
 	{
-															#line 1169 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1215 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		excl = __excl;
-															#line 5315 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5427 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		loopDepth = a_body1cont1(loopDepth);
 
 		return loopDepth;
@@ -5377,48 +5489,48 @@ public:
 	}
 	int a_body1cont2(int loopDepth) 
 	{
-															#line 1175 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1221 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		ASSERT(!serverList.more && serverList.size() < CLIENT_KNOBS->TOO_MANY);
-															#line 1177 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1223 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		for( auto& s : serverList ) {
-															#line 1178 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1224 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			auto addresses = decodeServerListValue(s.value).getKeyValues.getEndpoint().addresses;
-															#line 1179 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1225 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (addressExcluded(exclusions, addresses.address))
-															#line 5388 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5500 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
-															#line 1180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1226 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				inProgressExclusion.insert(addresses.address);
-															#line 5392 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5504 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			}
-															#line 1182 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1228 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (addresses.secondaryAddress.present() && addressExcluded(exclusions, addresses.secondaryAddress.get()))
-															#line 5396 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5508 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
-															#line 1183 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1229 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				inProgressExclusion.insert(addresses.secondaryAddress.get());
-															#line 5400 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5512 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			}
 		}
-															#line 1187 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1233 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		StrictFuture<Optional<Standalone<StringRef>>> __when_expr_2 = tr.get(logsKey);
-															#line 1187 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1233 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (static_cast<ExclusionInProgressActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 5407 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5519 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1cont2when1(__when_expr_2.get(), loopDepth); };
 		static_cast<ExclusionInProgressActorActor*>(this)->actor_wait_state = 3;
-															#line 1187 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1233 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< ExclusionInProgressActorActor, 2, Optional<Standalone<StringRef>> >*>(static_cast<ExclusionInProgressActorActor*>(this)));
-															#line 5412 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5524 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont1when1(RangeResult const& __serverList,int loopDepth) 
 	{
-															#line 1174 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1220 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		serverList = __serverList;
-															#line 5421 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5533 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		loopDepth = a_body1cont2(loopDepth);
 
 		return loopDepth;
@@ -5483,58 +5595,58 @@ public:
 	}
 	int a_body1cont3(Optional<Standalone<StringRef>> const& value,int loopDepth) 
 	{
-															#line 1188 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1234 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		ASSERT(value.present());
-															#line 1189 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1235 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		auto logs = decodeLogsValue(value.get());
-															#line 1190 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1236 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		for( auto const& log : logs.first ) {
-															#line 1191 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1237 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (log.second == NetworkAddress() || addressExcluded(exclusions, log.second))
-															#line 5494 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5606 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
-															#line 1192 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1238 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				inProgressExclusion.insert(log.second);
-															#line 5498 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5610 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			}
 		}
-															#line 1195 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1241 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		for( auto const& log : logs.second ) {
-															#line 1196 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1242 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (log.second == NetworkAddress() || addressExcluded(exclusions, log.second))
-															#line 5505 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5617 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
-															#line 1197 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1243 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				inProgressExclusion.insert(log.second);
-															#line 5509 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5621 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			}
 		}
-															#line 1202 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1248 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		std::set<std::string> inProgressAddresses;
-															#line 1203 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1249 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		for( auto const& address : inProgressExclusion ) {
-															#line 1204 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1250 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			inProgressAddresses.insert(formatIpPort(address.ip, address.port));
-															#line 5518 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5630 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		}
-															#line 1207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1253 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		for( auto const& address : inProgressAddresses ) {
-															#line 1208 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1254 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			Key addrKey = prefix.withSuffix(address);
-															#line 1209 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1255 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (kr.contains(addrKey))
-															#line 5526 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5638 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
-															#line 1210 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1256 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				result.push_back(result.arena(), KeyValueRef(addrKey, ValueRef()));
-															#line 1211 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1257 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				result.arena().dependsOn(addrKey.arena());
-															#line 5532 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5644 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			}
 		}
-															#line 1214 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1260 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<ExclusionInProgressActorActor*>(this)->SAV<RangeResult>::futures) { (void)(result); this->~ExclusionInProgressActorActorState(); static_cast<ExclusionInProgressActorActor*>(this)->destroy(); return 0; }
-															#line 5537 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5649 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<ExclusionInProgressActorActor*>(this)->SAV< RangeResult >::value()) RangeResult(std::move(result)); // state_var_RVO
 		this->~ExclusionInProgressActorActorState();
 		static_cast<ExclusionInProgressActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -5544,58 +5656,58 @@ public:
 	}
 	int a_body1cont3(Optional<Standalone<StringRef>> && value,int loopDepth) 
 	{
-															#line 1188 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1234 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		ASSERT(value.present());
-															#line 1189 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1235 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		auto logs = decodeLogsValue(value.get());
-															#line 1190 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1236 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		for( auto const& log : logs.first ) {
-															#line 1191 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1237 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (log.second == NetworkAddress() || addressExcluded(exclusions, log.second))
-															#line 5555 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5667 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
-															#line 1192 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1238 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				inProgressExclusion.insert(log.second);
-															#line 5559 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5671 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			}
 		}
-															#line 1195 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1241 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		for( auto const& log : logs.second ) {
-															#line 1196 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1242 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (log.second == NetworkAddress() || addressExcluded(exclusions, log.second))
-															#line 5566 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5678 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
-															#line 1197 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1243 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				inProgressExclusion.insert(log.second);
-															#line 5570 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5682 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			}
 		}
-															#line 1202 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1248 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		std::set<std::string> inProgressAddresses;
-															#line 1203 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1249 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		for( auto const& address : inProgressExclusion ) {
-															#line 1204 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1250 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			inProgressAddresses.insert(formatIpPort(address.ip, address.port));
-															#line 5579 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5691 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		}
-															#line 1207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1253 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		for( auto const& address : inProgressAddresses ) {
-															#line 1208 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1254 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			Key addrKey = prefix.withSuffix(address);
-															#line 1209 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1255 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (kr.contains(addrKey))
-															#line 5587 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5699 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
-															#line 1210 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1256 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				result.push_back(result.arena(), KeyValueRef(addrKey, ValueRef()));
-															#line 1211 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1257 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				result.arena().dependsOn(addrKey.arena());
-															#line 5593 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5705 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			}
 		}
-															#line 1214 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1260 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<ExclusionInProgressActorActor*>(this)->SAV<RangeResult>::futures) { (void)(result); this->~ExclusionInProgressActorActorState(); static_cast<ExclusionInProgressActorActor*>(this)->destroy(); return 0; }
-															#line 5598 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5710 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<ExclusionInProgressActorActor*>(this)->SAV< RangeResult >::value()) RangeResult(std::move(result)); // state_var_RVO
 		this->~ExclusionInProgressActorActorState();
 		static_cast<ExclusionInProgressActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -5666,30 +5778,30 @@ public:
 		fdb_probe_actor_exit("ExclusionInProgressActor", reinterpret_cast<unsigned long>(this), 2);
 
 	}
-															#line 1162 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1208 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	ReadYourWritesTransaction* ryw;
-															#line 1162 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1208 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	KeyRef prefix;
-															#line 1162 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1208 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	KeyRangeRef kr;
-															#line 1163 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1209 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	RangeResult result;
-															#line 1164 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1210 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	Transaction& tr;
-															#line 1169 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1215 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	std::vector<AddressExclusion> excl;
-															#line 1170 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1216 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	std::set<AddressExclusion> exclusions;
-															#line 1171 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1217 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	std::set<NetworkAddress> inProgressExclusion;
-															#line 1174 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1220 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	RangeResult serverList;
-															#line 5687 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5799 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 };
 // This generated class is to be used only via ExclusionInProgressActor()
-															#line 1162 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1208 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class ExclusionInProgressActorActor final : public Actor<RangeResult>, public ActorCallback< ExclusionInProgressActorActor, 0, std::vector<AddressExclusion> >, public ActorCallback< ExclusionInProgressActorActor, 1, RangeResult >, public ActorCallback< ExclusionInProgressActorActor, 2, Optional<Standalone<StringRef>> >, public FastAllocated<ExclusionInProgressActorActor>, public ExclusionInProgressActorActorState<ExclusionInProgressActorActor> {
-															#line 5692 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5804 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
 	using FastAllocated<ExclusionInProgressActorActor>::operator new;
 	using FastAllocated<ExclusionInProgressActorActor>::operator delete;
@@ -5700,9 +5812,9 @@ public:
 friend struct ActorCallback< ExclusionInProgressActorActor, 0, std::vector<AddressExclusion> >;
 friend struct ActorCallback< ExclusionInProgressActorActor, 1, RangeResult >;
 friend struct ActorCallback< ExclusionInProgressActorActor, 2, Optional<Standalone<StringRef>> >;
-															#line 1162 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1208 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	ExclusionInProgressActorActor(ReadYourWritesTransaction* const& ryw,KeyRef const& prefix,KeyRangeRef const& kr) 
-															#line 5705 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5817 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		 : Actor<RangeResult>(),
 		   ExclusionInProgressActorActorState<ExclusionInProgressActorActor>(ryw, prefix, kr)
 	{
@@ -5728,14 +5840,14 @@ friend struct ActorCallback< ExclusionInProgressActorActor, 2, Optional<Standalo
 	}
 };
 }
-															#line 1162 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1208 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 [[nodiscard]] Future<RangeResult> ExclusionInProgressActor( ReadYourWritesTransaction* const& ryw, KeyRef const& prefix, KeyRangeRef const& kr ) {
-															#line 1162 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1208 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	return Future<RangeResult>(new ExclusionInProgressActorActor(ryw, prefix, kr));
-															#line 5735 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5847 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 }
 
-#line 1216 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+#line 1262 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 
 ExclusionInProgressRangeImpl::ExclusionInProgressRangeImpl(KeyRangeRef kr) : SpecialKeyRangeAsyncImpl(kr) {}
 
@@ -5745,25 +5857,25 @@ Future<RangeResult> ExclusionInProgressRangeImpl::getRange(ReadYourWritesTransac
 	return ExclusionInProgressActor(ryw, getKeyRange().begin, kr);
 }
 
-															#line 5748 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5860 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 namespace {
 // This generated class is to be used only via getProcessClassActor()
-															#line 1225 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1271 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 template <class GetProcessClassActorActor>
-															#line 1225 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1271 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class GetProcessClassActorActorState {
-															#line 5755 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5867 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
-															#line 1225 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1271 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	GetProcessClassActorActorState(ReadYourWritesTransaction* const& ryw,KeyRef const& prefix,KeyRangeRef const& kr) 
-															#line 1225 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-															#line 1225 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1271 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1271 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		 : ryw(ryw),
-															#line 1225 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1271 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   prefix(prefix),
-															#line 1225 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1271 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   kr(kr)
-															#line 5766 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5878 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 	{
 		fdb_probe_actor_create("getProcessClassActor", reinterpret_cast<unsigned long>(this));
 
@@ -5776,18 +5888,18 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 1226 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1272 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			ryw->setOption(FDBTransactionOptions::RAW_ACCESS);
-															#line 1227 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1273 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			StrictFuture<std::vector<ProcessData>> __when_expr_0 = getWorkers(&ryw->getTransaction());
-															#line 1227 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1273 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (static_cast<GetProcessClassActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 5785 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5897 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<GetProcessClassActorActor*>(this)->actor_wait_state = 1;
-															#line 1227 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1273 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< GetProcessClassActorActor, 0, std::vector<ProcessData> >*>(static_cast<GetProcessClassActorActor*>(this)));
-															#line 5790 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5902 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -5808,30 +5920,34 @@ public:
 	}
 	int a_body1cont1(std::vector<ProcessData> const& _workers,int loopDepth) 
 	{
-															#line 1228 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1274 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		auto workers = _workers;
-															#line 1230 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1276 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		std::sort(workers.begin(), workers.end(), [](const ProcessData& lhs, const ProcessData& rhs) { return formatIpPort(lhs.address.ip, lhs.address.port) < formatIpPort(rhs.address.ip, rhs.address.port); });
-															#line 1233 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1280 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		auto last = std::unique(workers.begin(), workers.end(), [](const ProcessData& lhs, const ProcessData& rhs) { return formatIpPort(lhs.address.ip, lhs.address.port) == formatIpPort(rhs.address.ip, rhs.address.port); });
+															#line 1284 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		workers.erase(last, workers.end());
+															#line 1285 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		RangeResult result;
-															#line 1234 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1286 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		for( auto& w : workers ) {
-															#line 1236 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1288 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			KeyRef k(prefix.withSuffix(formatIpPort(w.address.ip, w.address.port), result.arena()));
-															#line 1237 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1289 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (kr.contains(k))
-															#line 5823 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5939 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
-															#line 1238 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1290 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				ValueRef v(result.arena(), w.processClass.toString());
-															#line 1239 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1291 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				result.push_back(result.arena(), KeyValueRef(k, v));
-															#line 5829 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5945 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			}
 		}
-															#line 1242 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1294 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<GetProcessClassActorActor*>(this)->SAV<RangeResult>::futures) { (void)(rywGetRange(ryw, kr, result)); this->~GetProcessClassActorActorState(); static_cast<GetProcessClassActorActor*>(this)->destroy(); return 0; }
-															#line 5834 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5950 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<GetProcessClassActorActor*>(this)->SAV< RangeResult >::value()) RangeResult(rywGetRange(ryw, kr, result));
 		this->~GetProcessClassActorActorState();
 		static_cast<GetProcessClassActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -5841,30 +5957,34 @@ public:
 	}
 	int a_body1cont1(std::vector<ProcessData> && _workers,int loopDepth) 
 	{
-															#line 1228 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1274 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		auto workers = _workers;
-															#line 1230 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1276 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		std::sort(workers.begin(), workers.end(), [](const ProcessData& lhs, const ProcessData& rhs) { return formatIpPort(lhs.address.ip, lhs.address.port) < formatIpPort(rhs.address.ip, rhs.address.port); });
-															#line 1233 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1280 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		auto last = std::unique(workers.begin(), workers.end(), [](const ProcessData& lhs, const ProcessData& rhs) { return formatIpPort(lhs.address.ip, lhs.address.port) == formatIpPort(rhs.address.ip, rhs.address.port); });
+															#line 1284 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		workers.erase(last, workers.end());
+															#line 1285 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		RangeResult result;
-															#line 1234 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1286 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		for( auto& w : workers ) {
-															#line 1236 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1288 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			KeyRef k(prefix.withSuffix(formatIpPort(w.address.ip, w.address.port), result.arena()));
-															#line 1237 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1289 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (kr.contains(k))
-															#line 5856 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5976 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
-															#line 1238 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1290 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				ValueRef v(result.arena(), w.processClass.toString());
-															#line 1239 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1291 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				result.push_back(result.arena(), KeyValueRef(k, v));
-															#line 5862 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5982 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			}
 		}
-															#line 1242 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1294 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<GetProcessClassActorActor*>(this)->SAV<RangeResult>::futures) { (void)(rywGetRange(ryw, kr, result)); this->~GetProcessClassActorActorState(); static_cast<GetProcessClassActorActor*>(this)->destroy(); return 0; }
-															#line 5867 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 5987 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<GetProcessClassActorActor*>(this)->SAV< RangeResult >::value()) RangeResult(rywGetRange(ryw, kr, result));
 		this->~GetProcessClassActorActorState();
 		static_cast<GetProcessClassActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -5935,18 +6055,18 @@ public:
 		fdb_probe_actor_exit("getProcessClassActor", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 1225 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1271 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	ReadYourWritesTransaction* ryw;
-															#line 1225 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1271 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	KeyRef prefix;
-															#line 1225 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1271 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	KeyRangeRef kr;
-															#line 5944 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6064 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 };
 // This generated class is to be used only via getProcessClassActor()
-															#line 1225 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1271 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class GetProcessClassActorActor final : public Actor<RangeResult>, public ActorCallback< GetProcessClassActorActor, 0, std::vector<ProcessData> >, public FastAllocated<GetProcessClassActorActor>, public GetProcessClassActorActorState<GetProcessClassActorActor> {
-															#line 5949 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6069 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
 	using FastAllocated<GetProcessClassActorActor>::operator new;
 	using FastAllocated<GetProcessClassActorActor>::operator delete;
@@ -5955,9 +6075,9 @@ public:
 	void destroy() override { ((Actor<RangeResult>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< GetProcessClassActorActor, 0, std::vector<ProcessData> >;
-															#line 1225 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1271 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	GetProcessClassActorActor(ReadYourWritesTransaction* const& ryw,KeyRef const& prefix,KeyRangeRef const& kr) 
-															#line 5960 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6080 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		 : Actor<RangeResult>(),
 		   GetProcessClassActorActorState<GetProcessClassActorActor>(ryw, prefix, kr)
 	{
@@ -5981,32 +6101,32 @@ friend struct ActorCallback< GetProcessClassActorActor, 0, std::vector<ProcessDa
 	}
 };
 }
-															#line 1225 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1271 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 [[nodiscard]] Future<RangeResult> getProcessClassActor( ReadYourWritesTransaction* const& ryw, KeyRef const& prefix, KeyRangeRef const& kr ) {
-															#line 1225 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1271 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	return Future<RangeResult>(new GetProcessClassActorActor(ryw, prefix, kr));
-															#line 5988 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6108 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 }
 
-#line 1244 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+#line 1296 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 
-															#line 5993 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6113 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 namespace {
 // This generated class is to be used only via processClassCommitActor()
-															#line 1245 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1297 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 template <class ProcessClassCommitActorActor>
-															#line 1245 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1297 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class ProcessClassCommitActorActorState {
-															#line 6000 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6120 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
-															#line 1245 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1297 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	ProcessClassCommitActorActorState(ReadYourWritesTransaction* const& ryw,KeyRangeRef const& range) 
-															#line 1245 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-															#line 1245 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1297 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1297 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		 : ryw(ryw),
-															#line 1245 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1297 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   range(range)
-															#line 6009 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6129 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 	{
 		fdb_probe_actor_create("processClassCommitActor", reinterpret_cast<unsigned long>(this));
 
@@ -6019,24 +6139,24 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 1247 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1299 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			ryw->setOption(FDBTransactionOptions::PRIORITY_SYSTEM_IMMEDIATE);
-															#line 1248 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1300 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			ryw->setOption(FDBTransactionOptions::LOCK_AWARE);
-															#line 1249 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1301 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			ryw->setOption(FDBTransactionOptions::USE_PROVISIONAL_PROXIES);
-															#line 1250 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1302 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			ryw->setOption(FDBTransactionOptions::RAW_ACCESS);
-															#line 1251 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1303 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			StrictFuture<std::vector<ProcessData>> __when_expr_0 = getWorkers(&ryw->getTransaction());
-															#line 1251 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1303 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (static_cast<ProcessClassCommitActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 6034 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6154 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<ProcessClassCommitActorActor*>(this)->actor_wait_state = 1;
-															#line 1251 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1303 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ProcessClassCommitActorActor, 0, std::vector<ProcessData> >*>(static_cast<ProcessClassCommitActorActor*>(this)));
-															#line 6039 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6159 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -6057,69 +6177,69 @@ public:
 	}
 	int a_body1cont1(std::vector<ProcessData> const& workers,int loopDepth) 
 	{
-															#line 1254 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1306 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		auto ranges = ryw->getSpecialKeySpaceWriteMap().containedRanges(range);
-															#line 1255 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1307 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		auto iter = ranges.begin();
-															#line 1256 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1308 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		for(;iter != ranges.end();) {
-															#line 1257 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1309 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			auto entry = iter->value();
-															#line 1259 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (entry.first && entry.second.present())
-															#line 6070 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6190 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
-															#line 1261 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				Key address = iter->begin().removePrefix(range.begin);
-															#line 1262 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1314 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				AddressExclusion addr = AddressExclusion::parse(address);
-															#line 1264 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1316 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				ValueRef processClassType = entry.second.get();
-															#line 1265 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1317 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				ProcessClass processClass(processClassType.toString(), ProcessClass::DBSource);
-															#line 1267 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1319 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				bool foundChange = false;
-															#line 1268 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1320 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				for(int i = 0;i < workers.size();i++) {
-															#line 1269 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1321 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					if (addr.excludes(workers[i].address))
-															#line 6086 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6206 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 					{
-															#line 1270 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1322 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 						if (processClass.classType() != ProcessClass::InvalidClass)
-															#line 6090 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6210 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 						{
-															#line 1271 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1323 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 							ryw->getTransaction().set(processClassKeyFor(workers[i].locality.processId().get()), processClassValue(processClass));
-															#line 6094 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6214 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 						}
 						else
 						{
-															#line 1274 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1326 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 							ryw->getTransaction().clear(processClassKeyFor(workers[i].locality.processId().get()));
-															#line 6100 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6220 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 						}
-															#line 1275 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1327 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 						foundChange = true;
-															#line 6104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6224 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 					}
 				}
-															#line 1278 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1330 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				if (foundChange)
-															#line 6109 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6229 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				{
-															#line 1279 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1331 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					ryw->getTransaction().set(processClassChangeKey, deterministicRandom()->randomUniqueID().toString());
-															#line 6113 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6233 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				}
 			}
-															#line 1281 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1333 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			++iter;
-															#line 6118 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6238 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		}
-															#line 1283 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1335 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<ProcessClassCommitActorActor*>(this)->SAV<Optional<std::string>>::futures) { (void)(Optional<std::string>()); this->~ProcessClassCommitActorActorState(); static_cast<ProcessClassCommitActorActor*>(this)->destroy(); return 0; }
-															#line 6122 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6242 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<ProcessClassCommitActorActor*>(this)->SAV< Optional<std::string> >::value()) Optional<std::string>(Optional<std::string>());
 		this->~ProcessClassCommitActorActorState();
 		static_cast<ProcessClassCommitActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -6129,69 +6249,69 @@ public:
 	}
 	int a_body1cont1(std::vector<ProcessData> && workers,int loopDepth) 
 	{
-															#line 1254 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1306 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		auto ranges = ryw->getSpecialKeySpaceWriteMap().containedRanges(range);
-															#line 1255 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1307 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		auto iter = ranges.begin();
-															#line 1256 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1308 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		for(;iter != ranges.end();) {
-															#line 1257 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1309 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			auto entry = iter->value();
-															#line 1259 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (entry.first && entry.second.present())
-															#line 6142 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6262 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
-															#line 1261 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				Key address = iter->begin().removePrefix(range.begin);
-															#line 1262 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1314 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				AddressExclusion addr = AddressExclusion::parse(address);
-															#line 1264 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1316 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				ValueRef processClassType = entry.second.get();
-															#line 1265 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1317 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				ProcessClass processClass(processClassType.toString(), ProcessClass::DBSource);
-															#line 1267 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1319 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				bool foundChange = false;
-															#line 1268 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1320 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				for(int i = 0;i < workers.size();i++) {
-															#line 1269 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1321 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					if (addr.excludes(workers[i].address))
-															#line 6158 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6278 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 					{
-															#line 1270 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1322 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 						if (processClass.classType() != ProcessClass::InvalidClass)
-															#line 6162 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6282 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 						{
-															#line 1271 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1323 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 							ryw->getTransaction().set(processClassKeyFor(workers[i].locality.processId().get()), processClassValue(processClass));
-															#line 6166 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6286 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 						}
 						else
 						{
-															#line 1274 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1326 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 							ryw->getTransaction().clear(processClassKeyFor(workers[i].locality.processId().get()));
-															#line 6172 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6292 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 						}
-															#line 1275 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1327 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 						foundChange = true;
-															#line 6176 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6296 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 					}
 				}
-															#line 1278 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1330 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				if (foundChange)
-															#line 6181 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6301 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				{
-															#line 1279 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1331 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					ryw->getTransaction().set(processClassChangeKey, deterministicRandom()->randomUniqueID().toString());
-															#line 6185 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6305 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				}
 			}
-															#line 1281 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1333 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			++iter;
-															#line 6190 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6310 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		}
-															#line 1283 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1335 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<ProcessClassCommitActorActor*>(this)->SAV<Optional<std::string>>::futures) { (void)(Optional<std::string>()); this->~ProcessClassCommitActorActorState(); static_cast<ProcessClassCommitActorActor*>(this)->destroy(); return 0; }
-															#line 6194 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6314 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<ProcessClassCommitActorActor*>(this)->SAV< Optional<std::string> >::value()) Optional<std::string>(Optional<std::string>());
 		this->~ProcessClassCommitActorActorState();
 		static_cast<ProcessClassCommitActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -6262,16 +6382,16 @@ public:
 		fdb_probe_actor_exit("processClassCommitActor", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 1245 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1297 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	ReadYourWritesTransaction* ryw;
-															#line 1245 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1297 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	KeyRangeRef range;
-															#line 6269 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6389 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 };
 // This generated class is to be used only via processClassCommitActor()
-															#line 1245 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1297 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class ProcessClassCommitActorActor final : public Actor<Optional<std::string>>, public ActorCallback< ProcessClassCommitActorActor, 0, std::vector<ProcessData> >, public FastAllocated<ProcessClassCommitActorActor>, public ProcessClassCommitActorActorState<ProcessClassCommitActorActor> {
-															#line 6274 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6394 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
 	using FastAllocated<ProcessClassCommitActorActor>::operator new;
 	using FastAllocated<ProcessClassCommitActorActor>::operator delete;
@@ -6280,9 +6400,9 @@ public:
 	void destroy() override { ((Actor<Optional<std::string>>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< ProcessClassCommitActorActor, 0, std::vector<ProcessData> >;
-															#line 1245 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1297 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	ProcessClassCommitActorActor(ReadYourWritesTransaction* const& ryw,KeyRangeRef const& range) 
-															#line 6285 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6405 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		 : Actor<Optional<std::string>>(),
 		   ProcessClassCommitActorActorState<ProcessClassCommitActorActor>(ryw, range)
 	{
@@ -6306,14 +6426,14 @@ friend struct ActorCallback< ProcessClassCommitActorActor, 0, std::vector<Proces
 	}
 };
 }
-															#line 1245 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1297 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 [[nodiscard]] Future<Optional<std::string>> processClassCommitActor( ReadYourWritesTransaction* const& ryw, KeyRangeRef const& range ) {
-															#line 1245 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1297 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	return Future<Optional<std::string>>(new ProcessClassCommitActorActor(ryw, range));
-															#line 6313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6433 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 }
 
-#line 1285 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+#line 1337 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 
 ProcessClassRangeImpl::ProcessClassRangeImpl(KeyRangeRef kr) : SpecialKeyRangeRWImpl(kr) {}
 
@@ -6345,8 +6465,7 @@ Future<Optional<std::string>> ProcessClassRangeImpl::commit(ReadYourWritesTransa
 			// validate class type
 			ValueRef processClassType = entry.second.get();
 			ProcessClass processClass(processClassType.toString(), ProcessClass::DBSource);
-			if (processClass.classType() == ProcessClass::InvalidClass &&
-			    processClassType != LiteralStringRef("default")) {
+			if (processClass.classType() == ProcessClass::InvalidClass && processClassType != "default"_sr) {
 				std::string error = "ERROR: \'" + processClassType.toString() + "\' is not a valid process class\n";
 				errorMsg = ManagementAPIError::toJsonString(false, "setclass", error);
 				return errorMsg;
@@ -6372,25 +6491,25 @@ void ProcessClassRangeImpl::clear(ReadYourWritesTransaction* ryw, const KeyRef& 
 	    ryw, "setclass", "Clear range operation is meaningless thus forbidden for setclass");
 }
 
-															#line 6375 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6494 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 namespace {
 // This generated class is to be used only via getProcessClassSourceActor()
-															#line 1343 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1394 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 template <class GetProcessClassSourceActorActor>
-															#line 1343 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1394 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class GetProcessClassSourceActorActorState {
-															#line 6382 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6501 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
-															#line 1343 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1394 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	GetProcessClassSourceActorActorState(ReadYourWritesTransaction* const& ryw,KeyRef const& prefix,KeyRangeRef const& kr) 
-															#line 1343 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-															#line 1343 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1394 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1394 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		 : ryw(ryw),
-															#line 1343 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1394 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   prefix(prefix),
-															#line 1343 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1394 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   kr(kr)
-															#line 6393 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6512 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 	{
 		fdb_probe_actor_create("getProcessClassSourceActor", reinterpret_cast<unsigned long>(this));
 
@@ -6403,18 +6522,18 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 1344 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1395 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			ryw->setOption(FDBTransactionOptions::RAW_ACCESS);
-															#line 1345 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1396 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			StrictFuture<std::vector<ProcessData>> __when_expr_0 = getWorkers(&ryw->getTransaction());
-															#line 1345 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1396 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (static_cast<GetProcessClassSourceActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 6412 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6531 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<GetProcessClassSourceActorActor*>(this)->actor_wait_state = 1;
-															#line 1345 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1396 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< GetProcessClassSourceActorActor, 0, std::vector<ProcessData> >*>(static_cast<GetProcessClassSourceActorActor*>(this)));
-															#line 6417 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6536 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -6435,34 +6554,38 @@ public:
 	}
 	int a_body1cont1(std::vector<ProcessData> const& _workers,int loopDepth) 
 	{
-															#line 1346 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1397 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		auto workers = _workers;
-															#line 1348 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1399 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		std::sort(workers.begin(), workers.end(), [](const ProcessData& lhs, const ProcessData& rhs) { return formatIpPort(lhs.address.ip, lhs.address.port) < formatIpPort(rhs.address.ip, rhs.address.port); });
-															#line 1351 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1403 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		auto last = std::unique(workers.begin(), workers.end(), [](const ProcessData& lhs, const ProcessData& rhs) { return formatIpPort(lhs.address.ip, lhs.address.port) == formatIpPort(rhs.address.ip, rhs.address.port); });
+															#line 1407 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		workers.erase(last, workers.end());
+															#line 1408 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		RangeResult result;
-															#line 1352 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1409 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		for( auto& w : workers ) {
-															#line 1354 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1411 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			Key k(prefix.withSuffix(formatIpPort(w.address.ip, w.address.port)));
-															#line 1355 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1412 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (kr.contains(k))
-															#line 6450 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6573 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
-															#line 1356 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1413 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				Value v(w.processClass.sourceString());
-															#line 1357 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1414 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				result.push_back(result.arena(), KeyValueRef(k, v));
-															#line 1358 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1415 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				result.arena().dependsOn(k.arena());
-															#line 1359 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1416 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				result.arena().dependsOn(v.arena());
-															#line 6460 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6583 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			}
 		}
-															#line 1362 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1419 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<GetProcessClassSourceActorActor*>(this)->SAV<RangeResult>::futures) { (void)(result); this->~GetProcessClassSourceActorActorState(); static_cast<GetProcessClassSourceActorActor*>(this)->destroy(); return 0; }
-															#line 6465 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6588 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<GetProcessClassSourceActorActor*>(this)->SAV< RangeResult >::value()) RangeResult(result);
 		this->~GetProcessClassSourceActorActorState();
 		static_cast<GetProcessClassSourceActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -6472,34 +6595,38 @@ public:
 	}
 	int a_body1cont1(std::vector<ProcessData> && _workers,int loopDepth) 
 	{
-															#line 1346 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1397 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		auto workers = _workers;
-															#line 1348 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1399 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		std::sort(workers.begin(), workers.end(), [](const ProcessData& lhs, const ProcessData& rhs) { return formatIpPort(lhs.address.ip, lhs.address.port) < formatIpPort(rhs.address.ip, rhs.address.port); });
-															#line 1351 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1403 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		auto last = std::unique(workers.begin(), workers.end(), [](const ProcessData& lhs, const ProcessData& rhs) { return formatIpPort(lhs.address.ip, lhs.address.port) == formatIpPort(rhs.address.ip, rhs.address.port); });
+															#line 1407 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		workers.erase(last, workers.end());
+															#line 1408 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		RangeResult result;
-															#line 1352 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1409 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		for( auto& w : workers ) {
-															#line 1354 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1411 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			Key k(prefix.withSuffix(formatIpPort(w.address.ip, w.address.port)));
-															#line 1355 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1412 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (kr.contains(k))
-															#line 6487 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6614 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
-															#line 1356 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1413 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				Value v(w.processClass.sourceString());
-															#line 1357 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1414 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				result.push_back(result.arena(), KeyValueRef(k, v));
-															#line 1358 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1415 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				result.arena().dependsOn(k.arena());
-															#line 1359 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1416 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				result.arena().dependsOn(v.arena());
-															#line 6497 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6624 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			}
 		}
-															#line 1362 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1419 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<GetProcessClassSourceActorActor*>(this)->SAV<RangeResult>::futures) { (void)(result); this->~GetProcessClassSourceActorActorState(); static_cast<GetProcessClassSourceActorActor*>(this)->destroy(); return 0; }
-															#line 6502 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6629 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<GetProcessClassSourceActorActor*>(this)->SAV< RangeResult >::value()) RangeResult(result);
 		this->~GetProcessClassSourceActorActorState();
 		static_cast<GetProcessClassSourceActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -6570,18 +6697,18 @@ public:
 		fdb_probe_actor_exit("getProcessClassSourceActor", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 1343 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1394 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	ReadYourWritesTransaction* ryw;
-															#line 1343 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1394 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	KeyRef prefix;
-															#line 1343 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1394 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	KeyRangeRef kr;
-															#line 6579 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6706 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 };
 // This generated class is to be used only via getProcessClassSourceActor()
-															#line 1343 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1394 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class GetProcessClassSourceActorActor final : public Actor<RangeResult>, public ActorCallback< GetProcessClassSourceActorActor, 0, std::vector<ProcessData> >, public FastAllocated<GetProcessClassSourceActorActor>, public GetProcessClassSourceActorActorState<GetProcessClassSourceActorActor> {
-															#line 6584 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6711 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
 	using FastAllocated<GetProcessClassSourceActorActor>::operator new;
 	using FastAllocated<GetProcessClassSourceActorActor>::operator delete;
@@ -6590,9 +6717,9 @@ public:
 	void destroy() override { ((Actor<RangeResult>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< GetProcessClassSourceActorActor, 0, std::vector<ProcessData> >;
-															#line 1343 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1394 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	GetProcessClassSourceActorActor(ReadYourWritesTransaction* const& ryw,KeyRef const& prefix,KeyRangeRef const& kr) 
-															#line 6595 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6722 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		 : Actor<RangeResult>(),
 		   GetProcessClassSourceActorActorState<GetProcessClassSourceActorActor>(ryw, prefix, kr)
 	{
@@ -6616,14 +6743,14 @@ friend struct ActorCallback< GetProcessClassSourceActorActor, 0, std::vector<Pro
 	}
 };
 }
-															#line 1343 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1394 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 [[nodiscard]] Future<RangeResult> getProcessClassSourceActor( ReadYourWritesTransaction* const& ryw, KeyRef const& prefix, KeyRangeRef const& kr ) {
-															#line 1343 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1394 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	return Future<RangeResult>(new GetProcessClassSourceActorActor(ryw, prefix, kr));
-															#line 6623 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6750 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 }
 
-#line 1364 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+#line 1421 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 
 ProcessClassSourceRangeImpl::ProcessClassSourceRangeImpl(KeyRangeRef kr) : SpecialKeyRangeReadImpl(kr) {}
 
@@ -6633,23 +6760,23 @@ Future<RangeResult> ProcessClassSourceRangeImpl::getRange(ReadYourWritesTransact
 	return getProcessClassSourceActor(ryw, getKeyRange().begin, kr);
 }
 
-															#line 6636 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6763 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 namespace {
 // This generated class is to be used only via getLockedKeyActor()
-															#line 1373 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1430 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 template <class GetLockedKeyActorActor>
-															#line 1373 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1430 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class GetLockedKeyActorActorState {
-															#line 6643 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6770 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
-															#line 1373 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1430 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	GetLockedKeyActorActorState(ReadYourWritesTransaction* const& ryw,KeyRangeRef const& kr) 
-															#line 1373 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-															#line 1373 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1430 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1430 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		 : ryw(ryw),
-															#line 1373 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1430 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   kr(kr)
-															#line 6652 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6779 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 	{
 		fdb_probe_actor_create("getLockedKeyActor", reinterpret_cast<unsigned long>(this));
 
@@ -6662,20 +6789,20 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 1374 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1431 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			ryw->getTransaction().setOption(FDBTransactionOptions::LOCK_AWARE);
-															#line 1375 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1432 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			ryw->getTransaction().setOption(FDBTransactionOptions::RAW_ACCESS);
-															#line 1376 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1433 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			StrictFuture<Optional<Value>> __when_expr_0 = ryw->getTransaction().get(databaseLockedKey);
-															#line 1376 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1433 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (static_cast<GetLockedKeyActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 6673 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6800 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<GetLockedKeyActorActor*>(this)->actor_wait_state = 1;
-															#line 1376 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1433 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< GetLockedKeyActorActor, 0, Optional<Value> >*>(static_cast<GetLockedKeyActorActor*>(this)));
-															#line 6678 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6805 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -6696,21 +6823,21 @@ public:
 	}
 	int a_body1cont1(Optional<Value> const& val,int loopDepth) 
 	{
-															#line 1377 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1434 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		RangeResult result;
-															#line 1378 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1435 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (val.present())
-															#line 6703 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6830 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 1379 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1436 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			UID uid = UID::fromString(BinaryReader::fromStringRef<UID>(val.get().substr(10), Unversioned()).toString());
-															#line 1380 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1437 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			result.push_back_deep(result.arena(), KeyValueRef(kr.begin, Value(uid.toString())));
-															#line 6709 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6836 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		}
-															#line 1382 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1439 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<GetLockedKeyActorActor*>(this)->SAV<RangeResult>::futures) { (void)(result); this->~GetLockedKeyActorActorState(); static_cast<GetLockedKeyActorActor*>(this)->destroy(); return 0; }
-															#line 6713 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6840 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<GetLockedKeyActorActor*>(this)->SAV< RangeResult >::value()) RangeResult(result);
 		this->~GetLockedKeyActorActorState();
 		static_cast<GetLockedKeyActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -6720,21 +6847,21 @@ public:
 	}
 	int a_body1cont1(Optional<Value> && val,int loopDepth) 
 	{
-															#line 1377 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1434 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		RangeResult result;
-															#line 1378 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1435 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (val.present())
-															#line 6727 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6854 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 1379 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1436 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			UID uid = UID::fromString(BinaryReader::fromStringRef<UID>(val.get().substr(10), Unversioned()).toString());
-															#line 1380 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1437 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			result.push_back_deep(result.arena(), KeyValueRef(kr.begin, Value(uid.toString())));
-															#line 6733 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6860 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		}
-															#line 1382 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1439 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<GetLockedKeyActorActor*>(this)->SAV<RangeResult>::futures) { (void)(result); this->~GetLockedKeyActorActorState(); static_cast<GetLockedKeyActorActor*>(this)->destroy(); return 0; }
-															#line 6737 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6864 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<GetLockedKeyActorActor*>(this)->SAV< RangeResult >::value()) RangeResult(result);
 		this->~GetLockedKeyActorActorState();
 		static_cast<GetLockedKeyActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -6805,16 +6932,16 @@ public:
 		fdb_probe_actor_exit("getLockedKeyActor", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 1373 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1430 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	ReadYourWritesTransaction* ryw;
-															#line 1373 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1430 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	KeyRangeRef kr;
-															#line 6812 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6939 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 };
 // This generated class is to be used only via getLockedKeyActor()
-															#line 1373 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1430 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class GetLockedKeyActorActor final : public Actor<RangeResult>, public ActorCallback< GetLockedKeyActorActor, 0, Optional<Value> >, public FastAllocated<GetLockedKeyActorActor>, public GetLockedKeyActorActorState<GetLockedKeyActorActor> {
-															#line 6817 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6944 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
 	using FastAllocated<GetLockedKeyActorActor>::operator new;
 	using FastAllocated<GetLockedKeyActorActor>::operator delete;
@@ -6823,9 +6950,9 @@ public:
 	void destroy() override { ((Actor<RangeResult>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< GetLockedKeyActorActor, 0, Optional<Value> >;
-															#line 1373 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1430 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	GetLockedKeyActorActor(ReadYourWritesTransaction* const& ryw,KeyRangeRef const& kr) 
-															#line 6828 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6955 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		 : Actor<RangeResult>(),
 		   GetLockedKeyActorActorState<GetLockedKeyActorActor>(ryw, kr)
 	{
@@ -6849,14 +6976,14 @@ friend struct ActorCallback< GetLockedKeyActorActor, 0, Optional<Value> >;
 	}
 };
 }
-															#line 1373 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1430 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 [[nodiscard]] Future<RangeResult> getLockedKeyActor( ReadYourWritesTransaction* const& ryw, KeyRangeRef const& kr ) {
-															#line 1373 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1430 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	return Future<RangeResult>(new GetLockedKeyActorActor(ryw, kr));
-															#line 6856 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 6983 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 }
 
-#line 1384 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+#line 1441 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 
 LockDatabaseImpl::LockDatabaseImpl(KeyRangeRef kr) : SpecialKeyRangeRWImpl(kr) {}
 
@@ -6878,25 +7005,25 @@ Future<RangeResult> LockDatabaseImpl::getRange(ReadYourWritesTransaction* ryw,
 	}
 }
 
-															#line 6881 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7008 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 namespace {
 // This generated class is to be used only via lockDatabaseCommitActor()
-															#line 1405 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1462 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 template <class LockDatabaseCommitActorActor>
-															#line 1405 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1462 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class LockDatabaseCommitActorActorState {
-															#line 6888 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7015 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
-															#line 1405 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1462 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	LockDatabaseCommitActorActorState(ReadYourWritesTransaction* const& ryw,UID const& uid) 
-															#line 1405 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-															#line 1405 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1462 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1462 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		 : ryw(ryw),
-															#line 1405 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1462 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   uid(uid),
-															#line 1406 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1463 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   msg()
-															#line 6899 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7026 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 	{
 		fdb_probe_actor_create("lockDatabaseCommitActor", reinterpret_cast<unsigned long>(this));
 
@@ -6909,20 +7036,20 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 1407 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1464 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			ryw->getTransaction().setOption(FDBTransactionOptions::LOCK_AWARE);
-															#line 1408 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1465 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			ryw->getTransaction().setOption(FDBTransactionOptions::RAW_ACCESS);
-															#line 1409 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1466 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			StrictFuture<Optional<Value>> __when_expr_0 = ryw->getTransaction().get(databaseLockedKey);
-															#line 1409 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1466 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (static_cast<LockDatabaseCommitActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 6920 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7047 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<LockDatabaseCommitActorActor*>(this)->actor_wait_state = 1;
-															#line 1409 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1466 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< LockDatabaseCommitActorActor, 0, Optional<Value> >*>(static_cast<LockDatabaseCommitActorActor*>(this)));
-															#line 6925 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7052 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -6943,30 +7070,30 @@ public:
 	}
 	int a_body1cont1(Optional<Value> const& val,int loopDepth) 
 	{
-															#line 1411 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1468 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (val.present() && BinaryReader::fromStringRef<UID>(val.get().substr(10), Unversioned()) != uid)
-															#line 6948 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7075 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 1414 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1471 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			return a_body1Catch1(database_locked(), loopDepth);
-															#line 6952 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7079 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		}
 		else
 		{
-															#line 1415 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1472 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (!val.present())
-															#line 6958 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7085 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
-															#line 1417 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-				ryw->getTransaction().atomicOp(databaseLockedKey, BinaryWriter::toValue(uid, Unversioned()) .withPrefix(LiteralStringRef("0123456789")) .withSuffix(LiteralStringRef("\x00\x00\x00\x00")), MutationRef::SetVersionstampedValue);
-															#line 1422 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1474 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+				ryw->getTransaction().atomicOp( databaseLockedKey, BinaryWriter::toValue(uid, Unversioned()).withPrefix("0123456789"_sr).withSuffix("\x00\x00\x00\x00"_sr), MutationRef::SetVersionstampedValue);
+															#line 1478 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				ryw->getTransaction().addWriteConflictRange(normalKeys);
-															#line 6964 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7091 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			}
 		}
-															#line 1425 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1481 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<LockDatabaseCommitActorActor*>(this)->SAV<Optional<std::string>>::futures) { (void)(msg); this->~LockDatabaseCommitActorActorState(); static_cast<LockDatabaseCommitActorActor*>(this)->destroy(); return 0; }
-															#line 6969 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7096 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<LockDatabaseCommitActorActor*>(this)->SAV< Optional<std::string> >::value()) Optional<std::string>(std::move(msg)); // state_var_RVO
 		this->~LockDatabaseCommitActorActorState();
 		static_cast<LockDatabaseCommitActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -6976,30 +7103,30 @@ public:
 	}
 	int a_body1cont1(Optional<Value> && val,int loopDepth) 
 	{
-															#line 1411 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1468 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (val.present() && BinaryReader::fromStringRef<UID>(val.get().substr(10), Unversioned()) != uid)
-															#line 6981 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7108 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 1414 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1471 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			return a_body1Catch1(database_locked(), loopDepth);
-															#line 6985 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7112 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		}
 		else
 		{
-															#line 1415 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1472 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (!val.present())
-															#line 6991 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7118 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
-															#line 1417 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-				ryw->getTransaction().atomicOp(databaseLockedKey, BinaryWriter::toValue(uid, Unversioned()) .withPrefix(LiteralStringRef("0123456789")) .withSuffix(LiteralStringRef("\x00\x00\x00\x00")), MutationRef::SetVersionstampedValue);
-															#line 1422 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1474 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+				ryw->getTransaction().atomicOp( databaseLockedKey, BinaryWriter::toValue(uid, Unversioned()).withPrefix("0123456789"_sr).withSuffix("\x00\x00\x00\x00"_sr), MutationRef::SetVersionstampedValue);
+															#line 1478 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				ryw->getTransaction().addWriteConflictRange(normalKeys);
-															#line 6997 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7124 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			}
 		}
-															#line 1425 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1481 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<LockDatabaseCommitActorActor*>(this)->SAV<Optional<std::string>>::futures) { (void)(msg); this->~LockDatabaseCommitActorActorState(); static_cast<LockDatabaseCommitActorActor*>(this)->destroy(); return 0; }
-															#line 7002 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7129 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<LockDatabaseCommitActorActor*>(this)->SAV< Optional<std::string> >::value()) Optional<std::string>(std::move(msg)); // state_var_RVO
 		this->~LockDatabaseCommitActorActorState();
 		static_cast<LockDatabaseCommitActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -7070,18 +7197,18 @@ public:
 		fdb_probe_actor_exit("lockDatabaseCommitActor", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 1405 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1462 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	ReadYourWritesTransaction* ryw;
-															#line 1405 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1462 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	UID uid;
-															#line 1406 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1463 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	Optional<std::string> msg;
-															#line 7079 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7206 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 };
 // This generated class is to be used only via lockDatabaseCommitActor()
-															#line 1405 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1462 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class LockDatabaseCommitActorActor final : public Actor<Optional<std::string>>, public ActorCallback< LockDatabaseCommitActorActor, 0, Optional<Value> >, public FastAllocated<LockDatabaseCommitActorActor>, public LockDatabaseCommitActorActorState<LockDatabaseCommitActorActor> {
-															#line 7084 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7211 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
 	using FastAllocated<LockDatabaseCommitActorActor>::operator new;
 	using FastAllocated<LockDatabaseCommitActorActor>::operator delete;
@@ -7090,9 +7217,9 @@ public:
 	void destroy() override { ((Actor<Optional<std::string>>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< LockDatabaseCommitActorActor, 0, Optional<Value> >;
-															#line 1405 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1462 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	LockDatabaseCommitActorActor(ReadYourWritesTransaction* const& ryw,UID const& uid) 
-															#line 7095 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7222 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		 : Actor<Optional<std::string>>(),
 		   LockDatabaseCommitActorActorState<LockDatabaseCommitActorActor>(ryw, uid)
 	{
@@ -7116,30 +7243,30 @@ friend struct ActorCallback< LockDatabaseCommitActorActor, 0, Optional<Value> >;
 	}
 };
 }
-															#line 1405 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1462 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 [[nodiscard]] Future<Optional<std::string>> lockDatabaseCommitActor( ReadYourWritesTransaction* const& ryw, UID const& uid ) {
-															#line 1405 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1462 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	return Future<Optional<std::string>>(new LockDatabaseCommitActorActor(ryw, uid));
-															#line 7123 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7250 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 }
 
-#line 1427 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+#line 1483 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 
-															#line 7128 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7255 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 namespace {
 // This generated class is to be used only via unlockDatabaseCommitActor()
-															#line 1428 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1484 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 template <class UnlockDatabaseCommitActorActor>
-															#line 1428 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1484 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class UnlockDatabaseCommitActorActorState {
-															#line 7135 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7262 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
-															#line 1428 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1484 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	UnlockDatabaseCommitActorActorState(ReadYourWritesTransaction* const& ryw) 
-															#line 1428 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-															#line 1428 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1484 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1484 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		 : ryw(ryw)
-															#line 7142 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7269 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 	{
 		fdb_probe_actor_create("unlockDatabaseCommitActor", reinterpret_cast<unsigned long>(this));
 
@@ -7152,20 +7279,20 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 1429 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1485 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			ryw->getTransaction().setOption(FDBTransactionOptions::LOCK_AWARE);
-															#line 1430 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1486 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			ryw->getTransaction().setOption(FDBTransactionOptions::RAW_ACCESS);
-															#line 1431 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1487 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			StrictFuture<Optional<Value>> __when_expr_0 = ryw->getTransaction().get(databaseLockedKey);
-															#line 1431 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1487 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (static_cast<UnlockDatabaseCommitActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 7163 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7290 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<UnlockDatabaseCommitActorActor*>(this)->actor_wait_state = 1;
-															#line 1431 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1487 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< UnlockDatabaseCommitActorActor, 0, Optional<Value> >*>(static_cast<UnlockDatabaseCommitActorActor*>(this)));
-															#line 7168 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -7186,17 +7313,17 @@ public:
 	}
 	int a_body1cont1(Optional<Value> const& val,int loopDepth) 
 	{
-															#line 1432 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1488 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (val.present())
-															#line 7191 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7318 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 1433 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1489 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			ryw->getTransaction().clear(singleKeyRange(databaseLockedKey));
-															#line 7195 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7322 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		}
-															#line 1435 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1491 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<UnlockDatabaseCommitActorActor*>(this)->SAV<Optional<std::string>>::futures) { (void)(Optional<std::string>()); this->~UnlockDatabaseCommitActorActorState(); static_cast<UnlockDatabaseCommitActorActor*>(this)->destroy(); return 0; }
-															#line 7199 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7326 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<UnlockDatabaseCommitActorActor*>(this)->SAV< Optional<std::string> >::value()) Optional<std::string>(Optional<std::string>());
 		this->~UnlockDatabaseCommitActorActorState();
 		static_cast<UnlockDatabaseCommitActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -7206,17 +7333,17 @@ public:
 	}
 	int a_body1cont1(Optional<Value> && val,int loopDepth) 
 	{
-															#line 1432 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1488 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (val.present())
-															#line 7211 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7338 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 1433 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1489 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			ryw->getTransaction().clear(singleKeyRange(databaseLockedKey));
-															#line 7215 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7342 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		}
-															#line 1435 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1491 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<UnlockDatabaseCommitActorActor*>(this)->SAV<Optional<std::string>>::futures) { (void)(Optional<std::string>()); this->~UnlockDatabaseCommitActorActorState(); static_cast<UnlockDatabaseCommitActorActor*>(this)->destroy(); return 0; }
-															#line 7219 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7346 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<UnlockDatabaseCommitActorActor*>(this)->SAV< Optional<std::string> >::value()) Optional<std::string>(Optional<std::string>());
 		this->~UnlockDatabaseCommitActorActorState();
 		static_cast<UnlockDatabaseCommitActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -7287,14 +7414,14 @@ public:
 		fdb_probe_actor_exit("unlockDatabaseCommitActor", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 1428 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1484 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	ReadYourWritesTransaction* ryw;
-															#line 7292 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7419 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 };
 // This generated class is to be used only via unlockDatabaseCommitActor()
-															#line 1428 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1484 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class UnlockDatabaseCommitActorActor final : public Actor<Optional<std::string>>, public ActorCallback< UnlockDatabaseCommitActorActor, 0, Optional<Value> >, public FastAllocated<UnlockDatabaseCommitActorActor>, public UnlockDatabaseCommitActorActorState<UnlockDatabaseCommitActorActor> {
-															#line 7297 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7424 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
 	using FastAllocated<UnlockDatabaseCommitActorActor>::operator new;
 	using FastAllocated<UnlockDatabaseCommitActorActor>::operator delete;
@@ -7303,9 +7430,9 @@ public:
 	void destroy() override { ((Actor<Optional<std::string>>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< UnlockDatabaseCommitActorActor, 0, Optional<Value> >;
-															#line 1428 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1484 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	UnlockDatabaseCommitActorActor(ReadYourWritesTransaction* const& ryw) 
-															#line 7308 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7435 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		 : Actor<Optional<std::string>>(),
 		   UnlockDatabaseCommitActorActorState<UnlockDatabaseCommitActorActor>(ryw)
 	{
@@ -7329,14 +7456,14 @@ friend struct ActorCallback< UnlockDatabaseCommitActorActor, 0, Optional<Value> 
 	}
 };
 }
-															#line 1428 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1484 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 [[nodiscard]] Future<Optional<std::string>> unlockDatabaseCommitActor( ReadYourWritesTransaction* const& ryw ) {
-															#line 1428 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1484 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	return Future<Optional<std::string>>(new UnlockDatabaseCommitActorActor(ryw));
-															#line 7336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7463 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 }
 
-#line 1437 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+#line 1493 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 
 Future<Optional<std::string>> LockDatabaseImpl::commit(ReadYourWritesTransaction* ryw) {
 	auto lockId = ryw->getSpecialKeySpaceWriteMap()[SpecialKeySpace::getManagementApiCommandPrefix("lock")].second;
@@ -7355,23 +7482,23 @@ Future<Optional<std::string>> LockDatabaseImpl::commit(ReadYourWritesTransaction
 	}
 }
 
-															#line 7358 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7485 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 namespace {
 // This generated class is to be used only via getConsistencyCheckKeyActor()
-															#line 1455 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1511 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 template <class GetConsistencyCheckKeyActorActor>
-															#line 1455 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1511 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class GetConsistencyCheckKeyActorActorState {
-															#line 7365 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7492 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
-															#line 1455 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1511 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	GetConsistencyCheckKeyActorActorState(ReadYourWritesTransaction* const& ryw,KeyRangeRef const& kr) 
-															#line 1455 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-															#line 1455 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1511 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1511 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		 : ryw(ryw),
-															#line 1455 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1511 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   kr(kr)
-															#line 7374 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7501 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 	{
 		fdb_probe_actor_create("getConsistencyCheckKeyActor", reinterpret_cast<unsigned long>(this));
 
@@ -7384,22 +7511,22 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 1456 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1512 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			ryw->getTransaction().setOption(FDBTransactionOptions::LOCK_AWARE);
-															#line 1457 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1513 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			ryw->getTransaction().setOption(FDBTransactionOptions::RAW_ACCESS);
-															#line 1458 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1514 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			ryw->getTransaction().setOption(FDBTransactionOptions::PRIORITY_SYSTEM_IMMEDIATE);
-															#line 1459 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1515 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			StrictFuture<Optional<Value>> __when_expr_0 = ryw->getTransaction().get(fdbShouldConsistencyCheckBeSuspended);
-															#line 1459 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1515 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (static_cast<GetConsistencyCheckKeyActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 7397 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7524 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<GetConsistencyCheckKeyActorActor*>(this)->actor_wait_state = 1;
-															#line 1459 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1515 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< GetConsistencyCheckKeyActorActor, 0, Optional<Value> >*>(static_cast<GetConsistencyCheckKeyActorActor*>(this)));
-															#line 7402 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7529 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -7420,21 +7547,21 @@ public:
 	}
 	int a_body1cont1(Optional<Value> const& val,int loopDepth) 
 	{
-															#line 1460 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1516 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		bool ccSuspendSetting = val.present() ? BinaryReader::fromStringRef<bool>(val.get(), Unversioned()) : false;
-															#line 1461 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1517 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		RangeResult result;
-															#line 1462 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1518 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (ccSuspendSetting)
-															#line 7429 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7556 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 1463 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1519 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			result.push_back_deep(result.arena(), KeyValueRef(kr.begin, ValueRef()));
-															#line 7433 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7560 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		}
-															#line 1465 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1521 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<GetConsistencyCheckKeyActorActor*>(this)->SAV<RangeResult>::futures) { (void)(result); this->~GetConsistencyCheckKeyActorActorState(); static_cast<GetConsistencyCheckKeyActorActor*>(this)->destroy(); return 0; }
-															#line 7437 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7564 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<GetConsistencyCheckKeyActorActor*>(this)->SAV< RangeResult >::value()) RangeResult(result);
 		this->~GetConsistencyCheckKeyActorActorState();
 		static_cast<GetConsistencyCheckKeyActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -7444,21 +7571,21 @@ public:
 	}
 	int a_body1cont1(Optional<Value> && val,int loopDepth) 
 	{
-															#line 1460 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1516 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		bool ccSuspendSetting = val.present() ? BinaryReader::fromStringRef<bool>(val.get(), Unversioned()) : false;
-															#line 1461 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1517 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		RangeResult result;
-															#line 1462 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1518 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (ccSuspendSetting)
-															#line 7453 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7580 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 1463 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1519 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			result.push_back_deep(result.arena(), KeyValueRef(kr.begin, ValueRef()));
-															#line 7457 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7584 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		}
-															#line 1465 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1521 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<GetConsistencyCheckKeyActorActor*>(this)->SAV<RangeResult>::futures) { (void)(result); this->~GetConsistencyCheckKeyActorActorState(); static_cast<GetConsistencyCheckKeyActorActor*>(this)->destroy(); return 0; }
-															#line 7461 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7588 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<GetConsistencyCheckKeyActorActor*>(this)->SAV< RangeResult >::value()) RangeResult(result);
 		this->~GetConsistencyCheckKeyActorActorState();
 		static_cast<GetConsistencyCheckKeyActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -7529,16 +7656,16 @@ public:
 		fdb_probe_actor_exit("getConsistencyCheckKeyActor", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 1455 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1511 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	ReadYourWritesTransaction* ryw;
-															#line 1455 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1511 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	KeyRangeRef kr;
-															#line 7536 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7663 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 };
 // This generated class is to be used only via getConsistencyCheckKeyActor()
-															#line 1455 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1511 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class GetConsistencyCheckKeyActorActor final : public Actor<RangeResult>, public ActorCallback< GetConsistencyCheckKeyActorActor, 0, Optional<Value> >, public FastAllocated<GetConsistencyCheckKeyActorActor>, public GetConsistencyCheckKeyActorActorState<GetConsistencyCheckKeyActorActor> {
-															#line 7541 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7668 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
 	using FastAllocated<GetConsistencyCheckKeyActorActor>::operator new;
 	using FastAllocated<GetConsistencyCheckKeyActorActor>::operator delete;
@@ -7547,9 +7674,9 @@ public:
 	void destroy() override { ((Actor<RangeResult>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< GetConsistencyCheckKeyActorActor, 0, Optional<Value> >;
-															#line 1455 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1511 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	GetConsistencyCheckKeyActorActor(ReadYourWritesTransaction* const& ryw,KeyRangeRef const& kr) 
-															#line 7552 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7679 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		 : Actor<RangeResult>(),
 		   GetConsistencyCheckKeyActorActorState<GetConsistencyCheckKeyActorActor>(ryw, kr)
 	{
@@ -7573,14 +7700,14 @@ friend struct ActorCallback< GetConsistencyCheckKeyActorActor, 0, Optional<Value
 	}
 };
 }
-															#line 1455 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1511 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 [[nodiscard]] Future<RangeResult> getConsistencyCheckKeyActor( ReadYourWritesTransaction* const& ryw, KeyRangeRef const& kr ) {
-															#line 1455 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1511 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	return Future<RangeResult>(new GetConsistencyCheckKeyActorActor(ryw, kr));
-															#line 7580 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7707 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 }
 
-#line 1467 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+#line 1523 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 
 ConsistencyCheckImpl::ConsistencyCheckImpl(KeyRangeRef kr) : SpecialKeyRangeRWImpl(kr) {}
 
@@ -7661,25 +7788,25 @@ void GlobalConfigImpl::set(ReadYourWritesTransaction* ryw, const KeyRef& key, co
 // Writes global configuration changes to durable memory. Also writes the
 // changes made in the transaction to a recent history set, and updates the
 // latest version which the global configuration was updated at.
-															#line 7664 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7791 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 namespace {
 // This generated class is to be used only via globalConfigCommitActor()
-															#line 1547 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1603 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 template <class GlobalConfigCommitActorActor>
-															#line 1547 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1603 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class GlobalConfigCommitActorActorState {
-															#line 7671 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7798 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
-															#line 1547 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1603 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	GlobalConfigCommitActorActorState(GlobalConfigImpl* const& globalConfig,ReadYourWritesTransaction* const& ryw) 
-															#line 1547 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-															#line 1547 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1603 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1603 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		 : globalConfig(globalConfig),
-															#line 1547 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1603 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   ryw(ryw),
-															#line 1549 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1605 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   tr(ryw->getTransaction())
-															#line 7682 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7809 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 	{
 		fdb_probe_actor_create("globalConfigCommitActor", reinterpret_cast<unsigned long>(this));
 
@@ -7692,18 +7819,18 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 1550 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1606 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			ryw->setOption(FDBTransactionOptions::RAW_ACCESS);
-															#line 1554 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1610 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			StrictFuture<RangeResult> __when_expr_0 = tr.getRange(globalConfigHistoryKeys, CLIENT_KNOBS->TOO_MANY);
-															#line 1554 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1610 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (static_cast<GlobalConfigCommitActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 7701 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7828 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<GlobalConfigCommitActorActor*>(this)->actor_wait_state = 1;
-															#line 1554 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1610 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< GlobalConfigCommitActorActor, 0, RangeResult >*>(static_cast<GlobalConfigCommitActorActor*>(this)));
-															#line 7706 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7833 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -7724,70 +7851,70 @@ public:
 	}
 	int a_body1cont1(RangeResult const& history,int loopDepth) 
 	{
-															#line 1555 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1611 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		constexpr int kGlobalConfigMaxHistorySize = 3;
-															#line 1556 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1612 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (history.size() > kGlobalConfigMaxHistorySize - 1)
-															#line 7731 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7858 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 1557 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1613 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			for(int i = 0;i < history.size() - (kGlobalConfigMaxHistorySize - 1);++i) {
-															#line 1558 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1614 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				tr.clear(history[i].key);
-															#line 7737 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7864 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			}
 		}
-															#line 1562 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1618 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		Standalone<VectorRef<KeyValueRef>> insertions;
-															#line 1563 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1619 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		Standalone<VectorRef<KeyRangeRef>> clears;
-															#line 1568 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1624 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		ranges = ryw->getSpecialKeySpaceWriteMap().containedRanges(specialKeys);
-															#line 1570 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1626 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		iter = ranges.begin();
-															#line 1571 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1627 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		for(;iter != ranges.end();) {
-															#line 1572 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1628 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			std::pair<bool, Optional<Value>> entry = iter->value();
-															#line 1573 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1629 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (entry.first)
-															#line 7754 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7881 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
-															#line 1574 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1630 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				if (entry.second.present() && iter->begin().startsWith(globalConfig->getKeyRange().begin))
-															#line 7758 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7885 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				{
-															#line 1575 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1631 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					Key bareKey = iter->begin().removePrefix(globalConfig->getKeyRange().begin);
-															#line 1576 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1632 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					insertions.push_back_deep(insertions.arena(), KeyValueRef(bareKey, entry.second.get()));
-															#line 7764 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7891 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				}
 				else
 				{
-															#line 1577 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1633 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					if (!entry.second.present() && iter->range().begin.startsWith(globalConfig->getKeyRange().begin) && iter->range().end.startsWith(globalConfig->getKeyRange().begin))
-															#line 7770 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7897 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 					{
-															#line 1579 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1635 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 						KeyRef bareRangeBegin = iter->range().begin.removePrefix(globalConfig->getKeyRange().begin);
-															#line 1580 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1636 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 						KeyRef bareRangeEnd = iter->range().end.removePrefix(globalConfig->getKeyRange().begin);
-															#line 1581 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1637 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 						clears.push_back_deep(clears.arena(), KeyRangeRef(bareRangeBegin, bareRangeEnd));
-															#line 7778 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7905 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 					}
 				}
 			}
-															#line 1584 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1640 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			++iter;
-															#line 7784 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7911 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		}
-															#line 1586 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1642 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		GlobalConfig::applyChanges(tr, insertions, clears);
-															#line 1588 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1644 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<GlobalConfigCommitActorActor*>(this)->SAV<Optional<std::string>>::futures) { (void)(Optional<std::string>()); this->~GlobalConfigCommitActorActorState(); static_cast<GlobalConfigCommitActorActor*>(this)->destroy(); return 0; }
-															#line 7790 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7917 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<GlobalConfigCommitActorActor*>(this)->SAV< Optional<std::string> >::value()) Optional<std::string>(Optional<std::string>());
 		this->~GlobalConfigCommitActorActorState();
 		static_cast<GlobalConfigCommitActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -7797,70 +7924,70 @@ public:
 	}
 	int a_body1cont1(RangeResult && history,int loopDepth) 
 	{
-															#line 1555 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1611 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		constexpr int kGlobalConfigMaxHistorySize = 3;
-															#line 1556 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1612 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (history.size() > kGlobalConfigMaxHistorySize - 1)
-															#line 7804 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7931 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 1557 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1613 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			for(int i = 0;i < history.size() - (kGlobalConfigMaxHistorySize - 1);++i) {
-															#line 1558 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1614 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				tr.clear(history[i].key);
-															#line 7810 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7937 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			}
 		}
-															#line 1562 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1618 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		Standalone<VectorRef<KeyValueRef>> insertions;
-															#line 1563 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1619 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		Standalone<VectorRef<KeyRangeRef>> clears;
-															#line 1568 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1624 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		ranges = ryw->getSpecialKeySpaceWriteMap().containedRanges(specialKeys);
-															#line 1570 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1626 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		iter = ranges.begin();
-															#line 1571 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1627 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		for(;iter != ranges.end();) {
-															#line 1572 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1628 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			std::pair<bool, Optional<Value>> entry = iter->value();
-															#line 1573 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1629 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (entry.first)
-															#line 7827 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7954 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
-															#line 1574 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1630 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				if (entry.second.present() && iter->begin().startsWith(globalConfig->getKeyRange().begin))
-															#line 7831 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7958 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				{
-															#line 1575 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1631 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					Key bareKey = iter->begin().removePrefix(globalConfig->getKeyRange().begin);
-															#line 1576 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1632 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					insertions.push_back_deep(insertions.arena(), KeyValueRef(bareKey, entry.second.get()));
-															#line 7837 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7964 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				}
 				else
 				{
-															#line 1577 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1633 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					if (!entry.second.present() && iter->range().begin.startsWith(globalConfig->getKeyRange().begin) && iter->range().end.startsWith(globalConfig->getKeyRange().begin))
-															#line 7843 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7970 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 					{
-															#line 1579 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1635 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 						KeyRef bareRangeBegin = iter->range().begin.removePrefix(globalConfig->getKeyRange().begin);
-															#line 1580 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1636 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 						KeyRef bareRangeEnd = iter->range().end.removePrefix(globalConfig->getKeyRange().begin);
-															#line 1581 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1637 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 						clears.push_back_deep(clears.arena(), KeyRangeRef(bareRangeBegin, bareRangeEnd));
-															#line 7851 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7978 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 					}
 				}
 			}
-															#line 1584 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1640 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			++iter;
-															#line 7857 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7984 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		}
-															#line 1586 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1642 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		GlobalConfig::applyChanges(tr, insertions, clears);
-															#line 1588 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1644 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<GlobalConfigCommitActorActor*>(this)->SAV<Optional<std::string>>::futures) { (void)(Optional<std::string>()); this->~GlobalConfigCommitActorActorState(); static_cast<GlobalConfigCommitActorActor*>(this)->destroy(); return 0; }
-															#line 7863 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 7990 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<GlobalConfigCommitActorActor*>(this)->SAV< Optional<std::string> >::value()) Optional<std::string>(Optional<std::string>());
 		this->~GlobalConfigCommitActorActorState();
 		static_cast<GlobalConfigCommitActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -7931,22 +8058,22 @@ public:
 		fdb_probe_actor_exit("globalConfigCommitActor", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 1547 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1603 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	GlobalConfigImpl* globalConfig;
-															#line 1547 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1603 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	ReadYourWritesTransaction* ryw;
-															#line 1549 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1605 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	Transaction& tr;
-															#line 1568 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1624 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	RangeMap<Key, std::pair<bool, Optional<Value>>, KeyRangeRef>::Ranges ranges;
-															#line 1570 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1626 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	RangeMap<Key, std::pair<bool, Optional<Value>>, KeyRangeRef>::iterator iter;
-															#line 7944 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8071 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 };
 // This generated class is to be used only via globalConfigCommitActor()
-															#line 1547 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1603 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class GlobalConfigCommitActorActor final : public Actor<Optional<std::string>>, public ActorCallback< GlobalConfigCommitActorActor, 0, RangeResult >, public FastAllocated<GlobalConfigCommitActorActor>, public GlobalConfigCommitActorActorState<GlobalConfigCommitActorActor> {
-															#line 7949 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8076 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
 	using FastAllocated<GlobalConfigCommitActorActor>::operator new;
 	using FastAllocated<GlobalConfigCommitActorActor>::operator delete;
@@ -7955,9 +8082,9 @@ public:
 	void destroy() override { ((Actor<Optional<std::string>>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< GlobalConfigCommitActorActor, 0, RangeResult >;
-															#line 1547 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1603 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	GlobalConfigCommitActorActor(GlobalConfigImpl* const& globalConfig,ReadYourWritesTransaction* const& ryw) 
-															#line 7960 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8087 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		 : Actor<Optional<std::string>>(),
 		   GlobalConfigCommitActorActorState<GlobalConfigCommitActorActor>(globalConfig, ryw)
 	{
@@ -7981,14 +8108,14 @@ friend struct ActorCallback< GlobalConfigCommitActorActor, 0, RangeResult >;
 	}
 };
 }
-															#line 1547 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1603 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 [[nodiscard]] Future<Optional<std::string>> globalConfigCommitActor( GlobalConfigImpl* const& globalConfig, ReadYourWritesTransaction* const& ryw ) {
-															#line 1547 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1603 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	return Future<Optional<std::string>>(new GlobalConfigCommitActorActor(globalConfig, ryw));
-															#line 7988 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8115 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 }
 
-#line 1590 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+#line 1646 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 
 // Called when a transaction includes keys in the global configuration special-key-space range.
 Future<Optional<std::string>> GlobalConfigImpl::commit(ReadYourWritesTransaction* ryw) {
@@ -8019,10 +8146,10 @@ Future<RangeResult> TracingOptionsImpl::getRange(ReadYourWritesTransaction* ryw,
 
 		if (key.endsWith(kTracingTransactionIdKey)) {
 			result.push_back_deep(result.arena(),
-			                      KeyValueRef(key, std::to_string(ryw->getTransactionState()->spanID.first())));
+			                      KeyValueRef(key, ryw->getTransactionState()->spanContext.traceID.toString()));
 		} else if (key.endsWith(kTracingTokenKey)) {
 			result.push_back_deep(result.arena(),
-			                      KeyValueRef(key, std::to_string(ryw->getTransactionState()->spanID.second())));
+			                      KeyValueRef(key, std::to_string(ryw->getTransactionState()->spanContext.spanID)));
 		}
 	}
 	return result;
@@ -8030,20 +8157,22 @@ Future<RangeResult> TracingOptionsImpl::getRange(ReadYourWritesTransaction* ryw,
 
 void TracingOptionsImpl::set(ReadYourWritesTransaction* ryw, const KeyRef& key, const ValueRef& value) {
 	if (ryw->getApproximateSize() > 0) {
-		ryw->setSpecialKeySpaceErrorMsg("tracing options must be set first");
+		ryw->setSpecialKeySpaceErrorMsg(
+		    ManagementAPIError::toJsonString(false, "configure trace", "tracing options must be set first"));
 		ryw->getSpecialKeySpaceWriteMap().insert(key, std::make_pair(true, Optional<Value>()));
 		return;
 	}
 
 	if (key.endsWith(kTracingTransactionIdKey)) {
-		ryw->setTransactionID(std::stoul(value.toString()));
+		ryw->setTransactionID(UID::fromString(value.toString()));
 	} else if (key.endsWith(kTracingTokenKey)) {
 		if (value.toString() == "true") {
 			ryw->setToken(deterministicRandom()->randomUInt64());
 		} else if (value.toString() == "false") {
 			ryw->setToken(0);
 		} else {
-			ryw->setSpecialKeySpaceErrorMsg("token must be set to true/false");
+			ryw->setSpecialKeySpaceErrorMsg(
+			    ManagementAPIError::toJsonString(false, "configure trace token", "token must be set to true/false"));
 			throw special_keys_api_failure();
 		}
 	}
@@ -8057,38 +8186,38 @@ Future<Optional<std::string>> TracingOptionsImpl::commit(ReadYourWritesTransacti
 }
 
 void TracingOptionsImpl::clear(ReadYourWritesTransaction* ryw, const KeyRangeRef& range) {
-	ryw->setSpecialKeySpaceErrorMsg("clear range disabled");
+	ryw->setSpecialKeySpaceErrorMsg(ManagementAPIError::toJsonString(false, "clear trace", "clear range disabled"));
 	throw special_keys_api_failure();
 }
 
 void TracingOptionsImpl::clear(ReadYourWritesTransaction* ryw, const KeyRef& key) {
-	ryw->setSpecialKeySpaceErrorMsg("clear disabled");
+	ryw->setSpecialKeySpaceErrorMsg(ManagementAPIError::toJsonString(false, "clear trace", "clear disabled"));
 	throw special_keys_api_failure();
 }
 
 CoordinatorsImpl::CoordinatorsImpl(KeyRangeRef kr) : SpecialKeyRangeRWImpl(kr) {}
 
-															#line 8071 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8200 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 namespace {
 // This generated class is to be used only via coordinatorsGetRangeActor()
-															#line 1669 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1727 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 template <class CoordinatorsGetRangeActorActor>
-															#line 1669 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1727 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class CoordinatorsGetRangeActorActorState {
-															#line 8078 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
-															#line 1669 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1727 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	CoordinatorsGetRangeActorActorState(ReadYourWritesTransaction* const& ryw,KeyRef const& prefix,KeyRangeRef const& kr) 
-															#line 1669 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-															#line 1669 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1727 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1727 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		 : ryw(ryw),
-															#line 1669 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1727 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   prefix(prefix),
-															#line 1669 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1727 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   kr(kr),
-															#line 1670 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1728 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   cs(ryw->getDatabase()->getConnectionRecord()->getConnectionString())
-															#line 8091 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8220 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 	{
 		fdb_probe_actor_create("coordinatorsGetRangeActor", reinterpret_cast<unsigned long>(this));
 
@@ -8101,16 +8230,16 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 1671 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1729 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			StrictFuture<std::vector<NetworkAddress>> __when_expr_0 = cs.tryResolveHostnames();
-															#line 1671 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1729 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (static_cast<CoordinatorsGetRangeActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 8108 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8237 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<CoordinatorsGetRangeActorActor*>(this)->actor_wait_state = 1;
-															#line 1671 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1729 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< CoordinatorsGetRangeActorActor, 0, std::vector<NetworkAddress> >*>(static_cast<CoordinatorsGetRangeActorActor*>(this)));
-															#line 8113 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8242 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -8131,49 +8260,49 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 1672 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1730 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		RangeResult result;
-															#line 1673 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		Key cluster_decription_key = prefix.withSuffix(LiteralStringRef("cluster_description"));
-															#line 1674 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1731 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		Key cluster_decription_key = prefix.withSuffix("cluster_description"_sr);
+															#line 1732 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (kr.contains(cluster_decription_key))
-															#line 8140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8269 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 1675 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1733 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			result.push_back_deep(result.arena(), KeyValueRef(cluster_decription_key, cs.clusterKeyName()));
-															#line 8144 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8273 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		}
-															#line 1679 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1737 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		std::sort(coordinator_processes.begin(), coordinator_processes.end(), [](const NetworkAddress& lhs, const NetworkAddress& rhs) { return lhs.toString() < rhs.toString(); });
-															#line 1682 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1740 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		std::string processes_str;
-															#line 1683 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1741 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		for( const auto& w : coordinator_processes ) {
-															#line 1684 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1742 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (processes_str.size())
-															#line 8154 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8283 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
-															#line 1685 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1743 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				processes_str += ",";
-															#line 8158 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8287 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			}
-															#line 1686 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1744 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			processes_str += w.toString();
-															#line 8162 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8291 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		}
-															#line 1688 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		Key processes_key = prefix.withSuffix(LiteralStringRef("processes"));
-															#line 1689 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1746 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		Key processes_key = prefix.withSuffix("processes"_sr);
+															#line 1747 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (kr.contains(processes_key))
-															#line 8168 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8297 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 1690 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1748 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			result.push_back_deep(result.arena(), KeyValueRef(processes_key, Value(processes_str)));
-															#line 8172 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8301 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		}
-															#line 1692 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1750 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<CoordinatorsGetRangeActorActor*>(this)->SAV<RangeResult>::futures) { (void)(rywGetRange(ryw, kr, result)); this->~CoordinatorsGetRangeActorActorState(); static_cast<CoordinatorsGetRangeActorActor*>(this)->destroy(); return 0; }
-															#line 8176 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8305 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<CoordinatorsGetRangeActorActor*>(this)->SAV< RangeResult >::value()) RangeResult(rywGetRange(ryw, kr, result));
 		this->~CoordinatorsGetRangeActorActorState();
 		static_cast<CoordinatorsGetRangeActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -8183,9 +8312,9 @@ public:
 	}
 	int a_body1when1(std::vector<NetworkAddress> const& __coordinator_processes,int loopDepth) 
 	{
-															#line 1671 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1729 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		coordinator_processes = __coordinator_processes;
-															#line 8188 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8317 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		loopDepth = a_body1cont1(loopDepth);
 
 		return loopDepth;
@@ -8248,22 +8377,22 @@ public:
 		fdb_probe_actor_exit("coordinatorsGetRangeActor", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 1669 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1727 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	ReadYourWritesTransaction* ryw;
-															#line 1669 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1727 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	KeyRef prefix;
-															#line 1669 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1727 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	KeyRangeRef kr;
-															#line 1670 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1728 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	ClusterConnectionString cs;
-															#line 1671 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1729 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	std::vector<NetworkAddress> coordinator_processes;
-															#line 8261 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8390 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 };
 // This generated class is to be used only via coordinatorsGetRangeActor()
-															#line 1669 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1727 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class CoordinatorsGetRangeActorActor final : public Actor<RangeResult>, public ActorCallback< CoordinatorsGetRangeActorActor, 0, std::vector<NetworkAddress> >, public FastAllocated<CoordinatorsGetRangeActorActor>, public CoordinatorsGetRangeActorActorState<CoordinatorsGetRangeActorActor> {
-															#line 8266 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8395 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
 	using FastAllocated<CoordinatorsGetRangeActorActor>::operator new;
 	using FastAllocated<CoordinatorsGetRangeActorActor>::operator delete;
@@ -8272,9 +8401,9 @@ public:
 	void destroy() override { ((Actor<RangeResult>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< CoordinatorsGetRangeActorActor, 0, std::vector<NetworkAddress> >;
-															#line 1669 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1727 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	CoordinatorsGetRangeActorActor(ReadYourWritesTransaction* const& ryw,KeyRef const& prefix,KeyRangeRef const& kr) 
-															#line 8277 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8406 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		 : Actor<RangeResult>(),
 		   CoordinatorsGetRangeActorActorState<CoordinatorsGetRangeActorActor>(ryw, prefix, kr)
 	{
@@ -8298,14 +8427,14 @@ friend struct ActorCallback< CoordinatorsGetRangeActorActor, 0, std::vector<Netw
 	}
 };
 }
-															#line 1669 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1727 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 [[nodiscard]] Future<RangeResult> coordinatorsGetRangeActor( ReadYourWritesTransaction* const& ryw, KeyRef const& prefix, KeyRangeRef const& kr ) {
-															#line 1669 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1727 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	return Future<RangeResult>(new CoordinatorsGetRangeActorActor(ryw, prefix, kr));
-															#line 8305 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8434 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 }
 
-#line 1694 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+#line 1752 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 
 Future<RangeResult> CoordinatorsImpl::getRange(ReadYourWritesTransaction* ryw,
                                                KeyRangeRef kr,
@@ -8314,33 +8443,33 @@ Future<RangeResult> CoordinatorsImpl::getRange(ReadYourWritesTransaction* ryw,
 	return coordinatorsGetRangeActor(ryw, prefix, kr);
 }
 
-															#line 8317 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8446 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 namespace {
 // This generated class is to be used only via coordinatorsCommitActor()
-															#line 1702 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1760 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 template <class CoordinatorsCommitActorActor>
-															#line 1702 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1760 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class CoordinatorsCommitActorActorState {
-															#line 8324 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8453 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
-															#line 1702 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1760 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	CoordinatorsCommitActorActorState(ReadYourWritesTransaction* const& ryw,KeyRangeRef const& kr) 
-															#line 1702 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-															#line 1702 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1760 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1760 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		 : ryw(ryw),
-															#line 1702 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1760 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   kr(kr),
-															#line 1703 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1761 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   conn(),
-															#line 1704 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1762 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   process_address_or_hostname_strs(),
-															#line 1705 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1763 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   msg(),
-															#line 1706 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1764 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   index(),
-															#line 1707 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1765 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   parse_error(false)
-															#line 8343 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8472 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 	{
 		fdb_probe_actor_create("coordinatorsCommitActor", reinterpret_cast<unsigned long>(this));
 
@@ -8353,35 +8482,35 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 1710 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			Key processes_key = LiteralStringRef("processes").withPrefix(kr.begin);
-															#line 1711 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1768 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			Key processes_key = "processes"_sr.withPrefix(kr.begin);
+															#line 1769 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			auto processes_entry = ryw->getSpecialKeySpaceWriteMap()[processes_key];
-															#line 1712 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1770 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (processes_entry.first)
-															#line 8362 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8491 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
-															#line 1713 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1771 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				ASSERT(processes_entry.second.present());
-															#line 1714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1772 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				auto processesStr = processes_entry.second.get().toString();
-															#line 1715 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1773 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				boost::split(process_address_or_hostname_strs, processesStr, [](char c) { return c == ','; });
-															#line 1716 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1774 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				if (!process_address_or_hostname_strs.size())
-															#line 8372 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8501 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				{
-															#line 1717 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1775 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					if (!static_cast<CoordinatorsCommitActorActor*>(this)->SAV<Optional<std::string>>::futures) { (void)(ManagementAPIError::toJsonString( false, "coordinators", "New coordinators\' processes are empty, please specify new processes\' network addresses with format " "\"IP:PORT,IP:PORT,...,IP:PORT\" or \"HOSTNAME:PORT,HOSTNAME:PORT,...,HOSTNAME:PORT\"")); this->~CoordinatorsCommitActorActorState(); static_cast<CoordinatorsCommitActorActor*>(this)->destroy(); return 0; }
-															#line 8376 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8505 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 					new (&static_cast<CoordinatorsCommitActorActor*>(this)->SAV< Optional<std::string> >::value()) Optional<std::string>(ManagementAPIError::toJsonString( false, "coordinators", "New coordinators\' processes are empty, please specify new processes\' network addresses with format " "\"IP:PORT,IP:PORT,...,IP:PORT\" or \"HOSTNAME:PORT,HOSTNAME:PORT,...,HOSTNAME:PORT\""));
 					this->~CoordinatorsCommitActorActorState();
 					static_cast<CoordinatorsCommitActorActor*>(this)->finishSendAndDelPromiseRef();
 					return 0;
 				}
-															#line 1723 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1781 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				index = 0;
-															#line 8384 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8513 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				loopDepth = a_body1loopHead1(loopDepth);
 			}
 			else
@@ -8407,47 +8536,49 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 1748 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1806 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		std::string newName;
-															#line 1750 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		Key cluster_decription_key = LiteralStringRef("cluster_description").withPrefix(kr.begin);
-															#line 1751 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1808 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		Key cluster_decription_key = "cluster_description"_sr.withPrefix(kr.begin);
+															#line 1809 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		auto entry = ryw->getSpecialKeySpaceWriteMap()[cluster_decription_key];
-															#line 1752 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1810 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (entry.first)
-															#line 8418 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8547 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 1754 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1812 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (entry.second.present() && isAlphaNumeric(entry.second.get().toString()))
-															#line 8422 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8551 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
-															#line 1756 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1814 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				newName = entry.second.get().toString();
-															#line 8426 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8555 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			}
 			else
 			{
-															#line 1759 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1817 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				if (!static_cast<CoordinatorsCommitActorActor*>(this)->SAV<Optional<std::string>>::futures) { (void)(ManagementAPIError::toJsonString( false, "coordinators", "Cluster description must match [A-Za-z0-9_]+")); this->~CoordinatorsCommitActorActorState(); static_cast<CoordinatorsCommitActorActor*>(this)->destroy(); return 0; }
-															#line 8432 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8561 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				new (&static_cast<CoordinatorsCommitActorActor*>(this)->SAV< Optional<std::string> >::value()) Optional<std::string>(ManagementAPIError::toJsonString( false, "coordinators", "Cluster description must match [A-Za-z0-9_]+"));
 				this->~CoordinatorsCommitActorActorState();
 				static_cast<CoordinatorsCommitActorActor*>(this)->finishSendAndDelPromiseRef();
 				return 0;
 			}
 		}
-															#line 1764 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		TraceEvent(SevDebug, "SKSChangeCoordinatorsStart") .detail("NewConnectionString", conn.toString()) .detail("Description", entry.first ? entry.second.get().toString() : "");
-															#line 1768 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		StrictFuture<Optional<CoordinatorsResult>> __when_expr_0 = changeQuorumChecker(&ryw->getTransaction(), &conn, newName);
-															#line 1768 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1822 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		auto configDBEntry = ryw->getSpecialKeySpaceWriteMap()["config_db"_sr.withPrefix(kr.begin)];
+															#line 1824 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		TraceEvent(SevDebug, "SKSChangeCoordinatorsStart") .detail("NewConnectionString", conn.toString()) .detail("Description", entry.first ? entry.second.get().toString() : "") .detail("ConfigDBDisabled", configDBEntry.first);
+															#line 1829 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		StrictFuture<Optional<CoordinatorsResult>> __when_expr_0 = changeQuorumChecker(&ryw->getTransaction(), &conn, newName, configDBEntry.first);
+															#line 1829 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (static_cast<CoordinatorsCommitActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 8445 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8576 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1cont1when1(__when_expr_0.get(), loopDepth); };
 		static_cast<CoordinatorsCommitActorActor*>(this)->actor_wait_state = 1;
-															#line 1768 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1829 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< CoordinatorsCommitActorActor, 0, Optional<CoordinatorsResult> >*>(static_cast<CoordinatorsCommitActorActor*>(this)));
-															#line 8450 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8581 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -8467,38 +8598,38 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 1723 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1781 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!(index < process_address_or_hostname_strs.size()))
-															#line 8472 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8603 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
 			return a_body1break1(loopDepth==0?0:loopDepth-1); // break
 		}
 		try {
-															#line 1725 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1783 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (Hostname::isHostname(process_address_or_hostname_strs[index]))
-															#line 8479 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8610 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
-															#line 1726 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1784 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				conn.hostnames.push_back(Hostname::parse(process_address_or_hostname_strs[index]));
-															#line 8483 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8614 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			}
 			else
 			{
-															#line 1728 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1786 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				NetworkAddress a = NetworkAddress::parse(process_address_or_hostname_strs[index]);
-															#line 1729 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1787 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				if (!a.isValid())
-															#line 8491 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8622 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				{
-															#line 1730 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1788 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					parse_error = true;
-															#line 8495 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8626 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				}
 				else
 				{
-															#line 1732 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1790 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					conn.coords.push_back(a);
-															#line 8501 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8632 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				}
 			}
 			loopDepth = a_body1loopBody1cont8(loopDepth);
@@ -8526,23 +8657,23 @@ public:
 	}
 	int a_body1loopBody1cont1(int loopDepth) 
 	{
-															#line 1740 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1798 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (parse_error)
-															#line 8531 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8662 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 1741 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1799 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			std::string error = "ERROR: \'" + process_address_or_hostname_strs[index] + "\' is not a valid network endpoint address\n";
-															#line 1743 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1801 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (!static_cast<CoordinatorsCommitActorActor*>(this)->SAV<Optional<std::string>>::futures) { (void)(ManagementAPIError::toJsonString(false, "coordinators", error)); this->~CoordinatorsCommitActorActorState(); static_cast<CoordinatorsCommitActorActor*>(this)->destroy(); return 0; }
-															#line 8537 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8668 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			new (&static_cast<CoordinatorsCommitActorActor*>(this)->SAV< Optional<std::string> >::value()) Optional<std::string>(ManagementAPIError::toJsonString(false, "coordinators", error));
 			this->~CoordinatorsCommitActorActorState();
 			static_cast<CoordinatorsCommitActorActor*>(this)->finishSendAndDelPromiseRef();
 			return 0;
 		}
-															#line 1723 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1781 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		index++;
-															#line 8545 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8676 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		if (loopDepth == 0) return a_body1loopHead1(0);
 
 		return loopDepth;
@@ -8550,11 +8681,11 @@ public:
 	int a_body1loopBody1Catch1(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 1736 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1794 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			TraceEvent(SevDebug, "SpecialKeysNetworkParseError").error(e);
-															#line 1737 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1795 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			parse_error = true;
-															#line 8557 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8688 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			loopDepth = a_body1loopBody1cont1(loopDepth);
 		}
 		catch (Error& error) {
@@ -8580,44 +8711,44 @@ public:
 	}
 	int a_body1cont4(Optional<CoordinatorsResult> const& r,int loopDepth) 
 	{
-															#line 1770 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1832 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		TraceEvent(SevDebug, "SKSChangeCoordinatorsFinish") .detail("Result", r.present() ? static_cast<int>(r.get()) : -1);
-															#line 1772 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1834 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (r.present())
-															#line 8587 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8718 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 1773 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1835 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			auto res = r.get();
-															#line 1774 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1836 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			bool retriable = false;
-															#line 1775 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1837 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (res == CoordinatorsResult::COORDINATOR_UNREACHABLE)
-															#line 8595 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8726 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
-															#line 1776 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1838 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				retriable = true;
-															#line 8599 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8730 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			}
 			else
 			{
-															#line 1777 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1839 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				if (res == CoordinatorsResult::SUCCESS)
-															#line 8605 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8736 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				{
-															#line 1778 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1840 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					TraceEvent(SevError, "SpecialKeysForCoordinators").detail("UnexpectedSuccessfulResult", "");
-															#line 1779 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1841 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					ASSERT(false);
-															#line 8611 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8742 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				}
 			}
-															#line 1781 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1843 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			msg = ManagementAPIError::toJsonString(retriable, "coordinators", ManagementAPI::generateErrorMessage(res));
-															#line 8616 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8747 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		}
-															#line 1783 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1845 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<CoordinatorsCommitActorActor*>(this)->SAV<Optional<std::string>>::futures) { (void)(msg); this->~CoordinatorsCommitActorActorState(); static_cast<CoordinatorsCommitActorActor*>(this)->destroy(); return 0; }
-															#line 8620 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8751 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<CoordinatorsCommitActorActor*>(this)->SAV< Optional<std::string> >::value()) Optional<std::string>(std::move(msg)); // state_var_RVO
 		this->~CoordinatorsCommitActorActorState();
 		static_cast<CoordinatorsCommitActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -8627,44 +8758,44 @@ public:
 	}
 	int a_body1cont4(Optional<CoordinatorsResult> && r,int loopDepth) 
 	{
-															#line 1770 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1832 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		TraceEvent(SevDebug, "SKSChangeCoordinatorsFinish") .detail("Result", r.present() ? static_cast<int>(r.get()) : -1);
-															#line 1772 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1834 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (r.present())
-															#line 8634 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8765 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 1773 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1835 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			auto res = r.get();
-															#line 1774 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1836 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			bool retriable = false;
-															#line 1775 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1837 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (res == CoordinatorsResult::COORDINATOR_UNREACHABLE)
-															#line 8642 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8773 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
-															#line 1776 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1838 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				retriable = true;
-															#line 8646 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8777 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			}
 			else
 			{
-															#line 1777 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1839 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				if (res == CoordinatorsResult::SUCCESS)
-															#line 8652 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8783 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				{
-															#line 1778 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1840 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					TraceEvent(SevError, "SpecialKeysForCoordinators").detail("UnexpectedSuccessfulResult", "");
-															#line 1779 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1841 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					ASSERT(false);
-															#line 8658 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8789 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				}
 			}
-															#line 1781 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1843 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			msg = ManagementAPIError::toJsonString(retriable, "coordinators", ManagementAPI::generateErrorMessage(res));
-															#line 8663 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8794 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		}
-															#line 1783 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1845 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<CoordinatorsCommitActorActor*>(this)->SAV<Optional<std::string>>::futures) { (void)(msg); this->~CoordinatorsCommitActorActorState(); static_cast<CoordinatorsCommitActorActor*>(this)->destroy(); return 0; }
-															#line 8667 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8798 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<CoordinatorsCommitActorActor*>(this)->SAV< Optional<std::string> >::value()) Optional<std::string>(std::move(msg)); // state_var_RVO
 		this->~CoordinatorsCommitActorActorState();
 		static_cast<CoordinatorsCommitActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -8735,26 +8866,26 @@ public:
 		fdb_probe_actor_exit("coordinatorsCommitActor", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 1702 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1760 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	ReadYourWritesTransaction* ryw;
-															#line 1702 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1760 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	KeyRangeRef kr;
-															#line 1703 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1761 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	ClusterConnectionString conn;
-															#line 1704 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1762 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	std::vector<std::string> process_address_or_hostname_strs;
-															#line 1705 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1763 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	Optional<std::string> msg;
-															#line 1706 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1764 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	int index;
-															#line 1707 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1765 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	bool parse_error;
-															#line 8752 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8883 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 };
 // This generated class is to be used only via coordinatorsCommitActor()
-															#line 1702 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1760 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class CoordinatorsCommitActorActor final : public Actor<Optional<std::string>>, public ActorCallback< CoordinatorsCommitActorActor, 0, Optional<CoordinatorsResult> >, public FastAllocated<CoordinatorsCommitActorActor>, public CoordinatorsCommitActorActorState<CoordinatorsCommitActorActor> {
-															#line 8757 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8888 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
 	using FastAllocated<CoordinatorsCommitActorActor>::operator new;
 	using FastAllocated<CoordinatorsCommitActorActor>::operator delete;
@@ -8763,9 +8894,9 @@ public:
 	void destroy() override { ((Actor<Optional<std::string>>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< CoordinatorsCommitActorActor, 0, Optional<CoordinatorsResult> >;
-															#line 1702 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1760 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	CoordinatorsCommitActorActor(ReadYourWritesTransaction* const& ryw,KeyRangeRef const& kr) 
-															#line 8768 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8899 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		 : Actor<Optional<std::string>>(),
 		   CoordinatorsCommitActorActorState<CoordinatorsCommitActorActor>(ryw, kr)
 	{
@@ -8789,14 +8920,14 @@ friend struct ActorCallback< CoordinatorsCommitActorActor, 0, Optional<Coordinat
 	}
 };
 }
-															#line 1702 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1760 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 [[nodiscard]] static Future<Optional<std::string>> coordinatorsCommitActor( ReadYourWritesTransaction* const& ryw, KeyRangeRef const& kr ) {
-															#line 1702 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1760 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	return Future<Optional<std::string>>(new CoordinatorsCommitActorActor(ryw, kr));
-															#line 8796 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8927 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 }
 
-#line 1785 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+#line 1847 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 
 Future<Optional<std::string>> CoordinatorsImpl::commit(ReadYourWritesTransaction* ryw) {
 	return coordinatorsCommitActor(ryw, getKeyRange());
@@ -8813,29 +8944,29 @@ void CoordinatorsImpl::clear(ReadYourWritesTransaction* ryw, const KeyRef& key) 
 
 CoordinatorsAutoImpl::CoordinatorsAutoImpl(KeyRangeRef kr) : SpecialKeyRangeReadImpl(kr) {}
 
-															#line 8816 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8947 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 namespace {
 // This generated class is to be used only via CoordinatorsAutoImplActor()
-															#line 1801 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1863 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 template <class CoordinatorsAutoImplActorActor>
-															#line 1801 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1863 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class CoordinatorsAutoImplActorActorState {
-															#line 8823 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8954 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
-															#line 1801 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1863 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	CoordinatorsAutoImplActorActorState(ReadYourWritesTransaction* const& ryw,KeyRangeRef const& kr) 
-															#line 1801 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-															#line 1801 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1863 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1863 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		 : ryw(ryw),
-															#line 1801 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1863 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   kr(kr),
-															#line 1802 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1864 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   res(),
-															#line 1803 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1865 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   autoCoordinatorsKey(),
-															#line 1804 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1866 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   tr(ryw->getTransaction())
-															#line 8838 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8969 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 	{
 		fdb_probe_actor_create("CoordinatorsAutoImplActor", reinterpret_cast<unsigned long>(this));
 
@@ -8848,24 +8979,24 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 1806 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1868 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			tr.setOption(FDBTransactionOptions::LOCK_AWARE);
-															#line 1807 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1869 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			tr.setOption(FDBTransactionOptions::RAW_ACCESS);
-															#line 1808 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1870 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			tr.setOption(FDBTransactionOptions::USE_PROVISIONAL_PROXIES);
-															#line 1809 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1871 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			tr.setOption(FDBTransactionOptions::PRIORITY_SYSTEM_IMMEDIATE);
-															#line 1810 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1872 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			StrictFuture<Optional<Value>> __when_expr_0 = tr.get(coordinatorsKey);
-															#line 1810 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1872 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (static_cast<CoordinatorsAutoImplActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 8863 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8994 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<CoordinatorsAutoImplActorActor*>(this)->actor_wait_state = 1;
-															#line 1810 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1872 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< CoordinatorsAutoImplActorActor, 0, Optional<Value> >*>(static_cast<CoordinatorsAutoImplActorActor*>(this)));
-															#line 8868 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 8999 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -8886,60 +9017,60 @@ public:
 	}
 	int a_body1cont1(Optional<Value> const& currentKey,int loopDepth) 
 	{
-															#line 1812 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1874 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!currentKey.present())
-															#line 8891 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 9022 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 1813 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1875 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			ryw->setSpecialKeySpaceErrorMsg( ManagementAPIError::toJsonString(false, "auto_coordinators", "The coordinator key does not exist"));
-															#line 1815 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1877 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			return a_body1Catch1(special_keys_api_failure(), loopDepth);
-															#line 8897 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 9028 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		}
-															#line 1817 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1879 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		old = ClusterConnectionString(currentKey.get().toString());
-															#line 1818 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1880 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		result = CoordinatorsResult::SUCCESS;
-															#line 1820 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1882 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		StrictFuture<std::vector<NetworkAddress>> __when_expr_1 = old.tryResolveHostnames();
-															#line 1820 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1882 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (static_cast<CoordinatorsAutoImplActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 8907 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 9038 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<CoordinatorsAutoImplActorActor*>(this)->actor_wait_state = 2;
-															#line 1820 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1882 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< CoordinatorsAutoImplActorActor, 1, std::vector<NetworkAddress> >*>(static_cast<CoordinatorsAutoImplActorActor*>(this)));
-															#line 8912 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 9043 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont1(Optional<Value> && currentKey,int loopDepth) 
 	{
-															#line 1812 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1874 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!currentKey.present())
-															#line 8921 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 9052 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 1813 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1875 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			ryw->setSpecialKeySpaceErrorMsg( ManagementAPIError::toJsonString(false, "auto_coordinators", "The coordinator key does not exist"));
-															#line 1815 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1877 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			return a_body1Catch1(special_keys_api_failure(), loopDepth);
-															#line 8927 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 9058 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		}
-															#line 1817 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1879 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		old = ClusterConnectionString(currentKey.get().toString());
-															#line 1818 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1880 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		result = CoordinatorsResult::SUCCESS;
-															#line 1820 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1882 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		StrictFuture<std::vector<NetworkAddress>> __when_expr_1 = old.tryResolveHostnames();
-															#line 1820 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1882 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (static_cast<CoordinatorsAutoImplActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 8937 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 9068 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<CoordinatorsAutoImplActorActor*>(this)->actor_wait_state = 2;
-															#line 1820 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1882 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< CoordinatorsAutoImplActorActor, 1, std::vector<NetworkAddress> >*>(static_cast<CoordinatorsAutoImplActorActor*>(this)));
-															#line 8942 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 9073 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -9009,32 +9140,32 @@ public:
 	}
 	int a_body1cont2(std::vector<NetworkAddress> const& oldCoordinators,int loopDepth) 
 	{
-															#line 1821 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1883 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		StrictFuture<std::vector<NetworkAddress>> __when_expr_2 = autoQuorumChange()->getDesiredCoordinators( &tr, oldCoordinators, Reference<ClusterConnectionMemoryRecord>(new ClusterConnectionMemoryRecord(old)), result);
-															#line 1821 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1883 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (static_cast<CoordinatorsAutoImplActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 9016 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 9147 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1cont2when1(__when_expr_2.get(), loopDepth); };
 		static_cast<CoordinatorsAutoImplActorActor*>(this)->actor_wait_state = 3;
-															#line 1821 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1883 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< CoordinatorsAutoImplActorActor, 2, std::vector<NetworkAddress> >*>(static_cast<CoordinatorsAutoImplActorActor*>(this)));
-															#line 9021 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 9152 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont2(std::vector<NetworkAddress> && oldCoordinators,int loopDepth) 
 	{
-															#line 1821 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1883 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		StrictFuture<std::vector<NetworkAddress>> __when_expr_2 = autoQuorumChange()->getDesiredCoordinators( &tr, oldCoordinators, Reference<ClusterConnectionMemoryRecord>(new ClusterConnectionMemoryRecord(old)), result);
-															#line 1821 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1883 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (static_cast<CoordinatorsAutoImplActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 9032 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 9163 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1cont2when1(__when_expr_2.get(), loopDepth); };
 		static_cast<CoordinatorsAutoImplActorActor*>(this)->actor_wait_state = 3;
-															#line 1821 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1883 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< CoordinatorsAutoImplActorActor, 2, std::vector<NetworkAddress> >*>(static_cast<CoordinatorsAutoImplActorActor*>(this)));
-															#line 9037 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 9168 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -9104,53 +9235,53 @@ public:
 	}
 	int a_body1cont4(std::vector<NetworkAddress> const& _desiredCoordinators,int loopDepth) 
 	{
-															#line 1827 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1889 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (result == CoordinatorsResult::NOT_ENOUGH_MACHINES)
-															#line 9109 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 9240 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 1830 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1892 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			ryw->setSpecialKeySpaceErrorMsg(ManagementAPIError::toJsonString( true, "auto_coordinators", "Too few fdbserver machines to provide coordination at the current redundancy level"));
-															#line 1834 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1896 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			return a_body1Catch1(special_keys_api_failure(), loopDepth);
-															#line 9115 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 9246 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		}
-															#line 1837 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1899 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (result == CoordinatorsResult::SAME_NETWORK_ADDRESSES)
-															#line 9119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 9250 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 1838 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1900 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			for( const auto& host : old.hostnames ) {
-															#line 1839 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1901 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				autoCoordinatorsKey += autoCoordinatorsKey.size() ? "," : "";
-															#line 1840 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1902 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				autoCoordinatorsKey += host.toString();
-															#line 9127 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 9258 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			}
-															#line 1842 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1904 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			for( const auto& coord : old.coords ) {
-															#line 1843 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1905 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				autoCoordinatorsKey += autoCoordinatorsKey.size() ? "," : "";
-															#line 1844 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1906 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				autoCoordinatorsKey += coord.toString();
-															#line 9135 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 9266 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			}
 		}
 		else
 		{
-															#line 1847 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1909 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			for( const auto& address : _desiredCoordinators ) {
-															#line 1848 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1910 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				autoCoordinatorsKey += autoCoordinatorsKey.size() ? "," : "";
-															#line 1849 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1911 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				autoCoordinatorsKey += address.toString();
-															#line 9146 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 9277 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			}
 		}
-															#line 1852 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1914 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		res.push_back_deep(res.arena(), KeyValueRef(kr.begin, Value(autoCoordinatorsKey)));
-															#line 1853 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1915 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<CoordinatorsAutoImplActorActor*>(this)->SAV<RangeResult>::futures) { (void)(res); this->~CoordinatorsAutoImplActorActorState(); static_cast<CoordinatorsAutoImplActorActor*>(this)->destroy(); return 0; }
-															#line 9153 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 9284 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<CoordinatorsAutoImplActorActor*>(this)->SAV< RangeResult >::value()) RangeResult(std::move(res)); // state_var_RVO
 		this->~CoordinatorsAutoImplActorActorState();
 		static_cast<CoordinatorsAutoImplActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -9160,53 +9291,53 @@ public:
 	}
 	int a_body1cont4(std::vector<NetworkAddress> && _desiredCoordinators,int loopDepth) 
 	{
-															#line 1827 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1889 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (result == CoordinatorsResult::NOT_ENOUGH_MACHINES)
-															#line 9165 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 9296 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 1830 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1892 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			ryw->setSpecialKeySpaceErrorMsg(ManagementAPIError::toJsonString( true, "auto_coordinators", "Too few fdbserver machines to provide coordination at the current redundancy level"));
-															#line 1834 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1896 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			return a_body1Catch1(special_keys_api_failure(), loopDepth);
-															#line 9171 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 9302 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		}
-															#line 1837 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1899 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (result == CoordinatorsResult::SAME_NETWORK_ADDRESSES)
-															#line 9175 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 9306 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 1838 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1900 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			for( const auto& host : old.hostnames ) {
-															#line 1839 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1901 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				autoCoordinatorsKey += autoCoordinatorsKey.size() ? "," : "";
-															#line 1840 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1902 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				autoCoordinatorsKey += host.toString();
-															#line 9183 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 9314 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			}
-															#line 1842 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1904 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			for( const auto& coord : old.coords ) {
-															#line 1843 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1905 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				autoCoordinatorsKey += autoCoordinatorsKey.size() ? "," : "";
-															#line 1844 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1906 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				autoCoordinatorsKey += coord.toString();
-															#line 9191 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 9322 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			}
 		}
 		else
 		{
-															#line 1847 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1909 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			for( const auto& address : _desiredCoordinators ) {
-															#line 1848 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1910 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				autoCoordinatorsKey += autoCoordinatorsKey.size() ? "," : "";
-															#line 1849 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1911 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				autoCoordinatorsKey += address.toString();
-															#line 9202 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 9333 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			}
 		}
-															#line 1852 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1914 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		res.push_back_deep(res.arena(), KeyValueRef(kr.begin, Value(autoCoordinatorsKey)));
-															#line 1853 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1915 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<CoordinatorsAutoImplActorActor*>(this)->SAV<RangeResult>::futures) { (void)(res); this->~CoordinatorsAutoImplActorActorState(); static_cast<CoordinatorsAutoImplActorActor*>(this)->destroy(); return 0; }
-															#line 9209 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 9340 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<CoordinatorsAutoImplActorActor*>(this)->SAV< RangeResult >::value()) RangeResult(std::move(res)); // state_var_RVO
 		this->~CoordinatorsAutoImplActorActorState();
 		static_cast<CoordinatorsAutoImplActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -9277,26 +9408,26 @@ public:
 		fdb_probe_actor_exit("CoordinatorsAutoImplActor", reinterpret_cast<unsigned long>(this), 2);
 
 	}
-															#line 1801 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1863 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	ReadYourWritesTransaction* ryw;
-															#line 1801 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1863 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	KeyRangeRef kr;
-															#line 1802 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1864 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	RangeResult res;
-															#line 1803 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1865 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	std::string autoCoordinatorsKey;
-															#line 1804 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1866 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	Transaction& tr;
-															#line 1817 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1879 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	ClusterConnectionString old;
-															#line 1818 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1880 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	CoordinatorsResult result;
-															#line 9294 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 9425 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 };
 // This generated class is to be used only via CoordinatorsAutoImplActor()
-															#line 1801 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1863 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class CoordinatorsAutoImplActorActor final : public Actor<RangeResult>, public ActorCallback< CoordinatorsAutoImplActorActor, 0, Optional<Value> >, public ActorCallback< CoordinatorsAutoImplActorActor, 1, std::vector<NetworkAddress> >, public ActorCallback< CoordinatorsAutoImplActorActor, 2, std::vector<NetworkAddress> >, public FastAllocated<CoordinatorsAutoImplActorActor>, public CoordinatorsAutoImplActorActorState<CoordinatorsAutoImplActorActor> {
-															#line 9299 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 9430 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
 	using FastAllocated<CoordinatorsAutoImplActorActor>::operator new;
 	using FastAllocated<CoordinatorsAutoImplActorActor>::operator delete;
@@ -9307,9 +9438,9 @@ public:
 friend struct ActorCallback< CoordinatorsAutoImplActorActor, 0, Optional<Value> >;
 friend struct ActorCallback< CoordinatorsAutoImplActorActor, 1, std::vector<NetworkAddress> >;
 friend struct ActorCallback< CoordinatorsAutoImplActorActor, 2, std::vector<NetworkAddress> >;
-															#line 1801 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1863 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	CoordinatorsAutoImplActorActor(ReadYourWritesTransaction* const& ryw,KeyRangeRef const& kr) 
-															#line 9312 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 9443 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		 : Actor<RangeResult>(),
 		   CoordinatorsAutoImplActorActorState<CoordinatorsAutoImplActorActor>(ryw, kr)
 	{
@@ -9335,14 +9466,14 @@ friend struct ActorCallback< CoordinatorsAutoImplActorActor, 2, std::vector<Netw
 	}
 };
 }
-															#line 1801 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1863 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 [[nodiscard]] static Future<RangeResult> CoordinatorsAutoImplActor( ReadYourWritesTransaction* const& ryw, KeyRangeRef const& kr ) {
-															#line 1801 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1863 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	return Future<RangeResult>(new CoordinatorsAutoImplActorActor(ryw, kr));
-															#line 9342 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 9473 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 }
 
-#line 1855 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+#line 1917 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 
 Future<RangeResult> CoordinatorsAutoImpl::getRange(ReadYourWritesTransaction* ryw,
                                                    KeyRangeRef kr,
@@ -9352,23 +9483,23 @@ Future<RangeResult> CoordinatorsAutoImpl::getRange(ReadYourWritesTransaction* ry
 	return CoordinatorsAutoImplActor(ryw, kr);
 }
 
-															#line 9355 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 9486 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 namespace {
 // This generated class is to be used only via getMinCommitVersionActor()
-															#line 1864 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 template <class GetMinCommitVersionActorActor>
-															#line 1864 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class GetMinCommitVersionActorActorState {
-															#line 9362 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 9493 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
-															#line 1864 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	GetMinCommitVersionActorActorState(ReadYourWritesTransaction* const& ryw,KeyRangeRef const& kr) 
-															#line 1864 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-															#line 1864 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		 : ryw(ryw),
-															#line 1864 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   kr(kr)
-															#line 9371 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 9502 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 	{
 		fdb_probe_actor_create("getMinCommitVersionActor", reinterpret_cast<unsigned long>(this));
 
@@ -9381,20 +9512,20 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 1865 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1927 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			ryw->getTransaction().setOption(FDBTransactionOptions::LOCK_AWARE);
-															#line 1866 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1928 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			ryw->getTransaction().setOption(FDBTransactionOptions::RAW_ACCESS);
-															#line 1867 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1929 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			StrictFuture<Optional<Value>> __when_expr_0 = ryw->getTransaction().get(minRequiredCommitVersionKey);
-															#line 1867 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1929 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (static_cast<GetMinCommitVersionActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 9392 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 9523 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<GetMinCommitVersionActorActor*>(this)->actor_wait_state = 1;
-															#line 1867 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1929 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< GetMinCommitVersionActorActor, 0, Optional<Value> >*>(static_cast<GetMinCommitVersionActorActor*>(this)));
-															#line 9397 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 9528 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -9415,23 +9546,23 @@ public:
 	}
 	int a_body1cont1(Optional<Value> const& val,int loopDepth) 
 	{
-															#line 1868 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1930 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		RangeResult result;
-															#line 1869 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1931 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (val.present())
-															#line 9422 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 9553 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 1870 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1932 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			Version minRequiredCommitVersion = BinaryReader::fromStringRef<Version>(val.get(), Unversioned());
-															#line 1871 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1933 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			ValueRef version(result.arena(), boost::lexical_cast<std::string>(minRequiredCommitVersion));
-															#line 1872 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1934 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			result.push_back_deep(result.arena(), KeyValueRef(kr.begin, version));
-															#line 9430 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 9561 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		}
-															#line 1874 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1936 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<GetMinCommitVersionActorActor*>(this)->SAV<RangeResult>::futures) { (void)(result); this->~GetMinCommitVersionActorActorState(); static_cast<GetMinCommitVersionActorActor*>(this)->destroy(); return 0; }
-															#line 9434 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 9565 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<GetMinCommitVersionActorActor*>(this)->SAV< RangeResult >::value()) RangeResult(result);
 		this->~GetMinCommitVersionActorActorState();
 		static_cast<GetMinCommitVersionActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -9441,23 +9572,23 @@ public:
 	}
 	int a_body1cont1(Optional<Value> && val,int loopDepth) 
 	{
-															#line 1868 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1930 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		RangeResult result;
-															#line 1869 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1931 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (val.present())
-															#line 9448 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 9579 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 1870 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1932 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			Version minRequiredCommitVersion = BinaryReader::fromStringRef<Version>(val.get(), Unversioned());
-															#line 1871 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1933 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			ValueRef version(result.arena(), boost::lexical_cast<std::string>(minRequiredCommitVersion));
-															#line 1872 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1934 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			result.push_back_deep(result.arena(), KeyValueRef(kr.begin, version));
-															#line 9456 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 9587 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		}
-															#line 1874 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1936 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<GetMinCommitVersionActorActor*>(this)->SAV<RangeResult>::futures) { (void)(result); this->~GetMinCommitVersionActorActorState(); static_cast<GetMinCommitVersionActorActor*>(this)->destroy(); return 0; }
-															#line 9460 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 9591 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<GetMinCommitVersionActorActor*>(this)->SAV< RangeResult >::value()) RangeResult(result);
 		this->~GetMinCommitVersionActorActorState();
 		static_cast<GetMinCommitVersionActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -9528,16 +9659,16 @@ public:
 		fdb_probe_actor_exit("getMinCommitVersionActor", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 1864 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	ReadYourWritesTransaction* ryw;
-															#line 1864 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	KeyRangeRef kr;
-															#line 9535 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 9666 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 };
 // This generated class is to be used only via getMinCommitVersionActor()
-															#line 1864 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class GetMinCommitVersionActorActor final : public Actor<RangeResult>, public ActorCallback< GetMinCommitVersionActorActor, 0, Optional<Value> >, public FastAllocated<GetMinCommitVersionActorActor>, public GetMinCommitVersionActorActorState<GetMinCommitVersionActorActor> {
-															#line 9540 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 9671 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
 	using FastAllocated<GetMinCommitVersionActorActor>::operator new;
 	using FastAllocated<GetMinCommitVersionActorActor>::operator delete;
@@ -9546,9 +9677,9 @@ public:
 	void destroy() override { ((Actor<RangeResult>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< GetMinCommitVersionActorActor, 0, Optional<Value> >;
-															#line 1864 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	GetMinCommitVersionActorActor(ReadYourWritesTransaction* const& ryw,KeyRangeRef const& kr) 
-															#line 9551 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 9682 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		 : Actor<RangeResult>(),
 		   GetMinCommitVersionActorActorState<GetMinCommitVersionActorActor>(ryw, kr)
 	{
@@ -9572,14 +9703,14 @@ friend struct ActorCallback< GetMinCommitVersionActorActor, 0, Optional<Value> >
 	}
 };
 }
-															#line 1864 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 [[nodiscard]] static Future<RangeResult> getMinCommitVersionActor( ReadYourWritesTransaction* const& ryw, KeyRangeRef const& kr ) {
-															#line 1864 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	return Future<RangeResult>(new GetMinCommitVersionActorActor(ryw, kr));
-															#line 9579 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 9710 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 }
 
-#line 1876 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+#line 1938 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 
 AdvanceVersionImpl::AdvanceVersionImpl(KeyRangeRef kr) : SpecialKeyRangeRWImpl(kr) {}
 
@@ -9601,23 +9732,23 @@ Future<RangeResult> AdvanceVersionImpl::getRange(ReadYourWritesTransaction* ryw,
 	}
 }
 
-															#line 9604 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 9735 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 namespace {
 // This generated class is to be used only via advanceVersionCommitActor()
-															#line 1897 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1959 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 template <class AdvanceVersionCommitActorActor>
-															#line 1897 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1959 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class AdvanceVersionCommitActorActorState {
-															#line 9611 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 9742 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
-															#line 1897 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1959 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	AdvanceVersionCommitActorActorState(ReadYourWritesTransaction* const& ryw,Version const& v) 
-															#line 1897 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-															#line 1897 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1959 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1959 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		 : ryw(ryw),
-															#line 1897 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1959 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   v(v)
-															#line 9620 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 9751 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 	{
 		fdb_probe_actor_create("advanceVersionCommitActor", reinterpret_cast<unsigned long>(this));
 
@@ -9630,36 +9761,16 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 1900 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			static const Version maxAllowedVerion = std::numeric_limits<int64_t>::max() - 1 - CLIENT_KNOBS->VERSIONS_PER_SECOND * 3600 * 24 * 365 * 1000;
-															#line 1903 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			ryw->getTransaction().setOption(FDBTransactionOptions::LOCK_AWARE);
-															#line 1904 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			ryw->getTransaction().setOption(FDBTransactionOptions::RAW_ACCESS);
-															#line 1905 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			TraceEvent(SevDebug, "AdvanceVersion").detail("MaxAllowedVersion", maxAllowedVerion);
-															#line 1906 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			if (v > maxAllowedVerion)
-															#line 9643 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-			{
-															#line 1907 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-				if (!static_cast<AdvanceVersionCommitActorActor*>(this)->SAV<Optional<std::string>>::futures) { (void)(ManagementAPIError::toJsonString( false, "advanceversion", "The given version is larger than the maximum allowed value(2**63-1-version_per_second*3600*24*365*1000)")); this->~AdvanceVersionCommitActorActorState(); static_cast<AdvanceVersionCommitActorActor*>(this)->destroy(); return 0; }
-															#line 9647 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-				new (&static_cast<AdvanceVersionCommitActorActor*>(this)->SAV< Optional<std::string> >::value()) Optional<std::string>(ManagementAPIError::toJsonString( false, "advanceversion", "The given version is larger than the maximum allowed value(2**63-1-version_per_second*3600*24*365*1000)"));
-				this->~AdvanceVersionCommitActorActorState();
-				static_cast<AdvanceVersionCommitActorActor*>(this)->finishSendAndDelPromiseRef();
-				return 0;
-			}
-															#line 1912 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			StrictFuture<Version> __when_expr_0 = ryw->getTransaction().getReadVersion();
-															#line 1912 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1960 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			StrictFuture<Optional<Standalone<StringRef>>> __when_expr_0 = ryw->getTransaction().get(versionEpochKey);
+															#line 1960 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (static_cast<AdvanceVersionCommitActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 9657 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 9768 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<AdvanceVersionCommitActorActor*>(this)->actor_wait_state = 1;
-															#line 1912 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< AdvanceVersionCommitActorActor, 0, Version >*>(static_cast<AdvanceVersionCommitActorActor*>(this)));
-															#line 9662 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1960 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< AdvanceVersionCommitActorActor, 0, Optional<Standalone<StringRef>> >*>(static_cast<AdvanceVersionCommitActorActor*>(this)));
+															#line 9773 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -9678,85 +9789,121 @@ public:
 
 		return loopDepth;
 	}
-	int a_body1cont1(Version const& rv,int loopDepth) 
+	int a_body1cont1(Optional<Standalone<StringRef>> const& versionEpochValue,int loopDepth) 
 	{
-															#line 1913 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		if (rv <= v)
-															#line 9685 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1961 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		if (versionEpochValue.present())
+															#line 9796 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 1914 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			ryw->getTransaction().set(minRequiredCommitVersionKey, BinaryWriter::toValue(v + 1, Unversioned()));
-															#line 9689 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-		}
-		else
-		{
-															#line 1916 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			if (!static_cast<AdvanceVersionCommitActorActor*>(this)->SAV<Optional<std::string>>::futures) { (void)(ManagementAPIError::toJsonString( false, "advanceversion", "Current read version is larger than the given version")); this->~AdvanceVersionCommitActorActorState(); static_cast<AdvanceVersionCommitActorActor*>(this)->destroy(); return 0; }
-															#line 9695 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-			new (&static_cast<AdvanceVersionCommitActorActor*>(this)->SAV< Optional<std::string> >::value()) Optional<std::string>(ManagementAPIError::toJsonString( false, "advanceversion", "Current read version is larger than the given version"));
+															#line 1962 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			if (!static_cast<AdvanceVersionCommitActorActor*>(this)->SAV<Optional<std::string>>::futures) { (void)(ManagementAPIError::toJsonString( false, "advanceversion", "Illegal to modify the version while the version epoch is enabled")); this->~AdvanceVersionCommitActorActorState(); static_cast<AdvanceVersionCommitActorActor*>(this)->destroy(); return 0; }
+															#line 9800 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+			new (&static_cast<AdvanceVersionCommitActorActor*>(this)->SAV< Optional<std::string> >::value()) Optional<std::string>(ManagementAPIError::toJsonString( false, "advanceversion", "Illegal to modify the version while the version epoch is enabled"));
 			this->~AdvanceVersionCommitActorActorState();
 			static_cast<AdvanceVersionCommitActorActor*>(this)->finishSendAndDelPromiseRef();
 			return 0;
 		}
-															#line 1919 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		if (!static_cast<AdvanceVersionCommitActorActor*>(this)->SAV<Optional<std::string>>::futures) { (void)(Optional<std::string>()); this->~AdvanceVersionCommitActorActorState(); static_cast<AdvanceVersionCommitActorActor*>(this)->destroy(); return 0; }
-															#line 9703 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-		new (&static_cast<AdvanceVersionCommitActorActor*>(this)->SAV< Optional<std::string> >::value()) Optional<std::string>(Optional<std::string>());
-		this->~AdvanceVersionCommitActorActorState();
-		static_cast<AdvanceVersionCommitActorActor*>(this)->finishSendAndDelPromiseRef();
-		return 0;
-
-		return loopDepth;
-	}
-	int a_body1cont1(Version && rv,int loopDepth) 
-	{
-															#line 1913 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		if (rv <= v)
-															#line 9715 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1968 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		static const Version maxAllowedVerion = std::numeric_limits<int64_t>::max() - 1 - CLIENT_KNOBS->VERSIONS_PER_SECOND * 3600 * 24 * 365 * 1000;
+															#line 1971 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		ryw->getTransaction().setOption(FDBTransactionOptions::LOCK_AWARE);
+															#line 1972 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		ryw->getTransaction().setOption(FDBTransactionOptions::RAW_ACCESS);
+															#line 1973 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		TraceEvent(SevDebug, "AdvanceVersion").detail("MaxAllowedVersion", maxAllowedVerion);
+															#line 1974 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		if (v > maxAllowedVerion)
+															#line 9816 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 1914 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			ryw->getTransaction().set(minRequiredCommitVersionKey, BinaryWriter::toValue(v + 1, Unversioned()));
-															#line 9719 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-		}
-		else
-		{
-															#line 1916 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			if (!static_cast<AdvanceVersionCommitActorActor*>(this)->SAV<Optional<std::string>>::futures) { (void)(ManagementAPIError::toJsonString( false, "advanceversion", "Current read version is larger than the given version")); this->~AdvanceVersionCommitActorActorState(); static_cast<AdvanceVersionCommitActorActor*>(this)->destroy(); return 0; }
-															#line 9725 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-			new (&static_cast<AdvanceVersionCommitActorActor*>(this)->SAV< Optional<std::string> >::value()) Optional<std::string>(ManagementAPIError::toJsonString( false, "advanceversion", "Current read version is larger than the given version"));
+															#line 1975 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			if (!static_cast<AdvanceVersionCommitActorActor*>(this)->SAV<Optional<std::string>>::futures) { (void)(ManagementAPIError::toJsonString( false, "advanceversion", "The given version is larger than the maximum allowed value(2**63-1-version_per_second*3600*24*365*1000)")); this->~AdvanceVersionCommitActorActorState(); static_cast<AdvanceVersionCommitActorActor*>(this)->destroy(); return 0; }
+															#line 9820 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+			new (&static_cast<AdvanceVersionCommitActorActor*>(this)->SAV< Optional<std::string> >::value()) Optional<std::string>(ManagementAPIError::toJsonString( false, "advanceversion", "The given version is larger than the maximum allowed value(2**63-1-version_per_second*3600*24*365*1000)"));
 			this->~AdvanceVersionCommitActorActorState();
 			static_cast<AdvanceVersionCommitActorActor*>(this)->finishSendAndDelPromiseRef();
 			return 0;
 		}
-															#line 1919 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		if (!static_cast<AdvanceVersionCommitActorActor*>(this)->SAV<Optional<std::string>>::futures) { (void)(Optional<std::string>()); this->~AdvanceVersionCommitActorActorState(); static_cast<AdvanceVersionCommitActorActor*>(this)->destroy(); return 0; }
-															#line 9733 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-		new (&static_cast<AdvanceVersionCommitActorActor*>(this)->SAV< Optional<std::string> >::value()) Optional<std::string>(Optional<std::string>());
-		this->~AdvanceVersionCommitActorActorState();
-		static_cast<AdvanceVersionCommitActorActor*>(this)->finishSendAndDelPromiseRef();
-		return 0;
+															#line 1980 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		StrictFuture<Version> __when_expr_1 = ryw->getTransaction().getReadVersion();
+															#line 1980 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		if (static_cast<AdvanceVersionCommitActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
+															#line 9830 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
+		static_cast<AdvanceVersionCommitActorActor*>(this)->actor_wait_state = 2;
+															#line 1980 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< AdvanceVersionCommitActorActor, 1, Version >*>(static_cast<AdvanceVersionCommitActorActor*>(this)));
+															#line 9835 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+		loopDepth = 0;
 
 		return loopDepth;
 	}
-	int a_body1when1(Version const& rv,int loopDepth) 
+	int a_body1cont1(Optional<Standalone<StringRef>> && versionEpochValue,int loopDepth) 
 	{
-		loopDepth = a_body1cont1(rv, loopDepth);
+															#line 1961 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		if (versionEpochValue.present())
+															#line 9844 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+		{
+															#line 1962 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			if (!static_cast<AdvanceVersionCommitActorActor*>(this)->SAV<Optional<std::string>>::futures) { (void)(ManagementAPIError::toJsonString( false, "advanceversion", "Illegal to modify the version while the version epoch is enabled")); this->~AdvanceVersionCommitActorActorState(); static_cast<AdvanceVersionCommitActorActor*>(this)->destroy(); return 0; }
+															#line 9848 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+			new (&static_cast<AdvanceVersionCommitActorActor*>(this)->SAV< Optional<std::string> >::value()) Optional<std::string>(ManagementAPIError::toJsonString( false, "advanceversion", "Illegal to modify the version while the version epoch is enabled"));
+			this->~AdvanceVersionCommitActorActorState();
+			static_cast<AdvanceVersionCommitActorActor*>(this)->finishSendAndDelPromiseRef();
+			return 0;
+		}
+															#line 1968 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		static const Version maxAllowedVerion = std::numeric_limits<int64_t>::max() - 1 - CLIENT_KNOBS->VERSIONS_PER_SECOND * 3600 * 24 * 365 * 1000;
+															#line 1971 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		ryw->getTransaction().setOption(FDBTransactionOptions::LOCK_AWARE);
+															#line 1972 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		ryw->getTransaction().setOption(FDBTransactionOptions::RAW_ACCESS);
+															#line 1973 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		TraceEvent(SevDebug, "AdvanceVersion").detail("MaxAllowedVersion", maxAllowedVerion);
+															#line 1974 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		if (v > maxAllowedVerion)
+															#line 9864 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+		{
+															#line 1975 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			if (!static_cast<AdvanceVersionCommitActorActor*>(this)->SAV<Optional<std::string>>::futures) { (void)(ManagementAPIError::toJsonString( false, "advanceversion", "The given version is larger than the maximum allowed value(2**63-1-version_per_second*3600*24*365*1000)")); this->~AdvanceVersionCommitActorActorState(); static_cast<AdvanceVersionCommitActorActor*>(this)->destroy(); return 0; }
+															#line 9868 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+			new (&static_cast<AdvanceVersionCommitActorActor*>(this)->SAV< Optional<std::string> >::value()) Optional<std::string>(ManagementAPIError::toJsonString( false, "advanceversion", "The given version is larger than the maximum allowed value(2**63-1-version_per_second*3600*24*365*1000)"));
+			this->~AdvanceVersionCommitActorActorState();
+			static_cast<AdvanceVersionCommitActorActor*>(this)->finishSendAndDelPromiseRef();
+			return 0;
+		}
+															#line 1980 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		StrictFuture<Version> __when_expr_1 = ryw->getTransaction().getReadVersion();
+															#line 1980 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		if (static_cast<AdvanceVersionCommitActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
+															#line 9878 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
+		static_cast<AdvanceVersionCommitActorActor*>(this)->actor_wait_state = 2;
+															#line 1980 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< AdvanceVersionCommitActorActor, 1, Version >*>(static_cast<AdvanceVersionCommitActorActor*>(this)));
+															#line 9883 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+		loopDepth = 0;
 
 		return loopDepth;
 	}
-	int a_body1when1(Version && rv,int loopDepth) 
+	int a_body1when1(Optional<Standalone<StringRef>> const& versionEpochValue,int loopDepth) 
 	{
-		loopDepth = a_body1cont1(std::move(rv), loopDepth);
+		loopDepth = a_body1cont1(versionEpochValue, loopDepth);
+
+		return loopDepth;
+	}
+	int a_body1when1(Optional<Standalone<StringRef>> && versionEpochValue,int loopDepth) 
+	{
+		loopDepth = a_body1cont1(std::move(versionEpochValue), loopDepth);
 
 		return loopDepth;
 	}
 	void a_exitChoose1() 
 	{
 		if (static_cast<AdvanceVersionCommitActorActor*>(this)->actor_wait_state > 0) static_cast<AdvanceVersionCommitActorActor*>(this)->actor_wait_state = 0;
-		static_cast<AdvanceVersionCommitActorActor*>(this)->ActorCallback< AdvanceVersionCommitActorActor, 0, Version >::remove();
+		static_cast<AdvanceVersionCommitActorActor*>(this)->ActorCallback< AdvanceVersionCommitActorActor, 0, Optional<Standalone<StringRef>> >::remove();
 
 	}
-	void a_callback_fire(ActorCallback< AdvanceVersionCommitActorActor, 0, Version >*,Version const& value) 
+	void a_callback_fire(ActorCallback< AdvanceVersionCommitActorActor, 0, Optional<Standalone<StringRef>> >*,Optional<Standalone<StringRef>> const& value) 
 	{
 		fdb_probe_actor_enter("advanceVersionCommitActor", reinterpret_cast<unsigned long>(this), 0);
 		a_exitChoose1();
@@ -9771,7 +9918,7 @@ public:
 		fdb_probe_actor_exit("advanceVersionCommitActor", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-	void a_callback_fire(ActorCallback< AdvanceVersionCommitActorActor, 0, Version >*,Version && value) 
+	void a_callback_fire(ActorCallback< AdvanceVersionCommitActorActor, 0, Optional<Standalone<StringRef>> >*,Optional<Standalone<StringRef>> && value) 
 	{
 		fdb_probe_actor_enter("advanceVersionCommitActor", reinterpret_cast<unsigned long>(this), 0);
 		a_exitChoose1();
@@ -9786,7 +9933,7 @@ public:
 		fdb_probe_actor_exit("advanceVersionCommitActor", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-	void a_callback_error(ActorCallback< AdvanceVersionCommitActorActor, 0, Version >*,Error err) 
+	void a_callback_error(ActorCallback< AdvanceVersionCommitActorActor, 0, Optional<Standalone<StringRef>> >*,Error err) 
 	{
 		fdb_probe_actor_enter("advanceVersionCommitActor", reinterpret_cast<unsigned long>(this), 0);
 		a_exitChoose1();
@@ -9801,16 +9948,139 @@ public:
 		fdb_probe_actor_exit("advanceVersionCommitActor", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 1897 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+	int a_body1cont2(Version const& rv,int loopDepth) 
+	{
+															#line 1981 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		if (rv <= v)
+															#line 9955 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+		{
+															#line 1982 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			ryw->getTransaction().set(minRequiredCommitVersionKey, BinaryWriter::toValue(v + 1, Unversioned()));
+															#line 9959 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+		}
+		else
+		{
+															#line 1984 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			if (!static_cast<AdvanceVersionCommitActorActor*>(this)->SAV<Optional<std::string>>::futures) { (void)(ManagementAPIError::toJsonString( false, "advanceversion", "Current read version is larger than the given version")); this->~AdvanceVersionCommitActorActorState(); static_cast<AdvanceVersionCommitActorActor*>(this)->destroy(); return 0; }
+															#line 9965 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+			new (&static_cast<AdvanceVersionCommitActorActor*>(this)->SAV< Optional<std::string> >::value()) Optional<std::string>(ManagementAPIError::toJsonString( false, "advanceversion", "Current read version is larger than the given version"));
+			this->~AdvanceVersionCommitActorActorState();
+			static_cast<AdvanceVersionCommitActorActor*>(this)->finishSendAndDelPromiseRef();
+			return 0;
+		}
+															#line 1987 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		if (!static_cast<AdvanceVersionCommitActorActor*>(this)->SAV<Optional<std::string>>::futures) { (void)(Optional<std::string>()); this->~AdvanceVersionCommitActorActorState(); static_cast<AdvanceVersionCommitActorActor*>(this)->destroy(); return 0; }
+															#line 9973 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+		new (&static_cast<AdvanceVersionCommitActorActor*>(this)->SAV< Optional<std::string> >::value()) Optional<std::string>(Optional<std::string>());
+		this->~AdvanceVersionCommitActorActorState();
+		static_cast<AdvanceVersionCommitActorActor*>(this)->finishSendAndDelPromiseRef();
+		return 0;
+
+		return loopDepth;
+	}
+	int a_body1cont2(Version && rv,int loopDepth) 
+	{
+															#line 1981 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		if (rv <= v)
+															#line 9985 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+		{
+															#line 1982 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			ryw->getTransaction().set(minRequiredCommitVersionKey, BinaryWriter::toValue(v + 1, Unversioned()));
+															#line 9989 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+		}
+		else
+		{
+															#line 1984 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			if (!static_cast<AdvanceVersionCommitActorActor*>(this)->SAV<Optional<std::string>>::futures) { (void)(ManagementAPIError::toJsonString( false, "advanceversion", "Current read version is larger than the given version")); this->~AdvanceVersionCommitActorActorState(); static_cast<AdvanceVersionCommitActorActor*>(this)->destroy(); return 0; }
+															#line 9995 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+			new (&static_cast<AdvanceVersionCommitActorActor*>(this)->SAV< Optional<std::string> >::value()) Optional<std::string>(ManagementAPIError::toJsonString( false, "advanceversion", "Current read version is larger than the given version"));
+			this->~AdvanceVersionCommitActorActorState();
+			static_cast<AdvanceVersionCommitActorActor*>(this)->finishSendAndDelPromiseRef();
+			return 0;
+		}
+															#line 1987 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		if (!static_cast<AdvanceVersionCommitActorActor*>(this)->SAV<Optional<std::string>>::futures) { (void)(Optional<std::string>()); this->~AdvanceVersionCommitActorActorState(); static_cast<AdvanceVersionCommitActorActor*>(this)->destroy(); return 0; }
+															#line 10003 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+		new (&static_cast<AdvanceVersionCommitActorActor*>(this)->SAV< Optional<std::string> >::value()) Optional<std::string>(Optional<std::string>());
+		this->~AdvanceVersionCommitActorActorState();
+		static_cast<AdvanceVersionCommitActorActor*>(this)->finishSendAndDelPromiseRef();
+		return 0;
+
+		return loopDepth;
+	}
+	int a_body1cont1when1(Version const& rv,int loopDepth) 
+	{
+		loopDepth = a_body1cont2(rv, loopDepth);
+
+		return loopDepth;
+	}
+	int a_body1cont1when1(Version && rv,int loopDepth) 
+	{
+		loopDepth = a_body1cont2(std::move(rv), loopDepth);
+
+		return loopDepth;
+	}
+	void a_exitChoose2() 
+	{
+		if (static_cast<AdvanceVersionCommitActorActor*>(this)->actor_wait_state > 0) static_cast<AdvanceVersionCommitActorActor*>(this)->actor_wait_state = 0;
+		static_cast<AdvanceVersionCommitActorActor*>(this)->ActorCallback< AdvanceVersionCommitActorActor, 1, Version >::remove();
+
+	}
+	void a_callback_fire(ActorCallback< AdvanceVersionCommitActorActor, 1, Version >*,Version const& value) 
+	{
+		fdb_probe_actor_enter("advanceVersionCommitActor", reinterpret_cast<unsigned long>(this), 1);
+		a_exitChoose2();
+		try {
+			a_body1cont1when1(value, 0);
+		}
+		catch (Error& error) {
+			a_body1Catch1(error, 0);
+		} catch (...) {
+			a_body1Catch1(unknown_error(), 0);
+		}
+		fdb_probe_actor_exit("advanceVersionCommitActor", reinterpret_cast<unsigned long>(this), 1);
+
+	}
+	void a_callback_fire(ActorCallback< AdvanceVersionCommitActorActor, 1, Version >*,Version && value) 
+	{
+		fdb_probe_actor_enter("advanceVersionCommitActor", reinterpret_cast<unsigned long>(this), 1);
+		a_exitChoose2();
+		try {
+			a_body1cont1when1(std::move(value), 0);
+		}
+		catch (Error& error) {
+			a_body1Catch1(error, 0);
+		} catch (...) {
+			a_body1Catch1(unknown_error(), 0);
+		}
+		fdb_probe_actor_exit("advanceVersionCommitActor", reinterpret_cast<unsigned long>(this), 1);
+
+	}
+	void a_callback_error(ActorCallback< AdvanceVersionCommitActorActor, 1, Version >*,Error err) 
+	{
+		fdb_probe_actor_enter("advanceVersionCommitActor", reinterpret_cast<unsigned long>(this), 1);
+		a_exitChoose2();
+		try {
+			a_body1Catch1(err, 0);
+		}
+		catch (Error& error) {
+			a_body1Catch1(error, 0);
+		} catch (...) {
+			a_body1Catch1(unknown_error(), 0);
+		}
+		fdb_probe_actor_exit("advanceVersionCommitActor", reinterpret_cast<unsigned long>(this), 1);
+
+	}
+															#line 1959 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	ReadYourWritesTransaction* ryw;
-															#line 1897 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1959 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	Version v;
-															#line 9808 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 10078 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 };
 // This generated class is to be used only via advanceVersionCommitActor()
-															#line 1897 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-class AdvanceVersionCommitActorActor final : public Actor<Optional<std::string>>, public ActorCallback< AdvanceVersionCommitActorActor, 0, Version >, public FastAllocated<AdvanceVersionCommitActorActor>, public AdvanceVersionCommitActorActorState<AdvanceVersionCommitActorActor> {
-															#line 9813 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 1959 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+class AdvanceVersionCommitActorActor final : public Actor<Optional<std::string>>, public ActorCallback< AdvanceVersionCommitActorActor, 0, Optional<Standalone<StringRef>> >, public ActorCallback< AdvanceVersionCommitActorActor, 1, Version >, public FastAllocated<AdvanceVersionCommitActorActor>, public AdvanceVersionCommitActorActorState<AdvanceVersionCommitActorActor> {
+															#line 10083 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
 	using FastAllocated<AdvanceVersionCommitActorActor>::operator new;
 	using FastAllocated<AdvanceVersionCommitActorActor>::operator delete;
@@ -9818,10 +10088,11 @@ public:
 #pragma clang diagnostic ignored "-Wdelete-non-virtual-dtor"
 	void destroy() override { ((Actor<Optional<std::string>>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
-friend struct ActorCallback< AdvanceVersionCommitActorActor, 0, Version >;
-															#line 1897 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+friend struct ActorCallback< AdvanceVersionCommitActorActor, 0, Optional<Standalone<StringRef>> >;
+friend struct ActorCallback< AdvanceVersionCommitActorActor, 1, Version >;
+															#line 1959 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	AdvanceVersionCommitActorActor(ReadYourWritesTransaction* const& ryw,Version const& v) 
-															#line 9824 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 10095 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		 : Actor<Optional<std::string>>(),
 		   AdvanceVersionCommitActorActorState<AdvanceVersionCommitActorActor>(ryw, v)
 	{
@@ -9839,20 +10110,21 @@ friend struct ActorCallback< AdvanceVersionCommitActorActor, 0, Version >;
 		auto wait_state = this->actor_wait_state;
 		this->actor_wait_state = -1;
 		switch (wait_state) {
-		case 1: this->a_callback_error((ActorCallback< AdvanceVersionCommitActorActor, 0, Version >*)0, actor_cancelled()); break;
+		case 1: this->a_callback_error((ActorCallback< AdvanceVersionCommitActorActor, 0, Optional<Standalone<StringRef>> >*)0, actor_cancelled()); break;
+		case 2: this->a_callback_error((ActorCallback< AdvanceVersionCommitActorActor, 1, Version >*)0, actor_cancelled()); break;
 		}
 
 	}
 };
 }
-															#line 1897 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1959 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 [[nodiscard]] static Future<Optional<std::string>> advanceVersionCommitActor( ReadYourWritesTransaction* const& ryw, Version const& v ) {
-															#line 1897 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 1959 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	return Future<Optional<std::string>>(new AdvanceVersionCommitActorActor(ryw, v));
-															#line 9852 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 10124 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 }
 
-#line 1921 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+#line 1989 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 
 Future<Optional<std::string>> AdvanceVersionImpl::commit(ReadYourWritesTransaction* ryw) {
 	ryw->getTransaction().setOption(FDBTransactionOptions::RAW_ACCESS);
@@ -9873,23 +10145,23 @@ Future<Optional<std::string>> AdvanceVersionImpl::commit(ReadYourWritesTransacti
 	return Optional<std::string>();
 }
 
-															#line 9876 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 10148 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 namespace {
 // This generated class is to be used only via getVersionEpochActor()
-															#line 1941 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2009 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 template <class GetVersionEpochActorActor>
-															#line 1941 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2009 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class GetVersionEpochActorActorState {
-															#line 9883 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 10155 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
-															#line 1941 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2009 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	GetVersionEpochActorActorState(ReadYourWritesTransaction* const& ryw,KeyRangeRef const& kr) 
-															#line 1941 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-															#line 1941 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2009 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2009 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		 : ryw(ryw),
-															#line 1941 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2009 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   kr(kr)
-															#line 9892 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 10164 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 	{
 		fdb_probe_actor_create("getVersionEpochActor", reinterpret_cast<unsigned long>(this));
 
@@ -9902,20 +10174,20 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 1942 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2010 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			ryw->getTransaction().setOption(FDBTransactionOptions::LOCK_AWARE);
-															#line 1943 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2011 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			ryw->getTransaction().setOption(FDBTransactionOptions::RAW_ACCESS);
-															#line 1944 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2012 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			StrictFuture<Optional<Value>> __when_expr_0 = ryw->getTransaction().get(versionEpochKey);
-															#line 1944 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2012 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (static_cast<GetVersionEpochActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 9913 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 10185 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<GetVersionEpochActorActor*>(this)->actor_wait_state = 1;
-															#line 1944 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2012 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< GetVersionEpochActorActor, 0, Optional<Value> >*>(static_cast<GetVersionEpochActorActor*>(this)));
-															#line 9918 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 10190 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -9936,23 +10208,23 @@ public:
 	}
 	int a_body1cont1(Optional<Value> const& val,int loopDepth) 
 	{
-															#line 1945 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2013 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		RangeResult result;
-															#line 1946 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2014 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (val.present())
-															#line 9943 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 10215 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 1947 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2015 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			int64_t versionEpoch = BinaryReader::fromStringRef<int64_t>(val.get(), Unversioned());
-															#line 1948 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2016 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			ValueRef version(result.arena(), boost::lexical_cast<std::string>(versionEpoch));
-															#line 1949 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2017 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			result.push_back_deep(result.arena(), KeyValueRef(kr.begin, version));
-															#line 9951 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 10223 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		}
-															#line 1951 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2019 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<GetVersionEpochActorActor*>(this)->SAV<RangeResult>::futures) { (void)(result); this->~GetVersionEpochActorActorState(); static_cast<GetVersionEpochActorActor*>(this)->destroy(); return 0; }
-															#line 9955 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 10227 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<GetVersionEpochActorActor*>(this)->SAV< RangeResult >::value()) RangeResult(result);
 		this->~GetVersionEpochActorActorState();
 		static_cast<GetVersionEpochActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -9962,23 +10234,23 @@ public:
 	}
 	int a_body1cont1(Optional<Value> && val,int loopDepth) 
 	{
-															#line 1945 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2013 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		RangeResult result;
-															#line 1946 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2014 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (val.present())
-															#line 9969 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 10241 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 1947 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2015 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			int64_t versionEpoch = BinaryReader::fromStringRef<int64_t>(val.get(), Unversioned());
-															#line 1948 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2016 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			ValueRef version(result.arena(), boost::lexical_cast<std::string>(versionEpoch));
-															#line 1949 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2017 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			result.push_back_deep(result.arena(), KeyValueRef(kr.begin, version));
-															#line 9977 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 10249 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		}
-															#line 1951 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2019 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<GetVersionEpochActorActor*>(this)->SAV<RangeResult>::futures) { (void)(result); this->~GetVersionEpochActorActorState(); static_cast<GetVersionEpochActorActor*>(this)->destroy(); return 0; }
-															#line 9981 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 10253 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<GetVersionEpochActorActor*>(this)->SAV< RangeResult >::value()) RangeResult(result);
 		this->~GetVersionEpochActorActorState();
 		static_cast<GetVersionEpochActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -10049,16 +10321,16 @@ public:
 		fdb_probe_actor_exit("getVersionEpochActor", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 1941 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2009 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	ReadYourWritesTransaction* ryw;
-															#line 1941 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2009 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	KeyRangeRef kr;
-															#line 10056 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 10328 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 };
 // This generated class is to be used only via getVersionEpochActor()
-															#line 1941 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2009 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class GetVersionEpochActorActor final : public Actor<RangeResult>, public ActorCallback< GetVersionEpochActorActor, 0, Optional<Value> >, public FastAllocated<GetVersionEpochActorActor>, public GetVersionEpochActorActorState<GetVersionEpochActorActor> {
-															#line 10061 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 10333 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
 	using FastAllocated<GetVersionEpochActorActor>::operator new;
 	using FastAllocated<GetVersionEpochActorActor>::operator delete;
@@ -10067,9 +10339,9 @@ public:
 	void destroy() override { ((Actor<RangeResult>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< GetVersionEpochActorActor, 0, Optional<Value> >;
-															#line 1941 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2009 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	GetVersionEpochActorActor(ReadYourWritesTransaction* const& ryw,KeyRangeRef const& kr) 
-															#line 10072 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 10344 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		 : Actor<RangeResult>(),
 		   GetVersionEpochActorActorState<GetVersionEpochActorActor>(ryw, kr)
 	{
@@ -10093,14 +10365,14 @@ friend struct ActorCallback< GetVersionEpochActorActor, 0, Optional<Value> >;
 	}
 };
 }
-															#line 1941 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2009 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 [[nodiscard]] static Future<RangeResult> getVersionEpochActor( ReadYourWritesTransaction* const& ryw, KeyRangeRef const& kr ) {
-															#line 1941 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2009 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	return Future<RangeResult>(new GetVersionEpochActorActor(ryw, kr));
-															#line 10100 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 10372 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 }
 
-#line 1953 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+#line 2021 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 
 VersionEpochImpl::VersionEpochImpl(KeyRangeRef kr) : SpecialKeyRangeRWImpl(kr) {}
 
@@ -10133,7 +10405,7 @@ Future<RangeResult> ClientProfilingImpl::getRange(ReadYourWritesTransaction* ryw
 	KeyRef prefix = getKeyRange().begin;
 	RangeResult result = RangeResult();
 	// client_txn_sample_rate
-	Key sampleRateKey = LiteralStringRef("client_txn_sample_rate").withPrefix(prefix);
+	Key sampleRateKey = "client_txn_sample_rate"_sr.withPrefix(prefix);
 
 	ryw->getTransaction().setOption(FDBTransactionOptions::RAW_ACCESS);
 
@@ -10154,7 +10426,7 @@ Future<RangeResult> ClientProfilingImpl::getRange(ReadYourWritesTransaction* ryw
 		}
 	}
 	// client_txn_size_limit
-	Key txnSizeLimitKey = LiteralStringRef("client_txn_size_limit").withPrefix(prefix);
+	Key txnSizeLimitKey = "client_txn_size_limit"_sr.withPrefix(prefix);
 	if (kr.contains(txnSizeLimitKey)) {
 		auto entry = ryw->getSpecialKeySpaceWriteMap()[txnSizeLimitKey];
 		if (!ryw->readYourWritesDisabled() && entry.first) {
@@ -10180,7 +10452,7 @@ Future<Optional<std::string>> ClientProfilingImpl::commit(ReadYourWritesTransact
 	Standalone<VectorRef<KeyRangeRef>> clears;
 
 	// client_txn_sample_rate
-	Key sampleRateKey = LiteralStringRef("client_txn_sample_rate").withPrefix(getKeyRange().begin);
+	Key sampleRateKey = "client_txn_sample_rate"_sr.withPrefix(getKeyRange().begin);
 	auto rateEntry = ryw->getSpecialKeySpaceWriteMap()[sampleRateKey];
 
 	if (rateEntry.first && rateEntry.second.present()) {
@@ -10191,7 +10463,7 @@ Future<Optional<std::string>> ClientProfilingImpl::commit(ReadYourWritesTransact
 		} else {
 			try {
 				double sampleRate = boost::lexical_cast<double>(sampleRateStr);
-				Tuple rate = Tuple().appendDouble(sampleRate);
+				Tuple rate = Tuple::makeTuple(sampleRate);
 				insertions.push_back_deep(insertions.arena(), KeyValueRef(fdbClientInfoTxnSampleRate, rate.pack()));
 			} catch (boost::bad_lexical_cast& e) {
 				return Optional<std::string>(ManagementAPIError::toJsonString(
@@ -10200,7 +10472,7 @@ Future<Optional<std::string>> ClientProfilingImpl::commit(ReadYourWritesTransact
 		}
 	}
 	// client_txn_size_limit
-	Key txnSizeLimitKey = LiteralStringRef("client_txn_size_limit").withPrefix(getKeyRange().begin);
+	Key txnSizeLimitKey = "client_txn_size_limit"_sr.withPrefix(getKeyRange().begin);
 	auto sizeLimitEntry = ryw->getSpecialKeySpaceWriteMap()[txnSizeLimitKey];
 	if (sizeLimitEntry.first && sizeLimitEntry.second.present()) {
 		std::string sizeLimitStr = sizeLimitEntry.second.get().toString();
@@ -10210,7 +10482,7 @@ Future<Optional<std::string>> ClientProfilingImpl::commit(ReadYourWritesTransact
 		} else {
 			try {
 				int64_t sizeLimit = boost::lexical_cast<int64_t>(sizeLimitStr);
-				Tuple size = Tuple().append(sizeLimit);
+				Tuple size = Tuple::makeTuple(sizeLimit);
 				insertions.push_back_deep(insertions.arena(), KeyValueRef(fdbClientInfoTxnSizeLimit, size.pack()));
 			} catch (boost::bad_lexical_cast& e) {
 				return Optional<std::string>(ManagementAPIError::toJsonString(
@@ -10245,11 +10517,11 @@ void parse(StringRef& val, double& d) {
 }
 
 void parse(StringRef& val, WaitState& w) {
-	if (val == LiteralStringRef("disk") || val == LiteralStringRef("Disk")) {
+	if (val == "disk"_sr || val == "Disk"_sr) {
 		w = WaitState::Disk;
-	} else if (val == LiteralStringRef("network") || val == LiteralStringRef("Network")) {
+	} else if (val == "network"_sr || val == "Network"_sr) {
 		w = WaitState::Network;
-	} else if (val == LiteralStringRef("running") || val == LiteralStringRef("Running")) {
+	} else if (val == "running"_sr || val == "Running"_sr) {
 		w = WaitState::Running;
 	} else {
 		throw std::range_error("failed to parse run state");
@@ -10331,45 +10603,45 @@ void parse(std::vector<StringRef>::iterator it, std::vector<StringRef>::iterator
 	}
 }
 
-															#line 10334 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 10606 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 namespace {
 // This generated class is to be used only via actorLineageGetRangeActor()
-															#line 2183 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2251 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 template <class ActorLineageGetRangeActorActor>
-															#line 2183 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2251 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class ActorLineageGetRangeActorActorState {
-															#line 10341 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 10613 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
-															#line 2183 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2251 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	ActorLineageGetRangeActorActorState(ReadYourWritesTransaction* const& ryw,KeyRef const& prefix,KeyRangeRef const& kr) 
-															#line 2183 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-															#line 2183 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2251 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2251 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		 : ryw(ryw),
-															#line 2183 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2251 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   prefix(prefix),
-															#line 2183 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2251 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   kr(kr),
-															#line 2186 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2254 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   result(),
-															#line 2190 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2258 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   host(),
-															#line 2191 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2259 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   waitStateStart(WaitState{ 0 }),
-															#line 2192 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2260 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   waitStateEnd(WaitState{ 2 }),
-															#line 2193 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2261 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   timeStart(0),
-															#line 2194 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2262 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   timeEnd(std::numeric_limits<time_t>::max()),
-															#line 2195 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2263 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   seqStart(0),
-															#line 2196 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2264 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   seqEnd(std::numeric_limits<int>::max()),
-															#line 2198 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2266 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   beginValues(kr.begin.removePrefix(prefix).splitAny("/"_sr)),
-															#line 2199 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2267 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   endValues(kr.end.removePrefix(prefix).splitAny("/"_sr))
-															#line 10372 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 10644 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 	{
 		fdb_probe_actor_create("actorLineageGetRangeActor", reinterpret_cast<unsigned long>(this));
 
@@ -10382,59 +10654,59 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 2201 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2269 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (beginValues.size() < 2 || endValues.size() < 2)
-															#line 10387 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 10659 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
-															#line 2202 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-				ryw->setSpecialKeySpaceErrorMsg("missing required parameters (index, host)");
-															#line 2203 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2270 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+				ryw->setSpecialKeySpaceErrorMsg( ManagementAPIError::toJsonString(false, "read actor_lineage", "missing required parameters (index, host)"));
+															#line 2272 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				return a_body1Catch1(special_keys_api_failure(), loopDepth);
-															#line 10393 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 10665 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			}
-															#line 2206 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2275 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			endRangeHost = NetworkAddress();
-															#line 10397 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 10669 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			try {
-															#line 2208 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2277 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				if (SpecialKeySpace::getActorLineageApiCommandRange("state").contains(kr))
-															#line 10401 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 10673 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				{
-															#line 2210 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2279 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					parse(beginValues.begin() + 1, beginValues.end(), host, waitStateStart, timeStart, seqStart);
-															#line 2211 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2280 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					if (kr.begin != kr.end)
-															#line 10407 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 10679 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 					{
-															#line 2212 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2281 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 						parse(endValues.begin() + 1, endValues.end(), endRangeHost, waitStateEnd, timeEnd, seqEnd);
-															#line 10411 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 10683 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 					}
 				}
 				else
 				{
-															#line 2214 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2283 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					if (SpecialKeySpace::getActorLineageApiCommandRange("time").contains(kr))
-															#line 10418 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 10690 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 					{
-															#line 2216 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2285 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 						parse(beginValues.begin() + 1, beginValues.end(), host, timeStart, waitStateStart, seqStart);
-															#line 2217 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2286 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 						if (kr.begin != kr.end)
-															#line 10424 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 10696 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 						{
-															#line 2218 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2287 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 							parse(endValues.begin() + 1, endValues.end(), endRangeHost, timeEnd, waitStateEnd, seqEnd);
-															#line 10428 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 10700 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 						}
 					}
 					else
 					{
-															#line 2221 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-						ryw->setSpecialKeySpaceErrorMsg("invalid index in actor_lineage");
-															#line 2222 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2290 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+						ryw->setSpecialKeySpaceErrorMsg( ManagementAPIError::toJsonString(false, "read actor_lineage", "invalid index in actor_lineage"));
+															#line 2292 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 						return a_body1Catch2(special_keys_api_failure(), loopDepth);
-															#line 10437 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 10709 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 					}
 				}
 				loopDepth = a_body1cont10(loopDepth);
@@ -10463,30 +10735,30 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 2233 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2304 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (kr.begin != kr.end && host != endRangeHost)
-															#line 10468 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 10740 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 2236 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			ryw->setSpecialKeySpaceErrorMsg("the host must remain the same on both ends of the range");
-															#line 2237 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2307 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			ryw->setSpecialKeySpaceErrorMsg(ManagementAPIError::toJsonString( false, "read actor_lineage", "the host must remain the same on both ends of the range"));
+															#line 2309 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			return a_body1Catch1(special_keys_api_failure(), loopDepth);
-															#line 10474 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 10746 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		}
-															#line 2242 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2314 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		process = ProcessInterface();
-															#line 2243 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2315 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		process.getInterface = RequestStream<GetProcessInterfaceRequest>(Endpoint::wellKnown({ host }, WLTOKEN_PROCESS));
-															#line 2244 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2316 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		StrictFuture<ProcessInterface> __when_expr_0 = retryBrokenPromise(process.getInterface, GetProcessInterfaceRequest{});
-															#line 2244 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2316 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (static_cast<ActorLineageGetRangeActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 10484 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 10756 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1cont1when1(__when_expr_0.get(), loopDepth); };
 		static_cast<ActorLineageGetRangeActorActor*>(this)->actor_wait_state = 1;
-															#line 2244 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2316 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ActorLineageGetRangeActorActor, 0, ProcessInterface >*>(static_cast<ActorLineageGetRangeActorActor*>(this)));
-															#line 10489 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 10761 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -10494,21 +10766,21 @@ public:
 	int a_body1Catch2(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 2225 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (e.code() != special_keys_api_failure().code())
-															#line 10499 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 10771 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
-															#line 2226 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-				ryw->setSpecialKeySpaceErrorMsg("failed to parse key");
-															#line 2227 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2296 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+				ryw->setSpecialKeySpaceErrorMsg( ManagementAPIError::toJsonString(false, "read actor_lineage", "failed to parse key"));
+															#line 2298 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				return a_body1Catch1(special_keys_api_failure(), loopDepth);
-															#line 10505 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 10777 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			}
 			else
 			{
-															#line 2229 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2300 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				return a_body1Catch1(e, loopDepth);
-															#line 10511 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 10783 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			}
 		}
 		catch (Error& error) {
@@ -10534,56 +10806,56 @@ public:
 	}
 	int a_body1cont11(ProcessInterface const& p,int loopDepth) 
 	{
-															#line 2245 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2317 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		process = p;
-															#line 2247 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2319 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		ActorLineageRequest actorLineageRequest;
-															#line 2248 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2320 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		actorLineageRequest.waitStateStart = waitStateStart;
-															#line 2249 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2321 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		actorLineageRequest.waitStateEnd = waitStateEnd;
-															#line 2250 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2322 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		actorLineageRequest.timeStart = timeStart;
-															#line 2251 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2323 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		actorLineageRequest.timeEnd = timeEnd;
-															#line 2252 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2324 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		StrictFuture<ActorLineageReply> __when_expr_1 = process.actorLineage.getReply(actorLineageRequest);
-															#line 2252 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2324 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (static_cast<ActorLineageGetRangeActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 10553 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 10825 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont11when1(__when_expr_1.get(), loopDepth); };
 		static_cast<ActorLineageGetRangeActorActor*>(this)->actor_wait_state = 2;
-															#line 2252 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2324 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< ActorLineageGetRangeActorActor, 1, ActorLineageReply >*>(static_cast<ActorLineageGetRangeActorActor*>(this)));
-															#line 10558 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 10830 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont11(ProcessInterface && p,int loopDepth) 
 	{
-															#line 2245 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2317 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		process = p;
-															#line 2247 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2319 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		ActorLineageRequest actorLineageRequest;
-															#line 2248 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2320 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		actorLineageRequest.waitStateStart = waitStateStart;
-															#line 2249 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2321 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		actorLineageRequest.waitStateEnd = waitStateEnd;
-															#line 2250 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2322 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		actorLineageRequest.timeStart = timeStart;
-															#line 2251 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2323 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		actorLineageRequest.timeEnd = timeEnd;
-															#line 2252 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2324 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		StrictFuture<ActorLineageReply> __when_expr_1 = process.actorLineage.getReply(actorLineageRequest);
-															#line 2252 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2324 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (static_cast<ActorLineageGetRangeActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 10581 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 10853 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont11when1(__when_expr_1.get(), loopDepth); };
 		static_cast<ActorLineageGetRangeActorActor*>(this)->actor_wait_state = 2;
-															#line 2252 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2324 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< ActorLineageGetRangeActorActor, 1, ActorLineageReply >*>(static_cast<ActorLineageGetRangeActorActor*>(this)));
-															#line 10586 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 10858 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -10653,127 +10925,127 @@ public:
 	}
 	int a_body1cont11cont1(ActorLineageReply const& reply,int loopDepth) 
 	{
-															#line 2254 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2326 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		time_t dt = 0;
-															#line 2255 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2327 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		int seq = -1;
-															#line 2256 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2328 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		for( const auto& sample : reply.samples ) {
-															#line 2257 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2329 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			time_t datetime = (time_t)sample.time;
-															#line 2258 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2330 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			char buf[50];
-															#line 2259 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2331 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			struct tm* tm;
-															#line 2260 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2332 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			tm = localtime(&datetime);
-															#line 2261 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2333 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			size_t size = strftime(buf, 50, "%FT%T%z", tm);
-															#line 2262 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2334 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			std::string date(buf, size);
-															#line 2264 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			seq = dt == datetime ? seq + 1 : 0;
-															#line 2265 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2337 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			dt = datetime;
-															#line 2267 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2339 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			for( const auto& [waitState, data] : sample.data ) {
-															#line 2268 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2340 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				if (seq < seqStart)
-															#line 10682 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 10954 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				{
 					continue;
 				}
 				else
 				{
-															#line 2270 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2342 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					if (seq >= seqEnd)
-															#line 10690 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 10962 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 					{
 						break;
 					}
 				}
-															#line 2274 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2346 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				std::ostringstream streamKey;
-															#line 2275 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2347 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				if (SpecialKeySpace::getActorLineageApiCommandRange("state").contains(kr))
-															#line 10699 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 10971 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				{
-															#line 2276 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2348 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					streamKey << SpecialKeySpace::getActorLineageApiCommandPrefix("state").toString() << host.toString() << "/" << to_string(waitState) << "/" << date;
-															#line 10703 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 10975 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				}
 				else
 				{
-															#line 2278 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2350 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					if (SpecialKeySpace::getActorLineageApiCommandRange("time").contains(kr))
-															#line 10709 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 10981 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 					{
-															#line 2279 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2351 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 						streamKey << SpecialKeySpace::getActorLineageApiCommandPrefix("time").toString() << host.toString() << "/" << date << "/" << to_string(waitState);
-															#line 10713 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 10985 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 					}
 					else
 					{
-															#line 2282 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2354 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 						ASSERT(false);
-															#line 10719 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 10991 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 					}
 				}
-															#line 2284 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2356 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				streamKey << "/" << seq;
-															#line 2286 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2358 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				msgpack::object_handle oh = msgpack::unpack(data.data(), data.size());
-															#line 2287 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2359 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				msgpack::object deserialized = oh.get();
-															#line 2289 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2361 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				std::ostringstream stream;
-															#line 2290 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2362 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				stream << deserialized;
-															#line 2292 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2364 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				result.push_back_deep(result.arena(), KeyValueRef(streamKey.str(), stream.str()));
-															#line 10734 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11006 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			}
-															#line 2295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2367 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (sample.data.size() == 0)
-															#line 10738 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11010 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
-															#line 2296 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2368 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				std::ostringstream streamKey;
-															#line 2297 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2369 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				if (SpecialKeySpace::getActorLineageApiCommandRange("state").contains(kr))
-															#line 10744 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11016 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				{
-															#line 2298 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2370 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					streamKey << SpecialKeySpace::getActorLineageApiCommandPrefix("state").toString() << host.toString() << "/Running/" << date;
-															#line 10748 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11020 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				}
 				else
 				{
-															#line 2300 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2372 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					if (SpecialKeySpace::getActorLineageApiCommandRange("time").contains(kr))
-															#line 10754 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11026 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 					{
-															#line 2301 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2373 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 						streamKey << SpecialKeySpace::getActorLineageApiCommandPrefix("time").toString() << host.toString() << "/" << date << "/Running";
-															#line 10758 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11030 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 					}
 					else
 					{
-															#line 2304 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2376 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 						ASSERT(false);
-															#line 10764 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11036 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 					}
 				}
-															#line 2306 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2378 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				streamKey << "/" << seq;
-															#line 2307 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2379 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				result.push_back_deep(result.arena(), KeyValueRef(streamKey.str(), "{}"_sr));
-															#line 10771 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11043 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			}
 		}
-															#line 2311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2383 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<ActorLineageGetRangeActorActor*>(this)->SAV<RangeResult>::futures) { (void)(result); this->~ActorLineageGetRangeActorActorState(); static_cast<ActorLineageGetRangeActorActor*>(this)->destroy(); return 0; }
-															#line 10776 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11048 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<ActorLineageGetRangeActorActor*>(this)->SAV< RangeResult >::value()) RangeResult(std::move(result)); // state_var_RVO
 		this->~ActorLineageGetRangeActorActorState();
 		static_cast<ActorLineageGetRangeActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -10783,127 +11055,127 @@ public:
 	}
 	int a_body1cont11cont1(ActorLineageReply && reply,int loopDepth) 
 	{
-															#line 2254 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2326 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		time_t dt = 0;
-															#line 2255 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2327 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		int seq = -1;
-															#line 2256 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2328 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		for( const auto& sample : reply.samples ) {
-															#line 2257 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2329 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			time_t datetime = (time_t)sample.time;
-															#line 2258 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2330 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			char buf[50];
-															#line 2259 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2331 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			struct tm* tm;
-															#line 2260 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2332 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			tm = localtime(&datetime);
-															#line 2261 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2333 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			size_t size = strftime(buf, 50, "%FT%T%z", tm);
-															#line 2262 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2334 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			std::string date(buf, size);
-															#line 2264 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			seq = dt == datetime ? seq + 1 : 0;
-															#line 2265 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2337 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			dt = datetime;
-															#line 2267 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2339 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			for( const auto& [waitState, data] : sample.data ) {
-															#line 2268 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2340 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				if (seq < seqStart)
-															#line 10812 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11084 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				{
 					continue;
 				}
 				else
 				{
-															#line 2270 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2342 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					if (seq >= seqEnd)
-															#line 10820 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11092 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 					{
 						break;
 					}
 				}
-															#line 2274 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2346 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				std::ostringstream streamKey;
-															#line 2275 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2347 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				if (SpecialKeySpace::getActorLineageApiCommandRange("state").contains(kr))
-															#line 10829 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11101 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				{
-															#line 2276 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2348 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					streamKey << SpecialKeySpace::getActorLineageApiCommandPrefix("state").toString() << host.toString() << "/" << to_string(waitState) << "/" << date;
-															#line 10833 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11105 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				}
 				else
 				{
-															#line 2278 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2350 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					if (SpecialKeySpace::getActorLineageApiCommandRange("time").contains(kr))
-															#line 10839 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11111 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 					{
-															#line 2279 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2351 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 						streamKey << SpecialKeySpace::getActorLineageApiCommandPrefix("time").toString() << host.toString() << "/" << date << "/" << to_string(waitState);
-															#line 10843 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11115 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 					}
 					else
 					{
-															#line 2282 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2354 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 						ASSERT(false);
-															#line 10849 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11121 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 					}
 				}
-															#line 2284 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2356 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				streamKey << "/" << seq;
-															#line 2286 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2358 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				msgpack::object_handle oh = msgpack::unpack(data.data(), data.size());
-															#line 2287 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2359 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				msgpack::object deserialized = oh.get();
-															#line 2289 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2361 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				std::ostringstream stream;
-															#line 2290 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2362 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				stream << deserialized;
-															#line 2292 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2364 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				result.push_back_deep(result.arena(), KeyValueRef(streamKey.str(), stream.str()));
-															#line 10864 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11136 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			}
-															#line 2295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2367 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (sample.data.size() == 0)
-															#line 10868 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
-															#line 2296 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2368 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				std::ostringstream streamKey;
-															#line 2297 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2369 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				if (SpecialKeySpace::getActorLineageApiCommandRange("state").contains(kr))
-															#line 10874 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11146 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				{
-															#line 2298 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2370 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					streamKey << SpecialKeySpace::getActorLineageApiCommandPrefix("state").toString() << host.toString() << "/Running/" << date;
-															#line 10878 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11150 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				}
 				else
 				{
-															#line 2300 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2372 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					if (SpecialKeySpace::getActorLineageApiCommandRange("time").contains(kr))
-															#line 10884 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11156 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 					{
-															#line 2301 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2373 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 						streamKey << SpecialKeySpace::getActorLineageApiCommandPrefix("time").toString() << host.toString() << "/" << date << "/Running";
-															#line 10888 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11160 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 					}
 					else
 					{
-															#line 2304 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2376 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 						ASSERT(false);
-															#line 10894 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11166 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 					}
 				}
-															#line 2306 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2378 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				streamKey << "/" << seq;
-															#line 2307 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2379 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				result.push_back_deep(result.arena(), KeyValueRef(streamKey.str(), "{}"_sr));
-															#line 10901 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11173 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			}
 		}
-															#line 2311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2383 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<ActorLineageGetRangeActorActor*>(this)->SAV<RangeResult>::futures) { (void)(result); this->~ActorLineageGetRangeActorActorState(); static_cast<ActorLineageGetRangeActorActor*>(this)->destroy(); return 0; }
-															#line 10906 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11178 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<ActorLineageGetRangeActorActor*>(this)->SAV< RangeResult >::value()) RangeResult(std::move(result)); // state_var_RVO
 		this->~ActorLineageGetRangeActorActorState();
 		static_cast<ActorLineageGetRangeActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -10974,42 +11246,42 @@ public:
 		fdb_probe_actor_exit("actorLineageGetRangeActor", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 2183 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2251 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	ReadYourWritesTransaction* ryw;
-															#line 2183 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2251 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	KeyRef prefix;
-															#line 2183 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2251 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	KeyRangeRef kr;
-															#line 2186 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2254 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	RangeResult result;
-															#line 2190 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2258 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	NetworkAddress host;
-															#line 2191 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2259 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	WaitState waitStateStart;
-															#line 2192 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2260 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	WaitState waitStateEnd;
-															#line 2193 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2261 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	time_t timeStart;
-															#line 2194 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2262 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	time_t timeEnd;
-															#line 2195 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2263 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	int seqStart;
-															#line 2196 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2264 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	int seqEnd;
-															#line 2198 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2266 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	std::vector<StringRef> beginValues;
-															#line 2199 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2267 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	std::vector<StringRef> endValues;
-															#line 2206 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2275 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	NetworkAddress endRangeHost;
-															#line 2242 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2314 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	ProcessInterface process;
-															#line 11007 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11279 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 };
 // This generated class is to be used only via actorLineageGetRangeActor()
-															#line 2183 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2251 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class ActorLineageGetRangeActorActor final : public Actor<RangeResult>, public ActorCallback< ActorLineageGetRangeActorActor, 0, ProcessInterface >, public ActorCallback< ActorLineageGetRangeActorActor, 1, ActorLineageReply >, public FastAllocated<ActorLineageGetRangeActorActor>, public ActorLineageGetRangeActorActorState<ActorLineageGetRangeActorActor> {
-															#line 11012 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11284 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
 	using FastAllocated<ActorLineageGetRangeActorActor>::operator new;
 	using FastAllocated<ActorLineageGetRangeActorActor>::operator delete;
@@ -11019,9 +11291,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< ActorLineageGetRangeActorActor, 0, ProcessInterface >;
 friend struct ActorCallback< ActorLineageGetRangeActorActor, 1, ActorLineageReply >;
-															#line 2183 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2251 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	ActorLineageGetRangeActorActor(ReadYourWritesTransaction* const& ryw,KeyRef const& prefix,KeyRangeRef const& kr) 
-															#line 11024 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11296 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		 : Actor<RangeResult>(),
 		   ActorLineageGetRangeActorActorState<ActorLineageGetRangeActorActor>(ryw, prefix, kr)
 	{
@@ -11046,14 +11318,14 @@ friend struct ActorCallback< ActorLineageGetRangeActorActor, 1, ActorLineageRepl
 	}
 };
 }
-															#line 2183 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2251 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 [[nodiscard]] static Future<RangeResult> actorLineageGetRangeActor( ReadYourWritesTransaction* const& ryw, KeyRef const& prefix, KeyRangeRef const& kr ) {
-															#line 2183 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2251 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	return Future<RangeResult>(new ActorLineageGetRangeActorActor(ryw, prefix, kr));
-															#line 11053 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11325 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 }
 
-#line 2313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+#line 2385 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 
 Future<RangeResult> ActorLineageImpl::getRange(ReadYourWritesTransaction* ryw,
                                                KeyRangeRef kr,
@@ -11135,27 +11407,27 @@ MaintenanceImpl::MaintenanceImpl(KeyRangeRef kr) : SpecialKeyRangeRWImpl(kr) {}
 // we will calculate the remaining time(truncated to integer, the same as fdbcli) and return back as the value
 // If the zoneId is the special one `ignoreSSFailuresZoneString`,
 // value will be 0 (same as fdbcli)
-															#line 11138 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11410 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 namespace {
 // This generated class is to be used only via MaintenanceGetRangeActor()
-															#line 2394 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2466 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 template <class MaintenanceGetRangeActorActor>
-															#line 2394 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2466 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class MaintenanceGetRangeActorActorState {
-															#line 11145 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11417 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
-															#line 2394 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2466 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	MaintenanceGetRangeActorActorState(ReadYourWritesTransaction* const& ryw,KeyRef const& prefix,KeyRangeRef const& kr) 
-															#line 2394 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-															#line 2394 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2466 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2466 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		 : ryw(ryw),
-															#line 2394 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2466 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   prefix(prefix),
-															#line 2394 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2466 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   kr(kr),
-															#line 2397 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2469 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   result()
-															#line 11158 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11430 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 	{
 		fdb_probe_actor_create("MaintenanceGetRangeActor", reinterpret_cast<unsigned long>(this));
 
@@ -11168,20 +11440,20 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 2399 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2471 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			ryw->getTransaction().setOption(FDBTransactionOptions::LOCK_AWARE);
-															#line 2400 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2472 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			ryw->getTransaction().setOption(FDBTransactionOptions::RAW_ACCESS);
-															#line 2401 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2473 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			StrictFuture<Optional<Value>> __when_expr_0 = ryw->getTransaction().get(healthyZoneKey);
-															#line 2401 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2473 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (static_cast<MaintenanceGetRangeActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 11179 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11451 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<MaintenanceGetRangeActorActor*>(this)->actor_wait_state = 1;
-															#line 2401 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2473 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< MaintenanceGetRangeActorActor, 0, Optional<Value> >*>(static_cast<MaintenanceGetRangeActorActor*>(this)));
-															#line 11184 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11456 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -11202,33 +11474,33 @@ public:
 	}
 	int a_body1cont1(Optional<Value> const& val,int loopDepth) 
 	{
-															#line 2402 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2474 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (val.present())
-															#line 11207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11479 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 2403 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2475 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			auto healthyZone = decodeHealthyZoneValue(val.get());
-															#line 2404 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2476 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if ((healthyZone.first == ignoreSSFailuresZoneString) || (healthyZone.second > ryw->getTransaction().getReadVersion().get()))
-															#line 11213 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11485 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
-															#line 2406 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2478 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				Key zone_key = healthyZone.first.withPrefix(prefix);
-															#line 2407 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2479 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				double seconds = healthyZone.first == ignoreSSFailuresZoneString ? 0 : (healthyZone.second - ryw->getTransaction().getReadVersion().get()) / CLIENT_KNOBS->CORE_VERSIONSPERSECOND;
-															#line 2411 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2483 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				if (kr.contains(zone_key))
-															#line 11221 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11493 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				{
-															#line 2412 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2484 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					result.push_back_deep(result.arena(), KeyValueRef(zone_key, Value(boost::lexical_cast<std::string>(seconds))));
-															#line 11225 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11497 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				}
 			}
 		}
-															#line 2417 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2489 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<MaintenanceGetRangeActorActor*>(this)->SAV<RangeResult>::futures) { (void)(rywGetRange(ryw, kr, result)); this->~MaintenanceGetRangeActorActorState(); static_cast<MaintenanceGetRangeActorActor*>(this)->destroy(); return 0; }
-															#line 11231 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11503 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<MaintenanceGetRangeActorActor*>(this)->SAV< RangeResult >::value()) RangeResult(rywGetRange(ryw, kr, result));
 		this->~MaintenanceGetRangeActorActorState();
 		static_cast<MaintenanceGetRangeActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -11238,33 +11510,33 @@ public:
 	}
 	int a_body1cont1(Optional<Value> && val,int loopDepth) 
 	{
-															#line 2402 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2474 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (val.present())
-															#line 11243 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11515 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 2403 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2475 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			auto healthyZone = decodeHealthyZoneValue(val.get());
-															#line 2404 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2476 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if ((healthyZone.first == ignoreSSFailuresZoneString) || (healthyZone.second > ryw->getTransaction().getReadVersion().get()))
-															#line 11249 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11521 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
-															#line 2406 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2478 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				Key zone_key = healthyZone.first.withPrefix(prefix);
-															#line 2407 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2479 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				double seconds = healthyZone.first == ignoreSSFailuresZoneString ? 0 : (healthyZone.second - ryw->getTransaction().getReadVersion().get()) / CLIENT_KNOBS->CORE_VERSIONSPERSECOND;
-															#line 2411 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2483 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				if (kr.contains(zone_key))
-															#line 11257 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11529 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				{
-															#line 2412 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2484 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					result.push_back_deep(result.arena(), KeyValueRef(zone_key, Value(boost::lexical_cast<std::string>(seconds))));
-															#line 11261 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11533 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				}
 			}
 		}
-															#line 2417 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2489 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<MaintenanceGetRangeActorActor*>(this)->SAV<RangeResult>::futures) { (void)(rywGetRange(ryw, kr, result)); this->~MaintenanceGetRangeActorActorState(); static_cast<MaintenanceGetRangeActorActor*>(this)->destroy(); return 0; }
-															#line 11267 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11539 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<MaintenanceGetRangeActorActor*>(this)->SAV< RangeResult >::value()) RangeResult(rywGetRange(ryw, kr, result));
 		this->~MaintenanceGetRangeActorActorState();
 		static_cast<MaintenanceGetRangeActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -11335,20 +11607,20 @@ public:
 		fdb_probe_actor_exit("MaintenanceGetRangeActor", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 2394 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2466 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	ReadYourWritesTransaction* ryw;
-															#line 2394 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2466 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	KeyRef prefix;
-															#line 2394 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2466 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	KeyRangeRef kr;
-															#line 2397 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2469 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	RangeResult result;
-															#line 11346 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11618 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 };
 // This generated class is to be used only via MaintenanceGetRangeActor()
-															#line 2394 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2466 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class MaintenanceGetRangeActorActor final : public Actor<RangeResult>, public ActorCallback< MaintenanceGetRangeActorActor, 0, Optional<Value> >, public FastAllocated<MaintenanceGetRangeActorActor>, public MaintenanceGetRangeActorActorState<MaintenanceGetRangeActorActor> {
-															#line 11351 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11623 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
 	using FastAllocated<MaintenanceGetRangeActorActor>::operator new;
 	using FastAllocated<MaintenanceGetRangeActorActor>::operator delete;
@@ -11357,9 +11629,9 @@ public:
 	void destroy() override { ((Actor<RangeResult>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< MaintenanceGetRangeActorActor, 0, Optional<Value> >;
-															#line 2394 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2466 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	MaintenanceGetRangeActorActor(ReadYourWritesTransaction* const& ryw,KeyRef const& prefix,KeyRangeRef const& kr) 
-															#line 11362 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11634 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		 : Actor<RangeResult>(),
 		   MaintenanceGetRangeActorActorState<MaintenanceGetRangeActorActor>(ryw, prefix, kr)
 	{
@@ -11383,14 +11655,14 @@ friend struct ActorCallback< MaintenanceGetRangeActorActor, 0, Optional<Value> >
 	}
 };
 }
-															#line 2394 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2466 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 [[nodiscard]] static Future<RangeResult> MaintenanceGetRangeActor( ReadYourWritesTransaction* const& ryw, KeyRef const& prefix, KeyRangeRef const& kr ) {
-															#line 2394 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2466 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	return Future<RangeResult>(new MaintenanceGetRangeActorActor(ryw, prefix, kr));
-															#line 11390 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11662 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 }
 
-#line 2419 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+#line 2491 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 
 Future<RangeResult> MaintenanceImpl::getRange(ReadYourWritesTransaction* ryw,
                                               KeyRangeRef kr,
@@ -11403,23 +11675,23 @@ Future<RangeResult> MaintenanceImpl::getRange(ReadYourWritesTransaction* ryw,
 // In addition, if the zoneId now is 'ignoreSSFailuresZoneString',
 // which means the data distribution is disabled for storage failures.
 // Only clear this specific key is allowed, any other operations will throw error
-															#line 11406 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11678 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 namespace {
 // This generated class is to be used only via maintenanceCommitActor()
-															#line 2431 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2503 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 template <class MaintenanceCommitActorActor>
-															#line 2431 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2503 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class MaintenanceCommitActorActorState {
-															#line 11413 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11685 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
-															#line 2431 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2503 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	MaintenanceCommitActorActorState(ReadYourWritesTransaction* const& ryw,KeyRangeRef const& kr) 
-															#line 2431 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-															#line 2431 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2503 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2503 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		 : ryw(ryw),
-															#line 2431 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2503 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   kr(kr)
-															#line 11422 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11694 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 	{
 		fdb_probe_actor_create("maintenanceCommitActor", reinterpret_cast<unsigned long>(this));
 
@@ -11432,22 +11704,22 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 2433 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2505 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			ryw->getTransaction().setOption(FDBTransactionOptions::LOCK_AWARE);
-															#line 2434 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2506 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			ryw->getTransaction().setOption(FDBTransactionOptions::RAW_ACCESS);
-															#line 2435 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2507 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			ryw->getTransaction().setOption(FDBTransactionOptions::PRIORITY_SYSTEM_IMMEDIATE);
-															#line 2436 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2508 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			StrictFuture<Optional<Value>> __when_expr_0 = ryw->getTransaction().get(healthyZoneKey);
-															#line 2436 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2508 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (static_cast<MaintenanceCommitActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 11445 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11717 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<MaintenanceCommitActorActor*>(this)->actor_wait_state = 1;
-															#line 2436 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2508 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< MaintenanceCommitActorActor, 0, Optional<Value> >*>(static_cast<MaintenanceCommitActorActor*>(this)));
-															#line 11450 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11722 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -11468,73 +11740,73 @@ public:
 	}
 	int a_body1cont1(Optional<Value> const& val,int loopDepth) 
 	{
-															#line 2437 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2509 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		Optional<std::pair<Key, Version>> healthyZone = val.present() ? decodeHealthyZoneValue(val.get()) : Optional<std::pair<Key, Version>>();
-															#line 2440 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2512 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		ranges = ryw->getSpecialKeySpaceWriteMap().containedRanges(kr);
-															#line 2442 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2514 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		Key zoneId;
-															#line 2443 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2515 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		double seconds;
-															#line 2444 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2516 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		bool isSet = false;
-															#line 2448 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2520 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		for(auto iter = ranges.begin();iter != ranges.end();++iter) {
-															#line 2449 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2521 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (!iter->value().first)
-															#line 11485 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11757 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
 				continue;
 			}
-															#line 2451 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2523 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (iter->value().second.present())
-															#line 11491 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11763 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
-															#line 2452 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2524 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				if (isSet)
-															#line 11495 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11767 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				{
-															#line 2453 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2525 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					if (!static_cast<MaintenanceCommitActorActor*>(this)->SAV<Optional<std::string>>::futures) { (void)(Optional<std::string>(ManagementAPIError::toJsonString( false, "maintenance", "Multiple zones given for maintenance, only one allowed at the same time"))); this->~MaintenanceCommitActorActorState(); static_cast<MaintenanceCommitActorActor*>(this)->destroy(); return 0; }
-															#line 11499 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11771 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 					new (&static_cast<MaintenanceCommitActorActor*>(this)->SAV< Optional<std::string> >::value()) Optional<std::string>(Optional<std::string>(ManagementAPIError::toJsonString( false, "maintenance", "Multiple zones given for maintenance, only one allowed at the same time")));
 					this->~MaintenanceCommitActorActorState();
 					static_cast<MaintenanceCommitActorActor*>(this)->finishSendAndDelPromiseRef();
 					return 0;
 				}
-															#line 2455 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2527 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				isSet = true;
-															#line 2456 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2528 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				zoneId = iter->begin().removePrefix(kr.begin);
-															#line 2457 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2529 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				seconds = boost::lexical_cast<double>(iter->value().second.get().toString());
-															#line 11511 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11783 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			}
 			else
 			{
-															#line 2460 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2532 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				if (!isSet && healthyZone.present() && iter.range().contains(healthyZone.get().first.withPrefix(kr.begin)))
-															#line 11517 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11789 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				{
-															#line 2461 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2533 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					ryw->getTransaction().clear(healthyZoneKey);
-															#line 11521 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11793 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				}
 			}
 		}
-															#line 2465 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2537 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (isSet)
-															#line 11527 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11799 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 2466 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2538 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (healthyZone.present() && healthyZone.get().first == ignoreSSFailuresZoneString)
-															#line 11531 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11803 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
-															#line 2467 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2539 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				std::string msg = "Maintenance mode cannot be used while data distribution is disabled for storage " "server failures.";
-															#line 2469 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2541 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				if (!static_cast<MaintenanceCommitActorActor*>(this)->SAV<Optional<std::string>>::futures) { (void)(Optional<std::string>(ManagementAPIError::toJsonString(false, "maintenance", msg))); this->~MaintenanceCommitActorActorState(); static_cast<MaintenanceCommitActorActor*>(this)->destroy(); return 0; }
-															#line 11537 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11809 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				new (&static_cast<MaintenanceCommitActorActor*>(this)->SAV< Optional<std::string> >::value()) Optional<std::string>(Optional<std::string>(ManagementAPIError::toJsonString(false, "maintenance", msg)));
 				this->~MaintenanceCommitActorActorState();
 				static_cast<MaintenanceCommitActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -11542,15 +11814,15 @@ public:
 			}
 			else
 			{
-															#line 2470 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2542 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				if (seconds < 0)
-															#line 11547 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11819 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				{
-															#line 2471 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2543 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					std::string msg = "The specified maintenance time " + boost::lexical_cast<std::string>(seconds) + " is a negative value";
-															#line 2473 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2545 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					if (!static_cast<MaintenanceCommitActorActor*>(this)->SAV<Optional<std::string>>::futures) { (void)(Optional<std::string>(ManagementAPIError::toJsonString(false, "maintenance", msg))); this->~MaintenanceCommitActorActorState(); static_cast<MaintenanceCommitActorActor*>(this)->destroy(); return 0; }
-															#line 11553 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11825 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 					new (&static_cast<MaintenanceCommitActorActor*>(this)->SAV< Optional<std::string> >::value()) Optional<std::string>(Optional<std::string>(ManagementAPIError::toJsonString(false, "maintenance", msg)));
 					this->~MaintenanceCommitActorActorState();
 					static_cast<MaintenanceCommitActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -11558,17 +11830,17 @@ public:
 				}
 				else
 				{
-															#line 2475 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2547 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					TraceEvent(SevDebug, "SKSMaintenanceSet").detail("ZoneId", zoneId.toString());
-															#line 2476 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2548 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					ryw->getTransaction().set(healthyZoneKey, healthyZoneValue(zoneId, ryw->getTransaction().getReadVersion().get() + (seconds * CLIENT_KNOBS->CORE_VERSIONSPERSECOND)));
-															#line 11565 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11837 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				}
 			}
 		}
-															#line 2482 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2554 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<MaintenanceCommitActorActor*>(this)->SAV<Optional<std::string>>::futures) { (void)(Optional<std::string>()); this->~MaintenanceCommitActorActorState(); static_cast<MaintenanceCommitActorActor*>(this)->destroy(); return 0; }
-															#line 11571 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11843 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<MaintenanceCommitActorActor*>(this)->SAV< Optional<std::string> >::value()) Optional<std::string>(Optional<std::string>());
 		this->~MaintenanceCommitActorActorState();
 		static_cast<MaintenanceCommitActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -11578,73 +11850,73 @@ public:
 	}
 	int a_body1cont1(Optional<Value> && val,int loopDepth) 
 	{
-															#line 2437 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2509 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		Optional<std::pair<Key, Version>> healthyZone = val.present() ? decodeHealthyZoneValue(val.get()) : Optional<std::pair<Key, Version>>();
-															#line 2440 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2512 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		ranges = ryw->getSpecialKeySpaceWriteMap().containedRanges(kr);
-															#line 2442 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2514 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		Key zoneId;
-															#line 2443 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2515 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		double seconds;
-															#line 2444 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2516 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		bool isSet = false;
-															#line 2448 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2520 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		for(auto iter = ranges.begin();iter != ranges.end();++iter) {
-															#line 2449 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2521 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (!iter->value().first)
-															#line 11595 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11867 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
 				continue;
 			}
-															#line 2451 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2523 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (iter->value().second.present())
-															#line 11601 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11873 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
-															#line 2452 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2524 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				if (isSet)
-															#line 11605 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11877 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				{
-															#line 2453 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2525 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					if (!static_cast<MaintenanceCommitActorActor*>(this)->SAV<Optional<std::string>>::futures) { (void)(Optional<std::string>(ManagementAPIError::toJsonString( false, "maintenance", "Multiple zones given for maintenance, only one allowed at the same time"))); this->~MaintenanceCommitActorActorState(); static_cast<MaintenanceCommitActorActor*>(this)->destroy(); return 0; }
-															#line 11609 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11881 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 					new (&static_cast<MaintenanceCommitActorActor*>(this)->SAV< Optional<std::string> >::value()) Optional<std::string>(Optional<std::string>(ManagementAPIError::toJsonString( false, "maintenance", "Multiple zones given for maintenance, only one allowed at the same time")));
 					this->~MaintenanceCommitActorActorState();
 					static_cast<MaintenanceCommitActorActor*>(this)->finishSendAndDelPromiseRef();
 					return 0;
 				}
-															#line 2455 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2527 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				isSet = true;
-															#line 2456 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2528 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				zoneId = iter->begin().removePrefix(kr.begin);
-															#line 2457 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2529 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				seconds = boost::lexical_cast<double>(iter->value().second.get().toString());
-															#line 11621 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11893 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			}
 			else
 			{
-															#line 2460 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2532 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				if (!isSet && healthyZone.present() && iter.range().contains(healthyZone.get().first.withPrefix(kr.begin)))
-															#line 11627 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11899 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				{
-															#line 2461 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2533 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					ryw->getTransaction().clear(healthyZoneKey);
-															#line 11631 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11903 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				}
 			}
 		}
-															#line 2465 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2537 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (isSet)
-															#line 11637 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11909 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 2466 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2538 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (healthyZone.present() && healthyZone.get().first == ignoreSSFailuresZoneString)
-															#line 11641 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11913 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
-															#line 2467 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2539 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				std::string msg = "Maintenance mode cannot be used while data distribution is disabled for storage " "server failures.";
-															#line 2469 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2541 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				if (!static_cast<MaintenanceCommitActorActor*>(this)->SAV<Optional<std::string>>::futures) { (void)(Optional<std::string>(ManagementAPIError::toJsonString(false, "maintenance", msg))); this->~MaintenanceCommitActorActorState(); static_cast<MaintenanceCommitActorActor*>(this)->destroy(); return 0; }
-															#line 11647 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11919 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				new (&static_cast<MaintenanceCommitActorActor*>(this)->SAV< Optional<std::string> >::value()) Optional<std::string>(Optional<std::string>(ManagementAPIError::toJsonString(false, "maintenance", msg)));
 				this->~MaintenanceCommitActorActorState();
 				static_cast<MaintenanceCommitActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -11652,15 +11924,15 @@ public:
 			}
 			else
 			{
-															#line 2470 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2542 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				if (seconds < 0)
-															#line 11657 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11929 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				{
-															#line 2471 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2543 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					std::string msg = "The specified maintenance time " + boost::lexical_cast<std::string>(seconds) + " is a negative value";
-															#line 2473 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2545 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					if (!static_cast<MaintenanceCommitActorActor*>(this)->SAV<Optional<std::string>>::futures) { (void)(Optional<std::string>(ManagementAPIError::toJsonString(false, "maintenance", msg))); this->~MaintenanceCommitActorActorState(); static_cast<MaintenanceCommitActorActor*>(this)->destroy(); return 0; }
-															#line 11663 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11935 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 					new (&static_cast<MaintenanceCommitActorActor*>(this)->SAV< Optional<std::string> >::value()) Optional<std::string>(Optional<std::string>(ManagementAPIError::toJsonString(false, "maintenance", msg)));
 					this->~MaintenanceCommitActorActorState();
 					static_cast<MaintenanceCommitActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -11668,17 +11940,17 @@ public:
 				}
 				else
 				{
-															#line 2475 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2547 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					TraceEvent(SevDebug, "SKSMaintenanceSet").detail("ZoneId", zoneId.toString());
-															#line 2476 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2548 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					ryw->getTransaction().set(healthyZoneKey, healthyZoneValue(zoneId, ryw->getTransaction().getReadVersion().get() + (seconds * CLIENT_KNOBS->CORE_VERSIONSPERSECOND)));
-															#line 11675 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11947 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				}
 			}
 		}
-															#line 2482 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2554 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<MaintenanceCommitActorActor*>(this)->SAV<Optional<std::string>>::futures) { (void)(Optional<std::string>()); this->~MaintenanceCommitActorActorState(); static_cast<MaintenanceCommitActorActor*>(this)->destroy(); return 0; }
-															#line 11681 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 11953 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<MaintenanceCommitActorActor*>(this)->SAV< Optional<std::string> >::value()) Optional<std::string>(Optional<std::string>());
 		this->~MaintenanceCommitActorActorState();
 		static_cast<MaintenanceCommitActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -11749,18 +12021,18 @@ public:
 		fdb_probe_actor_exit("maintenanceCommitActor", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 2431 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2503 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	ReadYourWritesTransaction* ryw;
-															#line 2431 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2503 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	KeyRangeRef kr;
-															#line 2440 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2512 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	RangeMap<Key, std::pair<bool, Optional<Value>>, KeyRangeRef>::Ranges ranges;
-															#line 11758 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 12030 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 };
 // This generated class is to be used only via maintenanceCommitActor()
-															#line 2431 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2503 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class MaintenanceCommitActorActor final : public Actor<Optional<std::string>>, public ActorCallback< MaintenanceCommitActorActor, 0, Optional<Value> >, public FastAllocated<MaintenanceCommitActorActor>, public MaintenanceCommitActorActorState<MaintenanceCommitActorActor> {
-															#line 11763 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 12035 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
 	using FastAllocated<MaintenanceCommitActorActor>::operator new;
 	using FastAllocated<MaintenanceCommitActorActor>::operator delete;
@@ -11769,9 +12041,9 @@ public:
 	void destroy() override { ((Actor<Optional<std::string>>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< MaintenanceCommitActorActor, 0, Optional<Value> >;
-															#line 2431 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2503 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	MaintenanceCommitActorActor(ReadYourWritesTransaction* const& ryw,KeyRangeRef const& kr) 
-															#line 11774 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 12046 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		 : Actor<Optional<std::string>>(),
 		   MaintenanceCommitActorActorState<MaintenanceCommitActorActor>(ryw, kr)
 	{
@@ -11795,14 +12067,14 @@ friend struct ActorCallback< MaintenanceCommitActorActor, 0, Optional<Value> >;
 	}
 };
 }
-															#line 2431 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2503 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 [[nodiscard]] static Future<Optional<std::string>> maintenanceCommitActor( ReadYourWritesTransaction* const& ryw, KeyRangeRef const& kr ) {
-															#line 2431 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2503 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	return Future<Optional<std::string>>(new MaintenanceCommitActorActor(ryw, kr));
-															#line 11802 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 12074 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 }
 
-#line 2484 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+#line 2556 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 
 Future<Optional<std::string>> MaintenanceImpl::commit(ReadYourWritesTransaction* ryw) {
 	return maintenanceCommitActor(ryw, getKeyRange());
@@ -11811,29 +12083,29 @@ Future<Optional<std::string>> MaintenanceImpl::commit(ReadYourWritesTransaction*
 DataDistributionImpl::DataDistributionImpl(KeyRangeRef kr) : SpecialKeyRangeRWImpl(kr) {}
 
 // Read the system keys dataDistributionModeKey and rebalanceDDIgnoreKey
-															#line 11814 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 12086 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 namespace {
 // This generated class is to be used only via DataDistributionGetRangeActor()
-															#line 2492 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2564 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 template <class DataDistributionGetRangeActorActor>
-															#line 2492 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2564 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class DataDistributionGetRangeActorActorState {
-															#line 11821 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 12093 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
-															#line 2492 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2564 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	DataDistributionGetRangeActorActorState(ReadYourWritesTransaction* const& ryw,KeyRef const& prefix,KeyRangeRef const& kr) 
-															#line 2492 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-															#line 2492 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2564 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2564 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		 : ryw(ryw),
-															#line 2492 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2564 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   prefix(prefix),
-															#line 2492 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2564 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   kr(kr),
-															#line 2495 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2567 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   result(),
-															#line 2497 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		   modeKey(LiteralStringRef("mode").withPrefix(prefix))
-															#line 11836 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2569 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		   modeKey("mode"_sr.withPrefix(prefix))
+															#line 12108 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 	{
 		fdb_probe_actor_create("DataDistributionGetRangeActor", reinterpret_cast<unsigned long>(this));
 
@@ -11846,28 +12118,28 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 2499 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2571 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			ryw->getTransaction().setOption(FDBTransactionOptions::RAW_ACCESS);
-															#line 2501 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2573 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (kr.contains(modeKey))
-															#line 11853 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 12125 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
-															#line 2502 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2574 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				auto entry = ryw->getSpecialKeySpaceWriteMap()[modeKey];
-															#line 2503 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2575 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				if (ryw->readYourWritesDisabled() || !entry.first)
-															#line 11859 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 12131 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				{
-															#line 2504 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2576 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					StrictFuture<Optional<Value>> __when_expr_0 = ryw->getTransaction().get(dataDistributionModeKey);
-															#line 2504 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2576 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					if (static_cast<DataDistributionGetRangeActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 11865 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 12137 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 					if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 					static_cast<DataDistributionGetRangeActorActor*>(this)->actor_wait_state = 1;
-															#line 2504 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2576 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 					__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< DataDistributionGetRangeActorActor, 0, Optional<Value> >*>(static_cast<DataDistributionGetRangeActorActor*>(this)));
-															#line 11870 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 12142 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 					loopDepth = 0;
 				}
 				else
@@ -11898,28 +12170,28 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 2513 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		rebalanceIgnoredKey = LiteralStringRef("rebalance_ignored").withPrefix(prefix);
-															#line 2514 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2585 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		rebalanceIgnoredKey = "rebalance_ignored"_sr.withPrefix(prefix);
+															#line 2586 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (kr.contains(rebalanceIgnoredKey))
-															#line 11905 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 12177 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 2515 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2587 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			auto entry = ryw->getSpecialKeySpaceWriteMap()[rebalanceIgnoredKey];
-															#line 2516 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2588 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (ryw->readYourWritesDisabled() || !entry.first)
-															#line 11911 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 12183 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
-															#line 2517 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2589 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				StrictFuture<Optional<Value>> __when_expr_1 = ryw->getTransaction().get(rebalanceDDIgnoreKey);
-															#line 2517 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2589 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				if (static_cast<DataDistributionGetRangeActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 11917 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 12189 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 				static_cast<DataDistributionGetRangeActorActor*>(this)->actor_wait_state = 2;
-															#line 2517 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2589 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< DataDistributionGetRangeActorActor, 1, Optional<Value> >*>(static_cast<DataDistributionGetRangeActorActor*>(this)));
-															#line 11922 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 12194 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				loopDepth = 0;
 			}
 			else
@@ -11942,38 +12214,38 @@ public:
 	}
 	int a_body1cont3(Optional<Value> const& f,int loopDepth) 
 	{
-															#line 2505 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2577 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		int mode = -1;
-															#line 2506 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2578 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (f.present())
-															#line 11949 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 12221 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 2507 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2579 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			mode = BinaryReader::fromStringRef<int>(f.get(), Unversioned());
-															#line 11953 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 12225 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		}
-															#line 2509 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2581 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		result.push_back_deep(result.arena(), KeyValueRef(modeKey, Value(boost::lexical_cast<std::string>(mode))));
-															#line 11957 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 12229 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		loopDepth = a_body1cont2(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1cont3(Optional<Value> && f,int loopDepth) 
 	{
-															#line 2505 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2577 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		int mode = -1;
-															#line 2506 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2578 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (f.present())
-															#line 11968 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 12240 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 2507 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2579 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			mode = BinaryReader::fromStringRef<int>(f.get(), Unversioned());
-															#line 11972 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 12244 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		}
-															#line 2509 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2581 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		result.push_back_deep(result.arena(), KeyValueRef(modeKey, Value(boost::lexical_cast<std::string>(mode))));
-															#line 11976 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 12248 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		loopDepth = a_body1cont2(loopDepth);
 
 		return loopDepth;
@@ -12043,9 +12315,9 @@ public:
 	}
 	int a_body1cont6(int loopDepth) 
 	{
-															#line 2523 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2595 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<DataDistributionGetRangeActorActor*>(this)->SAV<RangeResult>::futures) { (void)(rywGetRange(ryw, kr, result)); this->~DataDistributionGetRangeActorActorState(); static_cast<DataDistributionGetRangeActorActor*>(this)->destroy(); return 0; }
-															#line 12048 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 12320 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<DataDistributionGetRangeActorActor*>(this)->SAV< RangeResult >::value()) RangeResult(rywGetRange(ryw, kr, result));
 		this->~DataDistributionGetRangeActorActorState();
 		static_cast<DataDistributionGetRangeActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -12061,13 +12333,13 @@ public:
 	}
 	int a_body1cont8(Optional<Value> const& f,int loopDepth) 
 	{
-															#line 2518 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2590 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (f.present())
-															#line 12066 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 12338 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 2519 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2591 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			result.push_back_deep(result.arena(), KeyValueRef(rebalanceIgnoredKey, Value()));
-															#line 12070 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 12342 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		}
 		loopDepth = a_body1cont7(loopDepth);
 
@@ -12075,13 +12347,13 @@ public:
 	}
 	int a_body1cont8(Optional<Value> && f,int loopDepth) 
 	{
-															#line 2518 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2590 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (f.present())
-															#line 12080 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 12352 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 2519 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2591 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			result.push_back_deep(result.arena(), KeyValueRef(rebalanceIgnoredKey, Value()));
-															#line 12084 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 12356 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		}
 		loopDepth = a_body1cont7(loopDepth);
 
@@ -12150,24 +12422,24 @@ public:
 		fdb_probe_actor_exit("DataDistributionGetRangeActor", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 2492 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2564 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	ReadYourWritesTransaction* ryw;
-															#line 2492 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2564 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	KeyRef prefix;
-															#line 2492 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2564 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	KeyRangeRef kr;
-															#line 2495 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2567 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	RangeResult result;
-															#line 2497 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2569 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	Key modeKey;
-															#line 2513 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2585 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	Key rebalanceIgnoredKey;
-															#line 12165 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 12437 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 };
 // This generated class is to be used only via DataDistributionGetRangeActor()
-															#line 2492 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2564 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class DataDistributionGetRangeActorActor final : public Actor<RangeResult>, public ActorCallback< DataDistributionGetRangeActorActor, 0, Optional<Value> >, public ActorCallback< DataDistributionGetRangeActorActor, 1, Optional<Value> >, public FastAllocated<DataDistributionGetRangeActorActor>, public DataDistributionGetRangeActorActorState<DataDistributionGetRangeActorActor> {
-															#line 12170 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 12442 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
 	using FastAllocated<DataDistributionGetRangeActorActor>::operator new;
 	using FastAllocated<DataDistributionGetRangeActorActor>::operator delete;
@@ -12177,9 +12449,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< DataDistributionGetRangeActorActor, 0, Optional<Value> >;
 friend struct ActorCallback< DataDistributionGetRangeActorActor, 1, Optional<Value> >;
-															#line 2492 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2564 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	DataDistributionGetRangeActorActor(ReadYourWritesTransaction* const& ryw,KeyRef const& prefix,KeyRangeRef const& kr) 
-															#line 12182 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 12454 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		 : Actor<RangeResult>(),
 		   DataDistributionGetRangeActorActorState<DataDistributionGetRangeActorActor>(ryw, prefix, kr)
 	{
@@ -12204,14 +12476,14 @@ friend struct ActorCallback< DataDistributionGetRangeActorActor, 1, Optional<Val
 	}
 };
 }
-															#line 2492 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2564 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 [[nodiscard]] static Future<RangeResult> DataDistributionGetRangeActor( ReadYourWritesTransaction* const& ryw, KeyRef const& prefix, KeyRangeRef const& kr ) {
-															#line 2492 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2564 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	return Future<RangeResult>(new DataDistributionGetRangeActorActor(ryw, prefix, kr));
-															#line 12211 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 12483 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 }
 
-#line 2525 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+#line 2597 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 
 Future<RangeResult> DataDistributionImpl::getRange(ReadYourWritesTransaction* ryw,
                                                    KeyRangeRef kr,
@@ -12227,8 +12499,8 @@ Future<Optional<std::string>> DataDistributionImpl::commit(ReadYourWritesTransac
 
 	Optional<std::string> msg;
 	KeyRangeRef kr = getKeyRange();
-	Key modeKey = LiteralStringRef("mode").withPrefix(kr.begin);
-	Key rebalanceIgnoredKey = LiteralStringRef("rebalance_ignored").withPrefix(kr.begin);
+	Key modeKey = "mode"_sr.withPrefix(kr.begin);
+	Key rebalanceIgnoredKey = "rebalance_ignored"_sr.withPrefix(kr.begin);
 	auto ranges = ryw->getSpecialKeySpaceWriteMap().containedRanges(kr);
 	for (auto iter = ranges.begin(); iter != ranges.end(); ++iter) {
 		if (!iter->value().first)
@@ -12238,7 +12510,7 @@ Future<Optional<std::string>> DataDistributionImpl::commit(ReadYourWritesTransac
 				try {
 					int mode = boost::lexical_cast<int>(iter->value().second.get().toString());
 					Value modeVal = BinaryWriter::toValue(mode, Unversioned());
-					if (mode == 0 || mode == 1) {
+					if (mode == 0 || mode == 1 || mode == 2) {
 						// Whenever configuration changes or DD related system keyspace is changed,
 						// actor must grab the moveKeysLockOwnerKey and update moveKeysLockWriteKey.
 						// This prevents concurrent write to the same system keyspace.
@@ -12263,14 +12535,18 @@ Future<Optional<std::string>> DataDistributionImpl::commit(ReadYourWritesTransac
 					                                           iter->value().second.get().toString());
 				}
 			} else if (iter->range() == singleKeyRange(rebalanceIgnoredKey)) {
-				if (iter->value().second.get().size())
-					msg =
-					    ManagementAPIError::toJsonString(false,
-					                                     "datadistribution",
-					                                     "Value is unused for the data_distribution/rebalance_ignored "
-					                                     "key, please set it to an empty value");
-				else
-					ryw->getTransaction().set(rebalanceDDIgnoreKey, LiteralStringRef("on"));
+				ValueRef val = iter->value().second.get();
+				try {
+					boost::lexical_cast<int>(iter->value().second.get().toString());
+				} catch (boost::bad_lexical_cast& e) {
+					ManagementAPIError::toJsonString(
+					    false,
+					    "datadistribution",
+					    "Invalid datadistribution rebalance ignore option (int or empty): " +
+					        iter->value().second.get().toString());
+					val = ""_sr;
+				}
+				ryw->getTransaction().set(rebalanceDDIgnoreKey, iter->value().second.get());
 			} else {
 				msg = ManagementAPIError::toJsonString(
 				    false,
@@ -12368,31 +12644,31 @@ bool parseLocalitiesFromKeys(ReadYourWritesTransaction* ryw,
 
 // On commit, parses the special exclusion keys and get the localities to be excluded, check for exclusions
 // and add them to the exclusion list. Also, clears the special management api keys with includeLocalities.
-															#line 12371 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 12647 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 namespace {
 // This generated class is to be used only via excludeLocalityCommitActor()
-															#line 2681 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2757 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 template <class ExcludeLocalityCommitActorActor>
-															#line 2681 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2757 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class ExcludeLocalityCommitActorActorState {
-															#line 12378 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 12654 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
-															#line 2681 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2757 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	ExcludeLocalityCommitActorActorState(ReadYourWritesTransaction* const& ryw,bool const& failed) 
-															#line 2681 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-															#line 2681 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2757 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2757 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		 : ryw(ryw),
-															#line 2681 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2757 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   failed(failed),
-															#line 2682 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2758 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   result(),
-															#line 2683 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2759 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   localities(),
-															#line 2684 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2760 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   addresses(),
-															#line 2685 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2761 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   exclusions()
-															#line 12395 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 12671 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 	{
 		fdb_probe_actor_create("excludeLocalityCommitActor", reinterpret_cast<unsigned long>(this));
 
@@ -12405,18 +12681,18 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 2687 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2763 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			ryw->setOption(FDBTransactionOptions::RAW_ACCESS);
-															#line 2689 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2765 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			StrictFuture<std::vector<ProcessData>> __when_expr_0 = getWorkers(&ryw->getTransaction());
-															#line 2689 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2765 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (static_cast<ExcludeLocalityCommitActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 12414 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 12690 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<ExcludeLocalityCommitActorActor*>(this)->actor_wait_state = 1;
-															#line 2689 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2765 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ExcludeLocalityCommitActorActor, 0, std::vector<ProcessData> >*>(static_cast<ExcludeLocalityCommitActorActor*>(this)));
-															#line 12419 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 12695 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -12437,34 +12713,34 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 2690 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2766 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!parseLocalitiesFromKeys(ryw, failed, localities, addresses, exclusions, workers, result))
-															#line 12442 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 12718 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 2691 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2767 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (!static_cast<ExcludeLocalityCommitActorActor*>(this)->SAV<Optional<std::string>>::futures) { (void)(result); this->~ExcludeLocalityCommitActorActorState(); static_cast<ExcludeLocalityCommitActorActor*>(this)->destroy(); return 0; }
-															#line 12446 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 12722 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			new (&static_cast<ExcludeLocalityCommitActorActor*>(this)->SAV< Optional<std::string> >::value()) Optional<std::string>(std::move(result)); // state_var_RVO
 			this->~ExcludeLocalityCommitActorActorState();
 			static_cast<ExcludeLocalityCommitActorActor*>(this)->finishSendAndDelPromiseRef();
 			return 0;
 		}
-															#line 2693 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2769 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		auto force = ryw->getSpecialKeySpaceWriteMap()[SpecialKeySpace::getManagementApiCommandOptionSpecialKey( failed ? "failed_locality" : "excluded_locality", "force")];
-															#line 2696 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2772 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (localities.size() && !(force.first && force.second.present()))
-															#line 12456 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 12732 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 2697 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2773 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			StrictFuture<bool> __when_expr_1 = checkExclusion(ryw->getDatabase(), &addresses, &exclusions, failed, &result);
-															#line 2697 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2773 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (static_cast<ExcludeLocalityCommitActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 12462 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 12738 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 			static_cast<ExcludeLocalityCommitActorActor*>(this)->actor_wait_state = 2;
-															#line 2697 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2773 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< ExcludeLocalityCommitActorActor, 1, bool >*>(static_cast<ExcludeLocalityCommitActorActor*>(this)));
-															#line 12467 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 12743 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			loopDepth = 0;
 		}
 		else
@@ -12476,9 +12752,9 @@ public:
 	}
 	int a_body1when1(std::vector<ProcessData> const& __workers,int loopDepth) 
 	{
-															#line 2689 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2765 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		workers = __workers;
-															#line 12481 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 12757 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		loopDepth = a_body1cont1(loopDepth);
 
 		return loopDepth;
@@ -12543,29 +12819,29 @@ public:
 	}
 	int a_body1cont2(int loopDepth) 
 	{
-															#line 2702 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2778 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		StrictFuture<Void> __when_expr_2 = excludeLocalities(&ryw->getTransaction(), localities, failed);
-															#line 2702 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2778 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (static_cast<ExcludeLocalityCommitActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 12550 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 12826 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1cont2when1(__when_expr_2.get(), loopDepth); };
 		static_cast<ExcludeLocalityCommitActorActor*>(this)->actor_wait_state = 3;
-															#line 2702 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2778 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< ExcludeLocalityCommitActorActor, 2, Void >*>(static_cast<ExcludeLocalityCommitActorActor*>(this)));
-															#line 12555 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 12831 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont4(bool const& safe,int loopDepth) 
 	{
-															#line 2698 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2774 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!safe)
-															#line 12564 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 12840 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 2699 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2775 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (!static_cast<ExcludeLocalityCommitActorActor*>(this)->SAV<Optional<std::string>>::futures) { (void)(result); this->~ExcludeLocalityCommitActorActorState(); static_cast<ExcludeLocalityCommitActorActor*>(this)->destroy(); return 0; }
-															#line 12568 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 12844 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			new (&static_cast<ExcludeLocalityCommitActorActor*>(this)->SAV< Optional<std::string> >::value()) Optional<std::string>(std::move(result)); // state_var_RVO
 			this->~ExcludeLocalityCommitActorActorState();
 			static_cast<ExcludeLocalityCommitActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -12577,13 +12853,13 @@ public:
 	}
 	int a_body1cont4(bool && safe,int loopDepth) 
 	{
-															#line 2698 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2774 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!safe)
-															#line 12582 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 12858 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 2699 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2775 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (!static_cast<ExcludeLocalityCommitActorActor*>(this)->SAV<Optional<std::string>>::futures) { (void)(result); this->~ExcludeLocalityCommitActorActorState(); static_cast<ExcludeLocalityCommitActorActor*>(this)->destroy(); return 0; }
-															#line 12586 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 12862 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			new (&static_cast<ExcludeLocalityCommitActorActor*>(this)->SAV< Optional<std::string> >::value()) Optional<std::string>(std::move(result)); // state_var_RVO
 			this->~ExcludeLocalityCommitActorActorState();
 			static_cast<ExcludeLocalityCommitActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -12658,11 +12934,11 @@ public:
 	}
 	int a_body1cont7(Void const& _,int loopDepth) 
 	{
-															#line 2703 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2779 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		includeLocalities(ryw);
-															#line 2705 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2781 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<ExcludeLocalityCommitActorActor*>(this)->SAV<Optional<std::string>>::futures) { (void)(result); this->~ExcludeLocalityCommitActorActorState(); static_cast<ExcludeLocalityCommitActorActor*>(this)->destroy(); return 0; }
-															#line 12665 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 12941 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<ExcludeLocalityCommitActorActor*>(this)->SAV< Optional<std::string> >::value()) Optional<std::string>(std::move(result)); // state_var_RVO
 		this->~ExcludeLocalityCommitActorActorState();
 		static_cast<ExcludeLocalityCommitActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -12672,11 +12948,11 @@ public:
 	}
 	int a_body1cont7(Void && _,int loopDepth) 
 	{
-															#line 2703 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2779 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		includeLocalities(ryw);
-															#line 2705 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2781 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<ExcludeLocalityCommitActorActor*>(this)->SAV<Optional<std::string>>::futures) { (void)(result); this->~ExcludeLocalityCommitActorActorState(); static_cast<ExcludeLocalityCommitActorActor*>(this)->destroy(); return 0; }
-															#line 12679 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 12955 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<ExcludeLocalityCommitActorActor*>(this)->SAV< Optional<std::string> >::value()) Optional<std::string>(std::move(result)); // state_var_RVO
 		this->~ExcludeLocalityCommitActorActorState();
 		static_cast<ExcludeLocalityCommitActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -12747,26 +13023,26 @@ public:
 		fdb_probe_actor_exit("excludeLocalityCommitActor", reinterpret_cast<unsigned long>(this), 2);
 
 	}
-															#line 2681 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2757 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	ReadYourWritesTransaction* ryw;
-															#line 2681 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2757 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	bool failed;
-															#line 2682 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2758 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	Optional<std::string> result;
-															#line 2683 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2759 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	std::unordered_set<std::string> localities;
-															#line 2684 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2760 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	std::vector<AddressExclusion> addresses;
-															#line 2685 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2761 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	std::set<AddressExclusion> exclusions;
-															#line 2689 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2765 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	std::vector<ProcessData> workers;
-															#line 12764 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 13040 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 };
 // This generated class is to be used only via excludeLocalityCommitActor()
-															#line 2681 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2757 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class ExcludeLocalityCommitActorActor final : public Actor<Optional<std::string>>, public ActorCallback< ExcludeLocalityCommitActorActor, 0, std::vector<ProcessData> >, public ActorCallback< ExcludeLocalityCommitActorActor, 1, bool >, public ActorCallback< ExcludeLocalityCommitActorActor, 2, Void >, public FastAllocated<ExcludeLocalityCommitActorActor>, public ExcludeLocalityCommitActorActorState<ExcludeLocalityCommitActorActor> {
-															#line 12769 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 13045 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
 	using FastAllocated<ExcludeLocalityCommitActorActor>::operator new;
 	using FastAllocated<ExcludeLocalityCommitActorActor>::operator delete;
@@ -12777,9 +13053,9 @@ public:
 friend struct ActorCallback< ExcludeLocalityCommitActorActor, 0, std::vector<ProcessData> >;
 friend struct ActorCallback< ExcludeLocalityCommitActorActor, 1, bool >;
 friend struct ActorCallback< ExcludeLocalityCommitActorActor, 2, Void >;
-															#line 2681 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2757 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	ExcludeLocalityCommitActorActor(ReadYourWritesTransaction* const& ryw,bool const& failed) 
-															#line 12782 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 13058 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		 : Actor<Optional<std::string>>(),
 		   ExcludeLocalityCommitActorActorState<ExcludeLocalityCommitActorActor>(ryw, failed)
 	{
@@ -12805,14 +13081,14 @@ friend struct ActorCallback< ExcludeLocalityCommitActorActor, 2, Void >;
 	}
 };
 }
-															#line 2681 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2757 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 [[nodiscard]] Future<Optional<std::string>> excludeLocalityCommitActor( ReadYourWritesTransaction* const& ryw, bool const& failed ) {
-															#line 2681 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2757 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	return Future<Optional<std::string>>(new ExcludeLocalityCommitActorActor(ryw, failed));
-															#line 12812 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 13088 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 }
 
-#line 2707 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+#line 2783 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 
 ExcludedLocalitiesRangeImpl::ExcludedLocalitiesRangeImpl(KeyRangeRef kr) : SpecialKeyRangeRWImpl(kr) {}
 
@@ -12830,11 +13106,11 @@ void ExcludedLocalitiesRangeImpl::set(ReadYourWritesTransaction* ryw, const KeyR
 
 Key ExcludedLocalitiesRangeImpl::decode(const KeyRef& key) const {
 	return key.removePrefix(SpecialKeySpace::getModuleRange(SpecialKeySpace::MODULE::MANAGEMENT).begin)
-	    .withPrefix(LiteralStringRef("\xff/conf/"));
+	    .withPrefix("\xff/conf/"_sr);
 }
 
 Key ExcludedLocalitiesRangeImpl::encode(const KeyRef& key) const {
-	return key.removePrefix(LiteralStringRef("\xff/conf/"))
+	return key.removePrefix("\xff/conf/"_sr)
 	    .withPrefix(SpecialKeySpace::getModuleRange(SpecialKeySpace::MODULE::MANAGEMENT).begin);
 }
 
@@ -12859,11 +13135,11 @@ void FailedLocalitiesRangeImpl::set(ReadYourWritesTransaction* ryw, const KeyRef
 
 Key FailedLocalitiesRangeImpl::decode(const KeyRef& key) const {
 	return key.removePrefix(SpecialKeySpace::getModuleRange(SpecialKeySpace::MODULE::MANAGEMENT).begin)
-	    .withPrefix(LiteralStringRef("\xff/conf/"));
+	    .withPrefix("\xff/conf/"_sr);
 }
 
 Key FailedLocalitiesRangeImpl::encode(const KeyRef& key) const {
-	return key.removePrefix(LiteralStringRef("\xff/conf/"))
+	return key.removePrefix("\xff/conf/"_sr)
 	    .withPrefix(SpecialKeySpace::getModuleRange(SpecialKeySpace::MODULE::MANAGEMENT).begin);
 }
 
@@ -12872,316 +13148,70 @@ Future<Optional<std::string>> FailedLocalitiesRangeImpl::commit(ReadYourWritesTr
 	return excludeLocalityCommitActor(ryw, true);
 }
 
-															#line 12875 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-namespace {
-// This generated class is to be used only via getTenantList()
-															#line 2766 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-template <class GetTenantListActor>
-															#line 2766 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-class GetTenantListActorState {
-															#line 12882 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-public:
-															#line 2766 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-	GetTenantListActorState(ReadYourWritesTransaction* const& ryw,KeyRangeRef const& kr,GetRangeLimits const& limitsHint) 
-															#line 2766 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-															#line 2766 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		 : ryw(ryw),
-															#line 2766 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		   kr(kr),
-															#line 2766 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		   limitsHint(limitsHint),
-															#line 2767 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		   managementPrefix(kr.begin.substr(0, SpecialKeySpace::getModuleRange(SpecialKeySpace::MODULE::MANAGEMENT).begin.size() + TenantMapRangeImpl::submoduleRange.begin.size()))
-															#line 12895 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-	{
-		fdb_probe_actor_create("getTenantList", reinterpret_cast<unsigned long>(this));
+// Defined in ReadYourWrites.actor.cpp
+															#line 13152 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+[[nodiscard]] Future<RangeResult> getWorkerInterfaces( Reference<IClusterConnectionRecord> const& clusterRecord );
 
-	}
-	~GetTenantListActorState() 
-	{
-		fdb_probe_actor_destroy("getTenantList", reinterpret_cast<unsigned long>(this));
+#line 2844 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+// Defined in NativeAPI.actor.cpp
+															#line 13157 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+[[nodiscard]] Future<bool> verifyInterfaceActor( Reference<FlowLock> const& connectLock, ClientWorkerInterface const& workerInterf );
 
-	}
-	int a_body1(int loopDepth=0) 
-	{
-		try {
-															#line 2772 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			kr = kr.removePrefix(SpecialKeySpace::getModuleRange(SpecialKeySpace::MODULE::MANAGEMENT).begin);
-															#line 2773 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			TenantNameRef beginTenant = kr.begin.removePrefix(TenantMapRangeImpl::submoduleRange.begin);
-															#line 2775 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			TenantNameRef endTenant = kr.end;
-															#line 2776 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			if (endTenant.startsWith(TenantMapRangeImpl::submoduleRange.begin))
-															#line 12916 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-			{
-															#line 2777 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-				endTenant = endTenant.removePrefix(TenantMapRangeImpl::submoduleRange.begin);
-															#line 12920 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-			}
-			else
-			{
-															#line 2779 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-				endTenant = "\xff"_sr;
-															#line 12926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-			}
-															#line 2782 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			StrictFuture<std::map<TenantName, TenantMapEntry>> __when_expr_0 = ManagementAPI::listTenantsTransaction(&ryw->getTransaction(), beginTenant, endTenant, limitsHint.rows);
-															#line 2782 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			if (static_cast<GetTenantListActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 12932 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
-			static_cast<GetTenantListActor*>(this)->actor_wait_state = 1;
-															#line 2782 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< GetTenantListActor, 0, std::map<TenantName, TenantMapEntry> >*>(static_cast<GetTenantListActor*>(this)));
-															#line 12937 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-			loopDepth = 0;
-		}
-		catch (Error& error) {
-			loopDepth = a_body1Catch1(error, loopDepth);
-		} catch (...) {
-			loopDepth = a_body1Catch1(unknown_error(), loopDepth);
-		}
+#line 2846 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 
-		return loopDepth;
-	}
-	int a_body1Catch1(Error error,int loopDepth=0) 
-	{
-		this->~GetTenantListActorState();
-		static_cast<GetTenantListActor*>(this)->sendErrorAndDelPromiseRef(error);
-		loopDepth = 0;
-
-		return loopDepth;
-	}
-	int a_body1cont1(std::map<TenantName, TenantMapEntry> const& tenants,int loopDepth) 
-	{
-															#line 2785 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		RangeResult results;
-															#line 2786 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		for( auto tenant : tenants ) {
-															#line 2787 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			json_spirit::mObject tenantEntry;
-															#line 2788 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			tenantEntry["id"] = tenant.second.id;
-															#line 2789 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			tenantEntry["prefix"] = tenant.second.prefix.toString();
-															#line 2790 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			std::string tenantEntryString = json_spirit::write_string(json_spirit::mValue(tenantEntry));
-															#line 2791 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			ValueRef tenantEntryBytes(results.arena(), tenantEntryString);
-															#line 2792 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			results.push_back(results.arena(), KeyValueRef(tenant.first.withPrefix(managementPrefix, results.arena()), tenantEntryBytes));
-															#line 12974 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-		}
-															#line 2796 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		if (!static_cast<GetTenantListActor*>(this)->SAV<RangeResult>::futures) { (void)(results); this->~GetTenantListActorState(); static_cast<GetTenantListActor*>(this)->destroy(); return 0; }
-															#line 12978 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-		new (&static_cast<GetTenantListActor*>(this)->SAV< RangeResult >::value()) RangeResult(results);
-		this->~GetTenantListActorState();
-		static_cast<GetTenantListActor*>(this)->finishSendAndDelPromiseRef();
-		return 0;
-
-		return loopDepth;
-	}
-	int a_body1cont1(std::map<TenantName, TenantMapEntry> && tenants,int loopDepth) 
-	{
-															#line 2785 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		RangeResult results;
-															#line 2786 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		for( auto tenant : tenants ) {
-															#line 2787 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			json_spirit::mObject tenantEntry;
-															#line 2788 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			tenantEntry["id"] = tenant.second.id;
-															#line 2789 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			tenantEntry["prefix"] = tenant.second.prefix.toString();
-															#line 2790 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			std::string tenantEntryString = json_spirit::write_string(json_spirit::mValue(tenantEntry));
-															#line 2791 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			ValueRef tenantEntryBytes(results.arena(), tenantEntryString);
-															#line 2792 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			results.push_back(results.arena(), KeyValueRef(tenant.first.withPrefix(managementPrefix, results.arena()), tenantEntryBytes));
-															#line 13004 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-		}
-															#line 2796 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		if (!static_cast<GetTenantListActor*>(this)->SAV<RangeResult>::futures) { (void)(results); this->~GetTenantListActorState(); static_cast<GetTenantListActor*>(this)->destroy(); return 0; }
-															#line 13008 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-		new (&static_cast<GetTenantListActor*>(this)->SAV< RangeResult >::value()) RangeResult(results);
-		this->~GetTenantListActorState();
-		static_cast<GetTenantListActor*>(this)->finishSendAndDelPromiseRef();
-		return 0;
-
-		return loopDepth;
-	}
-	int a_body1when1(std::map<TenantName, TenantMapEntry> const& tenants,int loopDepth) 
-	{
-		loopDepth = a_body1cont1(tenants, loopDepth);
-
-		return loopDepth;
-	}
-	int a_body1when1(std::map<TenantName, TenantMapEntry> && tenants,int loopDepth) 
-	{
-		loopDepth = a_body1cont1(std::move(tenants), loopDepth);
-
-		return loopDepth;
-	}
-	void a_exitChoose1() 
-	{
-		if (static_cast<GetTenantListActor*>(this)->actor_wait_state > 0) static_cast<GetTenantListActor*>(this)->actor_wait_state = 0;
-		static_cast<GetTenantListActor*>(this)->ActorCallback< GetTenantListActor, 0, std::map<TenantName, TenantMapEntry> >::remove();
-
-	}
-	void a_callback_fire(ActorCallback< GetTenantListActor, 0, std::map<TenantName, TenantMapEntry> >*,std::map<TenantName, TenantMapEntry> const& value) 
-	{
-		fdb_probe_actor_enter("getTenantList", reinterpret_cast<unsigned long>(this), 0);
-		a_exitChoose1();
-		try {
-			a_body1when1(value, 0);
-		}
-		catch (Error& error) {
-			a_body1Catch1(error, 0);
-		} catch (...) {
-			a_body1Catch1(unknown_error(), 0);
-		}
-		fdb_probe_actor_exit("getTenantList", reinterpret_cast<unsigned long>(this), 0);
-
-	}
-	void a_callback_fire(ActorCallback< GetTenantListActor, 0, std::map<TenantName, TenantMapEntry> >*,std::map<TenantName, TenantMapEntry> && value) 
-	{
-		fdb_probe_actor_enter("getTenantList", reinterpret_cast<unsigned long>(this), 0);
-		a_exitChoose1();
-		try {
-			a_body1when1(std::move(value), 0);
-		}
-		catch (Error& error) {
-			a_body1Catch1(error, 0);
-		} catch (...) {
-			a_body1Catch1(unknown_error(), 0);
-		}
-		fdb_probe_actor_exit("getTenantList", reinterpret_cast<unsigned long>(this), 0);
-
-	}
-	void a_callback_error(ActorCallback< GetTenantListActor, 0, std::map<TenantName, TenantMapEntry> >*,Error err) 
-	{
-		fdb_probe_actor_enter("getTenantList", reinterpret_cast<unsigned long>(this), 0);
-		a_exitChoose1();
-		try {
-			a_body1Catch1(err, 0);
-		}
-		catch (Error& error) {
-			a_body1Catch1(error, 0);
-		} catch (...) {
-			a_body1Catch1(unknown_error(), 0);
-		}
-		fdb_probe_actor_exit("getTenantList", reinterpret_cast<unsigned long>(this), 0);
-
-	}
-															#line 2766 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-	ReadYourWritesTransaction* ryw;
-															#line 2766 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-	KeyRangeRef kr;
-															#line 2766 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-	GetRangeLimits limitsHint;
-															#line 2767 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-	KeyRef managementPrefix;
-															#line 13087 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-};
-// This generated class is to be used only via getTenantList()
-															#line 2766 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-class GetTenantListActor final : public Actor<RangeResult>, public ActorCallback< GetTenantListActor, 0, std::map<TenantName, TenantMapEntry> >, public FastAllocated<GetTenantListActor>, public GetTenantListActorState<GetTenantListActor> {
-															#line 13092 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-public:
-	using FastAllocated<GetTenantListActor>::operator new;
-	using FastAllocated<GetTenantListActor>::operator delete;
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdelete-non-virtual-dtor"
-	void destroy() override { ((Actor<RangeResult>*)this)->~Actor(); operator delete(this); }
-#pragma clang diagnostic pop
-friend struct ActorCallback< GetTenantListActor, 0, std::map<TenantName, TenantMapEntry> >;
-															#line 2766 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-	GetTenantListActor(ReadYourWritesTransaction* const& ryw,KeyRangeRef const& kr,GetRangeLimits const& limitsHint) 
-															#line 13103 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-		 : Actor<RangeResult>(),
-		   GetTenantListActorState<GetTenantListActor>(ryw, kr, limitsHint)
-	{
-		fdb_probe_actor_enter("getTenantList", reinterpret_cast<unsigned long>(this), -1);
-		#ifdef ENABLE_SAMPLING
-		this->lineage.setActorName("getTenantList");
-		LineageScope _(&this->lineage);
-		#endif
-		this->a_body1();
-		fdb_probe_actor_exit("getTenantList", reinterpret_cast<unsigned long>(this), -1);
-
-	}
-	void cancel() override
-	{
-		auto wait_state = this->actor_wait_state;
-		this->actor_wait_state = -1;
-		switch (wait_state) {
-		case 1: this->a_callback_error((ActorCallback< GetTenantListActor, 0, std::map<TenantName, TenantMapEntry> >*)0, actor_cancelled()); break;
-		}
-
-	}
-};
-}
-															#line 2766 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-[[nodiscard]] Future<RangeResult> getTenantList( ReadYourWritesTransaction* const& ryw, KeyRangeRef const& kr, GetRangeLimits const& limitsHint ) {
-															#line 2766 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-	return Future<RangeResult>(new GetTenantListActor(ryw, kr, limitsHint));
-															#line 13131 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-}
-
-#line 2798 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-
-TenantMapRangeImpl::TenantMapRangeImpl(KeyRangeRef kr) : SpecialKeyRangeRWImpl(kr) {}
-
-Future<RangeResult> TenantMapRangeImpl::getRange(ReadYourWritesTransaction* ryw,
-                                                 KeyRangeRef kr,
-                                                 GetRangeLimits limitsHint) const {
-	return getTenantList(ryw, kr, limitsHint);
-}
-
-															#line 13144 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-namespace {
-// This generated class is to be used only via deleteTenantRange()
-															#line 2807 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-template <class DeleteTenantRangeActor>
-															#line 2807 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-class DeleteTenantRangeActorState {
-															#line 13151 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-public:
-															#line 2807 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-	DeleteTenantRangeActorState(ReadYourWritesTransaction* const& ryw,TenantName const& beginTenant,TenantName const& endTenant) 
-															#line 2807 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-															#line 2807 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		 : ryw(ryw),
-															#line 2807 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		   beginTenant(beginTenant),
-															#line 2807 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		   endTenant(endTenant)
 															#line 13162 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+namespace {
+// This generated class is to be used only via workerInterfacesImplGetRangeActor()
+															#line 2847 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+template <class WorkerInterfacesImplGetRangeActorActor>
+															#line 2847 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+class WorkerInterfacesImplGetRangeActorActorState {
+															#line 13169 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+public:
+															#line 2847 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+	WorkerInterfacesImplGetRangeActorActorState(ReadYourWritesTransaction* const& ryw,KeyRef const& prefix,KeyRangeRef const& kr) 
+															#line 2847 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2847 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		 : ryw(ryw),
+															#line 2847 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		   prefix(prefix),
+															#line 2847 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		   kr(kr)
+															#line 13180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 	{
-		fdb_probe_actor_create("deleteTenantRange", reinterpret_cast<unsigned long>(this));
+		fdb_probe_actor_create("workerInterfacesImplGetRangeActor", reinterpret_cast<unsigned long>(this));
 
 	}
-	~DeleteTenantRangeActorState() 
+	~WorkerInterfacesImplGetRangeActorActorState() 
 	{
-		fdb_probe_actor_destroy("deleteTenantRange", reinterpret_cast<unsigned long>(this));
+		fdb_probe_actor_destroy("workerInterfacesImplGetRangeActor", reinterpret_cast<unsigned long>(this));
 
 	}
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 2808 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			StrictFuture<std::map<TenantName, TenantMapEntry>> __when_expr_0 = ManagementAPI::listTenantsTransaction(&ryw->getTransaction(), beginTenant, endTenant, CLIENT_KNOBS->TOO_MANY);
-															#line 2808 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			if (static_cast<DeleteTenantRangeActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 13179 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2850 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			if (!ryw->getDatabase().getPtr() || !ryw->getDatabase()->getConnectionRecord())
+															#line 13195 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+			{
+															#line 2851 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+				if (!static_cast<WorkerInterfacesImplGetRangeActorActor*>(this)->SAV<RangeResult>::futures) { (void)(RangeResult()); this->~WorkerInterfacesImplGetRangeActorActorState(); static_cast<WorkerInterfacesImplGetRangeActorActor*>(this)->destroy(); return 0; }
+															#line 13199 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+				new (&static_cast<WorkerInterfacesImplGetRangeActorActor*>(this)->SAV< RangeResult >::value()) RangeResult(RangeResult());
+				this->~WorkerInterfacesImplGetRangeActorActorState();
+				static_cast<WorkerInterfacesImplGetRangeActorActor*>(this)->finishSendAndDelPromiseRef();
+				return 0;
+			}
+															#line 2853 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			StrictFuture<RangeResult> __when_expr_0 = getWorkerInterfaces(ryw->getDatabase()->getConnectionRecord());
+															#line 2853 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			if (static_cast<WorkerInterfacesImplGetRangeActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
+															#line 13209 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
-			static_cast<DeleteTenantRangeActor*>(this)->actor_wait_state = 1;
-															#line 2808 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< DeleteTenantRangeActor, 0, std::map<TenantName, TenantMapEntry> >*>(static_cast<DeleteTenantRangeActor*>(this)));
-															#line 13184 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+			static_cast<WorkerInterfacesImplGetRangeActorActor*>(this)->actor_wait_state = 1;
+															#line 2853 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< WorkerInterfacesImplGetRangeActorActor, 0, RangeResult >*>(static_cast<WorkerInterfacesImplGetRangeActorActor*>(this)));
+															#line 13214 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -13194,105 +13224,104 @@ public:
 	}
 	int a_body1Catch1(Error error,int loopDepth=0) 
 	{
-		this->~DeleteTenantRangeActorState();
-		static_cast<DeleteTenantRangeActor*>(this)->sendErrorAndDelPromiseRef(error);
+		this->~WorkerInterfacesImplGetRangeActorActorState();
+		static_cast<WorkerInterfacesImplGetRangeActorActor*>(this)->sendErrorAndDelPromiseRef(error);
 		loopDepth = 0;
 
 		return loopDepth;
 	}
-	int a_body1cont1(std::map<TenantName, TenantMapEntry> const& tenants,int loopDepth) 
+	int a_body1cont1(int loopDepth) 
 	{
-															#line 2811 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		if (tenants.size() == CLIENT_KNOBS->TOO_MANY)
-															#line 13207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2855 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		auto [verify, _] = ryw->getSpecialKeySpaceWriteMap()[SpecialKeySpace::getManagementApiCommandOptionSpecialKey( "worker_interfaces", "verify")];
+															#line 2857 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		result = RangeResult();
+															#line 2858 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		if (verify)
+															#line 13241 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 2812 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			TraceEvent(SevWarn, "DeleteTenantRangeTooLange") .detail("BeginTenant", beginTenant) .detail("EndTenant", endTenant);
-															#line 2815 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			ryw->setSpecialKeySpaceErrorMsg("too many tenants to range delete");
-															#line 2816 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			return a_body1Catch1(special_keys_api_failure(), loopDepth);
-															#line 13215 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-		}
-															#line 2819 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		std::vector<Future<Void>> deleteFutures;
-															#line 2820 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		for( auto tenant : tenants ) {
-															#line 2821 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			deleteFutures.push_back(ManagementAPI::deleteTenantTransaction(&ryw->getTransaction(), tenant.first));
-															#line 13223 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-		}
-															#line 2824 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		StrictFuture<Void> __when_expr_1 = waitForAll(deleteFutures);
-															#line 2824 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		if (static_cast<DeleteTenantRangeActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 13229 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
-		static_cast<DeleteTenantRangeActor*>(this)->actor_wait_state = 2;
-															#line 2824 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< DeleteTenantRangeActor, 1, Void >*>(static_cast<DeleteTenantRangeActor*>(this)));
-															#line 13234 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-		loopDepth = 0;
-
-		return loopDepth;
-	}
-	int a_body1cont1(std::map<TenantName, TenantMapEntry> && tenants,int loopDepth) 
-	{
-															#line 2811 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		if (tenants.size() == CLIENT_KNOBS->TOO_MANY)
-															#line 13243 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-		{
-															#line 2812 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			TraceEvent(SevWarn, "DeleteTenantRangeTooLange") .detail("BeginTenant", beginTenant) .detail("EndTenant", endTenant);
-															#line 2815 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			ryw->setSpecialKeySpaceErrorMsg("too many tenants to range delete");
-															#line 2816 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			return a_body1Catch1(special_keys_api_failure(), loopDepth);
-															#line 13251 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-		}
-															#line 2819 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		std::vector<Future<Void>> deleteFutures;
-															#line 2820 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		for( auto tenant : tenants ) {
-															#line 2821 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			deleteFutures.push_back(ManagementAPI::deleteTenantTransaction(&ryw->getTransaction(), tenant.first));
+															#line 2860 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			Reference<FlowLock> connectLock(new FlowLock(CLIENT_KNOBS->CLI_CONNECT_PARALLELISM));
+															#line 2861 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			verifyInterfs = std::vector<Future<bool>>();
+															#line 2862 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			for( const auto& [k_, value] : interfs ) {
+															#line 2863 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+				auto k = k_.withPrefix(prefix);
+															#line 2864 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+				if (kr.contains(k))
+															#line 13253 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+				{
+															#line 2865 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+					ClientWorkerInterface workerInterf = BinaryReader::fromStringRef<ClientWorkerInterface>(value, IncludeVersion());
+															#line 2867 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+					verifyInterfs.push_back(verifyInterfaceActor(connectLock, workerInterf));
 															#line 13259 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-		}
-															#line 2824 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		StrictFuture<Void> __when_expr_1 = waitForAll(deleteFutures);
-															#line 2824 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		if (static_cast<DeleteTenantRangeActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
+				}
+				else
+				{
+															#line 2869 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+					verifyInterfs.push_back(false);
 															#line 13265 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
-		static_cast<DeleteTenantRangeActor*>(this)->actor_wait_state = 2;
-															#line 2824 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< DeleteTenantRangeActor, 1, Void >*>(static_cast<DeleteTenantRangeActor*>(this)));
-															#line 13270 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-		loopDepth = 0;
+				}
+			}
+															#line 2872 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			StrictFuture<Void> __when_expr_1 = waitForAll(verifyInterfs);
+															#line 2872 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			if (static_cast<WorkerInterfacesImplGetRangeActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
+															#line 13272 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
+			static_cast<WorkerInterfacesImplGetRangeActorActor*>(this)->actor_wait_state = 2;
+															#line 2872 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< WorkerInterfacesImplGetRangeActorActor, 1, Void >*>(static_cast<WorkerInterfacesImplGetRangeActorActor*>(this)));
+															#line 13277 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+			loopDepth = 0;
+		}
+		else
+		{
+															#line 2882 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			for( const auto& [k_, v] : interfs ) {
+															#line 2883 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+				auto k = k_.withPrefix(prefix);
+															#line 2884 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+				if (kr.contains(k))
+															#line 13288 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+				{
+															#line 2885 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+					result.push_back_deep(result.arena(), KeyValueRef(k, v));
+															#line 13292 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+				}
+			}
+			loopDepth = a_body1cont3(loopDepth);
+		}
 
 		return loopDepth;
 	}
-	int a_body1when1(std::map<TenantName, TenantMapEntry> const& tenants,int loopDepth) 
+	int a_body1when1(RangeResult const& __interfs,int loopDepth) 
 	{
-		loopDepth = a_body1cont1(tenants, loopDepth);
+															#line 2853 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		interfs = __interfs;
+															#line 13304 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+		loopDepth = a_body1cont1(loopDepth);
 
 		return loopDepth;
 	}
-	int a_body1when1(std::map<TenantName, TenantMapEntry> && tenants,int loopDepth) 
+	int a_body1when1(RangeResult && __interfs,int loopDepth) 
 	{
-		loopDepth = a_body1cont1(std::move(tenants), loopDepth);
+		interfs = std::move(__interfs);
+		loopDepth = a_body1cont1(loopDepth);
 
 		return loopDepth;
 	}
 	void a_exitChoose1() 
 	{
-		if (static_cast<DeleteTenantRangeActor*>(this)->actor_wait_state > 0) static_cast<DeleteTenantRangeActor*>(this)->actor_wait_state = 0;
-		static_cast<DeleteTenantRangeActor*>(this)->ActorCallback< DeleteTenantRangeActor, 0, std::map<TenantName, TenantMapEntry> >::remove();
+		if (static_cast<WorkerInterfacesImplGetRangeActorActor*>(this)->actor_wait_state > 0) static_cast<WorkerInterfacesImplGetRangeActorActor*>(this)->actor_wait_state = 0;
+		static_cast<WorkerInterfacesImplGetRangeActorActor*>(this)->ActorCallback< WorkerInterfacesImplGetRangeActorActor, 0, RangeResult >::remove();
 
 	}
-	void a_callback_fire(ActorCallback< DeleteTenantRangeActor, 0, std::map<TenantName, TenantMapEntry> >*,std::map<TenantName, TenantMapEntry> const& value) 
+	void a_callback_fire(ActorCallback< WorkerInterfacesImplGetRangeActorActor, 0, RangeResult >*,RangeResult const& value) 
 	{
-		fdb_probe_actor_enter("deleteTenantRange", reinterpret_cast<unsigned long>(this), 0);
+		fdb_probe_actor_enter("workerInterfacesImplGetRangeActor", reinterpret_cast<unsigned long>(this), 0);
 		a_exitChoose1();
 		try {
 			a_body1when1(value, 0);
@@ -13302,12 +13331,12 @@ public:
 		} catch (...) {
 			a_body1Catch1(unknown_error(), 0);
 		}
-		fdb_probe_actor_exit("deleteTenantRange", reinterpret_cast<unsigned long>(this), 0);
+		fdb_probe_actor_exit("workerInterfacesImplGetRangeActor", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-	void a_callback_fire(ActorCallback< DeleteTenantRangeActor, 0, std::map<TenantName, TenantMapEntry> >*,std::map<TenantName, TenantMapEntry> && value) 
+	void a_callback_fire(ActorCallback< WorkerInterfacesImplGetRangeActorActor, 0, RangeResult >*,RangeResult && value) 
 	{
-		fdb_probe_actor_enter("deleteTenantRange", reinterpret_cast<unsigned long>(this), 0);
+		fdb_probe_actor_enter("workerInterfacesImplGetRangeActor", reinterpret_cast<unsigned long>(this), 0);
 		a_exitChoose1();
 		try {
 			a_body1when1(std::move(value), 0);
@@ -13317,12 +13346,12 @@ public:
 		} catch (...) {
 			a_body1Catch1(unknown_error(), 0);
 		}
-		fdb_probe_actor_exit("deleteTenantRange", reinterpret_cast<unsigned long>(this), 0);
+		fdb_probe_actor_exit("workerInterfacesImplGetRangeActor", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-	void a_callback_error(ActorCallback< DeleteTenantRangeActor, 0, std::map<TenantName, TenantMapEntry> >*,Error err) 
+	void a_callback_error(ActorCallback< WorkerInterfacesImplGetRangeActorActor, 0, RangeResult >*,Error err) 
 	{
-		fdb_probe_actor_enter("deleteTenantRange", reinterpret_cast<unsigned long>(this), 0);
+		fdb_probe_actor_enter("workerInterfacesImplGetRangeActor", reinterpret_cast<unsigned long>(this), 0);
 		a_exitChoose1();
 		try {
 			a_body1Catch1(err, 0);
@@ -13332,54 +13361,78 @@ public:
 		} catch (...) {
 			a_body1Catch1(unknown_error(), 0);
 		}
-		fdb_probe_actor_exit("deleteTenantRange", reinterpret_cast<unsigned long>(this), 0);
+		fdb_probe_actor_exit("workerInterfacesImplGetRangeActor", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-	int a_body1cont2(Void const& _,int loopDepth) 
+	int a_body1cont3(int loopDepth) 
 	{
-															#line 2825 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		if (!static_cast<DeleteTenantRangeActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~DeleteTenantRangeActorState(); static_cast<DeleteTenantRangeActor*>(this)->destroy(); return 0; }
-															#line 13342 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-		new (&static_cast<DeleteTenantRangeActor*>(this)->SAV< Void >::value()) Void(Void());
-		this->~DeleteTenantRangeActorState();
-		static_cast<DeleteTenantRangeActor*>(this)->finishSendAndDelPromiseRef();
+															#line 2888 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		std::sort(result.begin(), result.end(), KeyValueRef::OrderByKey{});
+															#line 2889 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		if (!static_cast<WorkerInterfacesImplGetRangeActorActor*>(this)->SAV<RangeResult>::futures) { (void)(result); this->~WorkerInterfacesImplGetRangeActorActorState(); static_cast<WorkerInterfacesImplGetRangeActorActor*>(this)->destroy(); return 0; }
+															#line 13373 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+		new (&static_cast<WorkerInterfacesImplGetRangeActorActor*>(this)->SAV< RangeResult >::value()) RangeResult(std::move(result)); // state_var_RVO
+		this->~WorkerInterfacesImplGetRangeActorActorState();
+		static_cast<WorkerInterfacesImplGetRangeActorActor*>(this)->finishSendAndDelPromiseRef();
 		return 0;
 
 		return loopDepth;
 	}
-	int a_body1cont2(Void && _,int loopDepth) 
+	int a_body1cont4(Void const& _,int loopDepth) 
 	{
-															#line 2825 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		if (!static_cast<DeleteTenantRangeActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~DeleteTenantRangeActorState(); static_cast<DeleteTenantRangeActor*>(this)->destroy(); return 0; }
-															#line 13354 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-		new (&static_cast<DeleteTenantRangeActor*>(this)->SAV< Void >::value()) Void(Void());
-		this->~DeleteTenantRangeActorState();
-		static_cast<DeleteTenantRangeActor*>(this)->finishSendAndDelPromiseRef();
-		return 0;
+															#line 2874 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		for(int index = 0;index < interfs.size();index++) {
+															#line 2875 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			if (verifyInterfs[index].get())
+															#line 13387 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+			{
+															#line 2877 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+				result.push_back_deep(result.arena(), KeyValueRef(interfs[index].key.withPrefix(prefix), interfs[index].value));
+															#line 13391 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+			}
+		}
+		loopDepth = a_body1cont3(loopDepth);
+
+		return loopDepth;
+	}
+	int a_body1cont4(Void && _,int loopDepth) 
+	{
+															#line 2874 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		for(int index = 0;index < interfs.size();index++) {
+															#line 2875 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			if (verifyInterfs[index].get())
+															#line 13404 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+			{
+															#line 2877 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+				result.push_back_deep(result.arena(), KeyValueRef(interfs[index].key.withPrefix(prefix), interfs[index].value));
+															#line 13408 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+			}
+		}
+		loopDepth = a_body1cont3(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1cont1when1(Void const& _,int loopDepth) 
 	{
-		loopDepth = a_body1cont2(_, loopDepth);
+		loopDepth = a_body1cont4(_, loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1cont1when1(Void && _,int loopDepth) 
 	{
-		loopDepth = a_body1cont2(std::move(_), loopDepth);
+		loopDepth = a_body1cont4(std::move(_), loopDepth);
 
 		return loopDepth;
 	}
 	void a_exitChoose2() 
 	{
-		if (static_cast<DeleteTenantRangeActor*>(this)->actor_wait_state > 0) static_cast<DeleteTenantRangeActor*>(this)->actor_wait_state = 0;
-		static_cast<DeleteTenantRangeActor*>(this)->ActorCallback< DeleteTenantRangeActor, 1, Void >::remove();
+		if (static_cast<WorkerInterfacesImplGetRangeActorActor*>(this)->actor_wait_state > 0) static_cast<WorkerInterfacesImplGetRangeActorActor*>(this)->actor_wait_state = 0;
+		static_cast<WorkerInterfacesImplGetRangeActorActor*>(this)->ActorCallback< WorkerInterfacesImplGetRangeActorActor, 1, Void >::remove();
 
 	}
-	void a_callback_fire(ActorCallback< DeleteTenantRangeActor, 1, Void >*,Void const& value) 
+	void a_callback_fire(ActorCallback< WorkerInterfacesImplGetRangeActorActor, 1, Void >*,Void const& value) 
 	{
-		fdb_probe_actor_enter("deleteTenantRange", reinterpret_cast<unsigned long>(this), 1);
+		fdb_probe_actor_enter("workerInterfacesImplGetRangeActor", reinterpret_cast<unsigned long>(this), 1);
 		a_exitChoose2();
 		try {
 			a_body1cont1when1(value, 0);
@@ -13389,12 +13442,12 @@ public:
 		} catch (...) {
 			a_body1Catch1(unknown_error(), 0);
 		}
-		fdb_probe_actor_exit("deleteTenantRange", reinterpret_cast<unsigned long>(this), 1);
+		fdb_probe_actor_exit("workerInterfacesImplGetRangeActor", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-	void a_callback_fire(ActorCallback< DeleteTenantRangeActor, 1, Void >*,Void && value) 
+	void a_callback_fire(ActorCallback< WorkerInterfacesImplGetRangeActorActor, 1, Void >*,Void && value) 
 	{
-		fdb_probe_actor_enter("deleteTenantRange", reinterpret_cast<unsigned long>(this), 1);
+		fdb_probe_actor_enter("workerInterfacesImplGetRangeActor", reinterpret_cast<unsigned long>(this), 1);
 		a_exitChoose2();
 		try {
 			a_body1cont1when1(std::move(value), 0);
@@ -13404,12 +13457,12 @@ public:
 		} catch (...) {
 			a_body1Catch1(unknown_error(), 0);
 		}
-		fdb_probe_actor_exit("deleteTenantRange", reinterpret_cast<unsigned long>(this), 1);
+		fdb_probe_actor_exit("workerInterfacesImplGetRangeActor", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-	void a_callback_error(ActorCallback< DeleteTenantRangeActor, 1, Void >*,Error err) 
+	void a_callback_error(ActorCallback< WorkerInterfacesImplGetRangeActorActor, 1, Void >*,Error err) 
 	{
-		fdb_probe_actor_enter("deleteTenantRange", reinterpret_cast<unsigned long>(this), 1);
+		fdb_probe_actor_enter("workerInterfacesImplGetRangeActor", reinterpret_cast<unsigned long>(this), 1);
 		a_exitChoose2();
 		try {
 			a_body1Catch1(err, 0);
@@ -13419,43 +13472,49 @@ public:
 		} catch (...) {
 			a_body1Catch1(unknown_error(), 0);
 		}
-		fdb_probe_actor_exit("deleteTenantRange", reinterpret_cast<unsigned long>(this), 1);
+		fdb_probe_actor_exit("workerInterfacesImplGetRangeActor", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 2807 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2847 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	ReadYourWritesTransaction* ryw;
-															#line 2807 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-	TenantName beginTenant;
-															#line 2807 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-	TenantName endTenant;
-															#line 13431 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2847 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+	KeyRef prefix;
+															#line 2847 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+	KeyRangeRef kr;
+															#line 2853 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+	RangeResult interfs;
+															#line 2857 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+	RangeResult result;
+															#line 2861 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+	std::vector<Future<bool>> verifyInterfs;
+															#line 13490 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 };
-// This generated class is to be used only via deleteTenantRange()
-															#line 2807 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-class DeleteTenantRangeActor final : public Actor<Void>, public ActorCallback< DeleteTenantRangeActor, 0, std::map<TenantName, TenantMapEntry> >, public ActorCallback< DeleteTenantRangeActor, 1, Void >, public FastAllocated<DeleteTenantRangeActor>, public DeleteTenantRangeActorState<DeleteTenantRangeActor> {
-															#line 13436 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+// This generated class is to be used only via workerInterfacesImplGetRangeActor()
+															#line 2847 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+class WorkerInterfacesImplGetRangeActorActor final : public Actor<RangeResult>, public ActorCallback< WorkerInterfacesImplGetRangeActorActor, 0, RangeResult >, public ActorCallback< WorkerInterfacesImplGetRangeActorActor, 1, Void >, public FastAllocated<WorkerInterfacesImplGetRangeActorActor>, public WorkerInterfacesImplGetRangeActorActorState<WorkerInterfacesImplGetRangeActorActor> {
+															#line 13495 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
-	using FastAllocated<DeleteTenantRangeActor>::operator new;
-	using FastAllocated<DeleteTenantRangeActor>::operator delete;
+	using FastAllocated<WorkerInterfacesImplGetRangeActorActor>::operator new;
+	using FastAllocated<WorkerInterfacesImplGetRangeActorActor>::operator delete;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdelete-non-virtual-dtor"
-	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
+	void destroy() override { ((Actor<RangeResult>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
-friend struct ActorCallback< DeleteTenantRangeActor, 0, std::map<TenantName, TenantMapEntry> >;
-friend struct ActorCallback< DeleteTenantRangeActor, 1, Void >;
-															#line 2807 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-	DeleteTenantRangeActor(ReadYourWritesTransaction* const& ryw,TenantName const& beginTenant,TenantName const& endTenant) 
-															#line 13448 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-		 : Actor<Void>(),
-		   DeleteTenantRangeActorState<DeleteTenantRangeActor>(ryw, beginTenant, endTenant)
+friend struct ActorCallback< WorkerInterfacesImplGetRangeActorActor, 0, RangeResult >;
+friend struct ActorCallback< WorkerInterfacesImplGetRangeActorActor, 1, Void >;
+															#line 2847 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+	WorkerInterfacesImplGetRangeActorActor(ReadYourWritesTransaction* const& ryw,KeyRef const& prefix,KeyRangeRef const& kr) 
+															#line 13507 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+		 : Actor<RangeResult>(),
+		   WorkerInterfacesImplGetRangeActorActorState<WorkerInterfacesImplGetRangeActorActor>(ryw, prefix, kr)
 	{
-		fdb_probe_actor_enter("deleteTenantRange", reinterpret_cast<unsigned long>(this), -1);
+		fdb_probe_actor_enter("workerInterfacesImplGetRangeActor", reinterpret_cast<unsigned long>(this), -1);
 		#ifdef ENABLE_SAMPLING
-		this->lineage.setActorName("deleteTenantRange");
+		this->lineage.setActorName("workerInterfacesImplGetRangeActor");
 		LineageScope _(&this->lineage);
 		#endif
 		this->a_body1();
-		fdb_probe_actor_exit("deleteTenantRange", reinterpret_cast<unsigned long>(this), -1);
+		fdb_probe_actor_exit("workerInterfacesImplGetRangeActor", reinterpret_cast<unsigned long>(this), -1);
 
 	}
 	void cancel() override
@@ -13463,84 +13522,55 @@ friend struct ActorCallback< DeleteTenantRangeActor, 1, Void >;
 		auto wait_state = this->actor_wait_state;
 		this->actor_wait_state = -1;
 		switch (wait_state) {
-		case 1: this->a_callback_error((ActorCallback< DeleteTenantRangeActor, 0, std::map<TenantName, TenantMapEntry> >*)0, actor_cancelled()); break;
-		case 2: this->a_callback_error((ActorCallback< DeleteTenantRangeActor, 1, Void >*)0, actor_cancelled()); break;
+		case 1: this->a_callback_error((ActorCallback< WorkerInterfacesImplGetRangeActorActor, 0, RangeResult >*)0, actor_cancelled()); break;
+		case 2: this->a_callback_error((ActorCallback< WorkerInterfacesImplGetRangeActorActor, 1, Void >*)0, actor_cancelled()); break;
 		}
 
 	}
 };
 }
-															#line 2807 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-[[nodiscard]] Future<Void> deleteTenantRange( ReadYourWritesTransaction* const& ryw, TenantName const& beginTenant, TenantName const& endTenant ) {
-															#line 2807 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-	return Future<Void>(new DeleteTenantRangeActor(ryw, beginTenant, endTenant));
-															#line 13477 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 2847 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+[[nodiscard]] static Future<RangeResult> workerInterfacesImplGetRangeActor( ReadYourWritesTransaction* const& ryw, KeyRef const& prefix, KeyRangeRef const& kr ) {
+															#line 2847 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+	return Future<RangeResult>(new WorkerInterfacesImplGetRangeActorActor(ryw, prefix, kr));
+															#line 13536 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 }
 
-#line 2827 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+#line 2891 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 
-Future<Optional<std::string>> TenantMapRangeImpl::commit(ReadYourWritesTransaction* ryw) {
-	auto ranges = ryw->getSpecialKeySpaceWriteMap().containedRanges(range);
-	std::vector<Future<Void>> tenantManagementFutures;
-	for (auto range : ranges) {
-		if (!range.value().first) {
-			continue;
-		}
+WorkerInterfacesSpecialKeyImpl::WorkerInterfacesSpecialKeyImpl(KeyRangeRef kr) : SpecialKeyRangeReadImpl(kr) {}
 
-		TenantNameRef tenantName =
-		    range.begin()
-		        .removePrefix(SpecialKeySpace::getModuleRange(SpecialKeySpace::MODULE::MANAGEMENT).begin)
-		        .removePrefix(TenantMapRangeImpl::submoduleRange.begin);
-
-		if (range.value().second.present()) {
-			tenantManagementFutures.push_back(
-			    success(ManagementAPI::createTenantTransaction(&ryw->getTransaction(), tenantName)));
-		} else {
-			// For a single key clear, just issue the delete
-			if (KeyRangeRef(range.begin(), range.end()).singleKeyRange()) {
-				tenantManagementFutures.push_back(
-				    ManagementAPI::deleteTenantTransaction(&ryw->getTransaction(), tenantName));
-			} else {
-				TenantNameRef endTenant = range.end().removePrefix(
-				    SpecialKeySpace::getModuleRange(SpecialKeySpace::MODULE::MANAGEMENT).begin);
-				if (endTenant.startsWith(submoduleRange.begin)) {
-					endTenant = endTenant.removePrefix(submoduleRange.begin);
-				} else {
-					endTenant = "\xff"_sr;
-				}
-				tenantManagementFutures.push_back(deleteTenantRange(ryw, tenantName, endTenant));
-			}
-		}
-	}
-
-	return tag(waitForAll(tenantManagementFutures), Optional<std::string>());
+Future<RangeResult> WorkerInterfacesSpecialKeyImpl::getRange(ReadYourWritesTransaction* ryw,
+                                                             KeyRangeRef kr,
+                                                             GetRangeLimits limitsHint) const {
+	return workerInterfacesImplGetRangeActor(ryw, getKeyRange().begin, kr);
 }
 
-															#line 13519 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 13549 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 namespace {
 // This generated class is to be used only via validateSpecialSubrangeRead()
-															#line 2865 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2900 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 template <class ValidateSpecialSubrangeReadActor>
-															#line 2865 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2900 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class ValidateSpecialSubrangeReadActorState {
-															#line 13526 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 13556 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
-															#line 2865 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2900 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	ValidateSpecialSubrangeReadActorState(ReadYourWritesTransaction* const& ryw,KeySelector const& begin,KeySelector const& end,GetRangeLimits const& limits,Reverse const& reverse,RangeResult const& result) 
-															#line 2865 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-															#line 2865 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2900 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2900 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		 : ryw(ryw),
-															#line 2865 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2900 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   begin(begin),
-															#line 2865 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2900 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   end(end),
-															#line 2865 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2900 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   limits(limits),
-															#line 2865 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2900 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   reverse(reverse),
-															#line 2865 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2900 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		   result(result)
-															#line 13543 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 13573 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 	{
 		fdb_probe_actor_create("validateSpecialSubrangeRead", reinterpret_cast<unsigned long>(this));
 
@@ -13553,20 +13583,20 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 2871 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2906 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			if (!result.size())
-															#line 13558 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 13588 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			{
-															#line 2872 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2907 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				StrictFuture<RangeResult> __when_expr_0 = ryw->getRange(begin, end, limits, Snapshot::True, reverse);
-															#line 2872 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2907 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				if (static_cast<ValidateSpecialSubrangeReadActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 13564 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 13594 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 				static_cast<ValidateSpecialSubrangeReadActor*>(this)->actor_wait_state = 1;
-															#line 2872 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2907 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 				__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ValidateSpecialSubrangeReadActor, 0, RangeResult >*>(static_cast<ValidateSpecialSubrangeReadActor*>(this)));
-															#line 13569 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 13599 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 				loopDepth = 0;
 			}
 			else
@@ -13592,110 +13622,110 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 2877 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2912 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (reverse)
-															#line 13597 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 13627 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		{
-															#line 2878 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2913 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			ASSERT(std::is_sorted(result.begin(), result.end(), KeyValueRef::OrderByKeyBack{}));
-															#line 13601 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 13631 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		}
 		else
 		{
-															#line 2880 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			ASSERT(std::is_sorted(result.begin(), result.end(), KeyValueRef::OrderByKey{}));
-															#line 13607 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-		}
-															#line 2885 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		std::vector<Key> candidateKeys;
-															#line 2886 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		if (reverse)
-															#line 13613 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-		{
-															#line 2887 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			for(int i = result.size() - 1;i >= 0;--i) {
-															#line 2888 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-				candidateKeys.emplace_back(result[i].key);
-															#line 2889 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-				if (i - 1 >= 0)
-															#line 13621 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-				{
-															#line 2890 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-					candidateKeys.emplace_back(keyBetween(KeyRangeRef(result[i].key, result[i - 1].key)));
-															#line 13625 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-				}
-			}
-		}
-		else
-		{
-															#line 2894 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			for(int i = 0;i < result.size();++i) {
-															#line 2895 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-				candidateKeys.emplace_back(result[i].key);
-															#line 2896 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-				if (i + 1 < result.size())
-															#line 13637 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-				{
-															#line 2897 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-					candidateKeys.emplace_back(keyBetween(KeyRangeRef(result[i].key, result[i + 1].key)));
-															#line 13641 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-				}
-			}
-		}
-															#line 2901 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		std::sort(candidateKeys.begin(), candidateKeys.end());
-															#line 2902 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		int originalSize = candidateKeys.size();
-															#line 2904 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		for(int i = 0;i < originalSize - 1;++i) {
-															#line 2905 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			candidateKeys.emplace_back(keyBetween(KeyRangeRef(candidateKeys[i], candidateKeys[i + 1])));
-															#line 13653 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-		}
-															#line 2907 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		std::vector<Key> keys;
-															#line 2908 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		keys = { deterministicRandom()->randomChoice(candidateKeys), deterministicRandom()->randomChoice(candidateKeys) };
-															#line 2909 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		std::sort(keys.begin(), keys.end());
-															#line 2910 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		testBegin = firstGreaterOrEqual(keys[0]);
-															#line 2911 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		testEnd = firstGreaterOrEqual(keys[1]);
 															#line 2915 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		expectedResult = RangeResult();
-															#line 2918 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-		for( const auto& kr : result ) {
-															#line 2919 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			if (kr.key >= keys[0] && kr.key < keys[1])
-															#line 13671 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-			{
+			ASSERT(std::is_sorted(result.begin(), result.end(), KeyValueRef::OrderByKey{}));
+															#line 13637 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+		}
 															#line 2920 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-				expectedResult.push_back(expectedResult.arena(), kr);
-															#line 13675 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+		std::vector<Key> candidateKeys;
+															#line 2921 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		if (reverse)
+															#line 13643 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+		{
+															#line 2922 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			for(int i = result.size() - 1;i >= 0;--i) {
+															#line 2923 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+				candidateKeys.emplace_back(result[i].key);
+															#line 2924 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+				if (i - 1 >= 0)
+															#line 13651 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+				{
+															#line 2925 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+					candidateKeys.emplace_back(keyBetween(KeyRangeRef(result[i].key, result[i - 1].key)));
+															#line 13655 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+				}
 			}
 		}
-															#line 2925 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		else
+		{
+															#line 2929 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			for(int i = 0;i < result.size();++i) {
+															#line 2930 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+				candidateKeys.emplace_back(result[i].key);
+															#line 2931 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+				if (i + 1 < result.size())
+															#line 13667 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+				{
+															#line 2932 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+					candidateKeys.emplace_back(keyBetween(KeyRangeRef(result[i].key, result[i + 1].key)));
+															#line 13671 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+				}
+			}
+		}
+															#line 2936 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		std::sort(candidateKeys.begin(), candidateKeys.end());
+															#line 2937 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		int originalSize = candidateKeys.size();
+															#line 2939 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		for(int i = 0;i < originalSize - 1;++i) {
+															#line 2940 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			candidateKeys.emplace_back(keyBetween(KeyRangeRef(candidateKeys[i], candidateKeys[i + 1])));
+															#line 13683 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+		}
+															#line 2942 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		std::vector<Key> keys;
+															#line 2943 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		keys = { deterministicRandom()->randomChoice(candidateKeys), deterministicRandom()->randomChoice(candidateKeys) };
+															#line 2944 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		std::sort(keys.begin(), keys.end());
+															#line 2945 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		testBegin = firstGreaterOrEqual(keys[0]);
+															#line 2946 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		testEnd = firstGreaterOrEqual(keys[1]);
+															#line 2950 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		expectedResult = RangeResult();
+															#line 2953 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+		for( const auto& kr : result ) {
+															#line 2954 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			if (kr.key >= keys[0] && kr.key < keys[1])
+															#line 13701 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+			{
+															#line 2955 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+				expectedResult.push_back(expectedResult.arena(), kr);
+															#line 13705 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+			}
+		}
+															#line 2960 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		StrictFuture<RangeResult> __when_expr_1 = ryw->getRange(testBegin, testEnd, limits, Snapshot::True, reverse);
-															#line 2925 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2960 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (static_cast<ValidateSpecialSubrangeReadActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 13682 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 13712 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<ValidateSpecialSubrangeReadActor*>(this)->actor_wait_state = 2;
-															#line 2925 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2960 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< ValidateSpecialSubrangeReadActor, 1, RangeResult >*>(static_cast<ValidateSpecialSubrangeReadActor*>(this)));
-															#line 13687 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 13717 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont2(RangeResult const& testResult,int loopDepth) 
 	{
-															#line 2873 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2908 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		ASSERT(testResult == result);
-															#line 2874 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2909 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<ValidateSpecialSubrangeReadActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~ValidateSpecialSubrangeReadActorState(); static_cast<ValidateSpecialSubrangeReadActor*>(this)->destroy(); return 0; }
-															#line 13698 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 13728 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<ValidateSpecialSubrangeReadActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~ValidateSpecialSubrangeReadActorState();
 		static_cast<ValidateSpecialSubrangeReadActor*>(this)->finishSendAndDelPromiseRef();
@@ -13705,11 +13735,11 @@ public:
 	}
 	int a_body1cont2(RangeResult && testResult,int loopDepth) 
 	{
-															#line 2873 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2908 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		ASSERT(testResult == result);
-															#line 2874 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2909 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<ValidateSpecialSubrangeReadActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~ValidateSpecialSubrangeReadActorState(); static_cast<ValidateSpecialSubrangeReadActor*>(this)->destroy(); return 0; }
-															#line 13712 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 13742 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<ValidateSpecialSubrangeReadActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~ValidateSpecialSubrangeReadActorState();
 		static_cast<ValidateSpecialSubrangeReadActor*>(this)->finishSendAndDelPromiseRef();
@@ -13782,47 +13812,47 @@ public:
 	}
 	int a_body1cont4(RangeResult const& testResult,int loopDepth) 
 	{
-															#line 2926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2961 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (testResult != expectedResult)
-															#line 13787 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-		{
-															#line 2927 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			fmt::print("Reverse: {}\n", reverse);
-															#line 2928 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			fmt::print("Original range: [{}, {})\n", begin.toString(), end.toString());
-															#line 2929 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			fmt::print("Original result:\n");
-															#line 2930 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			for( const auto& kr : result ) {
-															#line 2931 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-				fmt::print("	{} -> {}\n", kr.key.printable(), kr.value.printable());
-															#line 13799 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-			}
-															#line 2933 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			fmt::print("Test range: [{}, {})\n", testBegin.getKey().printable(), testEnd.getKey().printable());
-															#line 2934 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			fmt::print("Expected:\n");
-															#line 2935 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			for( const auto& kr : expectedResult ) {
-															#line 2936 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-				fmt::print("	{} -> {}\n", kr.key.printable(), kr.value.printable());
-															#line 13809 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-			}
-															#line 2938 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			fmt::print("Got:\n");
-															#line 2939 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			for( const auto& kr : testResult ) {
-															#line 2940 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-				fmt::print("	{} -> {}\n", kr.key.printable(), kr.value.printable());
 															#line 13817 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+		{
+															#line 2962 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			fmt::print("Reverse: {}\n", reverse);
+															#line 2963 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			fmt::print("Original range: [{}, {})\n", begin.toString(), end.toString());
+															#line 2964 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			fmt::print("Original result:\n");
+															#line 2965 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			for( const auto& kr : result ) {
+															#line 2966 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+				fmt::print("	{} -> {}\n", kr.key.printable(), kr.value.printable());
+															#line 13829 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			}
-															#line 2942 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2968 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			fmt::print("Test range: [{}, {})\n", testBegin.getKey().printable(), testEnd.getKey().printable());
+															#line 2969 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			fmt::print("Expected:\n");
+															#line 2970 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			for( const auto& kr : expectedResult ) {
+															#line 2971 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+				fmt::print("	{} -> {}\n", kr.key.printable(), kr.value.printable());
+															#line 13839 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+			}
+															#line 2973 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			fmt::print("Got:\n");
+															#line 2974 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			for( const auto& kr : testResult ) {
+															#line 2975 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+				fmt::print("	{} -> {}\n", kr.key.printable(), kr.value.printable());
+															#line 13847 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+			}
+															#line 2977 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			ASSERT(testResult == expectedResult);
-															#line 13821 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 13851 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		}
-															#line 2944 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2979 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<ValidateSpecialSubrangeReadActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~ValidateSpecialSubrangeReadActorState(); static_cast<ValidateSpecialSubrangeReadActor*>(this)->destroy(); return 0; }
-															#line 13825 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 13855 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<ValidateSpecialSubrangeReadActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~ValidateSpecialSubrangeReadActorState();
 		static_cast<ValidateSpecialSubrangeReadActor*>(this)->finishSendAndDelPromiseRef();
@@ -13832,47 +13862,47 @@ public:
 	}
 	int a_body1cont4(RangeResult && testResult,int loopDepth) 
 	{
-															#line 2926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2961 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (testResult != expectedResult)
-															#line 13837 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-		{
-															#line 2927 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			fmt::print("Reverse: {}\n", reverse);
-															#line 2928 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			fmt::print("Original range: [{}, {})\n", begin.toString(), end.toString());
-															#line 2929 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			fmt::print("Original result:\n");
-															#line 2930 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			for( const auto& kr : result ) {
-															#line 2931 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-				fmt::print("	{} -> {}\n", kr.key.printable(), kr.value.printable());
-															#line 13849 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-			}
-															#line 2933 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			fmt::print("Test range: [{}, {})\n", testBegin.getKey().printable(), testEnd.getKey().printable());
-															#line 2934 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			fmt::print("Expected:\n");
-															#line 2935 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			for( const auto& kr : expectedResult ) {
-															#line 2936 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-				fmt::print("	{} -> {}\n", kr.key.printable(), kr.value.printable());
-															#line 13859 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
-			}
-															#line 2938 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			fmt::print("Got:\n");
-															#line 2939 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-			for( const auto& kr : testResult ) {
-															#line 2940 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
-				fmt::print("	{} -> {}\n", kr.key.printable(), kr.value.printable());
 															#line 13867 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+		{
+															#line 2962 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			fmt::print("Reverse: {}\n", reverse);
+															#line 2963 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			fmt::print("Original range: [{}, {})\n", begin.toString(), end.toString());
+															#line 2964 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			fmt::print("Original result:\n");
+															#line 2965 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			for( const auto& kr : result ) {
+															#line 2966 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+				fmt::print("	{} -> {}\n", kr.key.printable(), kr.value.printable());
+															#line 13879 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 			}
-															#line 2942 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2968 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			fmt::print("Test range: [{}, {})\n", testBegin.getKey().printable(), testEnd.getKey().printable());
+															#line 2969 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			fmt::print("Expected:\n");
+															#line 2970 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			for( const auto& kr : expectedResult ) {
+															#line 2971 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+				fmt::print("	{} -> {}\n", kr.key.printable(), kr.value.printable());
+															#line 13889 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+			}
+															#line 2973 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			fmt::print("Got:\n");
+															#line 2974 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+			for( const auto& kr : testResult ) {
+															#line 2975 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+				fmt::print("	{} -> {}\n", kr.key.printable(), kr.value.printable());
+															#line 13897 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+			}
+															#line 2977 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 			ASSERT(testResult == expectedResult);
-															#line 13871 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 13901 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		}
-															#line 2944 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2979 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 		if (!static_cast<ValidateSpecialSubrangeReadActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~ValidateSpecialSubrangeReadActorState(); static_cast<ValidateSpecialSubrangeReadActor*>(this)->destroy(); return 0; }
-															#line 13875 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 13905 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		new (&static_cast<ValidateSpecialSubrangeReadActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~ValidateSpecialSubrangeReadActorState();
 		static_cast<ValidateSpecialSubrangeReadActor*>(this)->finishSendAndDelPromiseRef();
@@ -13943,30 +13973,30 @@ public:
 		fdb_probe_actor_exit("validateSpecialSubrangeRead", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 2865 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2900 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	ReadYourWritesTransaction* ryw;
-															#line 2865 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2900 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	KeySelector begin;
-															#line 2865 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2900 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	KeySelector end;
-															#line 2865 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2900 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	GetRangeLimits limits;
-															#line 2865 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2900 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	Reverse reverse;
-															#line 2865 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2900 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	RangeResult result;
-															#line 2910 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2945 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	KeySelector testBegin;
-															#line 2911 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2946 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	KeySelector testEnd;
-															#line 2915 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2950 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	RangeResult expectedResult;
-															#line 13964 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 13994 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 };
 // This generated class is to be used only via validateSpecialSubrangeRead()
-															#line 2865 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2900 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 class ValidateSpecialSubrangeReadActor final : public Actor<Void>, public ActorCallback< ValidateSpecialSubrangeReadActor, 0, RangeResult >, public ActorCallback< ValidateSpecialSubrangeReadActor, 1, RangeResult >, public FastAllocated<ValidateSpecialSubrangeReadActor>, public ValidateSpecialSubrangeReadActorState<ValidateSpecialSubrangeReadActor> {
-															#line 13969 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 13999 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 public:
 	using FastAllocated<ValidateSpecialSubrangeReadActor>::operator new;
 	using FastAllocated<ValidateSpecialSubrangeReadActor>::operator delete;
@@ -13976,9 +14006,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< ValidateSpecialSubrangeReadActor, 0, RangeResult >;
 friend struct ActorCallback< ValidateSpecialSubrangeReadActor, 1, RangeResult >;
-															#line 2865 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2900 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	ValidateSpecialSubrangeReadActor(ReadYourWritesTransaction* const& ryw,KeySelector const& begin,KeySelector const& end,GetRangeLimits const& limits,Reverse const& reverse,RangeResult const& result) 
-															#line 13981 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 14011 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 		 : Actor<Void>(),
 		   ValidateSpecialSubrangeReadActorState<ValidateSpecialSubrangeReadActor>(ryw, begin, end, limits, reverse, result)
 	{
@@ -14003,11 +14033,11 @@ friend struct ActorCallback< ValidateSpecialSubrangeReadActor, 1, RangeResult >;
 	}
 };
 }
-															#line 2865 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2900 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 [[nodiscard]] Future<Void> validateSpecialSubrangeRead( ReadYourWritesTransaction* const& ryw, KeySelector const& begin, KeySelector const& end, GetRangeLimits const& limits, Reverse const& reverse, RangeResult const& result ) {
-															#line 2865 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+															#line 2900 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
 	return Future<Void>(new ValidateSpecialSubrangeReadActor(ryw, begin, end, limits, reverse, result));
-															#line 14010 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
+															#line 14040 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.cpp"
 }
 
-#line 2946 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"
+#line 2981 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.cpp"

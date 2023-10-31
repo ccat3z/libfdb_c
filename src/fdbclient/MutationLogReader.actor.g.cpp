@@ -83,7 +83,7 @@ public:
 															#line 67 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.cpp"
 		   tr(cx),
 															#line 69 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.cpp"
-		   limits(GetRangeLimits::ROW_LIMIT_UNLIMITED, (g_network->isSimulated() && !g_simulator.speedUpSimulation) ? CLIENT_KNOBS->BACKUP_SIMULATED_LIMIT_BYTES : CLIENT_KNOBS->BACKUP_GET_RANGE_LIMIT_BYTES),
+		   limits(GetRangeLimits::ROW_LIMIT_UNLIMITED, (g_network->isSimulated() && !g_simulator->speedUpSimulation) ? CLIENT_KNOBS->BACKUP_SIMULATED_LIMIT_BYTES : CLIENT_KNOBS->BACKUP_GET_RANGE_LIMIT_BYTES),
 															#line 74 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.cpp"
 		   begin(versionToKey(self->currentBeginVersion, self->prefix)),
 															#line 75 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.cpp"
@@ -345,7 +345,7 @@ public:
 			return 0;
 		}
 															#line 106 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.cpp"
-		begin = kvs.readThrough.present() ? kvs.readThrough.get() : keyAfter(kvs.back().key);
+		begin = kvs.getReadThrough();
 															#line 349 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.g.cpp"
 		return a_body1loopBody1cont1break1(loopDepth==0?0:loopDepth-1); // break
 
@@ -376,7 +376,7 @@ public:
 			return 0;
 		}
 															#line 106 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.cpp"
-		begin = kvs.readThrough.present() ? kvs.readThrough.get() : keyAfter(kvs.back().key);
+		begin = kvs.getReadThrough();
 															#line 380 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.g.cpp"
 		return a_body1loopBody1cont1break1(loopDepth==0?0:loopDepth-1); // break
 
@@ -1366,7 +1366,7 @@ public:
 	{
 		try {
 															#line 182 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.cpp"
-			Key prefix = LiteralStringRef("foos");
+			Key prefix = "foos"_sr;
 															#line 184 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.cpp"
 			ASSERT(keyRefToVersion(versionToKey(0, prefix), prefix.size()) == 0);
 															#line 185 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.cpp"

@@ -25,11 +25,19 @@
 #include <string>
 #include <utility>
 
+#include "flow/MkCert.h"
 #include "fmt/format.h"
 #include "fdbrpc/simulator.h"
+#include "flow/Arena.h"
+#ifndef BOOST_SYSTEM_NO_LIB
 #define BOOST_SYSTEM_NO_LIB
+#endif
+#ifndef BOOST_DATE_TIME_NO_LIB
 #define BOOST_DATE_TIME_NO_LIB
+#endif
+#ifndef BOOST_REGEX_NO_LIB
 #define BOOST_REGEX_NO_LIB
+#endif
 #include "fdbrpc/SimExternalConnection.h"
 #include "flow/ActorCollection.h"
 #include "flow/IRandom.h"
@@ -37,12 +45,13 @@
 #include "flow/ProtocolVersion.h"
 #include "flow/Util.h"
 #include "flow/WriteOnlySet.h"
-#include "fdbrpc/IAsyncFile.h"
+#include "flow/IAsyncFile.h"
 #include "fdbrpc/AsyncFileCached.actor.h"
 #include "fdbrpc/AsyncFileEncrypted.h"
+#include "fdbrpc/SimulatorProcessInfo.h"
 #include "fdbrpc/AsyncFileNonDurable.actor.h"
-#include "fdbrpc/AsyncFileChaos.actor.h"
-#include "flow/crc32c.h"
+#include "fdbrpc/AsyncFileChaos.h"
+#include "crc32/crc32c.h"
 #include "fdbrpc/TraceFileIO.h"
 #include "flow/flow.h"
 #include "flow/genericactors.actor.h"
@@ -54,23 +63,46 @@
 #include "fdbrpc/AsyncFileWriteChecker.h"
 #include "fdbrpc/genericactors.actor.h"
 #include "flow/FaultInjection.h"
+#include "flow/TaskQueue.h"
+#include "flow/IUDPSocket.h"
+#include "flow/IConnection.h"
 #include "flow/actorcompiler.h" // This must be the last #include.
+
+ISimulator* g_simulator = nullptr;
+thread_local ISimulator::ProcessInfo* ISimulator::currentProcess = nullptr;
+
+ISimulator::ISimulator()
+  : desiredCoordinators(1), physicalDatacenters(1), processesPerMachine(0), listenersPerProcess(1), usableRegions(1),
+    allowLogSetKills(true), tssMode(TSSMode::Disabled), configDBType(ConfigDBType::DISABLED), isStopped(false),
+    lastConnectionFailure(0), connectionFailuresDisableDuration(0), speedUpSimulation(false),
+    connectionFailureEnableTime(0), disableTLogRecoveryFinish(false), backupAgents(BackupAgentType::WaitForType),
+    drAgents(BackupAgentType::WaitForType), allSwapsDisabled(false), blobGranulesEnabled(false) {}
+ISimulator::~ISimulator() = default;
 
 bool simulator_should_inject_fault(const char* context, const char* file, int line, int error_code) {
 	if (!g_network->isSimulated() || !faultInjectionActivated)
 		return false;
 
-	auto p = g_simulator.getCurrentProcess();
+	auto p = g_simulator->getCurrentProcess();
 
 	if (p->fault_injection_p2 && deterministicRandom()->random01() < p->fault_injection_p2 &&
-	    !g_simulator.speedUpSimulation) {
+	    !g_simulator->speedUpSimulation) {
 		uint32_t h1 = line + (p->fault_injection_r >> 32);
 
 		if (h1 < p->fault_injection_p1 * std::numeric_limits<uint32_t>::max()) {
-			TEST(true); // A fault was injected
-			TEST(error_code == error_code_io_timeout); // An io timeout was injected
-			TEST(error_code == error_code_io_error); // An io error was injected
-			TEST(error_code == error_code_platform_error); // A platform error was injected.
+			CODE_PROBE(true, "A fault was injected", probe::assert::simOnly, probe::context::sim2);
+			CODE_PROBE(error_code == error_code_io_timeout,
+			           "An io timeout was injected",
+			           probe::assert::simOnly,
+			           probe::context::sim2);
+			CODE_PROBE(error_code == error_code_io_error,
+			           "An io error was injected",
+			           probe::assert::simOnly,
+			           probe::context::sim2);
+			CODE_PROBE(error_code == error_code_platform_error,
+			           "A platform error was injected.",
+			           probe::assert::simOnly,
+			           probe::context::sim2);
 			TraceEvent(SevWarn, "FaultInjected")
 			    .detail("Context", context)
 			    .detail("File", file)
@@ -85,6 +117,56 @@ bool simulator_should_inject_fault(const char* context, const char* file, int li
 
 	return false;
 }
+
+bool simulator_should_inject_blob_fault(const char* context, const char* file, int line, int error_code) {
+	if (!g_network->isSimulated() || !faultInjectionActivated)
+		return false;
+
+	auto p = g_simulator->getCurrentProcess();
+
+	if (!g_simulator->speedUpSimulation && deterministicRandom()->random01() < p->blob_inject_failure_rate) {
+		CODE_PROBE(true, "A blob fault was injected", probe::assert::simOnly, probe::context::sim2);
+		CODE_PROBE(error_code == error_code_http_request_failed,
+		           "A failed http request was injected",
+		           probe::assert::simOnly,
+		           probe::context::sim2);
+		TraceEvent("BlobFaultInjected")
+		    .detail("Context", context)
+		    .detail("File", file)
+		    .detail("Line", line)
+		    .detail("ErrorCode", error_code);
+		return true;
+	}
+
+	return false;
+}
+
+void ISimulator::disableFor(const std::string& desc, double time) {
+	disabledMap[desc] = time;
+}
+
+double ISimulator::checkDisabled(const std::string& desc) const {
+	auto iter = disabledMap.find(desc);
+	if (iter != disabledMap.end()) {
+		return iter->second;
+	}
+	return 0;
+}
+
+bool ISimulator::checkInjectedCorruption() {
+	auto iter = corruptWorkerMap.find(currentProcess->address);
+	if (iter != corruptWorkerMap.end())
+		return iter->second;
+	return false;
+}
+
+flowGlobalType ISimulator::global(int id) const {
+	return getCurrentProcess()->global(id);
+};
+
+void ISimulator::setGlobal(size_t id, flowGlobalType v) {
+	getCurrentProcess()->setGlobal(id, v);
+};
 
 void ISimulator::displayWorkers() const {
 	std::map<std::string, std::vector<ISimulator::ProcessInfo*>> machineMap;
@@ -108,18 +190,37 @@ void ISimulator::displayWorkers() const {
 		for (auto& processInfo : machineRecord.second) {
 			printf("                  %9s %-10s%-13s%-8s %-6s %-9s %-8s %-48s %-40s\n",
 			       processInfo->address.toString().c_str(),
-			       processInfo->name,
+			       processInfo->name.c_str(),
 			       processInfo->startingClass.toString().c_str(),
 			       (processInfo->isExcluded() ? "True" : "False"),
 			       (processInfo->failed ? "True" : "False"),
 			       (processInfo->rebooting ? "True" : "False"),
 			       (processInfo->isCleared() ? "True" : "False"),
 			       getRoles(processInfo->address).c_str(),
-			       processInfo->dataFolder);
+			       processInfo->dataFolder.c_str());
 		}
 	}
 
 	return;
+}
+
+WipedString ISimulator::makeToken(int64_t tenantId, uint64_t ttlSecondsFromNow) {
+	ASSERT_GT(authKeys.size(), 0);
+	auto tokenSpec = authz::jwt::TokenRef{};
+	auto [keyName, key] = *authKeys.begin();
+	tokenSpec.algorithm = key.algorithm() == PKeyAlgorithm::EC ? authz::Algorithm::ES256 : authz::Algorithm::RS256;
+	tokenSpec.keyId = keyName;
+	tokenSpec.issuer = "sim2_issuer"_sr;
+	tokenSpec.subject = "sim2_testing"_sr;
+	auto const now = static_cast<uint64_t>(g_network->timer());
+	tokenSpec.notBeforeUnixTime = now - 1;
+	tokenSpec.issuedAtUnixTime = now;
+	tokenSpec.expiresAtUnixTime = now + ttlSecondsFromNow;
+	auto const tokenId = deterministicRandom()->randomAlphaNumeric(10);
+	tokenSpec.tokenId = StringRef(tokenId);
+	tokenSpec.tenants = VectorRef<int64_t>(&tenantId, 1);
+	Arena arena;
+	return WipedString(authz::jwt::signToken(arena, tokenSpec, key));
 }
 
 int openCount = 0;
@@ -136,17 +237,17 @@ struct SimClogging {
 
 		double tnow = now();
 		double t = tnow + (stableConnection ? 0.1 : 1.0) * halfLatency();
-		if (!g_simulator.speedUpSimulation && !stableConnection)
+		if (!g_simulator->speedUpSimulation && !stableConnection)
 			t += clogPairLatency[pair];
 
-		if (!g_simulator.speedUpSimulation && !stableConnection && clogPairUntil.count(pair))
+		if (!g_simulator->speedUpSimulation && !stableConnection && clogPairUntil.count(pair))
 			t = std::max(t, clogPairUntil[pair]);
 
 		auto p = std::make_pair(from, to);
-		if (!g_simulator.speedUpSimulation && !stableConnection && clogProcessPairUntil.count(p))
+		if (!g_simulator->speedUpSimulation && !stableConnection && clogProcessPairUntil.count(p))
 			t = std::max(t, clogProcessPairUntil[p]);
 
-		if (!g_simulator.speedUpSimulation && !stableConnection && clogRecvUntil.count(to.ip))
+		if (!g_simulator->speedUpSimulation && !stableConnection && clogRecvUntil.count(to.ip))
 			t = std::max(t, clogRecvUntil[to.ip]);
 
 		return t - tnow;
@@ -154,7 +255,7 @@ struct SimClogging {
 
 	bool disconnected(const IPAddress& from, const IPAddress& to) {
 		auto pair = std::make_pair(from, to);
-		if (g_simulator.speedUpSimulation || disconnectPairUntil.find(pair) == disconnectPairUntil.end()) {
+		if (g_simulator->speedUpSimulation || disconnectPairUntil.find(pair) == disconnectPairUntil.end()) {
 			return false;
 		}
 
@@ -214,7 +315,7 @@ private:
 	double halfLatency() const {
 		double a = deterministicRandom()->random01();
 		const double pFast = 0.999;
-		if (a <= pFast || g_simulator.speedUpSimulation) {
+		if (a <= pFast || g_simulator->speedUpSimulation) {
 			a = a / pFast;
 			return 0.5 * (FLOW_KNOBS->MIN_NETWORK_LATENCY * (1 - a) +
 			              FLOW_KNOBS->FAST_NETWORK_LATENCY / pFast * a); // 0.5ms average
@@ -230,7 +331,7 @@ SimClogging g_clogging;
 
 struct Sim2Conn final : IConnection, ReferenceCounted<Sim2Conn> {
 	Sim2Conn(ISimulator::ProcessInfo* process)
-	  : opened(false), closedByCaller(false), stableConnection(false), process(process),
+	  : opened(false), closedByCaller(false), stableConnection(false), trustedPeer(true), process(process),
 	    dbgid(deterministicRandom()->randomUniqueID()), stopReceive(Never()) {
 		pipes = sender(this) && receiver(this);
 	}
@@ -288,6 +389,8 @@ struct Sim2Conn final : IConnection, ReferenceCounted<Sim2Conn> {
 	Future<Void> onReadable() override { return whenReadable(this); }
 
 	bool isPeerGone() const { return !peer || peerProcess->failed; }
+
+	bool hasTrustedPeer() const override { return trustedPeer; }
 
 	bool isStableConnection() const override { return stableConnection; }
 
@@ -357,7 +460,7 @@ struct Sim2Conn final : IConnection, ReferenceCounted<Sim2Conn> {
 
 	boost::asio::ip::tcp::socket& getSocket() override { throw operation_failed(); }
 
-	bool opened, closedByCaller, stableConnection;
+	bool opened, closedByCaller, stableConnection, trustedPeer;
 
 private:
 	ISimulator::ProcessInfo *process, *peerProcess;
@@ -388,20 +491,20 @@ private:
 		peer.clear();
 	}
 
-																#line 391 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+																#line 494 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 // This generated class is to be used only via sender()
-															#line 389 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 492 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 template <class SenderActor>
-															#line 389 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 492 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 class SenderActorState {
-															#line 397 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 500 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 public:
-															#line 389 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 492 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	SenderActorState(Sim2Conn* const& self) 
-															#line 389 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-															#line 389 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 492 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 492 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		 : self(self)
-															#line 404 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 507 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 	{
 		fdb_probe_actor_create("sender", reinterpret_cast<unsigned long>(this));
 
@@ -414,9 +517,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 390 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 493 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			;
-															#line 419 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 522 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -444,52 +547,52 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 391 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 494 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		StrictFuture<Void> __when_expr_0 = self->writtenBytes.onChange();
-															#line 391 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 494 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (static_cast<SenderActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 451 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 554 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 		static_cast<SenderActor*>(this)->actor_wait_state = 1;
-															#line 391 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 494 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< SenderActor, 0, Void >*>(static_cast<SenderActor*>(this)));
-															#line 456 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 559 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont1(Void const& _,int loopDepth) 
 	{
-															#line 392 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-		ASSERT(g_simulator.getCurrentProcess() == self->peerProcess);
-															#line 393 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 495 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		ASSERT(g_simulator->getCurrentProcess() == self->peerProcess);
+															#line 496 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = delay(.002 * deterministicRandom()->random01());
-															#line 393 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 496 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (static_cast<SenderActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 469 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 572 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1cont1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<SenderActor*>(this)->actor_wait_state = 2;
-															#line 393 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 496 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< SenderActor, 1, Void >*>(static_cast<SenderActor*>(this)));
-															#line 474 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 577 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont1(Void && _,int loopDepth) 
 	{
-															#line 392 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-		ASSERT(g_simulator.getCurrentProcess() == self->peerProcess);
-															#line 393 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 495 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		ASSERT(g_simulator->getCurrentProcess() == self->peerProcess);
+															#line 496 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = delay(.002 * deterministicRandom()->random01());
-															#line 393 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 496 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (static_cast<SenderActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 487 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 590 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1cont1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<SenderActor*>(this)->actor_wait_state = 2;
-															#line 393 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 496 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< SenderActor, 1, Void >*>(static_cast<SenderActor*>(this)));
-															#line 492 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 595 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -559,18 +662,18 @@ public:
 	}
 	int a_body1loopBody1cont2(Void const& _,int loopDepth) 
 	{
-															#line 394 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 497 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		self->sentBytes.set(self->writtenBytes.get());
-															#line 564 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 667 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		if (loopDepth == 0) return a_body1loopHead1(0);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont2(Void && _,int loopDepth) 
 	{
-															#line 394 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 497 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		self->sentBytes.set(self->writtenBytes.get());
-															#line 573 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 676 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		if (loopDepth == 0) return a_body1loopHead1(0);
 
 		return loopDepth;
@@ -638,14 +741,14 @@ public:
 		fdb_probe_actor_exit("sender", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 389 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 492 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	Sim2Conn* self;
-															#line 643 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 746 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 };
 // This generated class is to be used only via sender()
-															#line 389 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 492 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 class SenderActor final : public Actor<Void>, public ActorCallback< SenderActor, 0, Void >, public ActorCallback< SenderActor, 1, Void >, public FastAllocated<SenderActor>, public SenderActorState<SenderActor> {
-															#line 648 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 751 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 public:
 	using FastAllocated<SenderActor>::operator new;
 	using FastAllocated<SenderActor>::operator delete;
@@ -655,9 +758,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< SenderActor, 0, Void >;
 friend struct ActorCallback< SenderActor, 1, Void >;
-															#line 389 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 492 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	SenderActor(Sim2Conn* const& self) 
-															#line 660 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 763 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		 : Actor<Void>(),
 		   SenderActorState<SenderActor>(self)
 	{
@@ -681,28 +784,28 @@ friend struct ActorCallback< SenderActor, 1, Void >;
 
 	}
 };
-															#line 389 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 492 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 [[nodiscard]] static Future<Void> sender( Sim2Conn* const& self ) {
-															#line 389 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 492 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	return Future<Void>(new SenderActor(self));
-															#line 688 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 791 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 }
 
-#line 397 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-																#line 692 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+#line 500 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+																#line 795 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 // This generated class is to be used only via receiver()
-															#line 397 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 500 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 template <class ReceiverActor>
-															#line 397 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 500 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 class ReceiverActorState {
-															#line 698 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 801 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 public:
-															#line 397 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 500 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	ReceiverActorState(Sim2Conn* const& self) 
-															#line 397 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-															#line 397 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 500 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 500 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		 : self(self)
-															#line 705 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 808 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 	{
 		fdb_probe_actor_create("receiver", reinterpret_cast<unsigned long>(this));
 
@@ -715,9 +818,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 398 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 501 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			;
-															#line 720 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 823 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -745,20 +848,20 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 399 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 502 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (self->sentBytes.get() != self->receivedBytes.get())
-															#line 750 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 853 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		{
-															#line 400 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-			StrictFuture<Void> __when_expr_0 = g_simulator.onProcess(self->peerProcess);
-															#line 400 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 503 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+			StrictFuture<Void> __when_expr_0 = g_simulator->onProcess(self->peerProcess);
+															#line 503 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			if (static_cast<ReceiverActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 756 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 859 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<ReceiverActor*>(this)->actor_wait_state = 1;
-															#line 400 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 503 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ReceiverActor, 0, Void >*>(static_cast<ReceiverActor*>(this)));
-															#line 761 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 864 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			loopDepth = 0;
 		}
 		else
@@ -770,9 +873,9 @@ public:
 	}
 	int a_body1loopBody1cont1(int loopDepth) 
 	{
-															#line 401 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 504 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		;
-															#line 775 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 878 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont1loopHead1(loopDepth);
 
 		return loopDepth;
@@ -854,30 +957,30 @@ public:
 	}
 	int a_body1loopBody1cont3(int loopDepth) 
 	{
-															#line 403 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-		ASSERT(g_simulator.getCurrentProcess() == self->peerProcess);
-															#line 406 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 506 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		ASSERT(g_simulator->getCurrentProcess() == self->peerProcess);
+															#line 509 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (g_clogging.disconnected(self->peerProcess->address.ip, self->process->address.ip))
-															#line 861 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 964 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		{
-															#line 407 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 510 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			TraceEvent("SimulatedDisconnection") .detail("Phase", "DataTransfer") .detail("Sender", self->peerProcess->address) .detail("Receiver", self->process->address);
-															#line 411 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 514 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			return a_body1Catch1(connection_failed(), std::max(0, loopDepth - 1));
-															#line 867 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 970 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		}
-															#line 414 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 517 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		pos = deterministicRandom()->random01() < .5 ? self->sentBytes.get() : deterministicRandom()->randomInt64(self->receivedBytes.get(), self->sentBytes.get() + 1);
-															#line 418 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 521 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		StrictFuture<Void> __when_expr_2 = delay(g_clogging.getSendDelay( self->peerProcess->address, self->process->address, self->isStableConnection()));
-															#line 418 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 521 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (static_cast<ReceiverActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 875 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 978 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1cont3when1(__when_expr_2.get(), loopDepth); };
 		static_cast<ReceiverActor*>(this)->actor_wait_state = 3;
-															#line 418 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 521 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< ReceiverActor, 2, Void >*>(static_cast<ReceiverActor*>(this)));
-															#line 880 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 983 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -891,22 +994,22 @@ public:
 	}
 	int a_body1loopBody1cont1loopBody1(int loopDepth) 
 	{
-															#line 401 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 504 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (!(self->sentBytes.get() == self->receivedBytes.get()))
-															#line 896 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 999 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		{
 			return a_body1loopBody1cont1break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 402 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 505 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = self->sentBytes.onChange();
-															#line 402 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 505 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (static_cast<ReceiverActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 2));
-															#line 904 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 1007 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), std::max(0, loopDepth - 2)); else return a_body1loopBody1cont1loopBody1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<ReceiverActor*>(this)->actor_wait_state = 2;
-															#line 402 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 505 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< ReceiverActor, 1, Void >*>(static_cast<ReceiverActor*>(this)));
-															#line 909 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 1012 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -1001,32 +1104,32 @@ public:
 	}
 	int a_body1loopBody1cont4(Void const& _,int loopDepth) 
 	{
-															#line 420 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-		StrictFuture<Void> __when_expr_3 = g_simulator.onProcess(self->process);
-															#line 420 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 523 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		StrictFuture<Void> __when_expr_3 = g_simulator->onProcess(self->process);
+															#line 523 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (static_cast<ReceiverActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 1008 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 1111 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		if (__when_expr_3.isReady()) { if (__when_expr_3.isError()) return a_body1Catch1(__when_expr_3.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1cont4when1(__when_expr_3.get(), loopDepth); };
 		static_cast<ReceiverActor*>(this)->actor_wait_state = 4;
-															#line 420 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 523 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		__when_expr_3.addCallbackAndClear(static_cast<ActorCallback< ReceiverActor, 3, Void >*>(static_cast<ReceiverActor*>(this)));
-															#line 1013 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 1116 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont4(Void && _,int loopDepth) 
 	{
-															#line 420 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-		StrictFuture<Void> __when_expr_3 = g_simulator.onProcess(self->process);
-															#line 420 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 523 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		StrictFuture<Void> __when_expr_3 = g_simulator->onProcess(self->process);
+															#line 523 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (static_cast<ReceiverActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 1024 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 1127 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		if (__when_expr_3.isReady()) { if (__when_expr_3.isError()) return a_body1Catch1(__when_expr_3.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1cont4when1(__when_expr_3.get(), loopDepth); };
 		static_cast<ReceiverActor*>(this)->actor_wait_state = 4;
-															#line 420 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 523 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		__when_expr_3.addCallbackAndClear(static_cast<ActorCallback< ReceiverActor, 3, Void >*>(static_cast<ReceiverActor*>(this)));
-															#line 1029 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 1132 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -1096,36 +1199,36 @@ public:
 	}
 	int a_body1loopBody1cont6(Void const& _,int loopDepth) 
 	{
-															#line 421 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-		ASSERT(g_simulator.getCurrentProcess() == self->process);
-															#line 422 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 524 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		ASSERT(g_simulator->getCurrentProcess() == self->process);
+															#line 525 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		StrictFuture<Void> __when_expr_4 = delay(g_clogging.getRecvDelay( self->peerProcess->address, self->process->address, self->isStableConnection()));
-															#line 422 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 525 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (static_cast<ReceiverActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 1105 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 1208 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		if (__when_expr_4.isReady()) { if (__when_expr_4.isError()) return a_body1Catch1(__when_expr_4.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1cont6when1(__when_expr_4.get(), loopDepth); };
 		static_cast<ReceiverActor*>(this)->actor_wait_state = 5;
-															#line 422 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 525 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		__when_expr_4.addCallbackAndClear(static_cast<ActorCallback< ReceiverActor, 4, Void >*>(static_cast<ReceiverActor*>(this)));
-															#line 1110 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 1213 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont6(Void && _,int loopDepth) 
 	{
-															#line 421 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-		ASSERT(g_simulator.getCurrentProcess() == self->process);
-															#line 422 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 524 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		ASSERT(g_simulator->getCurrentProcess() == self->process);
+															#line 525 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		StrictFuture<Void> __when_expr_4 = delay(g_clogging.getRecvDelay( self->peerProcess->address, self->process->address, self->isStableConnection()));
-															#line 422 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 525 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (static_cast<ReceiverActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 1123 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 1226 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		if (__when_expr_4.isReady()) { if (__when_expr_4.isError()) return a_body1Catch1(__when_expr_4.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1cont6when1(__when_expr_4.get(), loopDepth); };
 		static_cast<ReceiverActor*>(this)->actor_wait_state = 5;
-															#line 422 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 525 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		__when_expr_4.addCallbackAndClear(static_cast<ActorCallback< ReceiverActor, 4, Void >*>(static_cast<ReceiverActor*>(this)));
-															#line 1128 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 1231 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -1195,22 +1298,22 @@ public:
 	}
 	int a_body1loopBody1cont7(Void const& _,int loopDepth) 
 	{
-															#line 424 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-		ASSERT(g_simulator.getCurrentProcess() == self->process);
-															#line 425 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 527 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		ASSERT(g_simulator->getCurrentProcess() == self->process);
+															#line 528 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (self->stopReceive.isReady())
-															#line 1202 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 1305 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		{
-															#line 426 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 529 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			StrictFuture<Void> __when_expr_5 = Future<Void>(Never());
-															#line 426 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 529 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			if (static_cast<ReceiverActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 1208 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 1311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			if (__when_expr_5.isReady()) { if (__when_expr_5.isError()) return a_body1Catch1(__when_expr_5.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1cont7when1(__when_expr_5.get(), loopDepth); };
 			static_cast<ReceiverActor*>(this)->actor_wait_state = 6;
-															#line 426 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 529 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			__when_expr_5.addCallbackAndClear(static_cast<ActorCallback< ReceiverActor, 5, Void >*>(static_cast<ReceiverActor*>(this)));
-															#line 1213 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 1316 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			loopDepth = 0;
 		}
 		else
@@ -1222,22 +1325,22 @@ public:
 	}
 	int a_body1loopBody1cont7(Void && _,int loopDepth) 
 	{
-															#line 424 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-		ASSERT(g_simulator.getCurrentProcess() == self->process);
-															#line 425 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 527 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		ASSERT(g_simulator->getCurrentProcess() == self->process);
+															#line 528 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (self->stopReceive.isReady())
-															#line 1229 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 1332 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		{
-															#line 426 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 529 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			StrictFuture<Void> __when_expr_5 = Future<Void>(Never());
-															#line 426 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 529 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			if (static_cast<ReceiverActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 1235 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 1338 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			if (__when_expr_5.isReady()) { if (__when_expr_5.isError()) return a_body1Catch1(__when_expr_5.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1cont7when1(__when_expr_5.get(), loopDepth); };
 			static_cast<ReceiverActor*>(this)->actor_wait_state = 6;
-															#line 426 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 529 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			__when_expr_5.addCallbackAndClear(static_cast<ActorCallback< ReceiverActor, 5, Void >*>(static_cast<ReceiverActor*>(this)));
-															#line 1240 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 1343 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			loopDepth = 0;
 		}
 		else
@@ -1312,18 +1415,18 @@ public:
 	}
 	int a_body1loopBody1cont8(int loopDepth) 
 	{
-															#line 428 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 531 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		self->receivedBytes.set(pos);
-															#line 429 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 532 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		StrictFuture<Void> __when_expr_6 = Future<Void>(Void());
-															#line 429 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 532 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (static_cast<ReceiverActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 1321 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 1424 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		if (__when_expr_6.isReady()) { if (__when_expr_6.isError()) return a_body1Catch1(__when_expr_6.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1cont8when1(__when_expr_6.get(), loopDepth); };
 		static_cast<ReceiverActor*>(this)->actor_wait_state = 7;
-															#line 429 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 532 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		__when_expr_6.addCallbackAndClear(static_cast<ActorCallback< ReceiverActor, 6, Void >*>(static_cast<ReceiverActor*>(this)));
-															#line 1326 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 1429 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -1405,18 +1508,18 @@ public:
 	}
 	int a_body1loopBody1cont10(Void const& _,int loopDepth) 
 	{
-															#line 430 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-		ASSERT(g_simulator.getCurrentProcess() == self->process);
-															#line 1410 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 533 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		ASSERT(g_simulator->getCurrentProcess() == self->process);
+															#line 1513 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		if (loopDepth == 0) return a_body1loopHead1(0);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont10(Void && _,int loopDepth) 
 	{
-															#line 430 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-		ASSERT(g_simulator.getCurrentProcess() == self->process);
-															#line 1419 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 533 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		ASSERT(g_simulator->getCurrentProcess() == self->process);
+															#line 1522 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		if (loopDepth == 0) return a_body1loopHead1(0);
 
 		return loopDepth;
@@ -1484,16 +1587,16 @@ public:
 		fdb_probe_actor_exit("receiver", reinterpret_cast<unsigned long>(this), 6);
 
 	}
-															#line 397 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 500 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	Sim2Conn* self;
-															#line 414 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 517 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	int64_t pos;
-															#line 1491 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 1594 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 };
 // This generated class is to be used only via receiver()
-															#line 397 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 500 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 class ReceiverActor final : public Actor<Void>, public ActorCallback< ReceiverActor, 0, Void >, public ActorCallback< ReceiverActor, 1, Void >, public ActorCallback< ReceiverActor, 2, Void >, public ActorCallback< ReceiverActor, 3, Void >, public ActorCallback< ReceiverActor, 4, Void >, public ActorCallback< ReceiverActor, 5, Void >, public ActorCallback< ReceiverActor, 6, Void >, public FastAllocated<ReceiverActor>, public ReceiverActorState<ReceiverActor> {
-															#line 1496 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 1599 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 public:
 	using FastAllocated<ReceiverActor>::operator new;
 	using FastAllocated<ReceiverActor>::operator delete;
@@ -1508,9 +1611,9 @@ friend struct ActorCallback< ReceiverActor, 3, Void >;
 friend struct ActorCallback< ReceiverActor, 4, Void >;
 friend struct ActorCallback< ReceiverActor, 5, Void >;
 friend struct ActorCallback< ReceiverActor, 6, Void >;
-															#line 397 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 500 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	ReceiverActor(Sim2Conn* const& self) 
-															#line 1513 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 1616 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		 : Actor<Void>(),
 		   ReceiverActorState<ReceiverActor>(self)
 	{
@@ -1539,28 +1642,28 @@ friend struct ActorCallback< ReceiverActor, 6, Void >;
 
 	}
 };
-															#line 397 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 500 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 [[nodiscard]] static Future<Void> receiver( Sim2Conn* const& self ) {
-															#line 397 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 500 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	return Future<Void>(new ReceiverActor(self));
-															#line 1546 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 1649 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 }
 
-#line 433 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-																#line 1550 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+#line 536 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+																#line 1653 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 // This generated class is to be used only via whenReadable()
-															#line 433 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 536 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 template <class WhenReadableActor>
-															#line 433 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 536 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 class WhenReadableActorState {
-															#line 1556 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 1659 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 public:
-															#line 433 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 536 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	WhenReadableActorState(Sim2Conn* const& self) 
-															#line 433 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-															#line 433 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 536 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 536 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		 : self(self)
-															#line 1563 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 1666 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 	{
 		fdb_probe_actor_create("whenReadable", reinterpret_cast<unsigned long>(this));
 
@@ -1574,9 +1677,9 @@ public:
 	{
 		try {
 			try {
-															#line 435 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 538 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 				;
-															#line 1579 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 1682 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 				loopDepth = a_body1loopHead1(loopDepth);
 			}
 			catch (Error& error) {
@@ -1604,11 +1707,11 @@ public:
 	int a_body1Catch2(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 444 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-			ASSERT(g_simulator.getCurrentProcess() == self->process);
-															#line 445 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 547 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+			ASSERT(g_simulator->getCurrentProcess() == self->process);
+															#line 548 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			return a_body1Catch1(e, loopDepth);
-															#line 1611 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 1714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		}
 		catch (Error& error) {
 			loopDepth = a_body1Catch1(error, loopDepth);
@@ -1627,48 +1730,48 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 436 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 539 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (self->readBytes.get() != self->receivedBytes.get())
-															#line 1632 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 1735 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		{
-															#line 437 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-			ASSERT(g_simulator.getCurrentProcess() == self->process);
-															#line 438 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 540 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+			ASSERT(g_simulator->getCurrentProcess() == self->process);
+															#line 541 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			if (!static_cast<WhenReadableActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~WhenReadableActorState(); static_cast<WhenReadableActor*>(this)->destroy(); return 0; }
-															#line 1638 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 1741 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			new (&static_cast<WhenReadableActor*>(this)->SAV< Void >::value()) Void(Void());
 			this->~WhenReadableActorState();
 			static_cast<WhenReadableActor*>(this)->finishSendAndDelPromiseRef();
 			return 0;
 		}
-															#line 440 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 543 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		StrictFuture<Void> __when_expr_0 = self->receivedBytes.onChange();
-															#line 440 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 543 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (static_cast<WhenReadableActor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 1648 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 1751 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch2(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 		static_cast<WhenReadableActor*>(this)->actor_wait_state = 1;
-															#line 440 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 543 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< WhenReadableActor, 0, Void >*>(static_cast<WhenReadableActor*>(this)));
-															#line 1653 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 1756 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont1(Void const& _,int loopDepth) 
 	{
-															#line 441 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 544 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		self->rollRandomClose();
-															#line 1662 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 1765 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		if (loopDepth == 0) return a_body1loopHead1(0);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont1(Void && _,int loopDepth) 
 	{
-															#line 441 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 544 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		self->rollRandomClose();
-															#line 1671 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 1774 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		if (loopDepth == 0) return a_body1loopHead1(0);
 
 		return loopDepth;
@@ -1736,14 +1839,14 @@ public:
 		fdb_probe_actor_exit("whenReadable", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 433 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 536 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	Sim2Conn* self;
-															#line 1741 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 1844 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 };
 // This generated class is to be used only via whenReadable()
-															#line 433 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 536 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 class WhenReadableActor final : public Actor<Void>, public ActorCallback< WhenReadableActor, 0, Void >, public FastAllocated<WhenReadableActor>, public WhenReadableActorState<WhenReadableActor> {
-															#line 1746 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 1849 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 public:
 	using FastAllocated<WhenReadableActor>::operator new;
 	using FastAllocated<WhenReadableActor>::operator delete;
@@ -1752,9 +1855,9 @@ public:
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< WhenReadableActor, 0, Void >;
-															#line 433 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 536 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	WhenReadableActor(Sim2Conn* const& self) 
-															#line 1757 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 1860 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		 : Actor<Void>(),
 		   WhenReadableActorState<WhenReadableActor>(self)
 	{
@@ -1777,28 +1880,28 @@ friend struct ActorCallback< WhenReadableActor, 0, Void >;
 
 	}
 };
-															#line 433 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 536 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 [[nodiscard]] static Future<Void> whenReadable( Sim2Conn* const& self ) {
-															#line 433 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 536 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	return Future<Void>(new WhenReadableActor(self));
-															#line 1784 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 1887 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 }
 
-#line 448 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-																#line 1788 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+#line 551 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+																#line 1891 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 // This generated class is to be used only via whenWritable()
-															#line 448 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 551 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 template <class WhenWritableActor>
-															#line 448 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 551 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 class WhenWritableActorState {
-															#line 1794 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 1897 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 public:
-															#line 448 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 551 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	WhenWritableActorState(Sim2Conn* const& self) 
-															#line 448 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-															#line 448 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 551 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 551 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		 : self(self)
-															#line 1801 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 1904 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 	{
 		fdb_probe_actor_create("whenWritable", reinterpret_cast<unsigned long>(this));
 
@@ -1812,9 +1915,9 @@ public:
 	{
 		try {
 			try {
-															#line 450 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 553 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 				;
-															#line 1817 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 1920 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 				loopDepth = a_body1loopHead1(loopDepth);
 			}
 			catch (Error& error) {
@@ -1842,11 +1945,11 @@ public:
 	int a_body1Catch2(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 467 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-			ASSERT(g_simulator.getCurrentProcess() == self->process);
-															#line 468 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 570 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+			ASSERT(g_simulator->getCurrentProcess() == self->process);
+															#line 571 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			return a_body1Catch1(e, loopDepth);
-															#line 1849 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 1952 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		}
 		catch (Error& error) {
 			loopDepth = a_body1Catch1(error, loopDepth);
@@ -1865,43 +1968,43 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 451 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 554 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (!self->peer)
-															#line 1870 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 1973 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		{
-															#line 452 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 555 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			if (!static_cast<WhenWritableActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~WhenWritableActorState(); static_cast<WhenWritableActor*>(this)->destroy(); return 0; }
-															#line 1874 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 1977 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			new (&static_cast<WhenWritableActor*>(this)->SAV< Void >::value()) Void(Void());
 			this->~WhenWritableActorState();
 			static_cast<WhenWritableActor*>(this)->finishSendAndDelPromiseRef();
 			return 0;
 		}
-															#line 453 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 556 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (self->peer->availableSendBufferForPeer() > 0)
-															#line 1882 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 1985 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		{
-															#line 454 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-			ASSERT(g_simulator.getCurrentProcess() == self->process);
-															#line 455 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 557 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+			ASSERT(g_simulator->getCurrentProcess() == self->process);
+															#line 558 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			if (!static_cast<WhenWritableActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~WhenWritableActorState(); static_cast<WhenWritableActor*>(this)->destroy(); return 0; }
-															#line 1888 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 1991 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			new (&static_cast<WhenWritableActor*>(this)->SAV< Void >::value()) Void(Void());
 			this->~WhenWritableActorState();
 			static_cast<WhenWritableActor*>(this)->finishSendAndDelPromiseRef();
 			return 0;
 		}
 		try {
-															#line 458 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 561 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			StrictFuture<Void> __when_expr_0 = self->peer->receivedBytes.onChange();
-															#line 458 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 561 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			if (static_cast<WhenWritableActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 1899 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 2002 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1loopBody1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<WhenWritableActor*>(this)->actor_wait_state = 1;
-															#line 458 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 561 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< WhenWritableActor, 0, Void >*>(static_cast<WhenWritableActor*>(this)));
-															#line 1904 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 2007 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -1914,16 +2017,16 @@ public:
 	}
 	int a_body1loopBody1cont1(int loopDepth) 
 	{
-															#line 464 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-		StrictFuture<Void> __when_expr_1 = g_simulator.onProcess(self->process);
-															#line 464 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 567 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		StrictFuture<Void> __when_expr_1 = g_simulator->onProcess(self->process);
+															#line 567 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (static_cast<WhenWritableActor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 1921 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 2024 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch2(__when_expr_1.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1cont1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<WhenWritableActor*>(this)->actor_wait_state = 2;
-															#line 464 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 567 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< WhenWritableActor, 1, Void >*>(static_cast<WhenWritableActor*>(this)));
-															#line 1926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 2029 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -1931,13 +2034,13 @@ public:
 	int a_body1loopBody1Catch1(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 461 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 564 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			if (e.code() != error_code_broken_promise)
-															#line 1936 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 2039 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			{
-															#line 462 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 565 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 				return a_body1Catch2(e, std::max(0, loopDepth - 1));
-															#line 1940 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 2043 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			}
 			loopDepth = a_body1loopBody1cont1(loopDepth);
 		}
@@ -1951,18 +2054,18 @@ public:
 	}
 	int a_body1loopBody1cont4(Void const& _,int loopDepth) 
 	{
-															#line 459 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-		ASSERT(g_simulator.getCurrentProcess() == self->peerProcess);
-															#line 1956 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 562 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		ASSERT(g_simulator->getCurrentProcess() == self->peerProcess);
+															#line 2059 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont6(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont4(Void && _,int loopDepth) 
 	{
-															#line 459 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-		ASSERT(g_simulator.getCurrentProcess() == self->peerProcess);
-															#line 1965 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 562 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		ASSERT(g_simulator->getCurrentProcess() == self->peerProcess);
+															#line 2068 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont6(loopDepth);
 
 		return loopDepth;
@@ -2118,14 +2221,14 @@ public:
 		fdb_probe_actor_exit("whenWritable", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 448 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 551 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	Sim2Conn* self;
-															#line 2123 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 2226 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 };
 // This generated class is to be used only via whenWritable()
-															#line 448 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 551 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 class WhenWritableActor final : public Actor<Void>, public ActorCallback< WhenWritableActor, 0, Void >, public ActorCallback< WhenWritableActor, 1, Void >, public FastAllocated<WhenWritableActor>, public WhenWritableActorState<WhenWritableActor> {
-															#line 2128 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 2231 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 public:
 	using FastAllocated<WhenWritableActor>::operator new;
 	using FastAllocated<WhenWritableActor>::operator delete;
@@ -2135,9 +2238,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< WhenWritableActor, 0, Void >;
 friend struct ActorCallback< WhenWritableActor, 1, Void >;
-															#line 448 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 551 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	WhenWritableActor(Sim2Conn* const& self) 
-															#line 2140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 2243 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		 : Actor<Void>(),
 		   WhenWritableActorState<WhenWritableActor>(self)
 	{
@@ -2161,23 +2264,23 @@ friend struct ActorCallback< WhenWritableActor, 1, Void >;
 
 	}
 };
-															#line 448 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 551 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 [[nodiscard]] static Future<Void> whenWritable( Sim2Conn* const& self ) {
-															#line 448 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 551 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	return Future<Void>(new WhenWritableActor(self));
-															#line 2168 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 2271 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 }
 
-#line 471 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+#line 574 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 
 	void rollRandomClose() {
 		// make sure connections between parenta and their childs are not closed
 		if (!stableConnection &&
-		    now() - g_simulator.lastConnectionFailure > g_simulator.connectionFailuresDisableDuration &&
+		    now() - g_simulator->lastConnectionFailure > g_simulator->connectionFailuresDisableDuration &&
 		    deterministicRandom()->random01() < .00001) {
-			g_simulator.lastConnectionFailure = now();
+			g_simulator->lastConnectionFailure = now();
 			double a = deterministicRandom()->random01(), b = deterministicRandom()->random01();
-			TEST(true); // Simulated connection failure
+			CODE_PROBE(true, "Simulated connection failure", probe::context::sim2, probe::assert::simOnly);
 			TraceEvent("ConnectionFailure", dbgid)
 			    .detail("MyAddr", process->address)
 			    .detail("PeerAddr", peerProcess->address)
@@ -2196,20 +2299,20 @@ friend struct ActorCallback< WhenWritableActor, 1, Void >;
 		}
 	}
 
-																#line 2199 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+																#line 2302 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 // This generated class is to be used only via trackLeakedConnection()
-															#line 498 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 601 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 template <class TrackLeakedConnectionActor>
-															#line 498 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 601 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 class TrackLeakedConnectionActorState {
-															#line 2205 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 2308 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 public:
-															#line 498 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 601 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	TrackLeakedConnectionActorState(Sim2Conn* const& self) 
-															#line 498 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-															#line 498 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 601 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 601 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		 : self(self)
-															#line 2212 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 2315 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 	{
 		fdb_probe_actor_create("trackLeakedConnection", reinterpret_cast<unsigned long>(this));
 
@@ -2222,16 +2325,28 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 499 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-			StrictFuture<Void> __when_expr_0 = g_simulator.onProcess(self->process);
-															#line 499 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 603 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+			if (g_simulator->httpServerIps.count(self->process->address.ip))
+															#line 2330 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+			{
+															#line 604 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+				if (!static_cast<TrackLeakedConnectionActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~TrackLeakedConnectionActorState(); static_cast<TrackLeakedConnectionActor*>(this)->destroy(); return 0; }
+															#line 2334 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+				new (&static_cast<TrackLeakedConnectionActor*>(this)->SAV< Void >::value()) Void(Void());
+				this->~TrackLeakedConnectionActorState();
+				static_cast<TrackLeakedConnectionActor*>(this)->finishSendAndDelPromiseRef();
+				return 0;
+			}
+															#line 606 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+			StrictFuture<Void> __when_expr_0 = g_simulator->onProcess(self->process);
+															#line 606 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			if (static_cast<TrackLeakedConnectionActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 2229 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 2344 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<TrackLeakedConnectionActor*>(this)->actor_wait_state = 1;
-															#line 499 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 606 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< TrackLeakedConnectionActor, 0, Void >*>(static_cast<TrackLeakedConnectionActor*>(this)));
-															#line 2234 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 2349 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -2252,34 +2367,34 @@ public:
 	}
 	int a_body1cont1(Void const& _,int loopDepth) 
 	{
-															#line 500 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 608 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (self->process->address.isPublic())
-															#line 2257 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 2372 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		{
-															#line 501 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 609 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			StrictFuture<Void> __when_expr_1 = delay(FLOW_KNOBS->CONNECTION_MONITOR_IDLE_TIMEOUT * FLOW_KNOBS->CONNECTION_MONITOR_IDLE_TIMEOUT * 1.5 + FLOW_KNOBS->CONNECTION_MONITOR_LOOP_TIME * 2.1 + FLOW_KNOBS->CONNECTION_MONITOR_TIMEOUT);
-															#line 501 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 609 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			if (static_cast<TrackLeakedConnectionActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 2263 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 2378 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 			static_cast<TrackLeakedConnectionActor*>(this)->actor_wait_state = 2;
-															#line 501 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 609 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< TrackLeakedConnectionActor, 1, Void >*>(static_cast<TrackLeakedConnectionActor*>(this)));
-															#line 2268 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 2383 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			loopDepth = 0;
 		}
 		else
 		{
-															#line 504 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 612 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			StrictFuture<Void> __when_expr_2 = delay(FLOW_KNOBS->CONNECTION_MONITOR_IDLE_TIMEOUT * 1.5);
-															#line 504 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 612 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			if (static_cast<TrackLeakedConnectionActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 2277 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 2392 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1cont1when2(__when_expr_2.get(), loopDepth); };
 			static_cast<TrackLeakedConnectionActor*>(this)->actor_wait_state = 3;
-															#line 504 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 612 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< TrackLeakedConnectionActor, 2, Void >*>(static_cast<TrackLeakedConnectionActor*>(this)));
-															#line 2282 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 2397 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			loopDepth = 0;
 		}
 
@@ -2287,34 +2402,34 @@ public:
 	}
 	int a_body1cont1(Void && _,int loopDepth) 
 	{
-															#line 500 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 608 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (self->process->address.isPublic())
-															#line 2292 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 2407 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		{
-															#line 501 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 609 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			StrictFuture<Void> __when_expr_1 = delay(FLOW_KNOBS->CONNECTION_MONITOR_IDLE_TIMEOUT * FLOW_KNOBS->CONNECTION_MONITOR_IDLE_TIMEOUT * 1.5 + FLOW_KNOBS->CONNECTION_MONITOR_LOOP_TIME * 2.1 + FLOW_KNOBS->CONNECTION_MONITOR_TIMEOUT);
-															#line 501 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 609 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			if (static_cast<TrackLeakedConnectionActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 2298 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 2413 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 			static_cast<TrackLeakedConnectionActor*>(this)->actor_wait_state = 2;
-															#line 501 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 609 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< TrackLeakedConnectionActor, 1, Void >*>(static_cast<TrackLeakedConnectionActor*>(this)));
-															#line 2303 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 2418 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			loopDepth = 0;
 		}
 		else
 		{
-															#line 504 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 612 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			StrictFuture<Void> __when_expr_2 = delay(FLOW_KNOBS->CONNECTION_MONITOR_IDLE_TIMEOUT * 1.5);
-															#line 504 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 612 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			if (static_cast<TrackLeakedConnectionActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 2312 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 2427 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1cont1when2(__when_expr_2.get(), loopDepth); };
 			static_cast<TrackLeakedConnectionActor*>(this)->actor_wait_state = 3;
-															#line 504 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 612 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< TrackLeakedConnectionActor, 2, Void >*>(static_cast<TrackLeakedConnectionActor*>(this)));
-															#line 2317 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 2432 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			loopDepth = 0;
 		}
 
@@ -2383,13 +2498,13 @@ public:
 		fdb_probe_actor_exit("trackLeakedConnection", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-	int a_body1cont2(int loopDepth) 
+	int a_body1cont3(int loopDepth) 
 	{
-															#line 506 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-		TraceEvent(SevError, "LeakedConnection", self->dbgid) .error(connection_leaked()) .detail("MyAddr", self->process->address) .detail("PeerAddr", self->peerEndpoint) .detail("PeerId", self->peerId) .detail("Opened", self->opened);
-															#line 512 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 614 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		TraceEvent(SevError, "LeakedConnection", self->dbgid) .error(connection_leaked()) .detail("MyAddr", self->process->address) .detail("IsPublic", self->process->address.isPublic()) .detail("PeerAddr", self->peerEndpoint) .detail("PeerId", self->peerId) .detail("Opened", self->opened);
+															#line 621 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (!static_cast<TrackLeakedConnectionActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~TrackLeakedConnectionActorState(); static_cast<TrackLeakedConnectionActor*>(this)->destroy(); return 0; }
-															#line 2392 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 2507 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		new (&static_cast<TrackLeakedConnectionActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~TrackLeakedConnectionActorState();
 		static_cast<TrackLeakedConnectionActor*>(this)->finishSendAndDelPromiseRef();
@@ -2397,27 +2512,27 @@ public:
 
 		return loopDepth;
 	}
-	int a_body1cont3(Void const& _,int loopDepth) 
+	int a_body1cont4(Void const& _,int loopDepth) 
 	{
-		loopDepth = a_body1cont2(loopDepth);
+		loopDepth = a_body1cont3(loopDepth);
 
 		return loopDepth;
 	}
-	int a_body1cont3(Void && _,int loopDepth) 
+	int a_body1cont4(Void && _,int loopDepth) 
 	{
-		loopDepth = a_body1cont2(loopDepth);
+		loopDepth = a_body1cont3(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1cont1when1(Void const& _,int loopDepth) 
 	{
-		loopDepth = a_body1cont3(_, loopDepth);
+		loopDepth = a_body1cont4(_, loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1cont1when1(Void && _,int loopDepth) 
 	{
-		loopDepth = a_body1cont3(std::move(_), loopDepth);
+		loopDepth = a_body1cont4(std::move(_), loopDepth);
 
 		return loopDepth;
 	}
@@ -2472,27 +2587,27 @@ public:
 		fdb_probe_actor_exit("trackLeakedConnection", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-	int a_body1cont4(Void const& _,int loopDepth) 
+	int a_body1cont5(Void const& _,int loopDepth) 
 	{
-		loopDepth = a_body1cont2(loopDepth);
+		loopDepth = a_body1cont3(loopDepth);
 
 		return loopDepth;
 	}
-	int a_body1cont4(Void && _,int loopDepth) 
+	int a_body1cont5(Void && _,int loopDepth) 
 	{
-		loopDepth = a_body1cont2(loopDepth);
+		loopDepth = a_body1cont3(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1cont1when2(Void const& _,int loopDepth) 
 	{
-		loopDepth = a_body1cont4(_, loopDepth);
+		loopDepth = a_body1cont5(_, loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1cont1when2(Void && _,int loopDepth) 
 	{
-		loopDepth = a_body1cont4(std::move(_), loopDepth);
+		loopDepth = a_body1cont5(std::move(_), loopDepth);
 
 		return loopDepth;
 	}
@@ -2547,14 +2662,14 @@ public:
 		fdb_probe_actor_exit("trackLeakedConnection", reinterpret_cast<unsigned long>(this), 2);
 
 	}
-															#line 498 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 601 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	Sim2Conn* self;
-															#line 2552 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 2667 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 };
 // This generated class is to be used only via trackLeakedConnection()
-															#line 498 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 601 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 class TrackLeakedConnectionActor final : public Actor<Void>, public ActorCallback< TrackLeakedConnectionActor, 0, Void >, public ActorCallback< TrackLeakedConnectionActor, 1, Void >, public ActorCallback< TrackLeakedConnectionActor, 2, Void >, public FastAllocated<TrackLeakedConnectionActor>, public TrackLeakedConnectionActorState<TrackLeakedConnectionActor> {
-															#line 2557 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 2672 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 public:
 	using FastAllocated<TrackLeakedConnectionActor>::operator new;
 	using FastAllocated<TrackLeakedConnectionActor>::operator delete;
@@ -2565,9 +2680,9 @@ public:
 friend struct ActorCallback< TrackLeakedConnectionActor, 0, Void >;
 friend struct ActorCallback< TrackLeakedConnectionActor, 1, Void >;
 friend struct ActorCallback< TrackLeakedConnectionActor, 2, Void >;
-															#line 498 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 601 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	TrackLeakedConnectionActor(Sim2Conn* const& self) 
-															#line 2570 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 2685 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		 : Actor<Void>(),
 		   TrackLeakedConnectionActorState<TrackLeakedConnectionActor>(self)
 	{
@@ -2592,14 +2707,14 @@ friend struct ActorCallback< TrackLeakedConnectionActor, 2, Void >;
 
 	}
 };
-															#line 498 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 601 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 [[nodiscard]] static Future<Void> trackLeakedConnection( Sim2Conn* const& self ) {
-															#line 498 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 601 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	return Future<Void>(new TrackLeakedConnectionActor(self));
-															#line 2599 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 2714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 }
 
-#line 514 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+#line 623 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 };
 
 #include <fcntl.h>
@@ -2635,32 +2750,32 @@ public:
 
 	static bool should_poll() { return false; }
 
-																#line 2638 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+																#line 2753 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 // This generated class is to be used only via open()
-															#line 549 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 658 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 template <class OpenActor>
-															#line 549 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 658 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 class OpenActorState {
-															#line 2644 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 2759 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 public:
-															#line 549 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 658 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	OpenActorState(std::string const& filename,int const& flags,int const& mode,Reference<DiskParameters> const& diskParameters = makeReference<DiskParameters>(25000, 150000000),bool const& delayOnWrite = true) 
-															#line 549 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-															#line 549 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 658 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 658 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		 : filename(filename),
-															#line 549 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 658 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		   flags(flags),
-															#line 549 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 658 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		   mode(mode),
-															#line 549 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 658 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		   diskParameters(diskParameters),
-															#line 549 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 658 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		   delayOnWrite(delayOnWrite),
-															#line 555 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-		   currentProcess(g_simulator.getCurrentProcess()),
-															#line 556 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 664 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		   currentProcess(g_simulator->getCurrentProcess()),
+															#line 665 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		   currentTaskID(g_network->getCurrentTask())
-															#line 2663 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 2778 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 	{
 		fdb_probe_actor_create("open", reinterpret_cast<unsigned long>(this));
 
@@ -2673,36 +2788,36 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 558 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-			if (++openCount >= 3000)
-															#line 2678 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 667 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+			if (++openCount >= 6000)
+															#line 2793 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			{
-															#line 559 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 668 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 				TraceEvent(SevError, "TooManyFiles").log();
-															#line 560 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 669 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 				ASSERT(false);
-															#line 2684 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 2799 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			}
-															#line 563 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-			if (openCount == 2000)
-															#line 2688 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 672 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+			if (openCount == 4000)
+															#line 2803 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			{
-															#line 564 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 673 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 				disableConnectionFailures("TooManyFiles");
-															#line 2692 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 2807 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			}
-															#line 569 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 678 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			ASSERT(basename(filename).size() < 250);
-															#line 571 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-			StrictFuture<Void> __when_expr_0 = g_simulator.onMachine(currentProcess);
-															#line 571 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 680 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+			StrictFuture<Void> __when_expr_0 = g_simulator->onMachine(currentProcess);
+															#line 680 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			if (static_cast<OpenActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 2700 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 2815 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<OpenActor*>(this)->actor_wait_state = 1;
-															#line 571 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 680 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< OpenActor, 0, Void >*>(static_cast<OpenActor*>(this)));
-															#line 2705 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 2820 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -2724,16 +2839,16 @@ public:
 	int a_body1cont1(Void const& _,int loopDepth) 
 	{
 		try {
-															#line 573 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 682 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			StrictFuture<Void> __when_expr_1 = delay(FLOW_KNOBS->MIN_OPEN_TIME + deterministicRandom()->random01() * (FLOW_KNOBS->MAX_OPEN_TIME - FLOW_KNOBS->MIN_OPEN_TIME));
-															#line 573 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 682 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			if (static_cast<OpenActor*>(this)->actor_wait_state < 0) return a_body1cont1Catch1(actor_cancelled(), loopDepth);
-															#line 2731 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 2846 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1cont1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 			static_cast<OpenActor*>(this)->actor_wait_state = 2;
-															#line 573 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 682 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< OpenActor, 1, Void >*>(static_cast<OpenActor*>(this)));
-															#line 2736 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 2851 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -2747,16 +2862,16 @@ public:
 	int a_body1cont1(Void && _,int loopDepth) 
 	{
 		try {
-															#line 573 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 682 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			StrictFuture<Void> __when_expr_1 = delay(FLOW_KNOBS->MIN_OPEN_TIME + deterministicRandom()->random01() * (FLOW_KNOBS->MAX_OPEN_TIME - FLOW_KNOBS->MIN_OPEN_TIME));
-															#line 573 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 682 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			if (static_cast<OpenActor*>(this)->actor_wait_state < 0) return a_body1cont1Catch1(actor_cancelled(), loopDepth);
-															#line 2754 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 2869 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1cont1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 			static_cast<OpenActor*>(this)->actor_wait_state = 2;
-															#line 573 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 682 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< OpenActor, 1, Void >*>(static_cast<OpenActor*>(this)));
-															#line 2759 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 2874 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -2833,18 +2948,18 @@ public:
 	int a_body1cont1Catch1(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 600 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 709 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			err = e;
-															#line 601 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-			StrictFuture<Void> __when_expr_3 = g_simulator.onProcess(currentProcess, currentTaskID);
-															#line 601 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 710 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+			StrictFuture<Void> __when_expr_3 = g_simulator->onProcess(currentProcess, currentTaskID);
+															#line 710 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			if (static_cast<OpenActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 2842 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 2957 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			if (__when_expr_3.isReady()) { if (__when_expr_3.isError()) return a_body1Catch1(__when_expr_3.getError(), loopDepth); else return a_body1cont1Catch1when1(__when_expr_3.get(), loopDepth); };
 			static_cast<OpenActor*>(this)->actor_wait_state = 4;
-															#line 601 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 710 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			__when_expr_3.addCallbackAndClear(static_cast<ActorCallback< OpenActor, 3, Void >*>(static_cast<OpenActor*>(this)));
-															#line 2847 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 2962 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -2857,100 +2972,100 @@ public:
 	}
 	int a_body1cont5(Void const& _,int loopDepth) 
 	{
-															#line 576 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 685 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		std::string open_filename = filename;
-															#line 577 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 686 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (flags & OPEN_ATOMIC_WRITE_AND_CREATE)
-															#line 2864 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 2979 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		{
-															#line 578 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 687 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			ASSERT((flags & OPEN_CREATE) && (flags & OPEN_READWRITE) && !(flags & OPEN_EXCLUSIVE));
-															#line 579 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 688 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			open_filename = filename + ".part";
-															#line 2870 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 2985 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		}
-															#line 582 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 691 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		int h = sf_open(open_filename.c_str(), flags, flagConversion(flags), mode);
-															#line 583 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 692 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (h == -1)
-															#line 2876 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 2991 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		{
-															#line 584 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 693 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			bool notFound = errno == ENOENT;
-															#line 585 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 694 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			Error e = notFound ? file_not_found() : io_error();
-															#line 586 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 695 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			TraceEvent(notFound ? SevWarn : SevWarnAlways, "FileOpenError") .error(e) .GetLastError() .detail("File", filename) .detail("Flags", flags);
-															#line 591 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 700 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			return a_body1cont1Catch1(e, loopDepth);
-															#line 2886 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3001 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		}
-															#line 594 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 703 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		platform::makeTemporary(open_filename.c_str());
-															#line 595 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 704 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		SimpleFile* simpleFile = new SimpleFile(h, diskParameters, delayOnWrite, filename, open_filename, flags);
-															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 705 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		file = Reference<IAsyncFile>(simpleFile);
-															#line 597 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-		StrictFuture<Void> __when_expr_2 = g_simulator.onProcess(currentProcess, currentTaskID);
-															#line 597 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 706 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		StrictFuture<Void> __when_expr_2 = g_simulator->onProcess(currentProcess, currentTaskID);
+															#line 706 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (static_cast<OpenActor*>(this)->actor_wait_state < 0) return a_body1cont1Catch1(actor_cancelled(), loopDepth);
-															#line 2898 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3013 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1cont1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1cont5when1(__when_expr_2.get(), loopDepth); };
 		static_cast<OpenActor*>(this)->actor_wait_state = 3;
-															#line 597 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 706 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< OpenActor, 2, Void >*>(static_cast<OpenActor*>(this)));
-															#line 2903 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3018 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont5(Void && _,int loopDepth) 
 	{
-															#line 576 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 685 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		std::string open_filename = filename;
-															#line 577 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 686 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (flags & OPEN_ATOMIC_WRITE_AND_CREATE)
-															#line 2914 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3029 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		{
-															#line 578 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 687 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			ASSERT((flags & OPEN_CREATE) && (flags & OPEN_READWRITE) && !(flags & OPEN_EXCLUSIVE));
-															#line 579 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 688 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			open_filename = filename + ".part";
-															#line 2920 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3035 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		}
-															#line 582 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 691 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		int h = sf_open(open_filename.c_str(), flags, flagConversion(flags), mode);
-															#line 583 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 692 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (h == -1)
-															#line 2926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3041 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		{
-															#line 584 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 693 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			bool notFound = errno == ENOENT;
-															#line 585 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 694 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			Error e = notFound ? file_not_found() : io_error();
-															#line 586 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 695 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			TraceEvent(notFound ? SevWarn : SevWarnAlways, "FileOpenError") .error(e) .GetLastError() .detail("File", filename) .detail("Flags", flags);
-															#line 591 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 700 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			return a_body1cont1Catch1(e, loopDepth);
-															#line 2936 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3051 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		}
-															#line 594 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 703 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		platform::makeTemporary(open_filename.c_str());
-															#line 595 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 704 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		SimpleFile* simpleFile = new SimpleFile(h, diskParameters, delayOnWrite, filename, open_filename, flags);
-															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 705 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		file = Reference<IAsyncFile>(simpleFile);
-															#line 597 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-		StrictFuture<Void> __when_expr_2 = g_simulator.onProcess(currentProcess, currentTaskID);
-															#line 597 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 706 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		StrictFuture<Void> __when_expr_2 = g_simulator->onProcess(currentProcess, currentTaskID);
+															#line 706 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (static_cast<OpenActor*>(this)->actor_wait_state < 0) return a_body1cont1Catch1(actor_cancelled(), loopDepth);
-															#line 2948 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3063 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1cont1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1cont5when1(__when_expr_2.get(), loopDepth); };
 		static_cast<OpenActor*>(this)->actor_wait_state = 3;
-															#line 597 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 706 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< OpenActor, 2, Void >*>(static_cast<OpenActor*>(this)));
-															#line 2953 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3068 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -3020,9 +3135,9 @@ public:
 	}
 	int a_body1cont6(Void const& _,int loopDepth) 
 	{
-															#line 598 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 707 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (!static_cast<OpenActor*>(this)->SAV<Reference<IAsyncFile>>::futures) { (void)(file); this->~OpenActorState(); static_cast<OpenActor*>(this)->destroy(); return 0; }
-															#line 3025 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		new (&static_cast<OpenActor*>(this)->SAV< Reference<IAsyncFile> >::value()) Reference<IAsyncFile>(std::move(file)); // state_var_RVO
 		this->~OpenActorState();
 		static_cast<OpenActor*>(this)->finishSendAndDelPromiseRef();
@@ -3032,9 +3147,9 @@ public:
 	}
 	int a_body1cont6(Void && _,int loopDepth) 
 	{
-															#line 598 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 707 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (!static_cast<OpenActor*>(this)->SAV<Reference<IAsyncFile>>::futures) { (void)(file); this->~OpenActorState(); static_cast<OpenActor*>(this)->destroy(); return 0; }
-															#line 3037 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3152 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		new (&static_cast<OpenActor*>(this)->SAV< Reference<IAsyncFile> >::value()) Reference<IAsyncFile>(std::move(file)); // state_var_RVO
 		this->~OpenActorState();
 		static_cast<OpenActor*>(this)->finishSendAndDelPromiseRef();
@@ -3107,17 +3222,17 @@ public:
 	}
 	int a_body1cont1Catch1cont1(Void const& _,int loopDepth) 
 	{
-															#line 602 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 711 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		return a_body1Catch1(err, loopDepth);
-															#line 3112 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3227 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 
 		return loopDepth;
 	}
 	int a_body1cont1Catch1cont1(Void && _,int loopDepth) 
 	{
-															#line 602 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 711 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		return a_body1Catch1(err, loopDepth);
-															#line 3120 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3235 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 
 		return loopDepth;
 	}
@@ -3184,30 +3299,30 @@ public:
 		fdb_probe_actor_exit("open", reinterpret_cast<unsigned long>(this), 3);
 
 	}
-															#line 549 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 658 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	std::string filename;
-															#line 549 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 658 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	int flags;
-															#line 549 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 658 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	int mode;
-															#line 549 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 658 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	Reference<DiskParameters> diskParameters;
-															#line 549 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 658 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	bool delayOnWrite;
-															#line 555 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 664 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	ISimulator::ProcessInfo* currentProcess;
-															#line 556 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 665 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	TaskPriority currentTaskID;
-															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 705 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	Reference<IAsyncFile> file;
-															#line 600 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 709 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	Error err;
-															#line 3205 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3320 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 };
 // This generated class is to be used only via open()
-															#line 549 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 658 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 class OpenActor final : public Actor<Reference<IAsyncFile>>, public ActorCallback< OpenActor, 0, Void >, public ActorCallback< OpenActor, 1, Void >, public ActorCallback< OpenActor, 2, Void >, public ActorCallback< OpenActor, 3, Void >, public FastAllocated<OpenActor>, public OpenActorState<OpenActor> {
-															#line 3210 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3325 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 public:
 	using FastAllocated<OpenActor>::operator new;
 	using FastAllocated<OpenActor>::operator delete;
@@ -3219,9 +3334,9 @@ friend struct ActorCallback< OpenActor, 0, Void >;
 friend struct ActorCallback< OpenActor, 1, Void >;
 friend struct ActorCallback< OpenActor, 2, Void >;
 friend struct ActorCallback< OpenActor, 3, Void >;
-															#line 549 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 658 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	OpenActor(std::string const& filename,int const& flags,int const& mode,Reference<DiskParameters> const& diskParameters = makeReference<DiskParameters>(25000, 150000000),bool const& delayOnWrite = true) 
-															#line 3224 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3339 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		 : Actor<Reference<IAsyncFile>>(),
 		   OpenActorState<OpenActor>(filename, flags, mode, diskParameters, delayOnWrite)
 	{
@@ -3247,14 +3362,14 @@ friend struct ActorCallback< OpenActor, 3, Void >;
 
 	}
 };
-															#line 549 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 658 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 [[nodiscard]] static Future<Reference<IAsyncFile>> open( std::string const& filename, int const& flags, int const& mode, Reference<DiskParameters> const& diskParameters = makeReference<DiskParameters>(25000, 150000000), bool const& delayOnWrite = true ) {
-															#line 549 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 658 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	return Future<Reference<IAsyncFile>>(new OpenActor(filename, flags, mode, diskParameters, delayOnWrite));
-															#line 3254 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3369 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 }
 
-#line 605 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+#line 714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 
 	void addref() override { ReferenceCounted<SimpleFile>::addref(); }
 	void delref() override { ReferenceCounted<SimpleFile>::delref(); }
@@ -3319,26 +3434,26 @@ private:
 		return outFlags;
 	}
 
-																#line 3322 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+																#line 3437 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 // This generated class is to be used only via read_impl()
-															#line 669 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 778 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 template <class Read_implActor>
-															#line 669 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 778 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 class Read_implActorState {
-															#line 3328 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3443 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 public:
-															#line 669 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 778 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	Read_implActorState(SimpleFile* const& self,void* const& data,int const& length,int64_t const& offset) 
-															#line 669 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-															#line 669 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 778 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 778 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		 : self(self),
-															#line 669 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 778 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		   data(data),
-															#line 669 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 778 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		   length(length),
-															#line 669 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 778 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		   offset(offset)
-															#line 3341 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3456 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 	{
 		fdb_probe_actor_create("read_impl", reinterpret_cast<unsigned long>(this));
 
@@ -3351,28 +3466,28 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 670 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 779 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			ASSERT((self->flags & IAsyncFile::OPEN_NO_AIO) != 0 || ((uintptr_t)data % 4096 == 0 && length % 4096 == 0 && offset % 4096 == 0));
-															#line 672 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 781 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			opId = deterministicRandom()->randomUniqueID();
-															#line 673 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 782 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			if (randLog)
-															#line 3360 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3475 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			{
-															#line 674 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 783 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 				fmt::print(randLog, "SFR1 {0} {1} {2} {3} {4}\n", self->dbgId.shortString(), self->filename, opId.shortString(), length, offset);
-															#line 3364 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3479 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			}
-															#line 682 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 791 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			StrictFuture<Void> __when_expr_0 = waitUntilDiskReady(self->diskParameters, length);
-															#line 682 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 791 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			if (static_cast<Read_implActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 3370 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3485 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<Read_implActor*>(this)->actor_wait_state = 1;
-															#line 682 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 791 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< Read_implActor, 0, Void >*>(static_cast<Read_implActor*>(this)));
-															#line 3375 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3490 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -3393,47 +3508,47 @@ public:
 	}
 	int a_body1cont1(Void const& _,int loopDepth) 
 	{
-															#line 684 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 793 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (_lseeki64(self->h, offset, SEEK_SET) == -1)
-															#line 3398 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3513 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		{
-															#line 685 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 794 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			TraceEvent(SevWarn, "SimpleFileIOError").detail("Location", 1);
-															#line 686 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 795 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			return a_body1Catch1(io_error(), loopDepth);
-															#line 3404 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3519 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		}
-															#line 689 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 798 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		unsigned int read_bytes = 0;
-															#line 690 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 799 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if ((read_bytes = _read(self->h, data, (unsigned int)length)) == -1)
-															#line 3410 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3525 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		{
-															#line 691 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 800 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			TraceEvent(SevWarn, "SimpleFileIOError").detail("Location", 2);
-															#line 692 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 801 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			return a_body1Catch1(io_error(), loopDepth);
-															#line 3416 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3531 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		}
-															#line 695 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 804 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (randLog)
-															#line 3420 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3535 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		{
-															#line 696 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 805 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			uint32_t a = crc32c_append(0, (const uint8_t*)data, read_bytes);
-															#line 697 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 806 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			fprintf(randLog, "SFR2 %s %s %s %d %d\n", self->dbgId.shortString().c_str(), self->filename.c_str(), opId.shortString().c_str(), read_bytes, a);
-															#line 3426 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3541 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		}
-															#line 706 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 815 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		debugFileCheck("SimpleFileRead", self->filename, data, offset, length);
-															#line 708 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 817 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		INJECT_FAULT(io_timeout, "SimpleFile::read");
-															#line 709 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 818 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		INJECT_FAULT(io_error, "SimpleFile::read");
-															#line 711 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 820 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (!static_cast<Read_implActor*>(this)->SAV<int>::futures) { (void)(read_bytes); this->~Read_implActorState(); static_cast<Read_implActor*>(this)->destroy(); return 0; }
-															#line 3436 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3551 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		new (&static_cast<Read_implActor*>(this)->SAV< int >::value()) int(read_bytes);
 		this->~Read_implActorState();
 		static_cast<Read_implActor*>(this)->finishSendAndDelPromiseRef();
@@ -3443,47 +3558,47 @@ public:
 	}
 	int a_body1cont1(Void && _,int loopDepth) 
 	{
-															#line 684 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 793 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (_lseeki64(self->h, offset, SEEK_SET) == -1)
-															#line 3448 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3563 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		{
-															#line 685 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 794 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			TraceEvent(SevWarn, "SimpleFileIOError").detail("Location", 1);
-															#line 686 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 795 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			return a_body1Catch1(io_error(), loopDepth);
-															#line 3454 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3569 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		}
-															#line 689 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 798 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		unsigned int read_bytes = 0;
-															#line 690 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 799 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if ((read_bytes = _read(self->h, data, (unsigned int)length)) == -1)
-															#line 3460 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3575 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		{
-															#line 691 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 800 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			TraceEvent(SevWarn, "SimpleFileIOError").detail("Location", 2);
-															#line 692 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 801 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			return a_body1Catch1(io_error(), loopDepth);
-															#line 3466 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3581 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		}
-															#line 695 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 804 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (randLog)
-															#line 3470 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3585 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		{
-															#line 696 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 805 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			uint32_t a = crc32c_append(0, (const uint8_t*)data, read_bytes);
-															#line 697 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 806 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			fprintf(randLog, "SFR2 %s %s %s %d %d\n", self->dbgId.shortString().c_str(), self->filename.c_str(), opId.shortString().c_str(), read_bytes, a);
-															#line 3476 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3591 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		}
-															#line 706 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 815 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		debugFileCheck("SimpleFileRead", self->filename, data, offset, length);
-															#line 708 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 817 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		INJECT_FAULT(io_timeout, "SimpleFile::read");
-															#line 709 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 818 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		INJECT_FAULT(io_error, "SimpleFile::read");
-															#line 711 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 820 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (!static_cast<Read_implActor*>(this)->SAV<int>::futures) { (void)(read_bytes); this->~Read_implActorState(); static_cast<Read_implActor*>(this)->destroy(); return 0; }
-															#line 3486 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3601 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		new (&static_cast<Read_implActor*>(this)->SAV< int >::value()) int(read_bytes);
 		this->~Read_implActorState();
 		static_cast<Read_implActor*>(this)->finishSendAndDelPromiseRef();
@@ -3554,22 +3669,22 @@ public:
 		fdb_probe_actor_exit("read_impl", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 669 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 778 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	SimpleFile* self;
-															#line 669 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 778 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	void* data;
-															#line 669 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 778 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	int length;
-															#line 669 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 778 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	int64_t offset;
-															#line 672 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 781 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	UID opId;
-															#line 3567 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3682 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 };
 // This generated class is to be used only via read_impl()
-															#line 669 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 778 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 class Read_implActor final : public Actor<int>, public ActorCallback< Read_implActor, 0, Void >, public FastAllocated<Read_implActor>, public Read_implActorState<Read_implActor> {
-															#line 3572 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3687 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 public:
 	using FastAllocated<Read_implActor>::operator new;
 	using FastAllocated<Read_implActor>::operator delete;
@@ -3578,9 +3693,9 @@ public:
 	void destroy() override { ((Actor<int>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< Read_implActor, 0, Void >;
-															#line 669 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 778 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	Read_implActor(SimpleFile* const& self,void* const& data,int const& length,int64_t const& offset) 
-															#line 3583 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3698 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		 : Actor<int>(),
 		   Read_implActorState<Read_implActor>(self, data, length, offset)
 	{
@@ -3603,35 +3718,35 @@ friend struct ActorCallback< Read_implActor, 0, Void >;
 
 	}
 };
-															#line 669 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 778 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 [[nodiscard]] static Future<int> read_impl( SimpleFile* const& self, void* const& data, int const& length, int64_t const& offset ) {
-															#line 669 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 778 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	return Future<int>(new Read_implActor(self, data, length, offset));
-															#line 3610 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3725 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 }
 
-#line 713 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+#line 822 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 
-																#line 3615 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+																#line 3730 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 // This generated class is to be used only via write_impl()
-															#line 714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 823 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 template <class Write_implActor>
-															#line 714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 823 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 class Write_implActorState {
-															#line 3621 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3736 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 public:
-															#line 714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 823 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	Write_implActorState(SimpleFile* const& self,StringRef const& data,int64_t const& offset) 
-															#line 714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-															#line 714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 823 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 823 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		 : self(self),
-															#line 714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 823 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		   data(data),
-															#line 714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 823 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		   offset(offset),
-															#line 715 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 824 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		   opId(deterministicRandom()->randomUniqueID())
-															#line 3634 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3749 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 	{
 		fdb_probe_actor_create("write_impl", reinterpret_cast<unsigned long>(this));
 
@@ -3644,30 +3759,30 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 716 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 825 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			if (randLog)
-															#line 3649 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3764 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			{
-															#line 717 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 826 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 				uint32_t a = crc32c_append(0, data.begin(), data.size());
-															#line 718 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 827 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 				fmt::print(randLog, "SFW1 {0} {1} {2} {3} {4} {5}\n", self->dbgId.shortString(), self->filename, opId.shortString(), a, data.size(), offset);
-															#line 3655 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3770 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			}
-															#line 728 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 837 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			if (self->delayOnWrite)
-															#line 3659 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3774 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			{
-															#line 729 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 838 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 				StrictFuture<Void> __when_expr_0 = waitUntilDiskReady(self->diskParameters, data.size());
-															#line 729 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 838 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 				if (static_cast<Write_implActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 3665 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3780 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 				if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 				static_cast<Write_implActor*>(this)->actor_wait_state = 1;
-															#line 729 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 838 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 				__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< Write_implActor, 0, Void >*>(static_cast<Write_implActor*>(this)));
-															#line 3670 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3785 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 				loopDepth = 0;
 			}
 			else
@@ -3693,55 +3808,55 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 731 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 840 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (_lseeki64(self->h, offset, SEEK_SET) == -1)
-															#line 3698 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3813 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		{
-															#line 732 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 841 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			TraceEvent(SevWarn, "SimpleFileIOError").detail("Location", 3);
-															#line 733 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 842 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			return a_body1Catch1(io_error(), loopDepth);
-															#line 3704 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3819 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		}
-															#line 736 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 845 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		unsigned int write_bytes = 0;
-															#line 737 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 846 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if ((write_bytes = _write(self->h, (void*)data.begin(), data.size())) == -1)
-															#line 3710 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3825 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		{
-															#line 738 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 847 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			TraceEvent(SevWarn, "SimpleFileIOError").detail("Location", 4);
-															#line 739 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 848 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			return a_body1Catch1(io_error(), loopDepth);
-															#line 3716 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3831 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		}
-															#line 742 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 851 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (write_bytes != data.size())
-															#line 3720 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3835 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		{
-															#line 743 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 852 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			TraceEvent(SevWarn, "SimpleFileIOError").detail("Location", 5);
-															#line 744 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 853 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			return a_body1Catch1(io_error(), loopDepth);
-															#line 3726 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3841 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		}
-															#line 747 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 856 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (randLog)
-															#line 3730 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3845 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		{
-															#line 748 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 857 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			fprintf(randLog, "SFW2 %s %s %s\n", self->dbgId.shortString().c_str(), self->filename.c_str(), opId.shortString().c_str());
-															#line 3734 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3849 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		}
-															#line 755 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 864 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		debugFileCheck("SimpleFileWrite", self->filename, (void*)data.begin(), offset, data.size());
-															#line 757 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 866 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		INJECT_FAULT(io_timeout, "SimpleFile::write");
-															#line 758 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 867 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		INJECT_FAULT(io_error, "SimpleFile::write");
-															#line 760 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 869 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (!static_cast<Write_implActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~Write_implActorState(); static_cast<Write_implActor*>(this)->destroy(); return 0; }
-															#line 3744 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3859 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		new (&static_cast<Write_implActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~Write_implActorState();
 		static_cast<Write_implActor*>(this)->finishSendAndDelPromiseRef();
@@ -3824,20 +3939,20 @@ public:
 		fdb_probe_actor_exit("write_impl", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 823 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	SimpleFile* self;
-															#line 714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 823 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	StringRef data;
-															#line 714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 823 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	int64_t offset;
-															#line 715 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 824 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	UID opId;
-															#line 3835 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3950 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 };
 // This generated class is to be used only via write_impl()
-															#line 714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 823 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 class Write_implActor final : public Actor<Void>, public ActorCallback< Write_implActor, 0, Void >, public FastAllocated<Write_implActor>, public Write_implActorState<Write_implActor> {
-															#line 3840 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3955 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 public:
 	using FastAllocated<Write_implActor>::operator new;
 	using FastAllocated<Write_implActor>::operator delete;
@@ -3846,9 +3961,9 @@ public:
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< Write_implActor, 0, Void >;
-															#line 714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 823 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	Write_implActor(SimpleFile* const& self,StringRef const& data,int64_t const& offset) 
-															#line 3851 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3966 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		 : Actor<Void>(),
 		   Write_implActorState<Write_implActor>(self, data, offset)
 	{
@@ -3871,33 +3986,33 @@ friend struct ActorCallback< Write_implActor, 0, Void >;
 
 	}
 };
-															#line 714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 823 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 [[nodiscard]] static Future<Void> write_impl( SimpleFile* const& self, StringRef const& data, int64_t const& offset ) {
-															#line 714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 823 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	return Future<Void>(new Write_implActor(self, data, offset));
-															#line 3878 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 3993 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 }
 
-#line 762 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+#line 871 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 
-																#line 3883 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+																#line 3998 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 // This generated class is to be used only via truncate_impl()
-															#line 763 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 872 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 template <class Truncate_implActor>
-															#line 763 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 872 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 class Truncate_implActorState {
-															#line 3889 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4004 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 public:
-															#line 763 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 872 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	Truncate_implActorState(SimpleFile* const& self,int64_t const& size) 
-															#line 763 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-															#line 763 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 872 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 872 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		 : self(self),
-															#line 763 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 872 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		   size(size),
-															#line 764 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 873 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		   opId(deterministicRandom()->randomUniqueID())
-															#line 3900 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4015 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 	{
 		fdb_probe_actor_create("truncate_impl", reinterpret_cast<unsigned long>(this));
 
@@ -3910,36 +4025,36 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 765 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 874 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			if (randLog)
-															#line 3915 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4030 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			{
-															#line 766 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 875 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 				fmt::print( randLog, "SFT1 {0} {1} {2} {3}\n", self->dbgId.shortString(), self->filename, opId.shortString(), size);
-															#line 3919 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4034 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			}
-															#line 770 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 879 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			if ((self->flags & IAsyncFile::OPEN_NO_AIO) == 0 && size == 0)
-															#line 3923 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4038 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			{
-															#line 771 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 880 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 				return a_body1Catch1(io_error(), loopDepth);
-															#line 3927 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4042 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			}
-															#line 774 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 883 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			if (self->delayOnWrite)
-															#line 3931 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4046 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			{
-															#line 775 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 884 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 				StrictFuture<Void> __when_expr_0 = waitUntilDiskReady(self->diskParameters, 0);
-															#line 775 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 884 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 				if (static_cast<Truncate_implActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 3937 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4052 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 				if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 				static_cast<Truncate_implActor*>(this)->actor_wait_state = 1;
-															#line 775 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 884 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 				__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< Truncate_implActor, 0, Void >*>(static_cast<Truncate_implActor*>(this)));
-															#line 3942 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4057 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 				loopDepth = 0;
 			}
 			else
@@ -3965,31 +4080,31 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 777 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 886 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (_chsize(self->h, (long)size) == -1)
-															#line 3970 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4085 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		{
-															#line 778 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 887 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			TraceEvent(SevWarn, "SimpleFileIOError") .detail("Location", 6) .detail("Filename", self->filename) .detail("Size", size) .detail("Fd", self->h) .GetLastError();
-															#line 784 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 893 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			return a_body1Catch1(io_error(), loopDepth);
-															#line 3976 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4091 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		}
-															#line 787 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 896 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (randLog)
-															#line 3980 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4095 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		{
-															#line 788 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 897 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			fprintf(randLog, "SFT2 %s %s %s\n", self->dbgId.shortString().c_str(), self->filename.c_str(), opId.shortString().c_str());
-															#line 3984 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4099 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		}
-															#line 794 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 903 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		INJECT_FAULT(io_timeout, "SimpleFile::truncate");
-															#line 795 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 904 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		INJECT_FAULT(io_error, "SimpleFile::truncate");
-															#line 797 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 906 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (!static_cast<Truncate_implActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~Truncate_implActorState(); static_cast<Truncate_implActor*>(this)->destroy(); return 0; }
-															#line 3992 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4107 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		new (&static_cast<Truncate_implActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~Truncate_implActorState();
 		static_cast<Truncate_implActor*>(this)->finishSendAndDelPromiseRef();
@@ -4072,18 +4187,18 @@ public:
 		fdb_probe_actor_exit("truncate_impl", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 763 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 872 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	SimpleFile* self;
-															#line 763 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 872 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	int64_t size;
-															#line 764 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 873 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	UID opId;
-															#line 4081 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4196 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 };
 // This generated class is to be used only via truncate_impl()
-															#line 763 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 872 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 class Truncate_implActor final : public Actor<Void>, public ActorCallback< Truncate_implActor, 0, Void >, public FastAllocated<Truncate_implActor>, public Truncate_implActorState<Truncate_implActor> {
-															#line 4086 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4201 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 public:
 	using FastAllocated<Truncate_implActor>::operator new;
 	using FastAllocated<Truncate_implActor>::operator delete;
@@ -4092,9 +4207,9 @@ public:
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< Truncate_implActor, 0, Void >;
-															#line 763 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 872 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	Truncate_implActor(SimpleFile* const& self,int64_t const& size) 
-															#line 4097 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4212 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		 : Actor<Void>(),
 		   Truncate_implActorState<Truncate_implActor>(self, size)
 	{
@@ -4117,32 +4232,32 @@ friend struct ActorCallback< Truncate_implActor, 0, Void >;
 
 	}
 };
-															#line 763 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 872 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 [[nodiscard]] static Future<Void> truncate_impl( SimpleFile* const& self, int64_t const& size ) {
-															#line 763 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 872 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	return Future<Void>(new Truncate_implActor(self, size));
-															#line 4124 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4239 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 }
 
-#line 799 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+#line 908 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 
 	// Simulated sync does not actually do anything besides wait a random amount of time
-																#line 4130 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+																#line 4245 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 // This generated class is to be used only via sync_impl()
-															#line 801 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 910 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 template <class Sync_implActor>
-															#line 801 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 910 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 class Sync_implActorState {
-															#line 4136 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4251 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 public:
-															#line 801 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 910 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	Sync_implActorState(SimpleFile* const& self) 
-															#line 801 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-															#line 801 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 910 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 910 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		 : self(self),
-															#line 802 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 911 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		   opId(deterministicRandom()->randomUniqueID())
-															#line 4145 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4260 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 	{
 		fdb_probe_actor_create("sync_impl", reinterpret_cast<unsigned long>(this));
 
@@ -4155,28 +4270,28 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 803 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 912 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			if (randLog)
-															#line 4160 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4275 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			{
-															#line 804 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 913 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 				fprintf(randLog, "SFC1 %s %s %s\n", self->dbgId.shortString().c_str(), self->filename.c_str(), opId.shortString().c_str());
-															#line 4164 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4279 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			}
-															#line 810 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 919 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			if (self->delayOnWrite)
-															#line 4168 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4283 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			{
-															#line 811 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 920 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 				StrictFuture<Void> __when_expr_0 = waitUntilDiskReady(self->diskParameters, 0, true);
-															#line 811 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 920 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 				if (static_cast<Sync_implActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 4174 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4289 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 				if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 				static_cast<Sync_implActor*>(this)->actor_wait_state = 1;
-															#line 811 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 920 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 				__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< Sync_implActor, 0, Void >*>(static_cast<Sync_implActor*>(this)));
-															#line 4179 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4294 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 				loopDepth = 0;
 			}
 			else
@@ -4202,48 +4317,64 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 813 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 922 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (self->flags & OPEN_ATOMIC_WRITE_AND_CREATE)
-															#line 4207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4322 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		{
-															#line 814 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 923 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			self->flags &= ~OPEN_ATOMIC_WRITE_AND_CREATE;
-															#line 815 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-			auto& machineCache = g_simulator.getCurrentProcess()->machine->openFiles;
-															#line 816 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 924 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+			auto& machineCache = g_simulator->getCurrentProcess()->machine->openFiles;
+															#line 925 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			std::string sourceFilename = self->filename + ".part";
-															#line 818 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 927 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			if (machineCache.count(sourceFilename))
-															#line 4217 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4332 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			{
-															#line 819 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 929 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+				using block_value_type = typename decltype(g_simulator->corruptedBlocks)::key_type::second_type;
+															#line 930 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 				TraceEvent("SimpleFileRename") .detail("From", sourceFilename) .detail("To", self->filename) .detail("SourceCount", machineCache.count(sourceFilename)) .detail("FileCount", machineCache.count(self->filename));
-															#line 824 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 935 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+				auto maxBlockValue = std::numeric_limits<block_value_type>::max();
+															#line 936 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+				g_simulator->corruptedBlocks.erase( g_simulator->corruptedBlocks.lower_bound(std::make_pair(sourceFilename, 0u)), g_simulator->corruptedBlocks.upper_bound(std::make_pair(self->filename, maxBlockValue)));
+															#line 941 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+				auto begin = g_simulator->corruptedBlocks.lower_bound(std::make_pair(sourceFilename, 0u)), end = g_simulator->corruptedBlocks.upper_bound(std::make_pair(sourceFilename, maxBlockValue));
+															#line 943 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+				for(auto iter = begin;iter != end;++iter) {
+															#line 944 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+					g_simulator->corruptedBlocks.emplace(self->filename, iter->second);
+															#line 4348 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+				}
+															#line 946 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+				g_simulator->corruptedBlocks.erase(begin, end);
+															#line 947 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 				renameFile(sourceFilename.c_str(), self->filename.c_str());
-															#line 826 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 949 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 				machineCache[self->filename] = machineCache[sourceFilename];
-															#line 827 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 950 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 				machineCache.erase(sourceFilename);
-															#line 828 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 951 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 				self->actualFilename = self->filename;
-															#line 4229 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4360 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			}
 		}
-															#line 832 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 955 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (randLog)
-															#line 4234 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4365 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		{
-															#line 833 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 956 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			fprintf(randLog, "SFC2 %s %s %s\n", self->dbgId.shortString().c_str(), self->filename.c_str(), opId.shortString().c_str());
-															#line 4238 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4369 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		}
-															#line 839 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 962 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		INJECT_FAULT(io_timeout, "SimpleFile::sync");
-															#line 840 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 963 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		INJECT_FAULT(io_error, "SimpleFile::sync");
-															#line 842 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 965 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (!static_cast<Sync_implActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~Sync_implActorState(); static_cast<Sync_implActor*>(this)->destroy(); return 0; }
-															#line 4246 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4377 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		new (&static_cast<Sync_implActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~Sync_implActorState();
 		static_cast<Sync_implActor*>(this)->finishSendAndDelPromiseRef();
@@ -4326,16 +4457,16 @@ public:
 		fdb_probe_actor_exit("sync_impl", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 801 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 910 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	SimpleFile* self;
-															#line 802 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 911 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	UID opId;
-															#line 4333 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4464 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 };
 // This generated class is to be used only via sync_impl()
-															#line 801 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 910 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 class Sync_implActor final : public Actor<Void>, public ActorCallback< Sync_implActor, 0, Void >, public FastAllocated<Sync_implActor>, public Sync_implActorState<Sync_implActor> {
-															#line 4338 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4469 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 public:
 	using FastAllocated<Sync_implActor>::operator new;
 	using FastAllocated<Sync_implActor>::operator delete;
@@ -4344,9 +4475,9 @@ public:
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< Sync_implActor, 0, Void >;
-															#line 801 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 910 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	Sync_implActor(SimpleFile* const& self) 
-															#line 4349 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4480 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		 : Actor<Void>(),
 		   Sync_implActorState<Sync_implActor>(self)
 	{
@@ -4369,31 +4500,31 @@ friend struct ActorCallback< Sync_implActor, 0, Void >;
 
 	}
 };
-															#line 801 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 910 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 [[nodiscard]] static Future<Void> sync_impl( SimpleFile* const& self ) {
-															#line 801 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 910 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	return Future<Void>(new Sync_implActor(self));
-															#line 4376 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4507 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 }
 
-#line 844 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+#line 967 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 
-																#line 4381 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+																#line 4512 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 // This generated class is to be used only via size_impl()
-															#line 845 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 968 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 template <class Size_implActor>
-															#line 845 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 968 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 class Size_implActorState {
-															#line 4387 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4518 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 public:
-															#line 845 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 968 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	Size_implActorState(SimpleFile const* const& self) 
-															#line 845 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-															#line 845 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 968 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 968 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		 : self(self),
-															#line 846 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 969 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		   opId(deterministicRandom()->randomUniqueID())
-															#line 4396 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4527 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 	{
 		fdb_probe_actor_create("size_impl", reinterpret_cast<unsigned long>(this));
 
@@ -4406,24 +4537,24 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 847 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 970 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			if (randLog)
-															#line 4411 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4542 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			{
-															#line 848 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 971 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 				fprintf(randLog, "SFS1 %s %s %s\n", self->dbgId.shortString().c_str(), self->filename.c_str(), opId.shortString().c_str());
-															#line 4415 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4546 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			}
-															#line 854 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 977 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			StrictFuture<Void> __when_expr_0 = waitUntilDiskReady(self->diskParameters, 0);
-															#line 854 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 977 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			if (static_cast<Size_implActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 4421 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4552 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<Size_implActor*>(this)->actor_wait_state = 1;
-															#line 854 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 977 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< Size_implActor, 0, Void >*>(static_cast<Size_implActor*>(this)));
-															#line 4426 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4557 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -4444,31 +4575,31 @@ public:
 	}
 	int a_body1cont1(Void const& _,int loopDepth) 
 	{
-															#line 856 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 979 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		int64_t pos = _lseeki64(self->h, 0L, SEEK_END);
-															#line 857 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 980 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (pos == -1)
-															#line 4451 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4582 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		{
-															#line 858 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 981 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			TraceEvent(SevWarn, "SimpleFileIOError").detail("Location", 8);
-															#line 859 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 982 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			return a_body1Catch1(io_error(), loopDepth);
-															#line 4457 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4588 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		}
-															#line 862 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 985 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (randLog)
-															#line 4461 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4592 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		{
-															#line 863 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 986 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			fmt::print( randLog, "SFS2 {0} {1} {2} {3}\n", self->dbgId.shortString(), self->filename, opId.shortString(), pos);
-															#line 4465 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		}
-															#line 865 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 988 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		INJECT_FAULT(io_error, "SimpleFile::size");
-															#line 867 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 990 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (!static_cast<Size_implActor*>(this)->SAV<int64_t>::futures) { (void)(pos); this->~Size_implActorState(); static_cast<Size_implActor*>(this)->destroy(); return 0; }
-															#line 4471 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4602 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		new (&static_cast<Size_implActor*>(this)->SAV< int64_t >::value()) int64_t(pos);
 		this->~Size_implActorState();
 		static_cast<Size_implActor*>(this)->finishSendAndDelPromiseRef();
@@ -4478,31 +4609,31 @@ public:
 	}
 	int a_body1cont1(Void && _,int loopDepth) 
 	{
-															#line 856 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 979 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		int64_t pos = _lseeki64(self->h, 0L, SEEK_END);
-															#line 857 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 980 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (pos == -1)
-															#line 4485 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4616 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		{
-															#line 858 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 981 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			TraceEvent(SevWarn, "SimpleFileIOError").detail("Location", 8);
-															#line 859 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 982 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			return a_body1Catch1(io_error(), loopDepth);
-															#line 4491 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4622 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		}
-															#line 862 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 985 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (randLog)
-															#line 4495 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4626 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		{
-															#line 863 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 986 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			fmt::print( randLog, "SFS2 {0} {1} {2} {3}\n", self->dbgId.shortString(), self->filename, opId.shortString(), pos);
-															#line 4499 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4630 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		}
-															#line 865 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 988 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		INJECT_FAULT(io_error, "SimpleFile::size");
-															#line 867 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 990 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (!static_cast<Size_implActor*>(this)->SAV<int64_t>::futures) { (void)(pos); this->~Size_implActorState(); static_cast<Size_implActor*>(this)->destroy(); return 0; }
-															#line 4505 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4636 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		new (&static_cast<Size_implActor*>(this)->SAV< int64_t >::value()) int64_t(pos);
 		this->~Size_implActorState();
 		static_cast<Size_implActor*>(this)->finishSendAndDelPromiseRef();
@@ -4573,16 +4704,16 @@ public:
 		fdb_probe_actor_exit("size_impl", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 845 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 968 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	SimpleFile const* self;
-															#line 846 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 969 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	UID opId;
-															#line 4580 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4711 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 };
 // This generated class is to be used only via size_impl()
-															#line 845 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 968 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 class Size_implActor final : public Actor<int64_t>, public ActorCallback< Size_implActor, 0, Void >, public FastAllocated<Size_implActor>, public Size_implActorState<Size_implActor> {
-															#line 4585 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4716 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 public:
 	using FastAllocated<Size_implActor>::operator new;
 	using FastAllocated<Size_implActor>::operator delete;
@@ -4591,9 +4722,9 @@ public:
 	void destroy() override { ((Actor<int64_t>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< Size_implActor, 0, Void >;
-															#line 845 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 968 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	Size_implActor(SimpleFile const* const& self) 
-															#line 4596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4727 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		 : Actor<int64_t>(),
 		   Size_implActorState<Size_implActor>(self)
 	{
@@ -4616,14 +4747,14 @@ friend struct ActorCallback< Size_implActor, 0, Void >;
 
 	}
 };
-															#line 845 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 968 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 [[nodiscard]] static Future<int64_t> size_impl( SimpleFile const* const& self ) {
-															#line 845 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 968 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	return Future<int64_t>(new Size_implActor(self));
-															#line 4623 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4754 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 }
 
-#line 869 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+#line 992 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 };
 
 struct SimDiskSpace {
@@ -4653,24 +4784,24 @@ private:
 	ISimulator::ProcessInfo* process;
 	PromiseStream<Reference<IConnection>> nextConnection;
 
-																#line 4656 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+																#line 4787 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 // This generated class is to be used only via incoming()
-															#line 898 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1021 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 template <class IncomingActor>
-															#line 898 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1021 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 class IncomingActorState {
-															#line 4662 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4793 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 public:
-															#line 898 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1021 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	IncomingActorState(Reference<Sim2Listener> const& self,double const& seconds,Reference<IConnection> const& conn) 
-															#line 898 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-															#line 898 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1021 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1021 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		 : self(self),
-															#line 898 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1021 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		   seconds(seconds),
-															#line 898 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1021 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		   conn(conn)
-															#line 4673 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4804 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 	{
 		fdb_probe_actor_create("incoming", reinterpret_cast<unsigned long>(this));
 
@@ -4683,15 +4814,15 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 899 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-			StrictFuture<Void> __when_expr_0 = g_simulator.onProcess(self->process);
-															#line 899 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1022 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+			StrictFuture<Void> __when_expr_0 = g_simulator->onProcess(self->process);
+															#line 1022 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
-															#line 4690 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4821 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			static_cast<IncomingActor*>(this)->actor_wait_state = 1;
-															#line 899 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1022 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< IncomingActor, 0, Void >*>(static_cast<IncomingActor*>(this)));
-															#line 4694 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4825 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -4711,30 +4842,30 @@ public:
 	}
 	int a_body1cont1(Void const& _,int loopDepth) 
 	{
-															#line 900 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1023 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = delay(seconds);
-															#line 900 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1023 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
-															#line 4718 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4849 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		static_cast<IncomingActor*>(this)->actor_wait_state = 2;
-															#line 900 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1023 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< IncomingActor, 1, Void >*>(static_cast<IncomingActor*>(this)));
-															#line 4722 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4853 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont1(Void && _,int loopDepth) 
 	{
-															#line 900 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1023 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = delay(seconds);
-															#line 900 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1023 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
-															#line 4733 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4864 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		static_cast<IncomingActor*>(this)->actor_wait_state = 2;
-															#line 900 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1023 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< IncomingActor, 1, Void >*>(static_cast<IncomingActor*>(this)));
-															#line 4737 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4868 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -4804,40 +4935,40 @@ public:
 	}
 	int a_body1cont2(Void const& _,int loopDepth) 
 	{
-															#line 901 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1024 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (((Sim2Conn*)conn.getPtr())->isPeerGone() && deterministicRandom()->random01() < 0.5)
-															#line 4809 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4940 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		{
-															#line 902 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1025 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			delete static_cast<IncomingActor*>(this);
-															#line 4813 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4944 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			return 0;
 		}
-															#line 903 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1026 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		TraceEvent("Sim2IncomingConn", conn->getDebugID()) .detail("ListenAddress", self->getListenAddress()) .detail("PeerAddress", conn->getPeerAddress());
-															#line 906 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1029 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		self->nextConnection.send(conn);
-															#line 4820 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4951 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		loopDepth = a_body1cont5(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1cont2(Void && _,int loopDepth) 
 	{
-															#line 901 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1024 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (((Sim2Conn*)conn.getPtr())->isPeerGone() && deterministicRandom()->random01() < 0.5)
-															#line 4829 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4960 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		{
-															#line 902 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1025 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			delete static_cast<IncomingActor*>(this);
-															#line 4833 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4964 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			return 0;
 		}
-															#line 903 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1026 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		TraceEvent("Sim2IncomingConn", conn->getDebugID()) .detail("ListenAddress", self->getListenAddress()) .detail("PeerAddress", conn->getPeerAddress());
-															#line 906 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1029 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		self->nextConnection.send(conn);
-															#line 4840 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 4971 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		loopDepth = a_body1cont5(loopDepth);
 
 		return loopDepth;
@@ -4907,25 +5038,25 @@ public:
 	}
 	int a_body1cont5(int loopDepth) 
 	{
-															#line 898 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1021 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		delete static_cast<IncomingActor*>(this);
-															#line 4912 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 5043 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		return 0;
 
 		return loopDepth;
 	}
-															#line 898 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1021 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	Reference<Sim2Listener> self;
-															#line 898 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1021 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	double seconds;
-															#line 898 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1021 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	Reference<IConnection> conn;
-															#line 4923 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 5054 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 };
 // This generated class is to be used only via incoming()
-															#line 898 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1021 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 class IncomingActor final : public Actor<void>, public ActorCallback< IncomingActor, 0, Void >, public ActorCallback< IncomingActor, 1, Void >, public FastAllocated<IncomingActor>, public IncomingActorState<IncomingActor> {
-															#line 4928 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 5059 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 public:
 	using FastAllocated<IncomingActor>::operator new;
 	using FastAllocated<IncomingActor>::operator delete;
@@ -4935,9 +5066,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< IncomingActor, 0, Void >;
 friend struct ActorCallback< IncomingActor, 1, Void >;
-															#line 898 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1021 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	IncomingActor(Reference<Sim2Listener> const& self,double const& seconds,Reference<IConnection> const& conn) 
-															#line 4940 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 5071 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		 : Actor<void>(),
 		   IncomingActorState<IncomingActor>(self, seconds, conn)
 	{
@@ -4951,28 +5082,28 @@ friend struct ActorCallback< IncomingActor, 1, Void >;
 
 	}
 };
-															#line 898 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1021 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 static void incoming( Reference<Sim2Listener> const& self, double const& seconds, Reference<IConnection> const& conn ) {
-															#line 898 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1021 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	new IncomingActor(self, seconds, conn);
-															#line 4958 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 5089 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 }
 
-#line 908 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-																#line 4962 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+#line 1031 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+																#line 5093 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 // This generated class is to be used only via popOne()
-															#line 908 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1031 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 template <class PopOneActor>
-															#line 908 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1031 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 class PopOneActorState {
-															#line 4968 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 5099 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 public:
-															#line 908 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1031 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	PopOneActorState(FutureStream<Reference<IConnection>> const& conns) 
-															#line 908 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-															#line 908 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1031 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1031 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		 : conns(conns)
-															#line 4975 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 5106 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 	{
 		fdb_probe_actor_create("popOne", reinterpret_cast<unsigned long>(this));
 
@@ -4985,16 +5116,16 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 909 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1032 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			FutureStream<Reference<IConnection>> __when_expr_0 = conns;
-															#line 909 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1032 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			if (static_cast<PopOneActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 4992 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 5123 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.pop(), loopDepth); };
 			static_cast<PopOneActor*>(this)->actor_wait_state = 1;
-															#line 909 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1032 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorSingleCallback< PopOneActor, 0, Reference<IConnection> >*>(static_cast<PopOneActor*>(this)));
-															#line 4997 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 5128 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -5015,11 +5146,11 @@ public:
 	}
 	int a_body1cont1(Reference<IConnection> const& c,int loopDepth) 
 	{
-															#line 910 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1033 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		((Sim2Conn*)c.getPtr())->opened = true;
-															#line 911 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1034 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (!static_cast<PopOneActor*>(this)->SAV<Reference<IConnection>>::futures) { (void)(c); this->~PopOneActorState(); static_cast<PopOneActor*>(this)->destroy(); return 0; }
-															#line 5022 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 5153 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		new (&static_cast<PopOneActor*>(this)->SAV< Reference<IConnection> >::value()) Reference<IConnection>(c);
 		this->~PopOneActorState();
 		static_cast<PopOneActor*>(this)->finishSendAndDelPromiseRef();
@@ -5029,11 +5160,11 @@ public:
 	}
 	int a_body1cont1(Reference<IConnection> && c,int loopDepth) 
 	{
-															#line 910 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1033 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		((Sim2Conn*)c.getPtr())->opened = true;
-															#line 911 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1034 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (!static_cast<PopOneActor*>(this)->SAV<Reference<IConnection>>::futures) { (void)(c); this->~PopOneActorState(); static_cast<PopOneActor*>(this)->destroy(); return 0; }
-															#line 5036 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 5167 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		new (&static_cast<PopOneActor*>(this)->SAV< Reference<IConnection> >::value()) Reference<IConnection>(c);
 		this->~PopOneActorState();
 		static_cast<PopOneActor*>(this)->finishSendAndDelPromiseRef();
@@ -5104,14 +5235,14 @@ public:
 		fdb_probe_actor_exit("popOne", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 908 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1031 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	FutureStream<Reference<IConnection>> conns;
-															#line 5109 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 5240 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 };
 // This generated class is to be used only via popOne()
-															#line 908 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1031 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 class PopOneActor final : public Actor<Reference<IConnection>>, public ActorSingleCallback< PopOneActor, 0, Reference<IConnection> >, public FastAllocated<PopOneActor>, public PopOneActorState<PopOneActor> {
-															#line 5114 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 5245 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 public:
 	using FastAllocated<PopOneActor>::operator new;
 	using FastAllocated<PopOneActor>::operator delete;
@@ -5120,9 +5251,9 @@ public:
 	void destroy() override { ((Actor<Reference<IConnection>>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorSingleCallback< PopOneActor, 0, Reference<IConnection> >;
-															#line 908 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1031 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	PopOneActor(FutureStream<Reference<IConnection>> const& conns) 
-															#line 5125 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 5256 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		 : Actor<Reference<IConnection>>(),
 		   PopOneActorState<PopOneActor>(conns)
 	{
@@ -5145,19 +5276,19 @@ friend struct ActorSingleCallback< PopOneActor, 0, Reference<IConnection> >;
 
 	}
 };
-															#line 908 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1031 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 [[nodiscard]] static Future<Reference<IConnection>> popOne( FutureStream<Reference<IConnection>> const& conns ) {
-															#line 908 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1031 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	return Future<Reference<IConnection>>(new PopOneActor(conns));
-															#line 5152 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 5283 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 }
 
-#line 913 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+#line 1036 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 
 	NetworkAddress address;
 };
 
-#define g_sim2 ((Sim2&)g_simulator)
+#define g_sim2 ((Sim2&)(*g_simulator))
 
 class Sim2 final : public ISimulator, public INetworkConnections {
 public:
@@ -5184,37 +5315,42 @@ public:
 	}
 	Future<class Void> delay(double seconds, TaskPriority taskID, ProcessInfo* machine, bool ordered = false) {
 		ASSERT(seconds >= -0.0001);
-		seconds = std::max(0.0, seconds);
-		Future<Void> f;
 
-		if (!ordered && !currentProcess->rebooting && machine == currentProcess &&
-		    !currentProcess->shutdownSignal.isSet() && FLOW_KNOBS->MAX_BUGGIFIED_DELAY > 0 &&
-		    deterministicRandom()->random01() < 0.25) { // FIXME: why doesn't this work when we are changing machines?
-			seconds += FLOW_KNOBS->MAX_BUGGIFIED_DELAY * pow(deterministicRandom()->random01(), 1000.0);
+		if (seconds >= 4e12) // Intervals that overflow an int64_t in microseconds (more than 100,000 years) are treated
+		                     // as infinite
+			return Never();
+
+		PromiseTask* t = new PromiseTask(machine);
+		if (seconds <= TIME_EPS) {
+			taskQueue.addReady(taskID, t);
+		} else {
+			if (!ordered && !currentProcess->rebooting && machine == currentProcess &&
+			    !currentProcess->shutdownSignal.isSet() && FLOW_KNOBS->MAX_BUGGIFIED_DELAY > 0 &&
+			    deterministicRandom()->random01() < 0.25) {
+				// FIXME: why doesn't this work when we are changing machines?
+				seconds += FLOW_KNOBS->MAX_BUGGIFIED_DELAY * pow(deterministicRandom()->random01(), 1000.0);
+			}
+			double at = now() + seconds;
+			taskQueue.addTimer(at, taskID, t);
 		}
-
-		mutex.enter();
-		tasks.push(Task(time + seconds, taskID, taskCount++, machine, f));
-		mutex.leave();
-
-		return f;
+		return t->promise.getFuture();
 	}
-																#line 5202 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+																#line 5338 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 // This generated class is to be used only via checkShutdown()
-															#line 959 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1087 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 template <class CheckShutdownActor>
-															#line 959 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1087 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 class CheckShutdownActorState {
-															#line 5208 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 5344 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 public:
-															#line 959 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1087 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	CheckShutdownActorState(Sim2* const& self,TaskPriority const& taskID) 
-															#line 959 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-															#line 959 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1087 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1087 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		 : self(self),
-															#line 959 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1087 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		   taskID(taskID)
-															#line 5217 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 5353 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 	{
 		fdb_probe_actor_create("checkShutdown", reinterpret_cast<unsigned long>(this));
 
@@ -5227,16 +5363,16 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 960 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1088 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			StrictFuture<Void> __when_expr_0 = success(self->getCurrentProcess()->shutdownSignal.getFuture());
-															#line 960 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1088 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			if (static_cast<CheckShutdownActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 5234 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 5370 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<CheckShutdownActor*>(this)->actor_wait_state = 1;
-															#line 960 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1088 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< CheckShutdownActor, 0, Void >*>(static_cast<CheckShutdownActor*>(this)));
-															#line 5239 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 5375 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -5257,11 +5393,11 @@ public:
 	}
 	int a_body1cont1(Void const& _,int loopDepth) 
 	{
-															#line 961 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1089 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		self->setCurrentTask(taskID);
-															#line 962 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1090 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (!static_cast<CheckShutdownActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~CheckShutdownActorState(); static_cast<CheckShutdownActor*>(this)->destroy(); return 0; }
-															#line 5264 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 5400 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		new (&static_cast<CheckShutdownActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~CheckShutdownActorState();
 		static_cast<CheckShutdownActor*>(this)->finishSendAndDelPromiseRef();
@@ -5271,11 +5407,11 @@ public:
 	}
 	int a_body1cont1(Void && _,int loopDepth) 
 	{
-															#line 961 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1089 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		self->setCurrentTask(taskID);
-															#line 962 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1090 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (!static_cast<CheckShutdownActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~CheckShutdownActorState(); static_cast<CheckShutdownActor*>(this)->destroy(); return 0; }
-															#line 5278 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 5414 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		new (&static_cast<CheckShutdownActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~CheckShutdownActorState();
 		static_cast<CheckShutdownActor*>(this)->finishSendAndDelPromiseRef();
@@ -5346,16 +5482,16 @@ public:
 		fdb_probe_actor_exit("checkShutdown", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 959 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1087 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	Sim2* self;
-															#line 959 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1087 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	TaskPriority taskID;
-															#line 5353 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 5489 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 };
 // This generated class is to be used only via checkShutdown()
-															#line 959 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1087 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 class CheckShutdownActor final : public Actor<Void>, public ActorCallback< CheckShutdownActor, 0, Void >, public FastAllocated<CheckShutdownActor>, public CheckShutdownActorState<CheckShutdownActor> {
-															#line 5358 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 5494 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 public:
 	using FastAllocated<CheckShutdownActor>::operator new;
 	using FastAllocated<CheckShutdownActor>::operator delete;
@@ -5364,9 +5500,9 @@ public:
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< CheckShutdownActor, 0, Void >;
-															#line 959 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1087 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	CheckShutdownActor(Sim2* const& self,TaskPriority const& taskID) 
-															#line 5369 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 5505 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		 : Actor<Void>(),
 		   CheckShutdownActorState<CheckShutdownActor>(self, taskID)
 	{
@@ -5389,14 +5525,14 @@ friend struct ActorCallback< CheckShutdownActor, 0, Void >;
 
 	}
 };
-															#line 959 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1087 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 [[nodiscard]] static Future<Void> checkShutdown( Sim2* const& self, TaskPriority const& taskID ) {
-															#line 959 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1087 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	return Future<Void>(new CheckShutdownActor(self, taskID));
-															#line 5396 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 5532 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 }
 
-#line 964 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+#line 1092 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	Future<class Void> yield(TaskPriority taskID) override {
 		if (taskID == TaskPriority::DefaultYield)
 			taskID = currentTaskID;
@@ -5451,6 +5587,10 @@ friend struct ActorCallback< CheckShutdownActor, 0, Void >;
 	}
 
 	Future<Reference<IConnection>> connectExternal(NetworkAddress toAddr) override {
+		// If sim http connection, do connect instead of external connect
+		if (httpServerIps.count(toAddr.ip)) {
+			return connect(toAddr);
+		}
 		return SimExternalConnection::connect(toAddr);
 	}
 
@@ -5518,22 +5658,22 @@ friend struct ActorCallback< CheckShutdownActor, 0, Void >;
 		}
 		return SimExternalConnection::resolveTCPEndpointBlocking(host, service, &dnsCache);
 	}
-																#line 5521 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+																#line 5661 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 // This generated class is to be used only via onConnect()
-															#line 1085 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1217 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 template <class OnConnectActor>
-															#line 1085 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1217 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 class OnConnectActorState {
-															#line 5527 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 5667 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 public:
-															#line 1085 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1217 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	OnConnectActorState(Future<Void> const& ready,Reference<Sim2Conn> const& conn) 
-															#line 1085 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-															#line 1085 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1217 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1217 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		 : ready(ready),
-															#line 1085 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1217 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		   conn(conn)
-															#line 5536 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 5676 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 	{
 		fdb_probe_actor_create("onConnect", reinterpret_cast<unsigned long>(this));
 
@@ -5546,16 +5686,16 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 1086 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1218 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			StrictFuture<Void> __when_expr_0 = ready;
-															#line 1086 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1218 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			if (static_cast<OnConnectActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 5553 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 5693 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<OnConnectActor*>(this)->actor_wait_state = 1;
-															#line 1086 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1218 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< OnConnectActor, 0, Void >*>(static_cast<OnConnectActor*>(this)));
-															#line 5558 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 5698 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -5576,30 +5716,30 @@ public:
 	}
 	int a_body1cont1(Void const& _,int loopDepth) 
 	{
-															#line 1087 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1219 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (conn->isPeerGone())
-															#line 5581 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 5721 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		{
-															#line 1088 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1220 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			conn.clear();
-															#line 1089 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1221 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			if (FLOW_KNOBS->SIM_CONNECT_ERROR_MODE == 1 || (FLOW_KNOBS->SIM_CONNECT_ERROR_MODE == 2 && deterministicRandom()->random01() > 0.5))
-															#line 5587 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 5727 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			{
-															#line 1091 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1223 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 				return a_body1Catch1(connection_failed(), loopDepth);
-															#line 5591 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 5731 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			}
-															#line 1093 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1225 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			StrictFuture<Void> __when_expr_1 = Never();
-															#line 1093 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1225 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			if (static_cast<OnConnectActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 5597 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 5737 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 			static_cast<OnConnectActor*>(this)->actor_wait_state = 2;
-															#line 1093 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1225 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< OnConnectActor, 1, Void >*>(static_cast<OnConnectActor*>(this)));
-															#line 5602 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 5742 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			loopDepth = 0;
 		}
 		else
@@ -5611,30 +5751,30 @@ public:
 	}
 	int a_body1cont1(Void && _,int loopDepth) 
 	{
-															#line 1087 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1219 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (conn->isPeerGone())
-															#line 5616 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 5756 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		{
-															#line 1088 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1220 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			conn.clear();
-															#line 1089 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1221 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			if (FLOW_KNOBS->SIM_CONNECT_ERROR_MODE == 1 || (FLOW_KNOBS->SIM_CONNECT_ERROR_MODE == 2 && deterministicRandom()->random01() > 0.5))
-															#line 5622 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 5762 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			{
-															#line 1091 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1223 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 				return a_body1Catch1(connection_failed(), loopDepth);
-															#line 5626 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 5766 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			}
-															#line 1093 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1225 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			StrictFuture<Void> __when_expr_1 = Never();
-															#line 1093 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1225 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			if (static_cast<OnConnectActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 5632 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 5772 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 			static_cast<OnConnectActor*>(this)->actor_wait_state = 2;
-															#line 1093 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1225 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< OnConnectActor, 1, Void >*>(static_cast<OnConnectActor*>(this)));
-															#line 5637 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 5777 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			loopDepth = 0;
 		}
 		else
@@ -5709,11 +5849,11 @@ public:
 	}
 	int a_body1cont2(int loopDepth) 
 	{
-															#line 1095 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1227 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		conn->opened = true;
-															#line 1096 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1228 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (!static_cast<OnConnectActor*>(this)->SAV<Reference<IConnection>>::futures) { (void)(conn); this->~OnConnectActorState(); static_cast<OnConnectActor*>(this)->destroy(); return 0; }
-															#line 5716 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 5856 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		new (&static_cast<OnConnectActor*>(this)->SAV< Reference<IConnection> >::value()) Reference<IConnection>(std::move(conn)); // state_var_RVO
 		this->~OnConnectActorState();
 		static_cast<OnConnectActor*>(this)->finishSendAndDelPromiseRef();
@@ -5796,16 +5936,16 @@ public:
 		fdb_probe_actor_exit("onConnect", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 1085 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1217 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	Future<Void> ready;
-															#line 1085 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1217 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	Reference<Sim2Conn> conn;
-															#line 5803 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 5943 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 };
 // This generated class is to be used only via onConnect()
-															#line 1085 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1217 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 class OnConnectActor final : public Actor<Reference<IConnection>>, public ActorCallback< OnConnectActor, 0, Void >, public ActorCallback< OnConnectActor, 1, Void >, public FastAllocated<OnConnectActor>, public OnConnectActorState<OnConnectActor> {
-															#line 5808 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 5948 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 public:
 	using FastAllocated<OnConnectActor>::operator new;
 	using FastAllocated<OnConnectActor>::operator delete;
@@ -5815,9 +5955,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< OnConnectActor, 0, Void >;
 friend struct ActorCallback< OnConnectActor, 1, Void >;
-															#line 1085 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1217 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	OnConnectActor(Future<Void> const& ready,Reference<Sim2Conn> const& conn) 
-															#line 5820 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 5960 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		 : Actor<Reference<IConnection>>(),
 		   OnConnectActorState<OnConnectActor>(ready, conn)
 	{
@@ -5841,35 +5981,35 @@ friend struct ActorCallback< OnConnectActor, 1, Void >;
 
 	}
 };
-															#line 1085 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1217 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 [[nodiscard]] static Future<Reference<IConnection>> onConnect( Future<Void> const& ready, Reference<Sim2Conn> const& conn ) {
-															#line 1085 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1217 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	return Future<Reference<IConnection>>(new OnConnectActor(ready, conn));
-															#line 5848 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 5988 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 }
 
-#line 1098 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+#line 1230 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	Reference<IListener> listen(NetworkAddress localAddr) override {
 		Reference<IListener> listener(getCurrentProcess()->getListener(localAddr));
 		ASSERT(listener);
 		return listener;
 	}
-																#line 5857 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+																#line 5997 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 // This generated class is to be used only via waitForProcessAndConnect()
-															#line 1103 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1235 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 template <class WaitForProcessAndConnectActor>
-															#line 1103 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1235 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 class WaitForProcessAndConnectActorState {
-															#line 5863 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 6003 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 public:
-															#line 1103 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1235 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	WaitForProcessAndConnectActorState(NetworkAddress const& toAddr,INetworkConnections* const& self) 
-															#line 1103 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-															#line 1103 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1235 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1235 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		 : toAddr(toAddr),
-															#line 1103 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1235 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		   self(self)
-															#line 5872 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 6012 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 	{
 		fdb_probe_actor_create("waitForProcessAndConnect", reinterpret_cast<unsigned long>(this));
 
@@ -5882,9 +6022,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 1106 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1238 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			;
-															#line 5887 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 6027 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -5912,36 +6052,36 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 1107 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1239 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		StrictFuture<Void> __when_expr_0 = ::delay(0.1 * deterministicRandom()->random01());
-															#line 1107 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1239 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (static_cast<WaitForProcessAndConnectActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 5919 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 6059 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 		static_cast<WaitForProcessAndConnectActor*>(this)->actor_wait_state = 1;
-															#line 1107 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1239 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< WaitForProcessAndConnectActor, 0, Void >*>(static_cast<WaitForProcessAndConnectActor*>(this)));
-															#line 5924 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 6064 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont1(Void const& _,int loopDepth) 
 	{
-															#line 1108 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1240 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (g_sim2.addressMap.count(toAddr))
-															#line 5933 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 6073 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		{
-															#line 1109 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1241 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			StrictFuture<Reference<IConnection>> __when_expr_1 = self->connect(toAddr);
-															#line 1109 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1241 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			if (static_cast<WaitForProcessAndConnectActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 5939 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 6079 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1cont1when1(__when_expr_1.get(), loopDepth); };
 			static_cast<WaitForProcessAndConnectActor*>(this)->actor_wait_state = 2;
-															#line 1109 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1241 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< WaitForProcessAndConnectActor, 1, Reference<IConnection> >*>(static_cast<WaitForProcessAndConnectActor*>(this)));
-															#line 5944 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 6084 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			loopDepth = 0;
 		}
 		else
@@ -5953,20 +6093,20 @@ public:
 	}
 	int a_body1loopBody1cont1(Void && _,int loopDepth) 
 	{
-															#line 1108 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1240 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (g_sim2.addressMap.count(toAddr))
-															#line 5958 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 6098 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		{
-															#line 1109 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1241 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			StrictFuture<Reference<IConnection>> __when_expr_1 = self->connect(toAddr);
-															#line 1109 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1241 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			if (static_cast<WaitForProcessAndConnectActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 5964 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 6104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1cont1when1(__when_expr_1.get(), loopDepth); };
 			static_cast<WaitForProcessAndConnectActor*>(this)->actor_wait_state = 2;
-															#line 1109 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1241 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< WaitForProcessAndConnectActor, 1, Reference<IConnection> >*>(static_cast<WaitForProcessAndConnectActor*>(this)));
-															#line 5969 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 6109 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			loopDepth = 0;
 		}
 		else
@@ -6047,9 +6187,9 @@ public:
 	}
 	int a_body1loopBody1cont3(Reference<IConnection> const& c,int loopDepth) 
 	{
-															#line 1110 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1242 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (!static_cast<WaitForProcessAndConnectActor*>(this)->SAV<Reference<IConnection>>::futures) { (void)(c); this->~WaitForProcessAndConnectActorState(); static_cast<WaitForProcessAndConnectActor*>(this)->destroy(); return 0; }
-															#line 6052 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 6192 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		new (&static_cast<WaitForProcessAndConnectActor*>(this)->SAV< Reference<IConnection> >::value()) Reference<IConnection>(c);
 		this->~WaitForProcessAndConnectActorState();
 		static_cast<WaitForProcessAndConnectActor*>(this)->finishSendAndDelPromiseRef();
@@ -6059,9 +6199,9 @@ public:
 	}
 	int a_body1loopBody1cont3(Reference<IConnection> && c,int loopDepth) 
 	{
-															#line 1110 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1242 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (!static_cast<WaitForProcessAndConnectActor*>(this)->SAV<Reference<IConnection>>::futures) { (void)(c); this->~WaitForProcessAndConnectActorState(); static_cast<WaitForProcessAndConnectActor*>(this)->destroy(); return 0; }
-															#line 6064 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 6204 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		new (&static_cast<WaitForProcessAndConnectActor*>(this)->SAV< Reference<IConnection> >::value()) Reference<IConnection>(c);
 		this->~WaitForProcessAndConnectActorState();
 		static_cast<WaitForProcessAndConnectActor*>(this)->finishSendAndDelPromiseRef();
@@ -6132,16 +6272,16 @@ public:
 		fdb_probe_actor_exit("waitForProcessAndConnect", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 1103 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1235 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	NetworkAddress toAddr;
-															#line 1103 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1235 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	INetworkConnections* self;
-															#line 6139 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 6279 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 };
 // This generated class is to be used only via waitForProcessAndConnect()
-															#line 1103 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1235 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 class WaitForProcessAndConnectActor final : public Actor<Reference<IConnection>>, public ActorCallback< WaitForProcessAndConnectActor, 0, Void >, public ActorCallback< WaitForProcessAndConnectActor, 1, Reference<IConnection> >, public FastAllocated<WaitForProcessAndConnectActor>, public WaitForProcessAndConnectActorState<WaitForProcessAndConnectActor> {
-															#line 6144 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 6284 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 public:
 	using FastAllocated<WaitForProcessAndConnectActor>::operator new;
 	using FastAllocated<WaitForProcessAndConnectActor>::operator delete;
@@ -6151,9 +6291,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< WaitForProcessAndConnectActor, 0, Void >;
 friend struct ActorCallback< WaitForProcessAndConnectActor, 1, Reference<IConnection> >;
-															#line 1103 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1235 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	WaitForProcessAndConnectActor(NetworkAddress const& toAddr,INetworkConnections* const& self) 
-															#line 6156 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 6296 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		 : Actor<Reference<IConnection>>(),
 		   WaitForProcessAndConnectActorState<WaitForProcessAndConnectActor>(toAddr, self)
 	{
@@ -6177,14 +6317,14 @@ friend struct ActorCallback< WaitForProcessAndConnectActor, 1, Reference<IConnec
 
 	}
 };
-															#line 1103 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1235 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 [[nodiscard]] static Future<Reference<IConnection>> waitForProcessAndConnect( NetworkAddress const& toAddr, INetworkConnections* const& self ) {
-															#line 1103 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1235 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	return Future<Reference<IConnection>>(new WaitForProcessAndConnectActor(toAddr, self));
-															#line 6184 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 6324 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 }
 
-#line 1114 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+#line 1246 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	const TLSConfig& getTLSConfig() const override {
 		static TLSConfig emptyConfig;
 		return emptyConfig;
@@ -6208,7 +6348,7 @@ friend struct ActorCallback< WaitForProcessAndConnectActor, 1, Reference<IConnec
 
 		SimThreadArgs(THREAD_FUNC_RETURN (*func)(void*), void* arg) : func(func), arg(arg) {
 			ASSERT(g_network->isSimulated());
-			currentProcess = g_simulator.getCurrentProcess();
+			currentProcess = g_simulator->getCurrentProcess();
 		}
 	};
 
@@ -6278,24 +6418,24 @@ friend struct ActorCallback< WaitForProcessAndConnectActor, 1, Reference<IConnec
 		return addr.ip == getCurrentProcess()->address.ip;
 	}
 
-																#line 6281 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+																#line 6421 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 // This generated class is to be used only via deleteFileImpl()
-															#line 1207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1339 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 template <class DeleteFileImplActor>
-															#line 1207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1339 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 class DeleteFileImplActorState {
-															#line 6287 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 6427 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 public:
-															#line 1207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1339 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	DeleteFileImplActorState(Sim2* const& self,std::string const& filename,bool const& mustBeDurable) 
-															#line 1207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-															#line 1207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1339 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1339 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		 : self(self),
-															#line 1207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1339 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		   filename(filename),
-															#line 1207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1339 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		   mustBeDurable(mustBeDurable)
-															#line 6298 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 6438 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 	{
 		fdb_probe_actor_create("deleteFileImpl", reinterpret_cast<unsigned long>(this));
 
@@ -6308,47 +6448,47 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 1211 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-			if (g_simulator.getCurrentProcess()->machine->openFiles.count(filename))
-															#line 6313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 1343 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+			if (g_simulator->getCurrentProcess()->machine->openFiles.count(filename))
+															#line 6453 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			{
-															#line 1212 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-				g_simulator.getCurrentProcess()->machine->openFiles.erase(filename);
-															#line 1213 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-				g_simulator.getCurrentProcess()->machine->deletingOrClosingFiles.insert(filename);
-															#line 6319 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 1344 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+				g_simulator->getCurrentProcess()->machine->openFiles.erase(filename);
+															#line 1345 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+				g_simulator->getCurrentProcess()->machine->deletingOrClosingFiles.insert(filename);
+															#line 6459 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			}
-															#line 1215 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1347 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			if (mustBeDurable || deterministicRandom()->random01() < 0.5)
-															#line 6323 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 6463 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			{
-															#line 1216 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-				currentProcess = g_simulator.getCurrentProcess();
-															#line 1217 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1348 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+				currentProcess = g_simulator->getCurrentProcess();
+															#line 1349 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 				currentTaskID = g_network->getCurrentTask();
-															#line 1218 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1350 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 				TraceEvent(SevDebug, "Sim2DeleteFileImpl") .detail("CurrentProcess", currentProcess->toString()) .detail("Filename", filename) .detail("Durable", mustBeDurable);
-															#line 1222 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-				StrictFuture<Void> __when_expr_0 = g_simulator.onMachine(currentProcess);
-															#line 1222 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1354 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+				StrictFuture<Void> __when_expr_0 = g_simulator->onMachine(currentProcess);
+															#line 1354 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 				if (static_cast<DeleteFileImplActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 6335 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 6475 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 				if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 				static_cast<DeleteFileImplActor*>(this)->actor_wait_state = 1;
-															#line 1222 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1354 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 				__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< DeleteFileImplActor, 0, Void >*>(static_cast<DeleteFileImplActor*>(this)));
-															#line 6340 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 6480 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 				loopDepth = 0;
 			}
 			else
 			{
-															#line 1239 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1371 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 				TraceEvent(SevDebug, "Sim2DeleteFileImplNonDurable") .detail("Filename", filename) .detail("Durable", mustBeDurable);
-															#line 1242 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-				TEST(true);
-															#line 1243 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1374 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+				CODE_PROBE(true, "Simulated non-durable delete", probe::context::sim2, probe::assert::simOnly);
+															#line 1375 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 				if (!static_cast<DeleteFileImplActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~DeleteFileImplActorState(); static_cast<DeleteFileImplActor*>(this)->destroy(); return 0; }
-															#line 6351 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 6491 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 				new (&static_cast<DeleteFileImplActor*>(this)->SAV< Void >::value()) Void(Void());
 				this->~DeleteFileImplActorState();
 				static_cast<DeleteFileImplActor*>(this)->finishSendAndDelPromiseRef();
@@ -6374,16 +6514,16 @@ public:
 	int a_body1cont3(Void const& _,int loopDepth) 
 	{
 		try {
-															#line 1224 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1356 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			StrictFuture<Void> __when_expr_1 = ::delay(0.05 * deterministicRandom()->random01());
-															#line 1224 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1356 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			if (static_cast<DeleteFileImplActor*>(this)->actor_wait_state < 0) return a_body1cont3Catch1(actor_cancelled(), loopDepth);
-															#line 6381 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 6521 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1cont3Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont3when1(__when_expr_1.get(), loopDepth); };
 			static_cast<DeleteFileImplActor*>(this)->actor_wait_state = 2;
-															#line 1224 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1356 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< DeleteFileImplActor, 1, Void >*>(static_cast<DeleteFileImplActor*>(this)));
-															#line 6386 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 6526 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -6397,16 +6537,16 @@ public:
 	int a_body1cont3(Void && _,int loopDepth) 
 	{
 		try {
-															#line 1224 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1356 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			StrictFuture<Void> __when_expr_1 = ::delay(0.05 * deterministicRandom()->random01());
-															#line 1224 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1356 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			if (static_cast<DeleteFileImplActor*>(this)->actor_wait_state < 0) return a_body1cont3Catch1(actor_cancelled(), loopDepth);
-															#line 6404 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 6544 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1cont3Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont3when1(__when_expr_1.get(), loopDepth); };
 			static_cast<DeleteFileImplActor*>(this)->actor_wait_state = 2;
-															#line 1224 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1356 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< DeleteFileImplActor, 1, Void >*>(static_cast<DeleteFileImplActor*>(this)));
-															#line 6409 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 6549 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -6483,18 +6623,18 @@ public:
 	int a_body1cont3Catch1(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 1234 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1366 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			err = e;
-															#line 1235 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-			StrictFuture<Void> __when_expr_4 = g_simulator.onProcess(currentProcess, currentTaskID);
-															#line 1235 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1367 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+			StrictFuture<Void> __when_expr_4 = g_simulator->onProcess(currentProcess, currentTaskID);
+															#line 1367 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			if (static_cast<DeleteFileImplActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 6492 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 6632 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			if (__when_expr_4.isReady()) { if (__when_expr_4.isError()) return a_body1Catch1(__when_expr_4.getError(), loopDepth); else return a_body1cont3Catch1when1(__when_expr_4.get(), loopDepth); };
 			static_cast<DeleteFileImplActor*>(this)->actor_wait_state = 5;
-															#line 1235 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1367 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			__when_expr_4.addCallbackAndClear(static_cast<ActorCallback< DeleteFileImplActor, 4, Void >*>(static_cast<DeleteFileImplActor*>(this)));
-															#line 6497 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 6637 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -6507,24 +6647,24 @@ public:
 	}
 	int a_body1cont5(Void const& _,int loopDepth) 
 	{
-															#line 1225 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1357 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (!currentProcess->rebooting)
-															#line 6512 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 6652 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		{
-															#line 1226 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1358 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			auto f = IAsyncFileSystem::filesystem(self->net2)->deleteFile(filename, false);
-															#line 1227 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1359 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			ASSERT(f.isReady());
-															#line 1228 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1360 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			StrictFuture<Void> __when_expr_2 = ::delay(0.05 * deterministicRandom()->random01());
-															#line 1228 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1360 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			if (static_cast<DeleteFileImplActor*>(this)->actor_wait_state < 0) return a_body1cont3Catch1(actor_cancelled(), loopDepth);
-															#line 6522 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 6662 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1cont3Catch1(__when_expr_2.getError(), loopDepth); else return a_body1cont5when1(__when_expr_2.get(), loopDepth); };
 			static_cast<DeleteFileImplActor*>(this)->actor_wait_state = 3;
-															#line 1228 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1360 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< DeleteFileImplActor, 2, Void >*>(static_cast<DeleteFileImplActor*>(this)));
-															#line 6527 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 6667 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			loopDepth = 0;
 		}
 		else
@@ -6536,24 +6676,24 @@ public:
 	}
 	int a_body1cont5(Void && _,int loopDepth) 
 	{
-															#line 1225 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1357 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (!currentProcess->rebooting)
-															#line 6541 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 6681 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		{
-															#line 1226 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1358 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			auto f = IAsyncFileSystem::filesystem(self->net2)->deleteFile(filename, false);
-															#line 1227 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1359 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			ASSERT(f.isReady());
-															#line 1228 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1360 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			StrictFuture<Void> __when_expr_2 = ::delay(0.05 * deterministicRandom()->random01());
-															#line 1228 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1360 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			if (static_cast<DeleteFileImplActor*>(this)->actor_wait_state < 0) return a_body1cont3Catch1(actor_cancelled(), loopDepth);
-															#line 6551 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 6691 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1cont3Catch1(__when_expr_2.getError(), loopDepth); else return a_body1cont5when1(__when_expr_2.get(), loopDepth); };
 			static_cast<DeleteFileImplActor*>(this)->actor_wait_state = 3;
-															#line 1228 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1360 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< DeleteFileImplActor, 2, Void >*>(static_cast<DeleteFileImplActor*>(this)));
-															#line 6556 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 6696 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			loopDepth = 0;
 		}
 		else
@@ -6628,34 +6768,34 @@ public:
 	}
 	int a_body1cont6(int loopDepth) 
 	{
-															#line 1231 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-		StrictFuture<Void> __when_expr_3 = g_simulator.onProcess(currentProcess, currentTaskID);
-															#line 1231 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1363 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		StrictFuture<Void> __when_expr_3 = g_simulator->onProcess(currentProcess, currentTaskID);
+															#line 1363 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (static_cast<DeleteFileImplActor*>(this)->actor_wait_state < 0) return a_body1cont3Catch1(actor_cancelled(), loopDepth);
-															#line 6635 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 6775 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		if (__when_expr_3.isReady()) { if (__when_expr_3.isError()) return a_body1cont3Catch1(__when_expr_3.getError(), loopDepth); else return a_body1cont6when1(__when_expr_3.get(), loopDepth); };
 		static_cast<DeleteFileImplActor*>(this)->actor_wait_state = 4;
-															#line 1231 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1363 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		__when_expr_3.addCallbackAndClear(static_cast<ActorCallback< DeleteFileImplActor, 3, Void >*>(static_cast<DeleteFileImplActor*>(this)));
-															#line 6640 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 6780 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont7(Void const& _,int loopDepth) 
 	{
-															#line 1229 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-		TEST(true);
-															#line 6649 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 1361 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		CODE_PROBE(true, "Simulated durable delete", probe::context::sim2, probe::assert::simOnly);
+															#line 6789 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		loopDepth = a_body1cont6(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1cont7(Void && _,int loopDepth) 
 	{
-															#line 1229 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-		TEST(true);
-															#line 6658 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 1361 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		CODE_PROBE(true, "Simulated durable delete", probe::context::sim2, probe::assert::simOnly);
+															#line 6798 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		loopDepth = a_body1cont6(loopDepth);
 
 		return loopDepth;
@@ -6725,9 +6865,9 @@ public:
 	}
 	int a_body1cont9(Void const& _,int loopDepth) 
 	{
-															#line 1232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1364 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (!static_cast<DeleteFileImplActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~DeleteFileImplActorState(); static_cast<DeleteFileImplActor*>(this)->destroy(); return 0; }
-															#line 6730 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 6870 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		new (&static_cast<DeleteFileImplActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~DeleteFileImplActorState();
 		static_cast<DeleteFileImplActor*>(this)->finishSendAndDelPromiseRef();
@@ -6737,9 +6877,9 @@ public:
 	}
 	int a_body1cont9(Void && _,int loopDepth) 
 	{
-															#line 1232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1364 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (!static_cast<DeleteFileImplActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~DeleteFileImplActorState(); static_cast<DeleteFileImplActor*>(this)->destroy(); return 0; }
-															#line 6742 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 6882 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		new (&static_cast<DeleteFileImplActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~DeleteFileImplActorState();
 		static_cast<DeleteFileImplActor*>(this)->finishSendAndDelPromiseRef();
@@ -6812,17 +6952,17 @@ public:
 	}
 	int a_body1cont3Catch1cont1(Void const& _,int loopDepth) 
 	{
-															#line 1236 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1368 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		return a_body1Catch1(err, loopDepth);
-															#line 6817 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 6957 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 
 		return loopDepth;
 	}
 	int a_body1cont3Catch1cont1(Void && _,int loopDepth) 
 	{
-															#line 1236 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1368 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		return a_body1Catch1(err, loopDepth);
-															#line 6825 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 6965 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 
 		return loopDepth;
 	}
@@ -6889,24 +7029,24 @@ public:
 		fdb_probe_actor_exit("deleteFileImpl", reinterpret_cast<unsigned long>(this), 4);
 
 	}
-															#line 1207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1339 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	Sim2* self;
-															#line 1207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1339 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	std::string filename;
-															#line 1207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1339 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	bool mustBeDurable;
-															#line 1216 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1348 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	ISimulator::ProcessInfo* currentProcess;
-															#line 1217 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1349 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	TaskPriority currentTaskID;
-															#line 1234 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1366 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	Error err;
-															#line 6904 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 7044 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 };
 // This generated class is to be used only via deleteFileImpl()
-															#line 1207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1339 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 class DeleteFileImplActor final : public Actor<Void>, public ActorCallback< DeleteFileImplActor, 0, Void >, public ActorCallback< DeleteFileImplActor, 1, Void >, public ActorCallback< DeleteFileImplActor, 2, Void >, public ActorCallback< DeleteFileImplActor, 3, Void >, public ActorCallback< DeleteFileImplActor, 4, Void >, public FastAllocated<DeleteFileImplActor>, public DeleteFileImplActorState<DeleteFileImplActor> {
-															#line 6909 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 7049 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 public:
 	using FastAllocated<DeleteFileImplActor>::operator new;
 	using FastAllocated<DeleteFileImplActor>::operator delete;
@@ -6919,9 +7059,9 @@ friend struct ActorCallback< DeleteFileImplActor, 1, Void >;
 friend struct ActorCallback< DeleteFileImplActor, 2, Void >;
 friend struct ActorCallback< DeleteFileImplActor, 3, Void >;
 friend struct ActorCallback< DeleteFileImplActor, 4, Void >;
-															#line 1207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1339 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	DeleteFileImplActor(Sim2* const& self,std::string const& filename,bool const& mustBeDurable) 
-															#line 6924 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 7064 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		 : Actor<Void>(),
 		   DeleteFileImplActorState<DeleteFileImplActor>(self, filename, mustBeDurable)
 	{
@@ -6948,32 +7088,43 @@ friend struct ActorCallback< DeleteFileImplActor, 4, Void >;
 
 	}
 };
-															#line 1207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1339 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 [[nodiscard]] static Future<Void> deleteFileImpl( Sim2* const& self, std::string const& filename, bool const& mustBeDurable ) {
-															#line 1207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 1339 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	return Future<Void>(new DeleteFileImplActor(self, filename, mustBeDurable));
-															#line 6955 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 7095 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 }
 
-#line 1246 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+#line 1378 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 
 	static void runLoop(Sim2* self) {
 		ISimulator::ProcessInfo* callingMachine = self->currentProcess;
+		int lastPrintTime = 0;
 		while (!self->isStopped) {
-			self->mutex.enter();
-			if (self->tasks.size() == 0) {
-				self->mutex.leave();
-				ASSERT(false);
+			if (self->taskQueue.canSleep()) {
+				double sleepTime = self->taskQueue.getSleepTime(self->time);
+				self->time +=
+				    sleepTime + FLOW_KNOBS->MAX_RUNLOOP_SLEEP_DELAY * pow(deterministicRandom()->random01(), 1000.0);
+				if (self->printSimTime && (int)self->time > lastPrintTime) {
+					printf("Time: %d\n", (int)self->time);
+					lastPrintTime = (int)self->time;
+				}
+				self->timerTime = std::max(self->timerTime, self->time);
 			}
 			// if (!randLog/* && now() >= 32.0*/)
 			//	randLog = fopen("randLog.txt", "wt");
-			Task t = std::move(self->tasks.top()); // Unfortunately still a copy under gcc where .top() returns const&
-			self->currentTaskID = t.taskID;
-			self->tasks.pop();
-			self->mutex.leave();
 
-			self->execTask(t);
-			self->yielded = false;
+			self->taskQueue.processReadyTimers(self->time);
+			self->taskQueue.processThreadReady();
+
+			while (self->taskQueue.hasReadyTask()) {
+				self->currentTaskID = self->taskQueue.getReadyTaskID();
+				PromiseTask* task = self->taskQueue.getReadyTask();
+				self->taskQueue.popReadyTask();
+				self->execTask(*task);
+				delete task;
+				self->yielded = false;
+			}
 		}
 		self->currentProcess = callingMachine;
 		for (auto& fn : self->stopCallbacks) {
@@ -6992,7 +7143,8 @@ friend struct ActorCallback< DeleteFileImplActor, 4, Void >;
 	                        ProcessClass startingClass,
 	                        const char* dataFolder,
 	                        const char* coordinationFolder,
-	                        ProtocolVersion protocol) override {
+	                        ProtocolVersion protocol,
+	                        bool drProcess) override {
 		ASSERT(locality.machineId().present());
 		MachineInfo& machine = machines[locality.machineId().get()];
 		if (!machine.machineId.present())
@@ -7039,9 +7191,10 @@ friend struct ActorCallback< DeleteFileImplActor, 4, Void >;
 		m->machine = &machine;
 		machine.processes.push_back(m);
 		currentlyRebootingProcesses.erase(addresses.address);
-		m->excluded = g_simulator.isExcluded(NetworkAddress(ip, port, true, false));
-		m->cleared = g_simulator.isCleared(addresses.address);
+		m->excluded = g_simulator->isExcluded(NetworkAddress(ip, port, true, false));
+		m->cleared = g_simulator->isCleared(addresses.address);
 		m->protocolVersion = protocol;
+		m->drProcess = drProcess;
 
 		m->setGlobal(enTDMetrics, (flowGlobalType)&m->tdmetrics);
 		if (FLOW_KNOBS->ENABLE_CHAOS_FEATURES) {
@@ -7049,13 +7202,15 @@ friend struct ActorCallback< DeleteFileImplActor, 4, Void >;
 		}
 		m->setGlobal(enNetworkConnections, (flowGlobalType)m->network);
 		m->setGlobal(enASIOTimedOut, (flowGlobalType) false);
+		m->setGlobal(INetwork::enMetrics, (flowGlobalType)&m->metrics);
 
 		TraceEvent("NewMachine")
 		    .detail("Name", name)
 		    .detail("Address", m->address)
 		    .detail("MachineId", m->locality.machineId())
 		    .detail("Excluded", m->excluded)
-		    .detail("Cleared", m->cleared);
+		    .detail("Cleared", m->cleared)
+		    .detail("DrProcess", m->drProcess);
 
 		if (std::string(name) == "remote flow process") {
 			protectedAddresses.insert(m->address);
@@ -7077,7 +7232,20 @@ friend struct ActorCallback< DeleteFileImplActor, 4, Void >;
 				}
 			}
 		}
-		return canKillProcesses(processesLeft, processesDead, KillInstantly, nullptr);
+		return canKillProcesses(processesLeft, processesDead, KillType::KillInstantly, nullptr);
+	}
+
+	std::vector<AddressExclusion> getAllAddressesInDCToExclude(Optional<Standalone<StringRef>> dcId) const override {
+		std::vector<AddressExclusion> addresses;
+		if (!dcId.present()) {
+			return addresses;
+		}
+		for (const auto& processInfo : getAllProcesses()) {
+			if (processInfo->locality.dcId() == dcId) {
+				addresses.emplace_back(processInfo->address.ip, processInfo->address.port);
+			}
+		}
+		return addresses;
 	}
 
 	bool datacenterDead(Optional<Standalone<StringRef>> dcId) const override {
@@ -7089,7 +7257,8 @@ friend struct ActorCallback< DeleteFileImplActor, 4, Void >;
 		std::vector<LocalityData> primaryLocalitiesDead, primaryLocalitiesLeft;
 
 		for (auto processInfo : getAllProcesses()) {
-			if (processInfo->isAvailableClass() && processInfo->locality.dcId() == dcId) {
+			if (!processInfo->isSpawnedKVProcess() && processInfo->isAvailableClass() &&
+			    processInfo->locality.dcId() == dcId) {
 				if (processInfo->isExcluded() || processInfo->isCleared() || !processInfo->isAvailable()) {
 					primaryProcessesDead.add(processInfo->locality);
 					primaryLocalitiesDead.push_back(processInfo->locality);
@@ -7109,8 +7278,48 @@ friend struct ActorCallback< DeleteFileImplActor, 4, Void >;
 		if (usableRegions > 1 && remoteTLogPolicy && !primaryTLogsDead) {
 			primaryTLogsDead = primaryProcessesDead.validate(remoteTLogPolicy);
 		}
-
 		return primaryTLogsDead || primaryProcessesDead.validate(storagePolicy);
+	}
+
+	// The following function will determine if a machine can be remove in case when it has a blob worker
+	bool canKillMachineWithBlobWorkers(Optional<Standalone<StringRef>> machineId, KillType kt, KillType* ktFinal) {
+		// Allow if no blob workers, or it's a reboot(without removing the machine)
+		// FIXME: this should be ||
+		if (!blobGranulesEnabled && kt >= KillType::RebootAndDelete) {
+			return true;
+		}
+
+		// Allow if the machine doesn't support blob worker
+		MachineInfo& currentMachine = machines[machineId];
+		bool hasBlobWorker = false;
+		for (auto processInfo : currentMachine.processes) {
+			if (processInfo->startingClass == ProcessClass::BlobWorkerClass) {
+				hasBlobWorker = true;
+				break;
+			}
+		}
+		if (!hasBlobWorker)
+			return true;
+
+		// Count # remaining support blob workers in current dc
+		auto currentDcId = currentMachine.machineProcess->locality.dcId();
+		int nLeft = 0;
+		for (auto processInfo : getAllProcesses()) {
+			if (currentDcId != processInfo->locality.dcId() || // skip other dc
+			    processInfo->startingClass != ProcessClass::BlobWorkerClass || // skip non blob workers
+			    processInfo->failed || // if process was killed but has not yet been removed from the process list
+			    processInfo->locality.machineId() == machineId) { // skip current machine
+				continue;
+			}
+			nLeft++; // alive blob workers after killing machineId
+		}
+
+		// Ensure there is at least 1 remaining blob workers after removing current machine
+		if (nLeft <= 1) {
+			*ktFinal = KillType::RebootAndDelete; // reboot and delete data, but keep this machine
+			return false;
+		}
+		return true;
 	}
 
 	// The following function will determine if the specified configuration of available and dead processes can allow
@@ -7123,8 +7332,8 @@ friend struct ActorCallback< DeleteFileImplActor, 4, Void >;
 		int nQuorum = ((desiredCoordinators + 1) / 2) * 2 - 1;
 
 		KillType newKt = kt;
-		if ((kt == KillInstantly) || (kt == InjectFaults) || (kt == FailDisk) || (kt == RebootAndDelete) ||
-		    (kt == RebootProcessAndDelete)) {
+		if ((kt == KillType::KillInstantly) || (kt == KillType::InjectFaults) || (kt == KillType::FailDisk) ||
+		    (kt == KillType::RebootAndDelete) || (kt == KillType::RebootProcessAndDelete)) {
 			LocalityGroup primaryProcessesLeft, primaryProcessesDead;
 			LocalityGroup primarySatelliteProcessesLeft, primarySatelliteProcessesDead;
 			LocalityGroup remoteProcessesLeft, remoteProcessesDead;
@@ -7138,7 +7347,7 @@ friend struct ActorCallback< DeleteFileImplActor, 4, Void >;
 			std::vector<LocalityData> badCombo;
 			std::set<Optional<Standalone<StringRef>>> uniqueMachines;
 
-			if (!primaryDcId.present()) {
+			if (!primaryDcId.present() || usableRegions == 1) {
 				for (auto processInfo : availableProcesses) {
 					primaryProcessesLeft.add(processInfo->locality);
 					primaryLocalitiesLeft.push_back(processInfo->locality);
@@ -7154,17 +7363,20 @@ friend struct ActorCallback< DeleteFileImplActor, 4, Void >;
 					if (processInfo->locality.dcId() == primaryDcId) {
 						primaryProcessesLeft.add(processInfo->locality);
 						primaryLocalitiesLeft.push_back(processInfo->locality);
-					} else if (processInfo->locality.dcId() == remoteDcId) {
+					}
+					if (processInfo->locality.dcId() == remoteDcId) {
 						remoteProcessesLeft.add(processInfo->locality);
 						remoteLocalitiesLeft.push_back(processInfo->locality);
-					} else if (std::find(primarySatelliteDcIds.begin(),
-					                     primarySatelliteDcIds.end(),
-					                     processInfo->locality.dcId()) != primarySatelliteDcIds.end()) {
+					}
+					if (std::find(primarySatelliteDcIds.begin(),
+					              primarySatelliteDcIds.end(),
+					              processInfo->locality.dcId()) != primarySatelliteDcIds.end()) {
 						primarySatelliteProcessesLeft.add(processInfo->locality);
 						primarySatelliteLocalitiesLeft.push_back(processInfo->locality);
-					} else if (std::find(remoteSatelliteDcIds.begin(),
-					                     remoteSatelliteDcIds.end(),
-					                     processInfo->locality.dcId()) != remoteSatelliteDcIds.end()) {
+					}
+					if (std::find(remoteSatelliteDcIds.begin(),
+					              remoteSatelliteDcIds.end(),
+					              processInfo->locality.dcId()) != remoteSatelliteDcIds.end()) {
 						remoteSatelliteProcessesLeft.add(processInfo->locality);
 						remoteSatelliteLocalitiesLeft.push_back(processInfo->locality);
 					}
@@ -7173,17 +7385,20 @@ friend struct ActorCallback< DeleteFileImplActor, 4, Void >;
 					if (processInfo->locality.dcId() == primaryDcId) {
 						primaryProcessesDead.add(processInfo->locality);
 						primaryLocalitiesDead.push_back(processInfo->locality);
-					} else if (processInfo->locality.dcId() == remoteDcId) {
+					}
+					if (processInfo->locality.dcId() == remoteDcId) {
 						remoteProcessesDead.add(processInfo->locality);
 						remoteLocalitiesDead.push_back(processInfo->locality);
-					} else if (std::find(primarySatelliteDcIds.begin(),
-					                     primarySatelliteDcIds.end(),
-					                     processInfo->locality.dcId()) != primarySatelliteDcIds.end()) {
+					}
+					if (std::find(primarySatelliteDcIds.begin(),
+					              primarySatelliteDcIds.end(),
+					              processInfo->locality.dcId()) != primarySatelliteDcIds.end()) {
 						primarySatelliteProcessesDead.add(processInfo->locality);
 						primarySatelliteLocalitiesDead.push_back(processInfo->locality);
-					} else if (std::find(remoteSatelliteDcIds.begin(),
-					                     remoteSatelliteDcIds.end(),
-					                     processInfo->locality.dcId()) != remoteSatelliteDcIds.end()) {
+					}
+					if (std::find(remoteSatelliteDcIds.begin(),
+					              remoteSatelliteDcIds.end(),
+					              processInfo->locality.dcId()) != remoteSatelliteDcIds.end()) {
 						remoteSatelliteProcessesDead.add(processInfo->locality);
 						remoteSatelliteLocalitiesDead.push_back(processInfo->locality);
 					}
@@ -7290,8 +7505,8 @@ friend struct ActorCallback< DeleteFileImplActor, 4, Void >;
 			}
 
 			// Reboot if dead machines do fulfill policies
-			if (tooManyDead) {
-				newKt = Reboot;
+			if (tooManyDead || (usableRegions > 1 && notEnoughLeft)) {
+				newKt = KillType::Reboot;
 				canSurvive = false;
 				TraceEvent("KillChanged")
 				    .detail("KillType", kt)
@@ -7300,16 +7515,16 @@ friend struct ActorCallback< DeleteFileImplActor, 4, Void >;
 				    .detail("Reason", "Too many dead processes that cannot satisfy tLogPolicy.");
 			}
 			// Reboot and Delete if remaining machines do NOT fulfill policies
-			else if ((kt < RebootAndDelete) && notEnoughLeft) {
-				newKt = RebootAndDelete;
+			else if ((kt < KillType::RebootAndDelete) && notEnoughLeft) {
+				newKt = KillType::RebootAndDelete;
 				canSurvive = false;
 				TraceEvent("KillChanged")
 				    .detail("KillType", kt)
 				    .detail("NewKillType", newKt)
 				    .detail("TLogPolicy", tLogPolicy->info())
 				    .detail("Reason", "Not enough tLog left to satisfy tLogPolicy.");
-			} else if ((kt < RebootAndDelete) && (nQuorum > uniqueMachines.size())) {
-				newKt = RebootAndDelete;
+			} else if ((kt < KillType::RebootAndDelete) && (nQuorum > uniqueMachines.size())) {
+				newKt = KillType::RebootAndDelete;
 				canSurvive = false;
 				TraceEvent("KillChanged")
 				    .detail("KillType", kt)
@@ -7345,15 +7560,26 @@ friend struct ActorCallback< DeleteFileImplActor, 4, Void >;
 			std::swap(*it, processes.back());
 		}
 		processes.pop_back();
-		killProcess_internal(p, KillInstantly);
+		killProcess_internal(p, KillType::KillInstantly);
 	}
 	void killProcess_internal(ProcessInfo* machine, KillType kt) {
-		TEST(true); // Simulated machine was killed with any kill type
-		TEST(kt == KillInstantly); // Simulated machine was killed instantly
-		TEST(kt == InjectFaults); // Simulated machine was killed with faults
-		TEST(kt == FailDisk); // Simulated machine was killed with a failed disk
+		CODE_PROBE(
+		    true, "Simulated machine was killed with any kill type", probe::context::sim2, probe::assert::simOnly);
+		CODE_PROBE(kt == KillType::KillInstantly,
+		           "Simulated machine was killed instantly",
+		           probe::context::sim2,
+		           probe::assert::simOnly);
+		CODE_PROBE(kt == KillType::InjectFaults,
+		           "Simulated machine was killed with faults",
+		           probe::context::sim2,
+		           probe::assert::simOnly);
+		CODE_PROBE(kt == KillType::FailDisk,
+		           "Simulated machine was killed with a failed disk",
+		           probe::context::sim2,
+		           probe::assert::simOnly,
+		           probe::decoration::rare);
 
-		if (kt == KillInstantly) {
+		if (kt == KillType::KillInstantly) {
 			TraceEvent(SevWarn, "FailMachine")
 			    .detail("Name", machine->name)
 			    .detail("Address", machine->address)
@@ -7363,10 +7589,10 @@ friend struct ActorCallback< DeleteFileImplActor, 4, Void >;
 			    .detail("Protected", protectedAddresses.count(machine->address))
 			    .backtrace();
 			// This will remove all the "tracked" messages that came from the machine being killed
-			if (std::string(machine->name) != "remote flow process")
+			if (!machine->isSpawnedKVProcess())
 				latestEventCache.clear();
 			machine->failed = true;
-		} else if (kt == InjectFaults) {
+		} else if (kt == KillType::InjectFaults) {
 			TraceEvent(SevWarn, "FaultMachine")
 			    .detail("Name", machine->name)
 			    .detail("Address", machine->address)
@@ -7379,8 +7605,8 @@ friend struct ActorCallback< DeleteFileImplActor, 4, Void >;
 			machine->fault_injection_r = deterministicRandom()->randomUniqueID().first();
 			machine->fault_injection_p1 = 0.1;
 			machine->fault_injection_p2 = deterministicRandom()->random01();
-		} else if (kt == FailDisk) {
-			TraceEvent(SevWarn, "FailDiskMachine")
+		} else if (kt == KillType::FailDisk) {
+			TraceEvent(SevWarn, "KillType::FailDiskMachine")
 			    .detail("Name", machine->name)
 			    .detail("Address", machine->address)
 			    .detail("ZoneId", machine->locality.zoneId())
@@ -7392,17 +7618,16 @@ friend struct ActorCallback< DeleteFileImplActor, 4, Void >;
 		} else {
 			ASSERT(false);
 		}
-		ASSERT(!protectedAddresses.count(machine->address) || machine->rebooting ||
-		       std::string(machine->name) == "remote flow process");
+		ASSERT(!protectedAddresses.count(machine->address) || machine->rebooting || machine->isSpawnedKVProcess());
 	}
 	void rebootProcess(ProcessInfo* process, KillType kt) override {
-		if (kt == RebootProcessAndDelete && protectedAddresses.count(process->address)) {
+		if (kt == KillType::RebootProcessAndDelete && protectedAddresses.count(process->address)) {
 			TraceEvent("RebootChanged")
 			    .detail("ZoneId", process->locality.describeZone())
-			    .detail("KillType", RebootProcess)
+			    .detail("KillType", KillType::RebootProcess)
 			    .detail("OrigKillType", kt)
 			    .detail("Reason", "Protected process");
-			kt = RebootProcess;
+			kt = KillType::RebootProcess;
 		}
 		doReboot(process, kt);
 	}
@@ -7411,7 +7636,7 @@ friend struct ActorCallback< DeleteFileImplActor, 4, Void >;
 			auto processes = getAllProcesses();
 			for (int i = 0; i < processes.size(); i++)
 				if (processes[i]->locality.zoneId() == zoneId && !processes[i]->rebooting)
-					doReboot(processes[i], RebootProcess);
+					doReboot(processes[i], KillType::RebootProcess);
 		} else {
 			auto processes = getAllProcesses();
 			for (int i = 0; i < processes.size(); i++) {
@@ -7420,20 +7645,25 @@ friend struct ActorCallback< DeleteFileImplActor, 4, Void >;
 				}
 			}
 			if (processes.size())
-				doReboot(deterministicRandom()->randomChoice(processes), RebootProcess);
+				doReboot(deterministicRandom()->randomChoice(processes), KillType::RebootProcess);
 		}
 	}
 	void killProcess(ProcessInfo* machine, KillType kt) override {
 		TraceEvent("AttemptingKillProcess").detail("ProcessInfo", machine->toString());
-		if (kt < RebootAndDelete) {
+		// Refuse to kill a protected process.
+		if (kt < KillType::RebootAndDelete && protectedAddresses.count(machine->address) == 0) {
 			killProcess_internal(machine, kt);
 		}
 	}
 	void killInterface(NetworkAddress address, KillType kt) override {
-		if (kt < RebootAndDelete) {
+		if (kt < KillType::RebootAndDelete) {
 			std::vector<ProcessInfo*>& processes = machines[addressMap[address]->locality.machineId()].processes;
-			for (int i = 0; i < processes.size(); i++)
-				killProcess_internal(processes[i], kt);
+			for (auto& process : processes) {
+				// Refuse to kill a protected process.
+				if (protectedAddresses.count(process->address) == 0) {
+					killProcess_internal(process, kt);
+				}
+			}
 		}
 	}
 	bool killZone(Optional<Standalone<StringRef>> zoneId, KillType kt, bool forceKill, KillType* ktFinal) override {
@@ -7452,15 +7682,47 @@ friend struct ActorCallback< DeleteFileImplActor, 4, Void >;
 		}
 		return result;
 	}
+	bool killDataHall(Optional<Standalone<StringRef>> dataHallId,
+	                  KillType kt,
+	                  bool forceKill,
+	                  KillType* ktFinal) override {
+		auto processes = getAllProcesses();
+		std::set<Optional<Standalone<StringRef>>> dataHallMachines;
+		for (auto& process : processes) {
+			if (process->locality.dataHallId() == dataHallId) {
+				dataHallMachines.insert(process->locality.machineId());
+			}
+		}
+		bool result = false;
+		for (auto& machineId : dataHallMachines) {
+			if (killMachine(machineId, kt, forceKill, ktFinal)) {
+				result = true;
+			}
+		}
+		return result;
+	}
+	bool killAll(KillType kt, bool forceKill, KillType* ktFinal) override {
+		bool result = false;
+		for (auto& machine : machines) {
+			if (killMachine(machine.second.machineId, kt, forceKill, ktFinal)) {
+				result = true;
+			}
+		}
+		return result;
+	}
 	bool killMachine(Optional<Standalone<StringRef>> machineId,
 	                 KillType kt,
 	                 bool forceKill,
 	                 KillType* ktFinal) override {
 		auto ktOrig = kt;
 
-		TEST(true); // Trying to killing a machine
-		TEST(kt == KillInstantly); // Trying to kill instantly
-		TEST(kt == InjectFaults); // Trying to kill by injecting faults
+		CODE_PROBE(true, "Trying to killing a machine", probe::context::sim2, probe::assert::simOnly);
+		CODE_PROBE(
+		    kt == KillType::KillInstantly, "Trying to kill instantly", probe::context::sim2, probe::assert::simOnly);
+		CODE_PROBE(kt == KillType::InjectFaults,
+		           "Trying to kill by injecting faults",
+		           probe::context::sim2,
+		           probe::assert::simOnly);
 
 		if (speedUpSimulation && !forceKill) {
 			TraceEvent(SevWarn, "AbortedKill")
@@ -7468,19 +7730,25 @@ friend struct ActorCallback< DeleteFileImplActor, 4, Void >;
 			    .detail("Reason", "Unforced kill within speedy simulation.")
 			    .backtrace();
 			if (ktFinal)
-				*ktFinal = None;
+				*ktFinal = KillType::None;
 			return false;
 		}
 
 		int processesOnMachine = 0;
+		bool isMainCluster = true; // false for machines running DR processes
 
 		KillType originalKt = kt;
 		// Reboot if any of the processes are protected and count the number of processes not rebooting
 		for (auto& process : machines[machineId].processes) {
-			if (protectedAddresses.count(process->address))
-				kt = Reboot;
+			if (protectedAddresses.count(process->address) && kt != KillType::RebootProcessAndSwitch) {
+				kt = KillType::Reboot;
+			}
+
 			if (!process->rebooting)
 				processesOnMachine++;
+			if (process->drProcess) {
+				isMainCluster = false;
+			}
 		}
 
 		// Do nothing, if no processes to kill
@@ -7492,13 +7760,22 @@ friend struct ActorCallback< DeleteFileImplActor, 4, Void >;
 			    .detail("ProcessesPerMachine", processesPerMachine)
 			    .backtrace();
 			if (ktFinal)
-				*ktFinal = None;
+				*ktFinal = KillType::None;
 			return false;
 		}
 
 		// Check if machine can be removed, if requested
-		if (!forceKill && ((kt == KillInstantly) || (kt == InjectFaults) || (kt == FailDisk) ||
-		                   (kt == RebootAndDelete) || (kt == RebootProcessAndDelete))) {
+		if (!forceKill &&
+		    ((kt == KillType::KillInstantly) || (kt == KillType::InjectFaults) || (kt == KillType::FailDisk) ||
+		     (kt == KillType::RebootAndDelete) || (kt == KillType::RebootProcessAndDelete))) {
+
+			if (!canKillMachineWithBlobWorkers(machineId, kt, &kt)) {
+				TraceEvent("CanKillMachineWithBlobWorkers")
+				    .detail("MachineId", machineId)
+				    .detail("KillType", kt)
+				    .detail("OrigKillType", ktOrig);
+			}
+
 			std::vector<ProcessInfo*> processesLeft, processesDead;
 			int protectedWorker = 0, unavailable = 0, excluded = 0, cleared = 0;
 
@@ -7539,7 +7816,8 @@ friend struct ActorCallback< DeleteFileImplActor, 4, Void >;
 				    .detail("ProtectedTotal", protectedAddresses.size())
 				    .detail("TLogPolicy", tLogPolicy->info())
 				    .detail("StoragePolicy", storagePolicy->info());
-			} else if ((kt == KillInstantly) || (kt == InjectFaults) || (kt == FailDisk)) {
+			} else if ((kt == KillType::KillInstantly) || (kt == KillType::InjectFaults) ||
+			           (kt == KillType::FailDisk)) {
 				TraceEvent("DeadMachine")
 				    .detail("MachineId", machineId)
 				    .detail("KillType", kt)
@@ -7594,11 +7872,22 @@ friend struct ActorCallback< DeleteFileImplActor, 4, Void >;
 			}
 		}
 
-		TEST(originalKt != kt); // Kill type was changed from requested to reboot.
+		CODE_PROBE(originalKt != kt,
+		           "Kill type was changed from requested to reboot.",
+		           probe::context::sim2,
+		           probe::assert::simOnly);
 
-		// Check if any processes on machine are rebooting
-		if (processesOnMachine != processesPerMachine && kt >= RebootAndDelete) {
-			TEST(true); // Attempted reboot, but the target did not have all of its processes running
+		if (isMainCluster && originalKt == KillType::RebootProcessAndSwitch) {
+			// When killing processes with the RebootProcessAndSwitch kill
+			// type, processes in the original cluster should be rebooted in
+			// order to kill any zombie processes.
+			kt = KillType::Reboot;
+		} else if (processesOnMachine != processesPerMachine && kt != KillType::RebootProcessAndSwitch) {
+			// Check if any processes on machine are rebooting
+			CODE_PROBE(true,
+			           "Attempted reboot, but the target did not have all of its processes running",
+			           probe::context::sim2,
+			           probe::assert::simOnly);
 			TraceEvent(SevWarn, "AbortedKill")
 			    .detail("KillType", kt)
 			    .detail("MachineId", machineId)
@@ -7607,22 +7896,7 @@ friend struct ActorCallback< DeleteFileImplActor, 4, Void >;
 			    .detail("ProcessesPerMachine", processesPerMachine)
 			    .backtrace();
 			if (ktFinal)
-				*ktFinal = None;
-			return false;
-		}
-
-		// Check if any processes on machine are rebooting
-		if (processesOnMachine != processesPerMachine) {
-			TEST(true); // Attempted reboot and kill, but the target did not have all of its processes running
-			TraceEvent(SevWarn, "AbortedKill")
-			    .detail("KillType", kt)
-			    .detail("MachineId", machineId)
-			    .detail("Reason", "Machine processes does not match number of processes per machine")
-			    .detail("Processes", processesOnMachine)
-			    .detail("ProcessesPerMachine", processesPerMachine)
-			    .backtrace();
-			if (ktFinal)
-				*ktFinal = None;
+				*ktFinal = KillType::None;
 			return false;
 		}
 
@@ -7633,8 +7907,9 @@ friend struct ActorCallback< DeleteFileImplActor, 4, Void >;
 		    .detail("KillableMachines", processesOnMachine)
 		    .detail("ProcessPerMachine", processesPerMachine)
 		    .detail("KillChanged", kt != ktOrig);
-		if (kt < RebootAndDelete) {
-			if ((kt == InjectFaults || kt == FailDisk) && machines[machineId].machineProcess != nullptr)
+		if (kt < KillType::RebootAndDelete) {
+			if ((kt == KillType::InjectFaults || kt == KillType::FailDisk) &&
+			    machines[machineId].machineProcess != nullptr)
 				killProcess_internal(machines[machineId].machineProcess, kt);
 			for (auto& process : machines[machineId].processes) {
 				TraceEvent("KillMachineProcess")
@@ -7648,7 +7923,8 @@ friend struct ActorCallback< DeleteFileImplActor, 4, Void >;
 				if (process->startingClass != ProcessClass::TesterClass)
 					killProcess_internal(process, kt);
 			}
-		} else if (kt == Reboot || kt == RebootAndDelete) {
+		} else if (kt == KillType::Reboot || kt == KillType::RebootAndDelete ||
+		           kt == KillType::RebootProcessAndSwitch) {
 			for (auto& process : machines[machineId].processes) {
 				TraceEvent("KillMachineProcess")
 				    .detail("KillType", kt)
@@ -7663,10 +7939,17 @@ friend struct ActorCallback< DeleteFileImplActor, 4, Void >;
 			}
 		}
 
-		TEST(kt == RebootAndDelete); // Resulted in a reboot and delete
-		TEST(kt == Reboot); // Resulted in a reboot
-		TEST(kt == KillInstantly); // Resulted in an instant kill
-		TEST(kt == InjectFaults); // Resulted in a kill by injecting faults
+		CODE_PROBE(kt == KillType::RebootAndDelete,
+		           "Resulted in a reboot and delete",
+		           probe::context::sim2,
+		           probe::assert::simOnly);
+		CODE_PROBE(kt == KillType::Reboot, "Resulted in a reboot", probe::context::sim2, probe::assert::simOnly);
+		CODE_PROBE(
+		    kt == KillType::KillInstantly, "Resulted in an instant kill", probe::context::sim2, probe::assert::simOnly);
+		CODE_PROBE(kt == KillType::InjectFaults,
+		           "Resulted in a kill by injecting faults",
+		           probe::context::sim2,
+		           probe::assert::simOnly);
 
 		if (ktFinal)
 			*ktFinal = kt;
@@ -7685,8 +7968,8 @@ friend struct ActorCallback< DeleteFileImplActor, 4, Void >;
 			auto processMachineId = procRecord->locality.machineId();
 			ASSERT(processMachineId.present());
 			if (processDcId.present() && (processDcId == dcId)) {
-				if ((kt != Reboot) && (protectedAddresses.count(procRecord->address))) {
-					kt = Reboot;
+				if ((kt != KillType::Reboot) && (protectedAddresses.count(procRecord->address))) {
+					kt = KillType::Reboot;
 					TraceEvent(SevWarn, "DcKillChanged")
 					    .detail("DataCenter", dcId)
 					    .detail("KillType", kt)
@@ -7705,8 +7988,9 @@ friend struct ActorCallback< DeleteFileImplActor, 4, Void >;
 		}
 
 		// Check if machine can be removed, if requested
-		if (!forceKill && ((kt == KillInstantly) || (kt == InjectFaults) || (kt == FailDisk) ||
-		                   (kt == RebootAndDelete) || (kt == RebootProcessAndDelete))) {
+		if (!forceKill &&
+		    ((kt == KillType::KillInstantly) || (kt == KillType::InjectFaults) || (kt == KillType::FailDisk) ||
+		     (kt == KillType::RebootAndDelete) || (kt == KillType::RebootProcessAndDelete))) {
 			std::vector<ProcessInfo*> processesLeft, processesDead;
 			for (auto processInfo : getAllProcesses()) {
 				if (processInfo->isAvailableClass()) {
@@ -7765,7 +8049,7 @@ friend struct ActorCallback< DeleteFileImplActor, 4, Void >;
 					    .detail("KillType", kt)
 					    .detail("KillTypeResult", ktResult)
 					    .detail("KillTypeOrig", ktOrig);
-					ASSERT(ktResult == None);
+					ASSERT(ktResult == KillType::None);
 				}
 				ktMin = std::min<KillType>(ktResult, ktMin);
 			}
@@ -7780,13 +8064,35 @@ friend struct ActorCallback< DeleteFileImplActor, 4, Void >;
 		    .detail("KillTypeMin", ktMin)
 		    .detail("KilledDC", kt == ktMin);
 
-		TEST(kt != ktMin); // DataCenter kill was rejected by killMachine
-		TEST((kt == ktMin) && (kt == RebootAndDelete)); // Datacenter kill Resulted in a reboot and delete
-		TEST((kt == ktMin) && (kt == Reboot)); // Datacenter kill Resulted in a reboot
-		TEST((kt == ktMin) && (kt == KillInstantly)); // Datacenter kill Resulted in an instant kill
-		TEST((kt == ktMin) && (kt == InjectFaults)); // Datacenter kill Resulted in a kill by injecting faults
-		TEST((kt == ktMin) && (kt != ktOrig)); // Datacenter Kill request was downgraded
-		TEST((kt == ktMin) && (kt == ktOrig)); // Datacenter kill - Requested kill was done
+		CODE_PROBE(kt != ktMin,
+		           "DataCenter kill was rejected by killMachine",
+		           probe::context::sim2,
+		           probe::assert::simOnly,
+		           probe::decoration::rare);
+		CODE_PROBE((kt == ktMin) && (kt == KillType::RebootAndDelete),
+		           "Datacenter kill Resulted in a reboot and delete",
+		           probe::context::sim2,
+		           probe::assert::simOnly);
+		CODE_PROBE((kt == ktMin) && (kt == KillType::Reboot),
+		           "Datacenter kill Resulted in a reboot",
+		           probe::context::sim2,
+		           probe::assert::simOnly);
+		CODE_PROBE((kt == ktMin) && (kt == KillType::KillInstantly),
+		           "Datacenter kill Resulted in an instant kill",
+		           probe::context::sim2,
+		           probe::assert::simOnly);
+		CODE_PROBE((kt == ktMin) && (kt == KillType::InjectFaults),
+		           "Datacenter kill Resulted in a kill by injecting faults",
+		           probe::context::sim2,
+		           probe::assert::simOnly);
+		CODE_PROBE((kt == ktMin) && (kt != ktOrig),
+		           "Datacenter Kill request was downgraded",
+		           probe::context::sim2,
+		           probe::assert::simOnly);
+		CODE_PROBE((kt == ktMin) && (kt == ktOrig),
+		           "Datacenter kill - Requested kill was done",
+		           probe::context::sim2,
+		           probe::assert::simOnly);
 
 		if (ktFinal)
 			*ktFinal = ktMin;
@@ -7836,6 +8142,18 @@ friend struct ActorCallback< DeleteFileImplActor, 4, Void >;
 		g_clogging.reconnectPair(from, to);
 	}
 
+	void processInjectBlobFault(ProcessInfo* machine, double failureRate) override {
+		CODE_PROBE(true, "Simulated process beginning blob fault", probe::context::sim2, probe::assert::simOnly);
+		should_inject_blob_fault = simulator_should_inject_blob_fault;
+		ASSERT(machine->blob_inject_failure_rate == 0.0);
+		machine->blob_inject_failure_rate = failureRate;
+	}
+
+	void processStopInjectBlobFault(ProcessInfo* machine) override {
+		CODE_PROBE(true, "Simulated process stopping blob fault", probe::context::sim2, probe::assert::simOnly);
+		machine->blob_inject_failure_rate = 0.0;
+	}
+
 	std::vector<ProcessInfo*> getAllProcesses() const override {
 		std::vector<ProcessInfo*> processes;
 		for (auto& c : machines) {
@@ -7867,13 +8185,448 @@ friend struct ActorCallback< DeleteFileImplActor, 4, Void >;
 			ASSERT(process->failed);
 		}
 		if (machine.machineProcess) {
-			killProcess_internal(machine.machineProcess, KillInstantly);
+			killProcess_internal(machine.machineProcess, KillType::KillInstantly);
 		}
 		machines.erase(machineId);
 	}
 
+	// Assumes the simulator is already onProcess for proc
+	void startRequestHandlerOnProcess(ProcessInfo* process,
+	                                  Reference<HTTP::SimServerContext> serverContext,
+	                                  Reference<HTTP::SimRegisteredHandlerContext> handlerContext) {
+		try {
+			NetworkAddress addr = serverContext->newAddress();
+			process->listenerMap[addr] = Reference<IListener>(new Sim2Listener(process, addr));
+			addressMap[addr] = process;
+			handlerContext->addAddress(addr);
+			serverContext->registerNewServer(addr, handlerContext->requestHandler->clone());
+		} catch (Error& e) {
+			// this should never happen, but would cause weird behavior if it did like unintentionally switching
+			// processes, so just fail
+			TraceEvent(SevError, "UnexpectedErrorRegisteringHTTPServer").errorUnsuppressed(e);
+			ASSERT(false);
+		}
+	}
+
+	// add a simulated http server process. New http servers called by registerHTTPServer will run on this process
+	void addSimHTTPProcess(Reference<HTTP::SimServerContext> context) override {
+		ProcessInfo* p = getCurrentProcess();
+
+		if (!g_simulator->httpProtected) {
+			// always protect one http server process so that if others are killed permanently, one will always be
+			// rebooted
+			fmt::print("SimHTTPServer protecting {0}\n", p->address.toString());
+			TraceEvent(SevDebug, "HTTPProcessProtected").detail("Address", p->address);
+			g_simulator->httpProtected = true;
+			protectedAddresses.insert(p->address);
+		}
+		// make sure this process isn't already added
+		for (int i = 0; i < httpServerProcesses.size(); i++) {
+			ASSERT(p != httpServerProcesses[i].first);
+		}
+		httpServerProcesses.push_back({ p, context });
+		httpServerIps.insert(p->address.ip);
+
+		for (auto& it : httpHandlers) {
+			startRequestHandlerOnProcess(p, context, it.second);
+		}
+	}
+
+	void removeSimHTTPProcess() override {
+		ProcessInfo* p = getCurrentProcess();
+
+		bool found = false;
+		for (int i = 0; i < httpServerProcesses.size(); i++) {
+			if (p == httpServerProcesses[i].first) {
+				swapAndPop(&httpServerProcesses, i);
+				found = true;
+				break;
+			}
+		}
+		ASSERT(found);
+
+		// FIXME: potentially instead delay removing from DNS for a bit so we still briefly try to talk to dead server
+		for (auto& it : httpHandlers) {
+			it.second->removeIp(p->address.ip);
+		}
+	}
+
+																#line 8254 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+// This generated class is to be used only via registerSimHTTPServerActor()
+															#line 2533 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+template <class RegisterSimHTTPServerActorActor>
+															#line 2533 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+class RegisterSimHTTPServerActorActorState {
+															#line 8260 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+public:
+															#line 2533 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+	RegisterSimHTTPServerActorActorState(Sim2* const& self,std::string const& hostname,std::string const& service,Reference<HTTP::IRequestHandler> const& requestHandler) 
+															#line 2533 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2533 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		 : self(self),
+															#line 2533 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		   hostname(hostname),
+															#line 2533 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		   service(service),
+															#line 2533 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		   requestHandler(requestHandler)
+															#line 8273 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+	{
+		fdb_probe_actor_create("registerSimHTTPServerActor", reinterpret_cast<unsigned long>(this));
+
+	}
+	~RegisterSimHTTPServerActorActorState() 
+	{
+		fdb_probe_actor_destroy("registerSimHTTPServerActor", reinterpret_cast<unsigned long>(this));
+
+	}
+	int a_body1(int loopDepth=0) 
+	{
+		try {
+															#line 2540 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+			std::string id = hostname + ":" + service;
+															#line 2541 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+			ASSERT(!self->httpHandlers.count(id));
+															#line 2543 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+			handlerContext = makeReference<HTTP::SimRegisteredHandlerContext>(hostname, service, requestHandler);
+															#line 2545 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+			self->httpHandlers.insert({ id, handlerContext });
+															#line 2548 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+			callingProcess = self->getCurrentProcess();
+															#line 2549 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+			i = 0;
+															#line 2551 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+			procsCopy = self->httpServerProcesses;
+															#line 2553 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+			;
+															#line 8302 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+			loopDepth = a_body1loopHead1(loopDepth);
+		}
+		catch (Error& error) {
+			loopDepth = a_body1Catch1(error, loopDepth);
+		} catch (...) {
+			loopDepth = a_body1Catch1(unknown_error(), loopDepth);
+		}
+
+		return loopDepth;
+	}
+	int a_body1Catch1(Error error,int loopDepth=0) 
+	{
+		this->~RegisterSimHTTPServerActorActorState();
+		static_cast<RegisterSimHTTPServerActorActor*>(this)->sendErrorAndDelPromiseRef(error);
+		loopDepth = 0;
+
+		return loopDepth;
+	}
+	int a_body1cont1(int loopDepth) 
+	{
+															#line 2559 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		StrictFuture<Void> __when_expr_1 = self->onProcess(callingProcess, TaskPriority::DefaultYield);
+															#line 2559 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		if (static_cast<RegisterSimHTTPServerActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
+															#line 8327 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
+		static_cast<RegisterSimHTTPServerActorActor*>(this)->actor_wait_state = 2;
+															#line 2559 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< RegisterSimHTTPServerActorActor, 1, Void >*>(static_cast<RegisterSimHTTPServerActorActor*>(this)));
+															#line 8332 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+		loopDepth = 0;
+
+		return loopDepth;
+	}
+	int a_body1loopHead1(int loopDepth) 
+	{
+		int oldLoopDepth = ++loopDepth;
+		while (loopDepth == oldLoopDepth) loopDepth = a_body1loopBody1(loopDepth);
+
+		return loopDepth;
+	}
+	int a_body1loopBody1(int loopDepth) 
+	{
+															#line 2553 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		if (!(i < procsCopy.size()))
+															#line 8348 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+		{
+			return a_body1break1(loopDepth==0?0:loopDepth-1); // break
+		}
+															#line 2554 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		serverProcess = procsCopy[i].first;
+															#line 2555 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		StrictFuture<Void> __when_expr_0 = self->onProcess(serverProcess, TaskPriority::DefaultYield);
+															#line 2555 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		if (static_cast<RegisterSimHTTPServerActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
+															#line 8358 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+		if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
+		static_cast<RegisterSimHTTPServerActorActor*>(this)->actor_wait_state = 1;
+															#line 2555 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< RegisterSimHTTPServerActorActor, 0, Void >*>(static_cast<RegisterSimHTTPServerActorActor*>(this)));
+															#line 8363 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+		loopDepth = 0;
+
+		return loopDepth;
+	}
+	int a_body1break1(int loopDepth) 
+	{
+		try {
+			return a_body1cont1(loopDepth);
+		}
+		catch (Error& error) {
+			loopDepth = a_body1Catch1(error, loopDepth);
+		} catch (...) {
+			loopDepth = a_body1Catch1(unknown_error(), loopDepth);
+		}
+
+		return loopDepth;
+	}
+	int a_body1loopBody1cont1(Void const& _,int loopDepth) 
+	{
+															#line 2556 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		self->startRequestHandlerOnProcess(serverProcess, procsCopy[i].second, handlerContext);
+															#line 2553 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		i++;
+															#line 8387 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+		if (loopDepth == 0) return a_body1loopHead1(0);
+
+		return loopDepth;
+	}
+	int a_body1loopBody1cont1(Void && _,int loopDepth) 
+	{
+															#line 2556 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		self->startRequestHandlerOnProcess(serverProcess, procsCopy[i].second, handlerContext);
+															#line 2553 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		i++;
+															#line 8398 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+		if (loopDepth == 0) return a_body1loopHead1(0);
+
+		return loopDepth;
+	}
+	int a_body1loopBody1when1(Void const& _,int loopDepth) 
+	{
+		loopDepth = a_body1loopBody1cont1(_, loopDepth);
+
+		return loopDepth;
+	}
+	int a_body1loopBody1when1(Void && _,int loopDepth) 
+	{
+		loopDepth = a_body1loopBody1cont1(std::move(_), loopDepth);
+
+		return loopDepth;
+	}
+	void a_exitChoose1() 
+	{
+		if (static_cast<RegisterSimHTTPServerActorActor*>(this)->actor_wait_state > 0) static_cast<RegisterSimHTTPServerActorActor*>(this)->actor_wait_state = 0;
+		static_cast<RegisterSimHTTPServerActorActor*>(this)->ActorCallback< RegisterSimHTTPServerActorActor, 0, Void >::remove();
+
+	}
+	void a_callback_fire(ActorCallback< RegisterSimHTTPServerActorActor, 0, Void >*,Void const& value) 
+	{
+		fdb_probe_actor_enter("registerSimHTTPServerActor", reinterpret_cast<unsigned long>(this), 0);
+		a_exitChoose1();
+		try {
+			a_body1loopBody1when1(value, 0);
+		}
+		catch (Error& error) {
+			a_body1Catch1(error, 0);
+		} catch (...) {
+			a_body1Catch1(unknown_error(), 0);
+		}
+		fdb_probe_actor_exit("registerSimHTTPServerActor", reinterpret_cast<unsigned long>(this), 0);
+
+	}
+	void a_callback_fire(ActorCallback< RegisterSimHTTPServerActorActor, 0, Void >*,Void && value) 
+	{
+		fdb_probe_actor_enter("registerSimHTTPServerActor", reinterpret_cast<unsigned long>(this), 0);
+		a_exitChoose1();
+		try {
+			a_body1loopBody1when1(std::move(value), 0);
+		}
+		catch (Error& error) {
+			a_body1Catch1(error, 0);
+		} catch (...) {
+			a_body1Catch1(unknown_error(), 0);
+		}
+		fdb_probe_actor_exit("registerSimHTTPServerActor", reinterpret_cast<unsigned long>(this), 0);
+
+	}
+	void a_callback_error(ActorCallback< RegisterSimHTTPServerActorActor, 0, Void >*,Error err) 
+	{
+		fdb_probe_actor_enter("registerSimHTTPServerActor", reinterpret_cast<unsigned long>(this), 0);
+		a_exitChoose1();
+		try {
+			a_body1Catch1(err, 0);
+		}
+		catch (Error& error) {
+			a_body1Catch1(error, 0);
+		} catch (...) {
+			a_body1Catch1(unknown_error(), 0);
+		}
+		fdb_probe_actor_exit("registerSimHTTPServerActor", reinterpret_cast<unsigned long>(this), 0);
+
+	}
+	int a_body1cont2(Void const& _,int loopDepth) 
+	{
+															#line 2561 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		if (!static_cast<RegisterSimHTTPServerActorActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~RegisterSimHTTPServerActorActorState(); static_cast<RegisterSimHTTPServerActorActor*>(this)->destroy(); return 0; }
+															#line 8470 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+		new (&static_cast<RegisterSimHTTPServerActorActor*>(this)->SAV< Void >::value()) Void(Void());
+		this->~RegisterSimHTTPServerActorActorState();
+		static_cast<RegisterSimHTTPServerActorActor*>(this)->finishSendAndDelPromiseRef();
+		return 0;
+
+		return loopDepth;
+	}
+	int a_body1cont2(Void && _,int loopDepth) 
+	{
+															#line 2561 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		if (!static_cast<RegisterSimHTTPServerActorActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~RegisterSimHTTPServerActorActorState(); static_cast<RegisterSimHTTPServerActorActor*>(this)->destroy(); return 0; }
+															#line 8482 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+		new (&static_cast<RegisterSimHTTPServerActorActor*>(this)->SAV< Void >::value()) Void(Void());
+		this->~RegisterSimHTTPServerActorActorState();
+		static_cast<RegisterSimHTTPServerActorActor*>(this)->finishSendAndDelPromiseRef();
+		return 0;
+
+		return loopDepth;
+	}
+	int a_body1cont1when1(Void const& _,int loopDepth) 
+	{
+		loopDepth = a_body1cont2(_, loopDepth);
+
+		return loopDepth;
+	}
+	int a_body1cont1when1(Void && _,int loopDepth) 
+	{
+		loopDepth = a_body1cont2(std::move(_), loopDepth);
+
+		return loopDepth;
+	}
+	void a_exitChoose2() 
+	{
+		if (static_cast<RegisterSimHTTPServerActorActor*>(this)->actor_wait_state > 0) static_cast<RegisterSimHTTPServerActorActor*>(this)->actor_wait_state = 0;
+		static_cast<RegisterSimHTTPServerActorActor*>(this)->ActorCallback< RegisterSimHTTPServerActorActor, 1, Void >::remove();
+
+	}
+	void a_callback_fire(ActorCallback< RegisterSimHTTPServerActorActor, 1, Void >*,Void const& value) 
+	{
+		fdb_probe_actor_enter("registerSimHTTPServerActor", reinterpret_cast<unsigned long>(this), 1);
+		a_exitChoose2();
+		try {
+			a_body1cont1when1(value, 0);
+		}
+		catch (Error& error) {
+			a_body1Catch1(error, 0);
+		} catch (...) {
+			a_body1Catch1(unknown_error(), 0);
+		}
+		fdb_probe_actor_exit("registerSimHTTPServerActor", reinterpret_cast<unsigned long>(this), 1);
+
+	}
+	void a_callback_fire(ActorCallback< RegisterSimHTTPServerActorActor, 1, Void >*,Void && value) 
+	{
+		fdb_probe_actor_enter("registerSimHTTPServerActor", reinterpret_cast<unsigned long>(this), 1);
+		a_exitChoose2();
+		try {
+			a_body1cont1when1(std::move(value), 0);
+		}
+		catch (Error& error) {
+			a_body1Catch1(error, 0);
+		} catch (...) {
+			a_body1Catch1(unknown_error(), 0);
+		}
+		fdb_probe_actor_exit("registerSimHTTPServerActor", reinterpret_cast<unsigned long>(this), 1);
+
+	}
+	void a_callback_error(ActorCallback< RegisterSimHTTPServerActorActor, 1, Void >*,Error err) 
+	{
+		fdb_probe_actor_enter("registerSimHTTPServerActor", reinterpret_cast<unsigned long>(this), 1);
+		a_exitChoose2();
+		try {
+			a_body1Catch1(err, 0);
+		}
+		catch (Error& error) {
+			a_body1Catch1(error, 0);
+		} catch (...) {
+			a_body1Catch1(unknown_error(), 0);
+		}
+		fdb_probe_actor_exit("registerSimHTTPServerActor", reinterpret_cast<unsigned long>(this), 1);
+
+	}
+															#line 2533 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+	Sim2* self;
+															#line 2533 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+	std::string hostname;
+															#line 2533 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+	std::string service;
+															#line 2533 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+	Reference<HTTP::IRequestHandler> requestHandler;
+															#line 2543 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+	Reference<HTTP::SimRegisteredHandlerContext> handlerContext;
+															#line 2548 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+	ProcessInfo* callingProcess;
+															#line 2549 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+	int i;
+															#line 2551 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+	std::vector<std::pair<ProcessInfo*, Reference<HTTP::SimServerContext>>> procsCopy;
+															#line 2554 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+	ProcessInfo* serverProcess;
+															#line 8571 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+};
+// This generated class is to be used only via registerSimHTTPServerActor()
+															#line 2533 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+class RegisterSimHTTPServerActorActor final : public Actor<Void>, public ActorCallback< RegisterSimHTTPServerActorActor, 0, Void >, public ActorCallback< RegisterSimHTTPServerActorActor, 1, Void >, public FastAllocated<RegisterSimHTTPServerActorActor>, public RegisterSimHTTPServerActorActorState<RegisterSimHTTPServerActorActor> {
+															#line 8576 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+public:
+	using FastAllocated<RegisterSimHTTPServerActorActor>::operator new;
+	using FastAllocated<RegisterSimHTTPServerActorActor>::operator delete;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdelete-non-virtual-dtor"
+	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
+#pragma clang diagnostic pop
+friend struct ActorCallback< RegisterSimHTTPServerActorActor, 0, Void >;
+friend struct ActorCallback< RegisterSimHTTPServerActorActor, 1, Void >;
+															#line 2533 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+	RegisterSimHTTPServerActorActor(Sim2* const& self,std::string const& hostname,std::string const& service,Reference<HTTP::IRequestHandler> const& requestHandler) 
+															#line 8588 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+		 : Actor<Void>(),
+		   RegisterSimHTTPServerActorActorState<RegisterSimHTTPServerActorActor>(self, hostname, service, requestHandler)
+	{
+		fdb_probe_actor_enter("registerSimHTTPServerActor", reinterpret_cast<unsigned long>(this), -1);
+		#ifdef ENABLE_SAMPLING
+		this->lineage.setActorName("registerSimHTTPServerActor");
+		LineageScope _(&this->lineage);
+		#endif
+		this->a_body1();
+		fdb_probe_actor_exit("registerSimHTTPServerActor", reinterpret_cast<unsigned long>(this), -1);
+
+	}
+	void cancel() override
+	{
+		auto wait_state = this->actor_wait_state;
+		this->actor_wait_state = -1;
+		switch (wait_state) {
+		case 1: this->a_callback_error((ActorCallback< RegisterSimHTTPServerActorActor, 0, Void >*)0, actor_cancelled()); break;
+		case 2: this->a_callback_error((ActorCallback< RegisterSimHTTPServerActorActor, 1, Void >*)0, actor_cancelled()); break;
+		}
+
+	}
+};
+															#line 2533 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+[[nodiscard]] static Future<Void> registerSimHTTPServerActor( Sim2* const& self, std::string const& hostname, std::string const& service, Reference<HTTP::IRequestHandler> const& requestHandler ) {
+															#line 2533 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+	return Future<Void>(new RegisterSimHTTPServerActorActor(self, hostname, service, requestHandler));
+															#line 8616 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+}
+
+#line 2563 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+
+	// starts a numAddresses http servers with the dns alias hostname:service with the provided server callback
+	Future<Void> registerSimHTTPServer(std::string hostname,
+	                                   std::string service,
+	                                   Reference<HTTP::IRequestHandler> requestHandler) override {
+		return registerSimHTTPServerActor(this, hostname, service, requestHandler);
+	}
+
 	Sim2(bool printSimTime)
-	  : time(0.0), timerTime(0.0), currentTaskID(TaskPriority::Zero), taskCount(0), yielded(false), yield_limit(0),
+	  : time(0.0), timerTime(0.0), currentTaskID(TaskPriority::Zero), yielded(false), yield_limit(0),
 	    printSimTime(printSimTime) {
 		// Not letting currentProcess be nullptr eliminates some annoying special cases
 		currentProcess =
@@ -7884,6 +8637,9 @@ friend struct ActorCallback< DeleteFileImplActor, 4, Void >;
 		                    this,
 		                    "",
 		                    "");
+		// create a key pair for AuthZ testing
+		auto key = mkcert::makeEcP256();
+		authKeys.insert(std::make_pair(Standalone<StringRef>("DefaultKey"_sr), key));
 		g_network = net2 = newNet2(TLSConfig(), false, true);
 		g_network->addStopCallback(Net2FileSystem::stop);
 		Net2FileSystem::newFileSystem();
@@ -7891,74 +8647,32 @@ friend struct ActorCallback< DeleteFileImplActor, 4, Void >;
 	}
 
 	// Implementation
-	struct Task {
-		TaskPriority taskID;
-		double time;
-		uint64_t stable;
+	struct PromiseTask final : public FastAllocated<PromiseTask> {
+		Promise<Void> promise;
 		ProcessInfo* machine;
-		Promise<Void> action;
-		Task(double time, TaskPriority taskID, uint64_t stable, ProcessInfo* machine, Promise<Void>&& action)
-		  : taskID(taskID), time(time), stable(stable), machine(machine), action(std::move(action)) {}
-		Task(double time, TaskPriority taskID, uint64_t stable, ProcessInfo* machine, Future<Void>& future)
-		  : taskID(taskID), time(time), stable(stable), machine(machine) {
-			future = action.getFuture();
-		}
-		Task(Task&& rhs) noexcept
-		  : taskID(rhs.taskID), time(rhs.time), stable(rhs.stable), machine(rhs.machine),
-		    action(std::move(rhs.action)) {}
-		void operator=(Task const& rhs) {
-			taskID = rhs.taskID;
-			time = rhs.time;
-			stable = rhs.stable;
-			machine = rhs.machine;
-			action = rhs.action;
-		}
-		Task(Task const& rhs)
-		  : taskID(rhs.taskID), time(rhs.time), stable(rhs.stable), machine(rhs.machine), action(rhs.action) {}
-		void operator=(Task&& rhs) noexcept {
-			time = rhs.time;
-			taskID = rhs.taskID;
-			stable = rhs.stable;
-			machine = rhs.machine;
-			action = std::move(rhs.action);
-		}
-
-		bool operator<(Task const& rhs) const {
-			// Ordering is reversed for priority_queue
-			if (time != rhs.time)
-				return time > rhs.time;
-			return stable > rhs.stable;
-		}
+		explicit PromiseTask(ProcessInfo* machine) : machine(machine) {}
+		PromiseTask(ProcessInfo* machine, Promise<Void>&& promise) : machine(machine), promise(std::move(promise)) {}
 	};
 
-	void execTask(struct Task& t) {
+	void execTask(struct PromiseTask& t) {
 		if (t.machine->failed) {
-			t.action.send(Never());
+			t.promise.send(Never());
 		} else {
-			mutex.enter();
-			if (printSimTime && (int)this->time < (int)t.time) {
-				printf("Time: %d\n", (int)t.time);
-			}
-			this->time = t.time;
-			this->timerTime = std::max(this->timerTime, this->time);
-			mutex.leave();
-
 			this->currentProcess = t.machine;
 			try {
-				t.action.send(Void());
+				t.promise.send(Void());
 				ASSERT(this->currentProcess == t.machine);
 			} catch (Error& e) {
 				TraceEvent(SevError, "UnhandledSimulationEventError").errorUnsuppressed(e);
-				killProcess(t.machine, KillInstantly);
+				killProcess(t.machine, KillType::KillInstantly);
 			}
 
 			if (randLog)
 				fmt::print(randLog,
-				           "T {0} {1} {2} {3}\n",
+				           "T {0} {1} {2}\n",
 				           this->time,
 				           int(deterministicRandom()->peek() % 10000),
-				           t.machine ? t.machine->name : "none",
-				           t.stable);
+				           t.machine ? t.machine->name : "none");
 		}
 	}
 
@@ -7966,11 +8680,10 @@ friend struct ActorCallback< DeleteFileImplActor, 4, Void >;
 		// This is presumably coming from either a "fake" thread pool thread, i.e. it is actually on this thread
 		// or a thread created with g_network->startThread
 		ASSERT(getCurrentProcess());
-
-		mutex.enter();
 		ASSERT(taskID >= TaskPriority::Min && taskID <= TaskPriority::Max);
-		tasks.push(Task(time, taskID, taskCount++, getCurrentProcess(), std::move(signal)));
-		mutex.leave();
+
+		PromiseTask* p = new PromiseTask(getCurrentProcess(), std::move(signal));
+		taskQueue.addReadyThreadSafe(isOnMainThread(), taskID, p);
 	}
 	bool isOnMainThread() const override { return net2->isOnMainThread(); }
 	Future<Void> onProcess(ISimulator::ProcessInfo* process, TaskPriority taskID) override {
@@ -7984,21 +8697,15 @@ friend struct ActorCallback< DeleteFileImplActor, 4, Void >;
 
 	ProtocolVersion protocolVersion() const override { return getCurrentProcess()->protocolVersion; }
 
-	// time is guarded by ISimulator::mutex. It is not necessary to guard reads on the main thread because
-	// time should only be modified from the main thread.
 	double time;
 	double timerTime;
 	TaskPriority currentTaskID;
-
-	// taskCount is guarded by ISimulator::mutex
-	uint64_t taskCount;
 
 	std::map<Optional<Standalone<StringRef>>, MachineInfo> machines;
 	std::map<NetworkAddress, ProcessInfo*> addressMap;
 	std::map<ProcessInfo*, Promise<Void>> filesDeadMap;
 
-	// tasks is guarded by ISimulator::mutex
-	std::priority_queue<Task, std::vector<Task>> tasks;
+	TaskQueue<PromiseTask> taskQueue;
 
 	std::vector<std::function<void()>> stopCallbacks;
 
@@ -8033,29 +8740,29 @@ class UDPSimSocket : public IUDPSocket, ReferenceCounted<UDPSimSocket> {
 	std::deque<std::pair<NetworkAddress, Packet>> recvBuffer;
 	AsyncVar<int64_t> writtenPackets;
 	NetworkAddress _localAddress;
-	bool randomDropPacket() {
-		auto res = deterministicRandom()->random01() < .000001;
-		TEST(res); // UDP packet drop
+	static bool randomDropPacket() {
+		auto res = deterministicRandom()->random01() < .000005;
+		CODE_PROBE(res, "UDP packet drop", probe::context::sim2, probe::assert::simOnly);
 		return res;
 	}
 
 	bool isClosed() const { return closed.getFuture().isReady(); }
 	Future<Void> onClosed() const { return closed.getFuture(); }
 
-																#line 8045 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+																#line 8752 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 // This generated class is to be used only via cleanupPeerSocket()
-															#line 2332 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2695 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 template <class CleanupPeerSocketActor>
-															#line 2332 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2695 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 class CleanupPeerSocketActorState {
-															#line 8051 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 8758 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 public:
-															#line 2332 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2695 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	CleanupPeerSocketActorState(UDPSimSocket* const& self) 
-															#line 2332 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-															#line 2332 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2695 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2695 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		 : self(self)
-															#line 8058 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 8765 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 	{
 		fdb_probe_actor_create("cleanupPeerSocket", reinterpret_cast<unsigned long>(this));
 
@@ -8068,16 +8775,16 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 2333 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2696 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			StrictFuture<Void> __when_expr_0 = self->peerSocket.get()->onClosed();
-															#line 2333 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2696 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			if (static_cast<CleanupPeerSocketActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 8075 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 8782 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<CleanupPeerSocketActor*>(this)->actor_wait_state = 1;
-															#line 2333 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2696 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< CleanupPeerSocketActor, 0, Void >*>(static_cast<CleanupPeerSocketActor*>(this)));
-															#line 8080 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 8787 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -8098,11 +8805,11 @@ public:
 	}
 	int a_body1cont1(Void const& _,int loopDepth) 
 	{
-															#line 2334 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2697 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		self->peerSocket.reset();
-															#line 2335 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2698 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (!static_cast<CleanupPeerSocketActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~CleanupPeerSocketActorState(); static_cast<CleanupPeerSocketActor*>(this)->destroy(); return 0; }
-															#line 8105 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 8812 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		new (&static_cast<CleanupPeerSocketActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~CleanupPeerSocketActorState();
 		static_cast<CleanupPeerSocketActor*>(this)->finishSendAndDelPromiseRef();
@@ -8112,11 +8819,11 @@ public:
 	}
 	int a_body1cont1(Void && _,int loopDepth) 
 	{
-															#line 2334 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2697 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		self->peerSocket.reset();
-															#line 2335 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2698 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (!static_cast<CleanupPeerSocketActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~CleanupPeerSocketActorState(); static_cast<CleanupPeerSocketActor*>(this)->destroy(); return 0; }
-															#line 8119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 8826 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		new (&static_cast<CleanupPeerSocketActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~CleanupPeerSocketActorState();
 		static_cast<CleanupPeerSocketActor*>(this)->finishSendAndDelPromiseRef();
@@ -8187,14 +8894,14 @@ public:
 		fdb_probe_actor_exit("cleanupPeerSocket", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 2332 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2695 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	UDPSimSocket* self;
-															#line 8192 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 8899 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 };
 // This generated class is to be used only via cleanupPeerSocket()
-															#line 2332 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2695 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 class CleanupPeerSocketActor final : public Actor<Void>, public ActorCallback< CleanupPeerSocketActor, 0, Void >, public FastAllocated<CleanupPeerSocketActor>, public CleanupPeerSocketActorState<CleanupPeerSocketActor> {
-															#line 8197 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 8904 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 public:
 	using FastAllocated<CleanupPeerSocketActor>::operator new;
 	using FastAllocated<CleanupPeerSocketActor>::operator delete;
@@ -8203,9 +8910,9 @@ public:
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< CleanupPeerSocketActor, 0, Void >;
-															#line 2332 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2695 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	CleanupPeerSocketActor(UDPSimSocket* const& self) 
-															#line 8208 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 8915 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		 : Actor<Void>(),
 		   CleanupPeerSocketActorState<CleanupPeerSocketActor>(self)
 	{
@@ -8228,37 +8935,37 @@ friend struct ActorCallback< CleanupPeerSocketActor, 0, Void >;
 
 	}
 };
-															#line 2332 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2695 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 [[nodiscard]] static Future<Void> cleanupPeerSocket( UDPSimSocket* const& self ) {
-															#line 2332 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2695 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	return Future<Void>(new CleanupPeerSocketActor(self));
-															#line 8235 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 8942 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 }
 
-#line 2337 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+#line 2700 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 
-																#line 8240 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+																#line 8947 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 // This generated class is to be used only via send()
-															#line 2338 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2701 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 template <class SendActor>
-															#line 2338 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2701 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 class SendActorState {
-															#line 8246 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 8953 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 public:
-															#line 2338 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2701 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	SendActorState(UDPSimSocket* const& self,Reference<UDPSimSocket> const& peerSocket,uint8_t const* const& begin,uint8_t const* const& end) 
-															#line 2338 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-															#line 2338 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2701 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2701 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		 : self(self),
-															#line 2338 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2701 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		   peerSocket(peerSocket),
-															#line 2338 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2701 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		   begin(begin),
-															#line 2338 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2701 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		   end(end),
-															#line 2342 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2705 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		   packet(std::make_shared<std::vector<uint8_t>>())
-															#line 8261 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 8968 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 	{
 		fdb_probe_actor_create("send", reinterpret_cast<unsigned long>(this));
 
@@ -8271,20 +8978,20 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 2343 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2706 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			packet->resize(end - begin);
-															#line 2344 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2707 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			std::copy(begin, end, packet->begin());
-															#line 2345 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2708 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			StrictFuture<Void> __when_expr_0 = delay(.002 * deterministicRandom()->random01());
-															#line 2345 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2708 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			if (static_cast<SendActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 8282 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 8989 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<SendActor*>(this)->actor_wait_state = 1;
-															#line 2345 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2708 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< SendActor, 0, Void >*>(static_cast<SendActor*>(this)));
-															#line 8287 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 8994 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -8305,13 +9012,13 @@ public:
 	}
 	int a_body1cont1(Void const& _,int loopDepth) 
 	{
-															#line 2346 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2709 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		peerSocket->recvBuffer.emplace_back(self->_localAddress, std::move(packet));
-															#line 2347 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2710 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		peerSocket->writtenPackets.set(peerSocket->writtenPackets.get() + 1);
-															#line 2348 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2711 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (!static_cast<SendActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~SendActorState(); static_cast<SendActor*>(this)->destroy(); return 0; }
-															#line 8314 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 9021 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		new (&static_cast<SendActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~SendActorState();
 		static_cast<SendActor*>(this)->finishSendAndDelPromiseRef();
@@ -8321,13 +9028,13 @@ public:
 	}
 	int a_body1cont1(Void && _,int loopDepth) 
 	{
-															#line 2346 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2709 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		peerSocket->recvBuffer.emplace_back(self->_localAddress, std::move(packet));
-															#line 2347 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2710 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		peerSocket->writtenPackets.set(peerSocket->writtenPackets.get() + 1);
-															#line 2348 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2711 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (!static_cast<SendActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~SendActorState(); static_cast<SendActor*>(this)->destroy(); return 0; }
-															#line 8330 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 9037 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		new (&static_cast<SendActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~SendActorState();
 		static_cast<SendActor*>(this)->finishSendAndDelPromiseRef();
@@ -8398,22 +9105,22 @@ public:
 		fdb_probe_actor_exit("send", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 2338 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2701 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	UDPSimSocket* self;
-															#line 2338 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2701 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	Reference<UDPSimSocket> peerSocket;
-															#line 2338 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2701 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	uint8_t const* begin;
-															#line 2338 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2701 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	uint8_t const* end;
-															#line 2342 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2705 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	Packet packet;
-															#line 8411 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 9118 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 };
 // This generated class is to be used only via send()
-															#line 2338 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2701 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 class SendActor final : public Actor<Void>, public ActorCallback< SendActor, 0, Void >, public FastAllocated<SendActor>, public SendActorState<SendActor> {
-															#line 8416 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 9123 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 public:
 	using FastAllocated<SendActor>::operator new;
 	using FastAllocated<SendActor>::operator delete;
@@ -8422,9 +9129,9 @@ public:
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< SendActor, 0, Void >;
-															#line 2338 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2701 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	SendActor(UDPSimSocket* const& self,Reference<UDPSimSocket> const& peerSocket,uint8_t const* const& begin,uint8_t const* const& end) 
-															#line 8427 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 9134 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		 : Actor<Void>(),
 		   SendActorState<SendActor>(self, peerSocket, begin, end)
 	{
@@ -8447,37 +9154,37 @@ friend struct ActorCallback< SendActor, 0, Void >;
 
 	}
 };
-															#line 2338 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2701 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 [[nodiscard]] static Future<Void> send( UDPSimSocket* const& self, Reference<UDPSimSocket> const& peerSocket, uint8_t const* const& begin, uint8_t const* const& end ) {
-															#line 2338 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2701 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	return Future<Void>(new SendActor(self, peerSocket, begin, end));
-															#line 8454 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 9161 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 }
 
-#line 2350 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+#line 2713 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 
-																#line 8459 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+																#line 9166 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 // This generated class is to be used only via receiveFrom()
-															#line 2351 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 template <class ReceiveFromActor>
-															#line 2351 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 class ReceiveFromActorState {
-															#line 8465 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 9172 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 public:
-															#line 2351 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	ReceiveFromActorState(UDPSimSocket* const& self,uint8_t* const& begin,uint8_t* const& end,NetworkAddress* const& sender) 
-															#line 2351 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-															#line 2351 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		 : self(self),
-															#line 2351 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		   begin(begin),
-															#line 2351 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		   end(end),
-															#line 2351 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		   sender(sender),
-															#line 2352 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2715 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		   currentTaskID(g_sim2.getCurrentTask())
-															#line 8480 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 9187 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 	{
 		fdb_probe_actor_create("receiveFrom", reinterpret_cast<unsigned long>(this));
 
@@ -8490,16 +9197,16 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 2353 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2716 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			StrictFuture<Void> __when_expr_0 = self->writtenPackets.onChange();
-															#line 2353 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2716 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			if (static_cast<ReceiveFromActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 8497 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 9204 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<ReceiveFromActor*>(this)->actor_wait_state = 1;
-															#line 2353 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2716 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ReceiveFromActor, 0, Void >*>(static_cast<ReceiveFromActor*>(this)));
-															#line 8502 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 9209 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -8520,32 +9227,32 @@ public:
 	}
 	int a_body1cont1(Void const& _,int loopDepth) 
 	{
-															#line 2354 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2717 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = g_sim2.onProcess(self->process, currentTaskID);
-															#line 2354 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2717 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (static_cast<ReceiveFromActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 8527 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 9234 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<ReceiveFromActor*>(this)->actor_wait_state = 2;
-															#line 2354 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2717 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< ReceiveFromActor, 1, Void >*>(static_cast<ReceiveFromActor*>(this)));
-															#line 8532 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 9239 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont1(Void && _,int loopDepth) 
 	{
-															#line 2354 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2717 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = g_sim2.onProcess(self->process, currentTaskID);
-															#line 2354 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2717 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (static_cast<ReceiveFromActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 8543 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 9250 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<ReceiveFromActor*>(this)->actor_wait_state = 2;
-															#line 2354 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2717 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< ReceiveFromActor, 1, Void >*>(static_cast<ReceiveFromActor*>(this)));
-															#line 8548 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 9255 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -8615,27 +9322,27 @@ public:
 	}
 	int a_body1cont2(Void const& _,int loopDepth) 
 	{
-															#line 2355 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2718 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		auto packet = self->recvBuffer.front().second;
-															#line 2356 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2719 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		int sz = packet->size();
-															#line 2357 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2720 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		ASSERT(sz <= end - begin);
-															#line 2358 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2721 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (sender)
-															#line 8626 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 9333 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		{
-															#line 2359 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2722 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			*sender = self->recvBuffer.front().first;
-															#line 8630 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 9337 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		}
-															#line 2361 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2724 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		std::copy(packet->begin(), packet->end(), begin);
-															#line 2362 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2725 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		self->recvBuffer.pop_front();
-															#line 2363 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2726 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (!static_cast<ReceiveFromActor*>(this)->SAV<int>::futures) { (void)(sz); this->~ReceiveFromActorState(); static_cast<ReceiveFromActor*>(this)->destroy(); return 0; }
-															#line 8638 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 9345 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		new (&static_cast<ReceiveFromActor*>(this)->SAV< int >::value()) int(sz);
 		this->~ReceiveFromActorState();
 		static_cast<ReceiveFromActor*>(this)->finishSendAndDelPromiseRef();
@@ -8645,27 +9352,27 @@ public:
 	}
 	int a_body1cont2(Void && _,int loopDepth) 
 	{
-															#line 2355 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2718 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		auto packet = self->recvBuffer.front().second;
-															#line 2356 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2719 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		int sz = packet->size();
-															#line 2357 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2720 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		ASSERT(sz <= end - begin);
-															#line 2358 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2721 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (sender)
-															#line 8656 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 9363 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		{
-															#line 2359 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2722 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			*sender = self->recvBuffer.front().first;
-															#line 8660 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 9367 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		}
-															#line 2361 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2724 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		std::copy(packet->begin(), packet->end(), begin);
-															#line 2362 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2725 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		self->recvBuffer.pop_front();
-															#line 2363 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2726 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (!static_cast<ReceiveFromActor*>(this)->SAV<int>::futures) { (void)(sz); this->~ReceiveFromActorState(); static_cast<ReceiveFromActor*>(this)->destroy(); return 0; }
-															#line 8668 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 9375 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		new (&static_cast<ReceiveFromActor*>(this)->SAV< int >::value()) int(sz);
 		this->~ReceiveFromActorState();
 		static_cast<ReceiveFromActor*>(this)->finishSendAndDelPromiseRef();
@@ -8736,22 +9443,22 @@ public:
 		fdb_probe_actor_exit("receiveFrom", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 2351 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	UDPSimSocket* self;
-															#line 2351 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	uint8_t* begin;
-															#line 2351 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	uint8_t* end;
-															#line 2351 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	NetworkAddress* sender;
-															#line 2352 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2715 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	TaskPriority currentTaskID;
-															#line 8749 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 9456 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 };
 // This generated class is to be used only via receiveFrom()
-															#line 2351 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 class ReceiveFromActor final : public Actor<int>, public ActorCallback< ReceiveFromActor, 0, Void >, public ActorCallback< ReceiveFromActor, 1, Void >, public FastAllocated<ReceiveFromActor>, public ReceiveFromActorState<ReceiveFromActor> {
-															#line 8754 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 9461 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 public:
 	using FastAllocated<ReceiveFromActor>::operator new;
 	using FastAllocated<ReceiveFromActor>::operator delete;
@@ -8761,9 +9468,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< ReceiveFromActor, 0, Void >;
 friend struct ActorCallback< ReceiveFromActor, 1, Void >;
-															#line 2351 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	ReceiveFromActor(UDPSimSocket* const& self,uint8_t* const& begin,uint8_t* const& end,NetworkAddress* const& sender) 
-															#line 8766 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 9473 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		 : Actor<int>(),
 		   ReceiveFromActorState<ReceiveFromActor>(self, begin, end, sender)
 	{
@@ -8787,19 +9494,19 @@ friend struct ActorCallback< ReceiveFromActor, 1, Void >;
 
 	}
 };
-															#line 2351 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 [[nodiscard]] static Future<int> receiveFrom( UDPSimSocket* const& self, uint8_t* const& begin, uint8_t* const& end, NetworkAddress* const& sender ) {
-															#line 2351 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	return Future<int>(new ReceiveFromActor(self, begin, end, sender));
-															#line 8794 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 9501 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 }
 
-#line 2365 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+#line 2728 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 
 public:
 	UDPSimSocket(NetworkAddress const& localAddress, Optional<NetworkAddress> const& peerAddress)
-	  : id(deterministicRandom()->randomUniqueID()), process(g_simulator.getCurrentProcess()), peerAddress(peerAddress),
-	    actors(false), _localAddress(localAddress) {
+	  : id(deterministicRandom()->randomUniqueID()), process(g_simulator->getCurrentProcess()),
+	    peerAddress(peerAddress), actors(false), _localAddress(localAddress) {
 		g_sim2.addressMap.emplace(_localAddress, process);
 		ASSERT(process->boundUDPSockets.find(localAddress) == process->boundUDPSockets.end());
 		process->boundUDPSockets.emplace(localAddress, this);
@@ -8902,7 +9609,7 @@ public:
 
 Future<Reference<IUDPSocket>> Sim2::createUDPSocket(NetworkAddress toAddr) {
 	NetworkAddress localAddress;
-	auto process = g_simulator.getCurrentProcess();
+	auto process = g_simulator->getCurrentProcess();
 	if (process->address.ip.isV6()) {
 		IPAddress::IPAddressStore store = process->address.ip.toV6();
 		uint16_t* ipParts = (uint16_t*)store.data();
@@ -8920,7 +9627,7 @@ Future<Reference<IUDPSocket>> Sim2::createUDPSocket(NetworkAddress toAddr) {
 
 Future<Reference<IUDPSocket>> Sim2::createUDPSocket(bool isV6) {
 	NetworkAddress localAddress;
-	auto process = g_simulator.getCurrentProcess();
+	auto process = g_simulator->getCurrentProcess();
 	if (process->address.ip.isV6() == isV6) {
 		localAddress = process->address;
 	} else {
@@ -8942,28 +9649,28 @@ Future<Reference<IUDPSocket>> Sim2::createUDPSocket(bool isV6) {
 
 void startNewSimulator(bool printSimTime) {
 	ASSERT(!g_network);
-	g_network = g_pSimulator = new Sim2(printSimTime);
-	g_simulator.connectionFailuresDisableDuration =
+	g_network = g_simulator = new Sim2(printSimTime);
+	g_simulator->connectionFailuresDisableDuration =
 	    deterministicRandom()->coinflip() ? 0 : DISABLE_CONNECTION_FAILURE_FOREVER;
 }
 
-															#line 8950 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 9657 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 namespace {
 // This generated class is to be used only via doReboot()
-															#line 2517 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2880 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 template <class DoRebootActor>
-															#line 2517 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2880 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 class DoRebootActorState {
-															#line 8957 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 9664 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 public:
-															#line 2517 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2880 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	DoRebootActorState(ISimulator::ProcessInfo* const& p,ISimulator::KillType const& kt) 
-															#line 2517 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-															#line 2517 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2880 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2880 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		 : p(p),
-															#line 2517 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2880 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		   kt(kt)
-															#line 8966 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 9673 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 	{
 		fdb_probe_actor_create("doReboot", reinterpret_cast<unsigned long>(this));
 
@@ -8976,17 +9683,17 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 2518 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2881 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			TraceEvent("RebootingProcessAttempt") .detail("ZoneId", p->locality.zoneId()) .detail("KillType", kt) .detail("Process", p->toString()) .detail("StartingClass", p->startingClass.toString()) .detail("Failed", p->failed) .detail("Excluded", p->excluded) .detail("Cleared", p->cleared) .detail("Rebooting", p->rebooting) .detail("TaskPriorityDefaultDelay", TaskPriority::DefaultDelay);
-															#line 2529 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2892 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			StrictFuture<Void> __when_expr_0 = g_sim2.delay(0, TaskPriority::DefaultDelay, p);
-															#line 2529 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2892 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
-															#line 8985 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 9692 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			static_cast<DoRebootActor*>(this)->actor_wait_state = 1;
-															#line 2529 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2892 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< DoRebootActor, 0, Void >*>(static_cast<DoRebootActor*>(this)));
-															#line 8989 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 9696 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -9007,73 +9714,86 @@ public:
 	int a_body1cont1(Void const& _,int loopDepth) 
 	{
 		try {
-															#line 2532 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-			ASSERT(kt == ISimulator::RebootProcess || kt == ISimulator::Reboot || kt == ISimulator::RebootAndDelete || kt == ISimulator::RebootProcessAndDelete);
-															#line 2535 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-			TEST(kt == ISimulator::RebootProcess);
-															#line 2536 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-			TEST(kt == ISimulator::Reboot);
-															#line 2537 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-			TEST(kt == ISimulator::RebootAndDelete);
-															#line 2538 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-			TEST( kt == ISimulator::RebootProcessAndDelete);
-															#line 2542 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2895 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+			ASSERT(kt == ISimulator::KillType::RebootProcess || kt == ISimulator::KillType::Reboot || kt == ISimulator::KillType::RebootAndDelete || kt == ISimulator::KillType::RebootProcessAndDelete || kt == ISimulator::KillType::RebootProcessAndSwitch);
+															#line 2899 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+			CODE_PROBE(kt == ISimulator::KillType::RebootProcess, "Simulated process rebooted", probe::assert::simOnly, probe::context::sim2);
+															#line 2903 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+			CODE_PROBE(kt == ISimulator::KillType::Reboot, "Simulated machine rebooted", probe::assert::simOnly, probe::context::sim2);
+															#line 2907 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+			CODE_PROBE(kt == ISimulator::KillType::RebootAndDelete, "Simulated machine rebooted with data and coordination state deletion", probe::assert::simOnly, probe::context::sim2);
+															#line 2911 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+			CODE_PROBE(kt == ISimulator::KillType::RebootProcessAndDelete, "Simulated process rebooted with data and coordination state deletion", probe::assert::simOnly, probe::context::sim2);
+															#line 2915 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+			CODE_PROBE(kt == ISimulator::KillType::RebootProcessAndSwitch, "Simulated process rebooted with different cluster file", probe::assert::simOnly, probe::context::sim2);
+															#line 2920 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			if (p->rebooting || !p->isReliable())
-															#line 9022 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 9731 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			{
-															#line 2543 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2921 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 				TraceEvent(SevDebug, "DoRebootFailed") .detail("Rebooting", p->rebooting) .detail("Reliable", p->isReliable());
-															#line 2546 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2924 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 				delete static_cast<DoRebootActor*>(this);
-															#line 9028 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 9737 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 				return 0;
 			}
 			else
 			{
-															#line 2547 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-				if (std::string(p->name) == "remote flow process")
-															#line 9035 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 2925 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+				if (p->isSpawnedKVProcess())
+															#line 9744 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 				{
-															#line 2548 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 					TraceEvent(SevDebug, "DoRebootFailed").detail("Name", p->name).detail("Address", p->address);
-															#line 2549 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2927 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 					delete static_cast<DoRebootActor*>(this);
-															#line 9041 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 9750 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 					return 0;
 				}
 				else
 				{
-															#line 2550 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2928 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 					if (p->getChilds().size())
-															#line 9048 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 9757 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 					{
-															#line 2551 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2929 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 						TraceEvent(SevDebug, "DoRebootFailedOnParentProcess").detail("Address", p->address);
-															#line 2552 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2930 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 						delete static_cast<DoRebootActor*>(this);
-															#line 9054 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 9763 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 						return 0;
 					}
 				}
 			}
-															#line 2555 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2933 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			TraceEvent("RebootingProcess") .detail("KillType", kt) .detail("Address", p->address) .detail("ZoneId", p->locality.zoneId()) .detail("DataHall", p->locality.dataHallId()) .detail("Locality", p->locality.toString()) .detail("Failed", p->failed) .detail("Excluded", p->excluded) .detail("Cleared", p->cleared) .backtrace();
-															#line 2565 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2943 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			p->rebooting = true;
-															#line 2566 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-			if ((kt == ISimulator::RebootAndDelete) || (kt == ISimulator::RebootProcessAndDelete))
-															#line 9065 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 2944 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+			if ((kt == ISimulator::KillType::RebootAndDelete) || (kt == ISimulator::KillType::RebootProcessAndDelete))
+															#line 9774 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			{
-															#line 2567 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2945 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 				p->cleared = true;
-															#line 2568 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-				g_simulator.clearAddress(p->address);
-															#line 9071 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 2946 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+				g_simulator->clearAddress(p->address);
+															#line 9780 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			}
-															#line 2570 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+			else
+			{
+															#line 2947 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+				if (kt == ISimulator::KillType::RebootProcessAndSwitch)
+															#line 9786 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+				{
+															#line 2948 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+					g_simulator->switchCluster(p->address);
+															#line 9790 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+				}
+			}
+															#line 2950 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			p->shutdownSignal.send(kt);
-															#line 9075 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
-			loopDepth = a_body1cont10(loopDepth);
+															#line 9795 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+			loopDepth = a_body1cont12(loopDepth);
 		}
 		catch (Error& error) {
 			loopDepth = a_body1cont1Catch1(error, loopDepth);
@@ -9086,73 +9806,86 @@ public:
 	int a_body1cont1(Void && _,int loopDepth) 
 	{
 		try {
-															#line 2532 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-			ASSERT(kt == ISimulator::RebootProcess || kt == ISimulator::Reboot || kt == ISimulator::RebootAndDelete || kt == ISimulator::RebootProcessAndDelete);
-															#line 2535 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-			TEST(kt == ISimulator::RebootProcess);
-															#line 2536 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-			TEST(kt == ISimulator::Reboot);
-															#line 2537 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-			TEST(kt == ISimulator::RebootAndDelete);
-															#line 2538 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-			TEST( kt == ISimulator::RebootProcessAndDelete);
-															#line 2542 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2895 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+			ASSERT(kt == ISimulator::KillType::RebootProcess || kt == ISimulator::KillType::Reboot || kt == ISimulator::KillType::RebootAndDelete || kt == ISimulator::KillType::RebootProcessAndDelete || kt == ISimulator::KillType::RebootProcessAndSwitch);
+															#line 2899 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+			CODE_PROBE(kt == ISimulator::KillType::RebootProcess, "Simulated process rebooted", probe::assert::simOnly, probe::context::sim2);
+															#line 2903 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+			CODE_PROBE(kt == ISimulator::KillType::Reboot, "Simulated machine rebooted", probe::assert::simOnly, probe::context::sim2);
+															#line 2907 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+			CODE_PROBE(kt == ISimulator::KillType::RebootAndDelete, "Simulated machine rebooted with data and coordination state deletion", probe::assert::simOnly, probe::context::sim2);
+															#line 2911 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+			CODE_PROBE(kt == ISimulator::KillType::RebootProcessAndDelete, "Simulated process rebooted with data and coordination state deletion", probe::assert::simOnly, probe::context::sim2);
+															#line 2915 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+			CODE_PROBE(kt == ISimulator::KillType::RebootProcessAndSwitch, "Simulated process rebooted with different cluster file", probe::assert::simOnly, probe::context::sim2);
+															#line 2920 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			if (p->rebooting || !p->isReliable())
-															#line 9101 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 9823 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			{
-															#line 2543 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2921 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 				TraceEvent(SevDebug, "DoRebootFailed") .detail("Rebooting", p->rebooting) .detail("Reliable", p->isReliable());
-															#line 2546 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2924 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 				delete static_cast<DoRebootActor*>(this);
-															#line 9107 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 9829 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 				return 0;
 			}
 			else
 			{
-															#line 2547 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-				if (std::string(p->name) == "remote flow process")
-															#line 9114 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 2925 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+				if (p->isSpawnedKVProcess())
+															#line 9836 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 				{
-															#line 2548 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 					TraceEvent(SevDebug, "DoRebootFailed").detail("Name", p->name).detail("Address", p->address);
-															#line 2549 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2927 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 					delete static_cast<DoRebootActor*>(this);
-															#line 9120 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 9842 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 					return 0;
 				}
 				else
 				{
-															#line 2550 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2928 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 					if (p->getChilds().size())
-															#line 9127 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 9849 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 					{
-															#line 2551 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2929 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 						TraceEvent(SevDebug, "DoRebootFailedOnParentProcess").detail("Address", p->address);
-															#line 2552 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2930 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 						delete static_cast<DoRebootActor*>(this);
-															#line 9133 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 9855 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 						return 0;
 					}
 				}
 			}
-															#line 2555 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2933 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			TraceEvent("RebootingProcess") .detail("KillType", kt) .detail("Address", p->address) .detail("ZoneId", p->locality.zoneId()) .detail("DataHall", p->locality.dataHallId()) .detail("Locality", p->locality.toString()) .detail("Failed", p->failed) .detail("Excluded", p->excluded) .detail("Cleared", p->cleared) .backtrace();
-															#line 2565 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2943 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			p->rebooting = true;
-															#line 2566 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-			if ((kt == ISimulator::RebootAndDelete) || (kt == ISimulator::RebootProcessAndDelete))
-															#line 9144 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 2944 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+			if ((kt == ISimulator::KillType::RebootAndDelete) || (kt == ISimulator::KillType::RebootProcessAndDelete))
+															#line 9866 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			{
-															#line 2567 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2945 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 				p->cleared = true;
-															#line 2568 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-				g_simulator.clearAddress(p->address);
-															#line 9150 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 2946 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+				g_simulator->clearAddress(p->address);
+															#line 9872 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			}
-															#line 2570 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+			else
+			{
+															#line 2947 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+				if (kt == ISimulator::KillType::RebootProcessAndSwitch)
+															#line 9878 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+				{
+															#line 2948 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+					g_simulator->switchCluster(p->address);
+															#line 9882 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+				}
+			}
+															#line 2950 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			p->shutdownSignal.send(kt);
-															#line 9154 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
-			loopDepth = a_body1cont10(loopDepth);
+															#line 9887 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+			loopDepth = a_body1cont12(loopDepth);
 		}
 		catch (Error& error) {
 			loopDepth = a_body1cont1Catch1(error, loopDepth);
@@ -9227,20 +9960,20 @@ public:
 	}
 	int a_body1cont2(int loopDepth) 
 	{
-		loopDepth = a_body1cont11(loopDepth);
+		loopDepth = a_body1cont13(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1cont1Catch1(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 2572 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2952 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			TraceEvent(SevError, "RebootError").error(e);
-															#line 2573 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2953 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			p->shutdownSignal.sendError(e);
-															#line 2574 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2954 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			return a_body1Catch1(e, loopDepth);
-															#line 9243 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 9976 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		}
 		catch (Error& error) {
 			loopDepth = a_body1Catch1(error, loopDepth);
@@ -9250,7 +9983,7 @@ public:
 
 		return loopDepth;
 	}
-	int a_body1cont10(int loopDepth) 
+	int a_body1cont12(int loopDepth) 
 	{
 		try {
 			loopDepth = a_body1cont2(loopDepth);
@@ -9263,25 +9996,25 @@ public:
 
 		return loopDepth;
 	}
-	int a_body1cont11(int loopDepth) 
+	int a_body1cont13(int loopDepth) 
 	{
-															#line 2517 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2880 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		delete static_cast<DoRebootActor*>(this);
-															#line 9270 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 10003 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		return 0;
 
 		return loopDepth;
 	}
-															#line 2517 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2880 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	ISimulator::ProcessInfo* p;
-															#line 2517 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2880 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	ISimulator::KillType kt;
-															#line 9279 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 10012 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 };
 // This generated class is to be used only via doReboot()
-															#line 2517 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2880 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 class DoRebootActor final : public Actor<void>, public ActorCallback< DoRebootActor, 0, Void >, public FastAllocated<DoRebootActor>, public DoRebootActorState<DoRebootActor> {
-															#line 9284 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 10017 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 public:
 	using FastAllocated<DoRebootActor>::operator new;
 	using FastAllocated<DoRebootActor>::operator delete;
@@ -9290,9 +10023,9 @@ public:
 	void destroy() {{ ((Actor<void>*)this)->~Actor(); operator delete(this); }}
 #pragma clang diagnostic pop
 friend struct ActorCallback< DoRebootActor, 0, Void >;
-															#line 2517 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2880 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	DoRebootActor(ISimulator::ProcessInfo* const& p,ISimulator::KillType const& kt) 
-															#line 9295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 10028 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		 : Actor<void>(),
 		   DoRebootActorState<DoRebootActor>(p, kt)
 	{
@@ -9307,26 +10040,26 @@ friend struct ActorCallback< DoRebootActor, 0, Void >;
 	}
 };
 }
-															#line 2517 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2880 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 void doReboot( ISimulator::ProcessInfo* const& p, ISimulator::KillType const& kt ) {
-															#line 2517 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 2880 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	new DoRebootActor(p, kt);
-															#line 9314 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 10047 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 }
 
-#line 2577 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+#line 2957 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 
 // Simulates delays for performing operations on disk
 Future<Void> waitUntilDiskReady(Reference<DiskParameters> diskParameters, int64_t size, bool sync) {
-	if (g_simulator.getCurrentProcess()->failedDisk) {
+	if (g_simulator->getCurrentProcess()->failedDisk) {
 		return Never();
 	}
-	if (g_simulator.connectionFailuresDisableDuration > 1e4)
+	if (g_simulator->connectionFailuresDisableDuration > 1e4)
 		return delay(0.0001);
 
 	if (diskParameters->nextOperation < now())
 		diskParameters->nextOperation = now();
-	diskParameters->nextOperation += (1.0 / diskParameters->iops) + (1.0 * size / diskParameters->bandwidth);
+	diskParameters->nextOperation += (1.0 / diskParameters->iops) + (size / diskParameters->bandwidth);
 
 	double randomLatency;
 	if (sync) {
@@ -9339,16 +10072,17 @@ Future<Void> waitUntilDiskReady(Reference<DiskParameters> diskParameters, int64_
 
 void enableConnectionFailures(std::string const& context) {
 	if (g_network->isSimulated()) {
-		g_simulator.connectionFailuresDisableDuration = 0;
-		g_simulator.speedUpSimulation = false;
+		g_simulator->connectionFailuresDisableDuration = 0;
+		g_simulator->speedUpSimulation = false;
+		g_simulator->connectionFailureEnableTime = now();
 		TraceEvent(SevWarnAlways, ("EnableConnectionFailures_" + context).c_str());
 	}
 }
 
 void disableConnectionFailures(std::string const& context) {
 	if (g_network->isSimulated()) {
-		g_simulator.connectionFailuresDisableDuration = DISABLE_CONNECTION_FAILURE_FOREVER;
-		g_simulator.speedUpSimulation = true;
+		g_simulator->connectionFailuresDisableDuration = DISABLE_CONNECTION_FAILURE_FOREVER;
+		g_simulator->speedUpSimulation = true;
 		TraceEvent(SevWarnAlways, ("DisableConnectionFailures_" + context).c_str());
 	}
 }
@@ -9385,24 +10119,20 @@ int sf_open(const char* filename, int flags, int convFlags, int mode) {
 Future<Reference<class IAsyncFile>> Sim2FileSystem::open(const std::string& filename, int64_t flags, int64_t mode) {
 	ASSERT((flags & IAsyncFile::OPEN_ATOMIC_WRITE_AND_CREATE) || !(flags & IAsyncFile::OPEN_CREATE) ||
 	       StringRef(filename).endsWith(
-	           LiteralStringRef(".fdb-lock"))); // We don't use "ordinary" non-atomic file creation right now except for
-	                                            // folder locking, and we don't have code to simulate its unsafeness.
+	           ".fdb-lock"_sr)); // We don't use "ordinary" non-atomic file creation right now except for
+	                             // folder locking, and we don't have code to simulate its unsafeness.
 
 	if ((flags & IAsyncFile::OPEN_EXCLUSIVE))
 		ASSERT(flags & IAsyncFile::OPEN_CREATE);
 
 	if (flags & IAsyncFile::OPEN_UNCACHED) {
-		auto& machineCache = g_simulator.getCurrentProcess()->machine->openFiles;
+		auto& machineCache = g_simulator->getCurrentProcess()->machine->openFiles;
 		std::string actualFilename = filename;
 		if (flags & IAsyncFile::OPEN_ATOMIC_WRITE_AND_CREATE) {
 			actualFilename = filename + ".part";
 			auto partFile = machineCache.find(actualFilename);
 			if (partFile != machineCache.end()) {
 				Future<Reference<IAsyncFile>> f = AsyncFileDetachable::open(partFile->second.get());
-				if (FLOW_KNOBS->PAGE_WRITE_CHECKSUM_HISTORY > 0)
-					f = map(f, [=](Reference<IAsyncFile> r) {
-						return Reference<IAsyncFile>(new AsyncFileWriteChecker(r));
-					});
 				return f;
 			}
 		}
@@ -9414,11 +10144,15 @@ Future<Reference<class IAsyncFile>> Sim2FileSystem::open(const std::string& file
 			// This way, they can both keep up with the time to start the next operation
 			auto diskParameters =
 			    makeReference<DiskParameters>(FLOW_KNOBS->SIM_DISK_IOPS, FLOW_KNOBS->SIM_DISK_BANDWIDTH);
-			f = AsyncFileNonDurable::open(filename,
-			                              actualFilename,
-			                              SimpleFile::open(filename, flags, mode, diskParameters, false),
-			                              diskParameters,
-			                              (flags & IAsyncFile::OPEN_NO_AIO) == 0);
+
+			f = SimpleFile::open(filename, flags, mode, diskParameters, false);
+			if (FLOW_KNOBS->PAGE_WRITE_CHECKSUM_HISTORY > 0) {
+				f = map(f,
+				        [=](Reference<IAsyncFile> r) { return Reference<IAsyncFile>(new AsyncFileWriteChecker(r)); });
+			}
+
+			f = AsyncFileNonDurable::open(
+			    filename, actualFilename, f, diskParameters, (flags & IAsyncFile::OPEN_NO_AIO) == 0);
 
 			machineCache[actualFilename] = UnsafeWeakFutureReference<IAsyncFile>(f);
 		} else {
@@ -9426,18 +10160,14 @@ Future<Reference<class IAsyncFile>> Sim2FileSystem::open(const std::string& file
 		}
 
 		f = AsyncFileDetachable::open(f);
-		if (FLOW_KNOBS->PAGE_WRITE_CHECKSUM_HISTORY > 0)
-			f = map(f, [=](Reference<IAsyncFile> r) { return Reference<IAsyncFile>(new AsyncFileWriteChecker(r)); });
 		if (FLOW_KNOBS->ENABLE_CHAOS_FEATURES)
 			f = map(f, [=](Reference<IAsyncFile> r) { return Reference<IAsyncFile>(new AsyncFileChaos(r)); });
-#if ENCRYPTION_ENABLED
 		if (flags & IAsyncFile::OPEN_ENCRYPTED)
 			f = map(f, [flags](Reference<IAsyncFile> r) {
 				auto mode = flags & IAsyncFile::OPEN_READWRITE ? AsyncFileEncrypted::Mode::APPEND_ONLY
 				                                               : AsyncFileEncrypted::Mode::READ_ONLY;
 				return Reference<IAsyncFile>(new AsyncFileEncrypted(r, mode));
 			});
-#endif // ENCRYPTION_ENABLED
 		return f;
 	} else
 		return AsyncFileCached::open(filename, flags, mode);
@@ -9449,23 +10179,23 @@ Future<Void> Sim2FileSystem::deleteFile(const std::string& filename, bool mustBe
 	return Sim2::deleteFileImpl(&g_sim2, filename, mustBeDurable);
 }
 
-															#line 9452 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 10182 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 namespace {
 // This generated class is to be used only via renameFileImpl()
-															#line 2711 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 3088 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 template <class RenameFileImplActor>
-															#line 2711 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 3088 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 class RenameFileImplActorState {
-															#line 9459 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 10189 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 public:
-															#line 2711 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 3088 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	RenameFileImplActorState(std::string const& from,std::string const& to) 
-															#line 2711 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
-															#line 2711 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 3088 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 3088 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		 : from(from),
-															#line 2711 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 3088 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		   to(to)
-															#line 9468 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 10198 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 	{
 		fdb_probe_actor_create("renameFileImpl", reinterpret_cast<unsigned long>(this));
 
@@ -9478,16 +10208,16 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 2712 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 3089 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			StrictFuture<Void> __when_expr_0 = delay(0.5 * deterministicRandom()->random01());
-															#line 2712 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 3089 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			if (static_cast<RenameFileImplActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 9485 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 10215 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<RenameFileImplActor*>(this)->actor_wait_state = 1;
-															#line 2712 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 3089 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< RenameFileImplActor, 0, Void >*>(static_cast<RenameFileImplActor*>(this)));
-															#line 9490 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 10220 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -9508,36 +10238,72 @@ public:
 	}
 	int a_body1cont1(Void const& _,int loopDepth) 
 	{
-															#line 2713 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 3092 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		TraceEvent("RenamingFile").detail("From", from).detail("To", to).log();
+															#line 3094 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		using block_value_type = typename decltype(g_simulator->corruptedBlocks)::key_type::second_type;
+															#line 3095 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		auto maxBlockValue = std::numeric_limits<block_value_type>::max();
+															#line 3096 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		g_simulator->corruptedBlocks.erase(g_simulator->corruptedBlocks.lower_bound(std::make_pair(to, 0u)), g_simulator->corruptedBlocks.upper_bound(std::make_pair(to, maxBlockValue)));
+															#line 3099 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		auto begin = g_simulator->corruptedBlocks.lower_bound(std::make_pair(from, 0u)), end = g_simulator->corruptedBlocks.upper_bound(std::make_pair(from, maxBlockValue));
+															#line 3101 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		for(auto iter = begin;iter != end;++iter) {
+															#line 3102 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+			g_simulator->corruptedBlocks.emplace(to, iter->second);
+															#line 10255 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+		}
+															#line 3104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		g_simulator->corruptedBlocks.erase(begin, end);
+															#line 3106 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		::renameFile(from, to);
-															#line 2714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 3107 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = delay(0.5 * deterministicRandom()->random01());
-															#line 2714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 3107 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (static_cast<RenameFileImplActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 9517 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 10265 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<RenameFileImplActor*>(this)->actor_wait_state = 2;
-															#line 2714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 3107 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< RenameFileImplActor, 1, Void >*>(static_cast<RenameFileImplActor*>(this)));
-															#line 9522 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 10270 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont1(Void && _,int loopDepth) 
 	{
-															#line 2713 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 3092 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		TraceEvent("RenamingFile").detail("From", from).detail("To", to).log();
+															#line 3094 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		using block_value_type = typename decltype(g_simulator->corruptedBlocks)::key_type::second_type;
+															#line 3095 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		auto maxBlockValue = std::numeric_limits<block_value_type>::max();
+															#line 3096 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		g_simulator->corruptedBlocks.erase(g_simulator->corruptedBlocks.lower_bound(std::make_pair(to, 0u)), g_simulator->corruptedBlocks.upper_bound(std::make_pair(to, maxBlockValue)));
+															#line 3099 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		auto begin = g_simulator->corruptedBlocks.lower_bound(std::make_pair(from, 0u)), end = g_simulator->corruptedBlocks.upper_bound(std::make_pair(from, maxBlockValue));
+															#line 3101 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		for(auto iter = begin;iter != end;++iter) {
+															#line 3102 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+			g_simulator->corruptedBlocks.emplace(to, iter->second);
+															#line 10291 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+		}
+															#line 3104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+		g_simulator->corruptedBlocks.erase(begin, end);
+															#line 3106 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		::renameFile(from, to);
-															#line 2714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 3107 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = delay(0.5 * deterministicRandom()->random01());
-															#line 2714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 3107 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (static_cast<RenameFileImplActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 9535 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 10301 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<RenameFileImplActor*>(this)->actor_wait_state = 2;
-															#line 2714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 3107 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< RenameFileImplActor, 1, Void >*>(static_cast<RenameFileImplActor*>(this)));
-															#line 9540 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 10306 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -9607,9 +10373,9 @@ public:
 	}
 	int a_body1cont2(Void const& _,int loopDepth) 
 	{
-															#line 2715 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 3108 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (!static_cast<RenameFileImplActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~RenameFileImplActorState(); static_cast<RenameFileImplActor*>(this)->destroy(); return 0; }
-															#line 9612 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 10378 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		new (&static_cast<RenameFileImplActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~RenameFileImplActorState();
 		static_cast<RenameFileImplActor*>(this)->finishSendAndDelPromiseRef();
@@ -9619,9 +10385,9 @@ public:
 	}
 	int a_body1cont2(Void && _,int loopDepth) 
 	{
-															#line 2715 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 3108 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 		if (!static_cast<RenameFileImplActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~RenameFileImplActorState(); static_cast<RenameFileImplActor*>(this)->destroy(); return 0; }
-															#line 9624 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 10390 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		new (&static_cast<RenameFileImplActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~RenameFileImplActorState();
 		static_cast<RenameFileImplActor*>(this)->finishSendAndDelPromiseRef();
@@ -9692,16 +10458,16 @@ public:
 		fdb_probe_actor_exit("renameFileImpl", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 2711 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 3088 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	std::string from;
-															#line 2711 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 3088 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	std::string to;
-															#line 9699 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 10465 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 };
 // This generated class is to be used only via renameFileImpl()
-															#line 2711 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 3088 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 class RenameFileImplActor final : public Actor<Void>, public ActorCallback< RenameFileImplActor, 0, Void >, public ActorCallback< RenameFileImplActor, 1, Void >, public FastAllocated<RenameFileImplActor>, public RenameFileImplActorState<RenameFileImplActor> {
-															#line 9704 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 10470 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 public:
 	using FastAllocated<RenameFileImplActor>::operator new;
 	using FastAllocated<RenameFileImplActor>::operator delete;
@@ -9711,9 +10477,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< RenameFileImplActor, 0, Void >;
 friend struct ActorCallback< RenameFileImplActor, 1, Void >;
-															#line 2711 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 3088 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	RenameFileImplActor(std::string const& from,std::string const& to) 
-															#line 9716 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 10482 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 		 : Actor<Void>(),
 		   RenameFileImplActorState<RenameFileImplActor>(from, to)
 	{
@@ -9738,14 +10504,14 @@ friend struct ActorCallback< RenameFileImplActor, 1, Void >;
 	}
 };
 }
-															#line 2711 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 3088 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 [[nodiscard]] Future<Void> renameFileImpl( std::string const& from, std::string const& to ) {
-															#line 2711 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+															#line 3088 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 	return Future<Void>(new RenameFileImplActor(from, to));
-															#line 9745 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
+															#line 10511 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.g.cpp"
 }
 
-#line 2717 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
+#line 3110 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/sim2.actor.cpp"
 
 Future<Void> Sim2FileSystem::renameFile(std::string const& from, std::string const& to) {
 	return renameFileImpl(from, to);

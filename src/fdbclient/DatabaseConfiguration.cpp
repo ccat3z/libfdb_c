@@ -19,8 +19,10 @@
  */
 
 #include "fdbclient/DatabaseConfiguration.h"
+#include "fdbclient/FDBTypes.h"
 #include "fdbclient/SystemData.h"
 #include "flow/ITrace.h"
+#include "flow/Platform.h"
 #include "flow/Trace.h"
 #include "flow/genericactors.actor.h"
 #include "flow/UnitTest.h"
@@ -54,6 +56,7 @@ void DatabaseConfiguration::resetInternal() {
 	storageMigrationType = StorageMigrationType::DEFAULT;
 	blobGranulesEnabled = false;
 	tenantMode = TenantMode::DISABLED;
+	encryptionAtRestMode = EncryptionAtRestMode::DISABLED;
 }
 
 int toInt(ValueRef const& v) {
@@ -63,6 +66,16 @@ int toInt(ValueRef const& v) {
 void parse(int* i, ValueRef const& v) {
 	// FIXME: Sanity checking
 	*i = atoi(v.toString().c_str());
+}
+
+void parse(int64_t* i, ValueRef const& v) {
+	// FIXME: Sanity checking
+	*i = atoll(v.toString().c_str());
+}
+
+void parse(double* i, ValueRef const& v) {
+	// FIXME: Sanity checking
+	*i = atof(v.toString().c_str());
 }
 
 void parseReplicationPolicy(Reference<IReplicationPolicy>* policy, ValueRef const& v) {
@@ -214,7 +227,8 @@ bool DatabaseConfiguration::isValid() const {
 	      (perpetualStorageWiggleSpeed == 0 || perpetualStorageWiggleSpeed == 1) &&
 	      isValidPerpetualStorageWiggleLocality(perpetualStorageWiggleLocality) &&
 	      storageMigrationType != StorageMigrationType::UNSET && tenantMode >= TenantMode::DISABLED &&
-	      tenantMode < TenantMode::END)) {
+	      tenantMode < TenantMode::END && encryptionAtRestMode >= EncryptionAtRestMode::DISABLED &&
+	      encryptionAtRestMode < EncryptionAtRestMode::END)) {
 		return false;
 	}
 	std::set<Key> dcIds;
@@ -242,6 +256,9 @@ bool DatabaseConfiguration::isValid() const {
 	return true;
 }
 
+// The database configuration is what we desired state of the cluster, which may be different from ongoing cluster
+// states. For example, the real count of roles, which is reported in each process, can differ from the desired role
+// count.
 StatusObject DatabaseConfiguration::toJSON(bool noPolicies) const {
 	StatusObject result;
 
@@ -292,47 +309,12 @@ StatusObject DatabaseConfiguration::toJSON(bool noPolicies) const {
 		result["log_version"] = (int)tLogVersion;
 	}
 
-	if (tLogDataStoreType == KeyValueStoreType::SSD_BTREE_V1 &&
-	    storageServerStoreType == KeyValueStoreType::SSD_BTREE_V1) {
-		result["storage_engine"] = "ssd-1";
-	} else if (tLogDataStoreType == KeyValueStoreType::SSD_BTREE_V2 &&
-	           storageServerStoreType == KeyValueStoreType::SSD_BTREE_V2) {
-		result["storage_engine"] = "ssd-2";
-	} else if (tLogDataStoreType == KeyValueStoreType::SSD_BTREE_V2 &&
-	           storageServerStoreType == KeyValueStoreType::SSD_REDWOOD_V1) {
-		result["storage_engine"] = "ssd-redwood-1-experimental";
-	} else if (tLogDataStoreType == KeyValueStoreType::SSD_BTREE_V2 &&
-	           storageServerStoreType == KeyValueStoreType::SSD_ROCKSDB_V1) {
-		result["storage_engine"] = "ssd-rocksdb-v1";
-	} else if (tLogDataStoreType == KeyValueStoreType::MEMORY && storageServerStoreType == KeyValueStoreType::MEMORY) {
-		result["storage_engine"] = "memory-1";
-	} else if (tLogDataStoreType == KeyValueStoreType::SSD_BTREE_V2 &&
-	           storageServerStoreType == KeyValueStoreType::MEMORY_RADIXTREE) {
-		result["storage_engine"] = "memory-radixtree-beta";
-	} else if (tLogDataStoreType == KeyValueStoreType::SSD_BTREE_V2 &&
-	           storageServerStoreType == KeyValueStoreType::MEMORY) {
-		result["storage_engine"] = "memory-2";
-	} else {
-		result["storage_engine"] = "custom";
-	}
+	result["log_engine"] = tLogDataStoreType.toString();
+	result["storage_engine"] = storageServerStoreType.toString();
 
 	if (desiredTSSCount > 0) {
 		result["tss_count"] = desiredTSSCount;
-		if (testingStorageServerStoreType == KeyValueStoreType::SSD_BTREE_V1) {
-			result["tss_storage_engine"] = "ssd-1";
-		} else if (testingStorageServerStoreType == KeyValueStoreType::SSD_BTREE_V2) {
-			result["tss_storage_engine"] = "ssd-2";
-		} else if (testingStorageServerStoreType == KeyValueStoreType::SSD_REDWOOD_V1) {
-			result["tss_storage_engine"] = "ssd-redwood-1-experimental";
-		} else if (testingStorageServerStoreType == KeyValueStoreType::SSD_ROCKSDB_V1) {
-			result["tss_storage_engine"] = "ssd-rocksdb-v1";
-		} else if (testingStorageServerStoreType == KeyValueStoreType::MEMORY_RADIXTREE) {
-			result["tss_storage_engine"] = "memory-radixtree-beta";
-		} else if (testingStorageServerStoreType == KeyValueStoreType::MEMORY) {
-			result["tss_storage_engine"] = "memory-2";
-		} else {
-			result["tss_storage_engine"] = "custom";
-		}
+		result["tss_storage_engine"] = testingStorageServerStoreType.toString();
 	}
 
 	result["log_spill"] = (int)tLogSpillType;
@@ -354,30 +336,19 @@ StatusObject DatabaseConfiguration::toJSON(bool noPolicies) const {
 		result["regions"] = getRegionJSON();
 	}
 
+	result["logs"] = getDesiredLogs();
+
+	auto cpCount = getDesiredCommitProxies();
+	result["commit_proxies"] = cpCount;
+
+	auto grvCount = getDesiredGrvProxies();
+	result["grv_proxies"] = grvCount;
+
 	// Add to the `proxies` count for backwards compatibility with tools built before 7.0.
-	int32_t proxyCount = -1;
-	if (desiredTLogCount != -1 || isOverridden("logs")) {
-		result["logs"] = desiredTLogCount;
-	}
-	if (commitProxyCount != -1 || isOverridden("commit_proxies")) {
-		result["commit_proxies"] = commitProxyCount;
-		if (proxyCount != -1) {
-			proxyCount += commitProxyCount;
-		} else {
-			proxyCount = commitProxyCount;
-		}
-	}
-	if (grvProxyCount != -1 || isOverridden("grv_proxies")) {
-		result["grv_proxies"] = grvProxyCount;
-		if (proxyCount != -1) {
-			proxyCount += grvProxyCount;
-		} else {
-			proxyCount = grvProxyCount;
-		}
-	}
-	if (resolverCount != -1 || isOverridden("resolvers")) {
-		result["resolvers"] = resolverCount;
-	}
+	result["proxies"] = cpCount + grvCount;
+
+	result["resolvers"] = getDesiredResolvers();
+
 	if (desiredLogRouterCount != -1 || isOverridden("log_routers")) {
 		result["log_routers"] = desiredLogRouterCount;
 	}
@@ -387,6 +358,8 @@ StatusObject DatabaseConfiguration::toJSON(bool noPolicies) const {
 	if (repopulateRegionAntiQuorum != 0 || isOverridden("repopulate_anti_quorum")) {
 		result["repopulate_anti_quorum"] = repopulateRegionAntiQuorum;
 	}
+
+	// only report the auto values when they're different from default
 	if (autoCommitProxyCount != CLIENT_KNOBS->DEFAULT_AUTO_COMMIT_PROXIES || isOverridden("auto_commit_proxies")) {
 		result["auto_commit_proxies"] = autoCommitProxyCount;
 	}
@@ -399,9 +372,6 @@ StatusObject DatabaseConfiguration::toJSON(bool noPolicies) const {
 	if (autoDesiredTLogCount != CLIENT_KNOBS->DEFAULT_AUTO_LOGS || isOverridden("auto_logs")) {
 		result["auto_logs"] = autoDesiredTLogCount;
 	}
-	if (proxyCount != -1) {
-		result["proxies"] = proxyCount;
-	}
 
 	result["backup_worker_enabled"] = (int32_t)backupWorkerEnabled;
 	result["perpetual_storage_wiggle"] = perpetualStorageWiggleSpeed;
@@ -412,6 +382,67 @@ StatusObject DatabaseConfiguration::toJSON(bool noPolicies) const {
 	result["storage_migration_type"] = storageMigrationType.toString();
 	result["blob_granules_enabled"] = (int32_t)blobGranulesEnabled;
 	result["tenant_mode"] = tenantMode.toString();
+	result["encryption_at_rest_mode"] = encryptionAtRestMode.toString();
+	return result;
+}
+
+std::string DatabaseConfiguration::configureStringFromJSON(const StatusObject& json) {
+	std::string result;
+
+	for (auto kv : json) {
+		// These JSON properties are ignored for some reason.  This behavior is being maintained in a refactor
+		// of this code and the old code gave no reasoning.
+		static std::set<std::string> ignore = { "tss_storage_engine", "perpetual_storage_wiggle_locality" };
+		if (ignore.contains(kv.first)) {
+			continue;
+		}
+
+		result += " ";
+		// All integers are assumed to be actual DatabaseConfig keys and are set with
+		// the hidden "<name>:=<intValue>" syntax of the configure command.
+		if (kv.second.type() == json_spirit::int_type) {
+			result += kv.first + ":=" + format("%d", kv.second.get_int());
+		} else if (kv.second.type() == json_spirit::str_type) {
+			// For string values, some properties can set with a "<name>=<value>" syntax in "configure"
+			// Such properites are listed here:
+			static std::set<std::string> directSet = {
+				"storage_migration_type", "tenant_mode", "encryption_at_rest_mode",
+				"storage_engine",         "log_engine",  "perpetual_storage_wiggle_engine"
+			};
+
+			if (directSet.contains(kv.first)) {
+				result += kv.first + "=" + kv.second.get_str();
+			} else {
+				// For the rest, it is assumed that the property name is meaningless and the value string
+				// is a standalone 'configure' command which has the identical effect.
+				// TODO:  Fix this terrible legacy behavior which probably isn't compatible with
+				// some of the more recently added configuration and options.
+				result += kv.second.get_str();
+			}
+		} else if (kv.second.type() == json_spirit::array_type) {
+			// Array properties convert to <name>=<json_array>
+			result += kv.first + "=" +
+			          json_spirit::write_string(json_spirit::mValue(kv.second.get_array()),
+			                                    json_spirit::Output_options::none);
+		} else {
+			throw invalid_config_db_key();
+		}
+	}
+
+	// The log_engine setting requires some special handling because it was not included in the JSON form of a
+	// DatabaseConfiguration until FDB 7.3.  This means that configuring a new database using a JSON config object from
+	// an older version will now fail because it lacks an explicit log_engine setting.  Previously, the log_engine would
+	// be set indirectly because the "storage_engine=<engine_name>" property from JSON would convert to a standalone
+	// "<engine_name>" command in the output, and each engine name exists as a command which sets both the
+	// log and storage engines, with the log engine normally being ssd-2.
+	// The storage_engine and log_engine JSON properties now explicitly indicate their engine types and map to configure
+	// commands of the same name.  So, to support configuring a new database with an older JSON config without an
+	// explicit log_engine we simply add " log_engine=ssd-2" to the output string if the input JSON did not contain a
+	// log_engine.
+	if (!json.contains("log_engine")) {
+		result += " log_engine=ssd-2";
+	}
+
 	return result;
 }
 
@@ -545,107 +576,106 @@ bool DatabaseConfiguration::setInternal(KeyRef key, ValueRef value) {
 	KeyRef ck = key.removePrefix(configKeysPrefix);
 	int type;
 
-	if (ck == LiteralStringRef("initialized")) {
+	if (ck == "initialized"_sr) {
 		initialized = true;
-	} else if (ck == LiteralStringRef("commit_proxies")) {
+	} else if (ck == "commit_proxies"_sr) {
 		commitProxyCount = toInt(value);
 		if (commitProxyCount == -1)
 			overwriteProxiesCount();
-	} else if (ck == LiteralStringRef("grv_proxies")) {
+	} else if (ck == "grv_proxies"_sr) {
 		grvProxyCount = toInt(value);
 		if (grvProxyCount == -1)
 			overwriteProxiesCount();
-	} else if (ck == LiteralStringRef("resolvers")) {
+	} else if (ck == "resolvers"_sr) {
 		parse(&resolverCount, value);
-	} else if (ck == LiteralStringRef("logs")) {
+	} else if (ck == "logs"_sr) {
 		parse(&desiredTLogCount, value);
-	} else if (ck == LiteralStringRef("log_replicas")) {
+	} else if (ck == "log_replicas"_sr) {
 		parse(&tLogReplicationFactor, value);
 		tLogWriteAntiQuorum = std::min(tLogWriteAntiQuorum, tLogReplicationFactor / 2);
-	} else if (ck == LiteralStringRef("log_anti_quorum")) {
+	} else if (ck == "log_anti_quorum"_sr) {
 		parse(&tLogWriteAntiQuorum, value);
 		if (tLogReplicationFactor > 0) {
 			tLogWriteAntiQuorum = std::min(tLogWriteAntiQuorum, tLogReplicationFactor / 2);
 		}
-	} else if (ck == LiteralStringRef("storage_replicas")) {
+	} else if (ck == "storage_replicas"_sr) {
 		parse(&storageTeamSize, value);
-	} else if (ck == LiteralStringRef("tss_count")) {
+	} else if (ck == "tss_count"_sr) {
 		parse(&desiredTSSCount, value);
-	} else if (ck == LiteralStringRef("log_version")) {
+	} else if (ck == "log_version"_sr) {
 		parse((&type), value);
 		type = std::max((int)TLogVersion::MIN_RECRUITABLE, type);
 		type = std::min((int)TLogVersion::MAX_SUPPORTED, type);
 		tLogVersion = (TLogVersion::Version)type;
-	} else if (ck == LiteralStringRef("log_engine")) {
+	} else if (ck == "log_engine"_sr) {
 		parse((&type), value);
 		tLogDataStoreType = (KeyValueStoreType::StoreType)type;
-		// TODO:  Remove this once Redwood works as a log engine
-		if (tLogDataStoreType == KeyValueStoreType::SSD_REDWOOD_V1) {
+		// It makes no sense to use a memory based engine to spill data that doesn't fit in memory
+		// so change these to an ssd-2
+		if (tLogDataStoreType == KeyValueStoreType::MEMORY ||
+		    tLogDataStoreType == KeyValueStoreType::MEMORY_RADIXTREE) {
 			tLogDataStoreType = KeyValueStoreType::SSD_BTREE_V2;
 		}
-		// TODO:  Remove this once memroy radix tree works as a log engine
-		if (tLogDataStoreType == KeyValueStoreType::MEMORY_RADIXTREE) {
-			tLogDataStoreType = KeyValueStoreType::SSD_BTREE_V2;
-		}
-	} else if (ck == LiteralStringRef("log_spill")) {
+	} else if (ck == "log_spill"_sr) {
 		parse((&type), value);
 		tLogSpillType = (TLogSpillType::SpillType)type;
-	} else if (ck == LiteralStringRef("storage_engine")) {
+	} else if (ck == "storage_engine"_sr) {
 		parse((&type), value);
 		storageServerStoreType = (KeyValueStoreType::StoreType)type;
-	} else if (ck == LiteralStringRef("tss_storage_engine")) {
+	} else if (ck == "tss_storage_engine"_sr) {
 		parse((&type), value);
 		testingStorageServerStoreType = (KeyValueStoreType::StoreType)type;
-	} else if (ck == LiteralStringRef("auto_commit_proxies")) {
+	} else if (ck == "auto_commit_proxies"_sr) {
 		parse(&autoCommitProxyCount, value);
-	} else if (ck == LiteralStringRef("auto_grv_proxies")) {
+	} else if (ck == "auto_grv_proxies"_sr) {
 		parse(&autoGrvProxyCount, value);
-	} else if (ck == LiteralStringRef("auto_resolvers")) {
+	} else if (ck == "auto_resolvers"_sr) {
 		parse(&autoResolverCount, value);
-	} else if (ck == LiteralStringRef("auto_logs")) {
+	} else if (ck == "auto_logs"_sr) {
 		parse(&autoDesiredTLogCount, value);
-	} else if (ck == LiteralStringRef("storage_replication_policy")) {
+	} else if (ck == "storage_replication_policy"_sr) {
 		parseReplicationPolicy(&storagePolicy, value);
-	} else if (ck == LiteralStringRef("log_replication_policy")) {
+	} else if (ck == "log_replication_policy"_sr) {
 		parseReplicationPolicy(&tLogPolicy, value);
-	} else if (ck == LiteralStringRef("log_routers")) {
+	} else if (ck == "log_routers"_sr) {
 		parse(&desiredLogRouterCount, value);
-	} else if (ck == LiteralStringRef("remote_logs")) {
+	} else if (ck == "remote_logs"_sr) {
 		parse(&remoteDesiredTLogCount, value);
-	} else if (ck == LiteralStringRef("remote_log_replicas")) {
+	} else if (ck == "remote_log_replicas"_sr) {
 		parse(&remoteTLogReplicationFactor, value);
-	} else if (ck == LiteralStringRef("remote_log_policy")) {
+	} else if (ck == "remote_log_policy"_sr) {
 		parseReplicationPolicy(&remoteTLogPolicy, value);
-	} else if (ck == LiteralStringRef("backup_worker_enabled")) {
+	} else if (ck == "backup_worker_enabled"_sr) {
 		parse((&type), value);
 		backupWorkerEnabled = (type != 0);
-	} else if (ck == LiteralStringRef("usable_regions")) {
+	} else if (ck == "usable_regions"_sr) {
 		parse(&usableRegions, value);
-	} else if (ck == LiteralStringRef("repopulate_anti_quorum")) {
+	} else if (ck == "repopulate_anti_quorum"_sr) {
 		parse(&repopulateRegionAntiQuorum, value);
-	} else if (ck == LiteralStringRef("regions")) {
+	} else if (ck == "regions"_sr) {
 		parse(&regions, value);
-	} else if (ck == LiteralStringRef("perpetual_storage_wiggle")) {
+	} else if (ck == "perpetual_storage_wiggle"_sr) {
 		parse(&perpetualStorageWiggleSpeed, value);
-	} else if (ck == LiteralStringRef("perpetual_storage_wiggle_locality")) {
+	} else if (ck == "perpetual_storage_wiggle_locality"_sr) {
 		if (!isValidPerpetualStorageWiggleLocality(value.toString())) {
 			return false;
 		}
 		perpetualStorageWiggleLocality = value.toString();
-	} else if (ck == LiteralStringRef("perpetual_storage_wiggle_engine")) {
+	} else if (ck == "perpetual_storage_wiggle_engine"_sr) {
 		parse((&type), value);
 		perpetualStoreType = (KeyValueStoreType::StoreType)type;
-	} else if (ck == LiteralStringRef("storage_migration_type")) {
+	} else if (ck == "storage_migration_type"_sr) {
 		parse((&type), value);
 		storageMigrationType = (StorageMigrationType::MigrationType)type;
-	} else if (ck == LiteralStringRef("tenant_mode")) {
-		parse((&type), value);
-		tenantMode = (TenantMode::Mode)type;
-	} else if (ck == LiteralStringRef("proxies")) {
+	} else if (ck == "tenant_mode"_sr) {
+		tenantMode = TenantMode::fromValue(value);
+	} else if (ck == "proxies"_sr) {
 		overwriteProxiesCount();
-	} else if (ck == LiteralStringRef("blob_granules_enabled")) {
+	} else if (ck == "blob_granules_enabled"_sr) {
 		parse((&type), value);
 		blobGranulesEnabled = (type != 0);
+	} else if (ck == "encryption_at_rest_mode"_sr) {
+		encryptionAtRestMode = EncryptionAtRestMode::fromValueRef(Optional<ValueRef>(value));
 	} else if (ck.startsWith("excluded/"_sr)) {
 		// excluded servers: don't keep the state internally
 	} else {
@@ -707,7 +737,7 @@ Optional<ValueRef> DatabaseConfiguration::get(KeyRef key) const {
 	}
 }
 
-bool DatabaseConfiguration::isExcludedServer(NetworkAddressList a) const {
+bool DatabaseConfiguration::isExcludedServer(NetworkAddressList a, const LocalityData& locality) const {
 	return get(encodeExcludedServersKey(AddressExclusion(a.address.ip, a.address.port))).present() ||
 	       get(encodeExcludedServersKey(AddressExclusion(a.address.ip))).present() ||
 	       get(encodeFailedServersKey(AddressExclusion(a.address.ip, a.address.port))).present() ||
@@ -718,7 +748,8 @@ bool DatabaseConfiguration::isExcludedServer(NetworkAddressList a) const {
 	         get(encodeExcludedServersKey(AddressExclusion(a.secondaryAddress.get().ip))).present() ||
 	         get(encodeFailedServersKey(AddressExclusion(a.secondaryAddress.get().ip, a.secondaryAddress.get().port)))
 	             .present() ||
-	         get(encodeFailedServersKey(AddressExclusion(a.secondaryAddress.get().ip))).present()));
+	         get(encodeFailedServersKey(AddressExclusion(a.secondaryAddress.get().ip))).present())) ||
+	       isExcludedLocality(locality);
 }
 std::set<AddressExclusion> DatabaseConfiguration::getExcludedServers() const {
 	const_cast<DatabaseConfiguration*>(this)->makeConfigurationImmutable();

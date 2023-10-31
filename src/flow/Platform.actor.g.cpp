@@ -23,52 +23,65 @@
 #ifdef _WIN32
 // This has to come as the first include on Win32 for rand_s() to be found
 #define _CRT_RAND_S
-#include <stdlib.h>
-#include <math.h> // For _set_FMA3_enable workaround in platformInit
-#endif
+#endif // _WIN32
 
-#include <errno.h>
-#include "fmt/format.h"
 #include "flow/Platform.h"
-#include "flow/Platform.actor.h"
-#include "flow/Arena.h"
 
-#if (!defined(TLS_DISABLED) && !defined(_WIN32))
-#include "flow/StreamCipher.h"
-#include "flow/BlobCipher.h"
-#endif
-#include "flow/Trace.h"
-#include "flow/Error.h"
-
-#include "flow/Knobs.h"
-
+#include <algorithm>
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <cstring>
-#include <algorithm>
+#include <string>
+#include <string_view>
+#include <vector>
 
+#include <errno.h>
+#include <fcntl.h>
+#include <sys/stat.h>
 #include <sys/types.h>
 #include <time.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include "flow/UnitTest.h"
+
+#include <boost/format.hpp>
+#include <boost/filesystem.hpp>
+#include <boost/filesystem/operations.hpp>
+#include <boost/algorithm/string.hpp>
+#include <boost/asio.hpp>
+
+#include "fmt/format.h"
+
+#include "flow/Arena.h"
+#include "flow/Error.h"
 #include "flow/FaultInjection.h"
+#include "flow/Knobs.h"
+#include "flow/Platform.actor.h"
+#include "flow/ScopeExit.h"
+#include "flow/StreamCipher.h"
+#include "flow/Trace.h"
+#include "flow/Trace.h"
+#include "flow/UnitTest.h"
+#include "flow/Util.h"
 
-#include "fdbrpc/IAsyncFile.h"
-
-#include "fdbclient/AnnotateActor.h"
+// boost uses either std::array or boost::asio::detail::array to store the IPv6 Addresses.
+// Enforce the format of IPAddressStore, which is declared in IPAddress.h, is using the same type
+// to boost.
+static_assert(std::is_same<boost::asio::ip::address_v6::bytes_type, std::array<uint8_t, 16>>::value,
+              "IPAddressStore must be std::array<uint8_t, 16>");
 
 #ifdef _WIN32
-#include <windows.h>
-#include <winioctl.h>
-#include <io.h>
-#include <psapi.h>
-#include <stdio.h>
+
 #include <conio.h>
 #include <direct.h>
+#include <io.h>
+#include <math.h> // For _set_FMA3_enable workaround in platformInit
 #include <pdh.h>
 #include <pdhmsg.h>
+#include <processenv.h>
+#include <psapi.h>
+#include <stdlib.h>
+#include <windows.h>
+#include <winioctl.h>
+
 #pragma comment(lib, "pdh.lib")
 
 // for SHGetFolderPath
@@ -83,18 +96,17 @@
 #define CANONICAL_PATH_SEPARATOR '/'
 
 #include <dirent.h>
-#include <sys/time.h>
-#include <sys/mman.h>
-#include <unistd.h>
 #include <ftw.h>
 #include <pwd.h>
 #include <sched.h>
+#include <sys/mman.h>
+#include <sys/time.h>
+#include <unistd.h>
+#include <sys/statvfs.h> /* Needed for disk capacity */
+
 #if !defined(__aarch64__) && !defined(__powerpc64__)
 #include <cpuid.h>
 #endif
-
-/* Needed for disk capacity */
-#include <sys/statvfs.h>
 
 /* getifaddrs */
 #include <sys/socket.h>
@@ -116,7 +128,7 @@
 #include <signal.h>
 /* Needed for gnu_dev_{major,minor} */
 #include <sys/sysmacros.h>
-#endif
+#endif // __linux__
 
 #ifdef __FreeBSD__
 /* Needed for processor affinity */
@@ -149,29 +161,31 @@
 #include <devstat.h>
 #include <kvm.h>
 #include <libutil.h>
-#endif
+#endif // __FreeBSD__
 
 #ifdef __APPLE__
-#include <sys/uio.h>
-#include <sys/syslimits.h>
-#include <mach/mach.h>
+/* Needed for cross-platform 'environ' */
+#include <crt_externs.h>
 #include <mach-o/dyld.h>
-#include <sys/param.h>
-#include <sys/mount.h>
-#include <sys/sysctl.h>
-#include <netinet/in.h>
-#include <net/if.h>
+#include <mach/mach.h>
 #include <net/if_dl.h>
+#include <net/if.h>
 #include <net/route.h>
+#include <netinet/in.h>
+#include <sys/mount.h>
+#include <sys/param.h>
+#include <sys/sysctl.h>
+#include <sys/syslimits.h>
+#include <sys/uio.h>
 
 #include <CoreFoundation/CoreFoundation.h>
 #include <IOKit/IOKitLib.h>
 #include <IOKit/storage/IOBlockStorageDriver.h>
 #include <IOKit/storage/IOMedia.h>
 #include <IOKit/IOBSD.h>
-#endif
+#endif // __APPLE_
 
-#endif
+#endif // __unixish__
 
 #include "flow/actorcompiler.h" // This must be the last #include.
 
@@ -405,25 +419,24 @@ uint64_t getMemoryUsage() {
 #endif
 }
 
-#if defined(__linux__)
+#ifdef __linux__
+namespace linux_os {
+
+namespace {
+
 void getMemoryInfo(std::map<StringRef, int64_t>& request, std::stringstream& memInfoStream) {
 	size_t count = request.size();
 	if (count == 0)
 		return;
 
-	while (count > 0 && !memInfoStream.eof()) {
-		std::string key;
-
-		memInfoStream >> key;
+	keyValueReader<std::string, int64_t>(memInfoStream, [&](const std::string& key, const int64_t& value) -> bool {
 		auto item = request.find(StringRef(key));
-		if (item != request.end()) {
-			int64_t value;
-			memInfoStream >> value;
+		if (item != std::end(request)) {
 			item->second = value;
-			count--;
+			--count;
 		}
-		memInfoStream.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-	}
+		return count != 0;
+	});
 }
 
 int64_t getLowWatermark(std::stringstream& zoneInfoStream) {
@@ -443,10 +456,8 @@ int64_t getLowWatermark(std::stringstream& zoneInfoStream) {
 
 	return lowWatermark;
 }
-#endif
 
-void getMachineRAMInfo(MachineRAMInfo& memInfo) {
-#if defined(__linux__)
+void getMachineRAMInfoImpl(MachineRAMInfo& memInfo) {
 	std::ifstream zoneInfoFileStream("/proc/zoneinfo", std::ifstream::in);
 	int64_t lowWatermark = 0;
 	if (!zoneInfoFileStream.good()) {
@@ -464,24 +475,22 @@ void getMachineRAMInfo(MachineRAMInfo& memInfo) {
 	}
 
 	std::map<StringRef, int64_t> request = {
-		{ LiteralStringRef("MemTotal:"), 0 },       { LiteralStringRef("MemFree:"), 0 },
-		{ LiteralStringRef("MemAvailable:"), -1 },  { LiteralStringRef("Active(file):"), 0 },
-		{ LiteralStringRef("Inactive(file):"), 0 }, { LiteralStringRef("SwapTotal:"), 0 },
-		{ LiteralStringRef("SwapFree:"), 0 },       { LiteralStringRef("SReclaimable:"), 0 },
+		{ "MemTotal:"_sr, 0 },       { "MemFree:"_sr, 0 },   { "MemAvailable:"_sr, -1 }, { "Active(file):"_sr, 0 },
+		{ "Inactive(file):"_sr, 0 }, { "SwapTotal:"_sr, 0 }, { "SwapFree:"_sr, 0 },      { "SReclaimable:"_sr, 0 },
 	};
 
 	std::stringstream memInfoStream;
 	memInfoStream << fileStream.rdbuf();
 	getMemoryInfo(request, memInfoStream);
 
-	int64_t memFree = request[LiteralStringRef("MemFree:")];
-	int64_t pageCache = request[LiteralStringRef("Active(file):")] + request[LiteralStringRef("Inactive(file):")];
-	int64_t slabReclaimable = request[LiteralStringRef("SReclaimable:")];
-	int64_t usedSwap = request[LiteralStringRef("SwapTotal:")] - request[LiteralStringRef("SwapFree:")];
+	int64_t memFree = request["MemFree:"_sr];
+	int64_t pageCache = request["Active(file):"_sr] + request["Inactive(file):"_sr];
+	int64_t slabReclaimable = request["SReclaimable:"_sr];
+	int64_t usedSwap = request["SwapTotal:"_sr] - request["SwapFree:"_sr];
 
-	memInfo.total = 1024 * request[LiteralStringRef("MemTotal:")];
-	if (request[LiteralStringRef("MemAvailable:")] != -1) {
-		memInfo.available = 1024 * (request[LiteralStringRef("MemAvailable:")] - usedSwap);
+	memInfo.total = 1024 * request["MemTotal:"_sr];
+	if (request["MemAvailable:"_sr] != -1) {
+		memInfo.available = 1024 * (request["MemAvailable:"_sr] - usedSwap);
 	} else {
 		memInfo.available =
 		    1024 * (std::max<int64_t>(0,
@@ -491,6 +500,35 @@ void getMachineRAMInfo(MachineRAMInfo& memInfo) {
 	}
 
 	memInfo.committed = memInfo.total - memInfo.available;
+}
+
+} // anonymous namespace
+
+std::map<std::string, int64_t> reportCGroupCpuStat() {
+	// Default path to the cpu,cpuacct
+	// See manpages for cgroup
+	static const std::string PATH_TO_CPU_CPUACCT = "/sys/fs/cgroup/cpu,cpuacct/cpu.stat";
+
+	std::map<std::string, int64_t> result;
+	std::ifstream ifs(PATH_TO_CPU_CPUACCT);
+	if (!ifs.is_open()) {
+		return result;
+	}
+
+	keyValueReader<std::string, int64_t>(ifs, [&](const std::string& key, const int64_t& value) -> bool {
+		result[key] = value;
+		return true;
+	});
+
+	return result;
+}
+
+} // namespace linux_os
+#endif // #ifdef __linux__
+
+void getMachineRAMInfo(MachineRAMInfo& memInfo) {
+#if defined(__linux__)
+	linux_os::getMachineRAMInfoImpl(memInfo);
 #elif defined(__FreeBSD__)
 	int status;
 
@@ -615,7 +653,11 @@ void getDiskBytes(std::string const& directory, int64_t& free, int64_t& total) {
 #endif
 
 	free = std::min((uint64_t)std::numeric_limits<int64_t>::max(), buf.f_bavail * blockSize);
-	total = std::min((uint64_t)std::numeric_limits<int64_t>::max(), buf.f_blocks * blockSize);
+
+	// f_blocks is the total fs space but (f_bfree - f_bavail) is space only available to privileged users
+	// so that amount will be subtracted from the reported total since FDB can't use it.
+	total = std::min((uint64_t)std::numeric_limits<int64_t>::max(),
+	                 (buf.f_blocks - (buf.f_bfree - buf.f_bavail)) * blockSize);
 
 #elif defined(_WIN32)
 	std::string fullPath = abspath(directory);
@@ -1938,6 +1980,39 @@ std::string epochsToGMTString(double epochs) {
 	return timeString;
 }
 
+std::vector<std::string> getEnvironmentKnobOptions() {
+	constexpr const size_t ENVKNOB_PREFIX_LEN = sizeof(ENVIRONMENT_KNOB_OPTION_PREFIX) - 1;
+	std::vector<std::string> knobOptions;
+#if defined(_WIN32)
+	auto e = GetEnvironmentStrings();
+	if (e == nullptr)
+		return {};
+	auto cleanup = ScopeExit([e]() { FreeEnvironmentStrings(e); });
+	while (*e) {
+		auto candidate = std::string_view(e);
+		if (boost::starts_with(candidate, ENVIRONMENT_KNOB_OPTION_PREFIX))
+			knobOptions.emplace_back(candidate.substr(ENVKNOB_PREFIX_LEN));
+		e += (candidate.size() + 1);
+	}
+#else
+	char** e = nullptr;
+#ifdef __linux__
+	e = environ;
+#elif defined(__APPLE__)
+	e = *_NSGetEnviron();
+#else
+#error Port me!
+#endif
+	for (; e && *e; e++) {
+		std::string_view envOption(*e);
+		if (boost::starts_with(envOption, ENVIRONMENT_KNOB_OPTION_PREFIX)) {
+			knobOptions.emplace_back(envOption.substr(ENVKNOB_PREFIX_LEN));
+		}
+	}
+#endif
+	return knobOptions;
+}
+
 void setMemoryQuota(size_t limit) {
 	if (limit == 0) {
 		return;
@@ -2034,7 +2109,53 @@ static void enableLargePages() {
 #endif
 }
 
-static void* allocateInternal(size_t length, bool largePages) {
+#ifndef _WIN32
+static void* mmapSafe(void* addr, size_t len, int prot, int flags, int fd, off_t offset) {
+	void* result = mmap(addr, len, prot, flags, fd, offset);
+	if (result == MAP_FAILED) {
+		int err = errno;
+		fprintf(stderr,
+		        "Error calling mmap(%p, %zu, %d, %d, %d, %jd): %s\n",
+		        addr,
+		        len,
+		        prot,
+		        flags,
+		        fd,
+		        (intmax_t)offset,
+		        strerror(err));
+		fflush(stderr);
+		std::abort();
+	}
+	return result;
+}
+
+static void mprotectSafe(void* p, size_t s, int prot) {
+	if (mprotect(p, s, prot) != 0) {
+		int err = errno;
+		fprintf(stderr, "Error calling mprotect(%p, %zu, %d): %s\n", p, s, prot, strerror(err));
+		fflush(stderr);
+		std::abort();
+	}
+}
+
+static void* mmapInternal(size_t length, int flags, bool guardPages) {
+	if (guardPages && FLOW_KNOBS->FAST_ALLOC_ALLOW_GUARD_PAGES) {
+		static size_t pageSize = sysconf(_SC_PAGESIZE);
+		length = RightAlign(length, pageSize);
+		length += 2 * pageSize; // Map enough for the guard pages
+		void* resultWithGuardPages = mmapSafe(nullptr, length, PROT_READ | PROT_WRITE, flags, -1, 0);
+		// left guard page
+		mprotectSafe(resultWithGuardPages, pageSize, PROT_NONE);
+		// right guard page
+		mprotectSafe((void*)(uintptr_t(resultWithGuardPages) + length - pageSize), pageSize, PROT_NONE);
+		return (void*)(uintptr_t(resultWithGuardPages) + pageSize);
+	} else {
+		return mmapSafe(nullptr, length, PROT_READ | PROT_WRITE, flags, -1, 0);
+	}
+}
+#endif
+
+static void* allocateInternal(size_t length, bool largePages, bool guardPages) {
 
 #ifdef _WIN32
 	DWORD allocType = MEM_COMMIT | MEM_RESERVE;
@@ -2049,31 +2170,31 @@ static void* allocateInternal(size_t length, bool largePages) {
 	if (largePages)
 		flags |= MAP_HUGETLB;
 
-	return mmap(nullptr, length, PROT_READ | PROT_WRITE, flags, -1, 0);
+	return mmapInternal(length, flags, guardPages);
 #elif defined(__APPLE__) || defined(__FreeBSD__)
 	int flags = MAP_PRIVATE | MAP_ANON;
 
-	return mmap(nullptr, length, PROT_READ | PROT_WRITE, flags, -1, 0);
+	return mmapInternal(length, flags, guardPages);
 #else
 #error Port me!
 #endif
 }
 
 static bool largeBlockFail = false;
-void* allocate(size_t length, bool allowLargePages) {
+void* allocate(size_t length, bool allowLargePages, bool includeGuardPages) {
 	if (allowLargePages)
 		enableLargePages();
 
 	void* block = ALLOC_FAIL;
 
 	if (allowLargePages && !largeBlockFail) {
-		block = allocateInternal(length, true);
+		block = allocateInternal(length, true, includeGuardPages);
 		if (block == ALLOC_FAIL)
 			largeBlockFail = true;
 	}
 
 	if (block == ALLOC_FAIL)
-		block = allocateInternal(length, false);
+		block = allocateInternal(length, false, includeGuardPages);
 
 	// FIXME: SevWarnAlways trace if "close" to out of memory
 
@@ -2138,35 +2259,21 @@ namespace platform {
 int getRandomSeed() {
 	INJECT_FAULT(platform_error, "getRandomSeed"); // getting a random seed failed
 	int randomSeed;
-	int retryCount = 0;
 
 #ifdef _WIN32
-	do {
-		retryCount++;
-		if (rand_s((unsigned int*)&randomSeed) != 0) {
-			TraceEvent(SevError, "WindowsRandomSeedError").log();
-			throw platform_error();
-		}
-	} while (randomSeed == 0 &&
-	         retryCount <
-	             FLOW_KNOBS->RANDOMSEED_RETRY_LIMIT); // randomSeed cannot be 0 since we use mersenne twister in
-	                                                  // DeterministicRandom. Get a new one if randomSeed is 0.
+	if (rand_s((unsigned int*)&randomSeed) != 0) {
+		TraceEvent(SevError, "WindowsRandomSeedError").log();
+		throw platform_error();
+	}
 #else
 	int devRandom = open("/dev/urandom", O_RDONLY | O_CLOEXEC);
-	do {
-		retryCount++;
-		if (read(devRandom, &randomSeed, sizeof(randomSeed)) != sizeof(randomSeed)) {
-			TraceEvent(SevError, "OpenURandom").GetLastError();
-			throw platform_error();
-		}
-	} while (randomSeed == 0 && retryCount < FLOW_KNOBS->RANDOMSEED_RETRY_LIMIT);
+	if (read(devRandom, &randomSeed, sizeof(randomSeed)) != sizeof(randomSeed)) {
+		TraceEvent(SevError, "OpenURandom").GetLastError();
+		throw platform_error();
+	}
 	close(devRandom);
 #endif
 
-	if (randomSeed == 0) {
-		TraceEvent(SevError, "RandomSeedZeroError").log();
-		throw platform_error();
-	}
 	return randomSeed;
 }
 } // namespace platform
@@ -2188,7 +2295,9 @@ void renamedFile() {
 void renameFile(std::string const& fromPath, std::string const& toPath) {
 	INJECT_FAULT(io_error, "renameFile"); // rename file failed
 #ifdef _WIN32
-	if (MoveFile(fromPath.c_str(), toPath.c_str())) {
+	if (MoveFileExA(fromPath.c_str(),
+	                toPath.c_str(),
+	                MOVEFILE_COPY_ALLOWED | MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH)) {
 		// renamedFile();
 		return;
 	}
@@ -2281,8 +2390,11 @@ void atomicReplace(std::string const& path, std::string const& content, bool tex
 		}
 		f = 0;
 
-		if (!ReplaceFile(path.c_str(), tempfilename.c_str(), nullptr, NULL, nullptr, nullptr))
+		if (!MoveFileExA(tempfilename.c_str(),
+		                 path.c_str(),
+		                 MOVEFILE_COPY_ALLOWED | MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH)) {
 			throw io_error();
+		}
 #elif defined(__unixish__)
 		if (!g_network->isSimulated()) {
 			if (fsync(fileno(f)) != 0)
@@ -2405,7 +2517,7 @@ bool createDirectory(std::string const& directory) {
 
 const uint8_t separatorChar = CANONICAL_PATH_SEPARATOR;
 StringRef separator(&separatorChar, 1);
-StringRef dotdot = LiteralStringRef("..");
+StringRef dotdot = ".."_sr;
 
 std::string cleanPath(std::string const& path) {
 	std::vector<StringRef> finalParts;
@@ -2473,14 +2585,14 @@ std::string popPath(const std::string& path) {
 	return path.substr(0, i + 1);
 }
 
-std::string abspath(std::string const& path, bool resolveLinks, bool mustExist) {
-	if (path.empty()) {
+std::string abspath(std::string const& path_, bool resolveLinks, bool mustExist) {
+	if (path_.empty()) {
 		Error e = platform_error();
 		Severity sev = e.code() == error_code_io_error ? SevError : SevWarnAlways;
-		TraceEvent(sev, "AbsolutePathError").error(e).detail("Path", path);
+		TraceEvent(sev, "AbsolutePathError").error(e).detail("Path", path_);
 		throw e;
 	}
-
+	std::string path = path_.back() == '\\' ? path_.substr(0, path_.size() - 1) : path_;
 	// Returns an absolute path canonicalized to use only CANONICAL_PATH_SEPARATOR
 	INJECT_FAULT(platform_error, "abspath"); // abspath failed
 
@@ -2587,27 +2699,27 @@ bool acceptDirectory(FILE_ATTRIBUTE_DATA fileAttributes, std::string const& name
 	return (fileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0;
 }
 
-															#line 2590 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 2702 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 namespace {
 // This generated class is to be used only via findFiles()
-															#line 2588 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2700 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 template <class FindFilesActor>
-															#line 2588 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2700 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 class FindFilesActorState {
-															#line 2597 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 2709 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 public:
-															#line 2588 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2700 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 	FindFilesActorState(std::string const& directory,std::string const& extension,bool const& directoryOnly,bool const& async) 
-															#line 2588 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
-															#line 2588 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2700 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2700 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 		 : directory(directory),
-															#line 2588 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2700 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 		   extension(extension),
-															#line 2588 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2700 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 		   directoryOnly(directoryOnly),
-															#line 2588 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2700 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 		   async(async)
-															#line 2610 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 2722 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 	{
 		fdb_probe_actor_create("findFiles", reinterpret_cast<unsigned long>(this));
 
@@ -2620,37 +2732,37 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 2592 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2704 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			INJECT_FAULT(platform_error, "findFiles");
-															#line 2593 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2705 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			result = std::vector<std::string>();
-															#line 2594 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2706 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			tsc_begin = timestampCounter();
-															#line 2596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2708 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			fd = WIN32_FIND_DATA();
-															#line 2597 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2709 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			h = FindFirstFile((directory + "/*" + extension).c_str(), &fd);
-															#line 2598 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2710 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			if (h == INVALID_HANDLE_VALUE)
-															#line 2635 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 2747 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 			{
-															#line 2599 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2711 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 				if (GetLastError() != ERROR_FILE_NOT_FOUND && GetLastError() != ERROR_PATH_NOT_FOUND)
-															#line 2639 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 2751 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 				{
-															#line 2600 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2712 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 					TraceEvent(SevError, "FindFirstFile") .detail("Directory", directory) .detail("Extension", extension) .GetLastError();
-															#line 2604 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2716 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 					return a_body1Catch1(platform_error(), loopDepth);
-															#line 2645 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 2757 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 				}
 				loopDepth = a_body1cont1(loopDepth);
 			}
 			else
 			{
-															#line 2607 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2719 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 				;
-															#line 2653 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 2765 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 				loopDepth = a_body1loopHead1(loopDepth);
 			}
 		}
@@ -2672,11 +2784,11 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 2630 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2742 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 		std::sort(result.begin(), result.end());
-															#line 2631 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2743 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 		if (!static_cast<FindFilesActor*>(this)->SAV<std::vector<std::string>>::futures) { (void)(result); this->~FindFilesActorState(); static_cast<FindFilesActor*>(this)->destroy(); return 0; }
-															#line 2679 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 2791 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 		new (&static_cast<FindFilesActor*>(this)->SAV< std::vector<std::string> >::value()) std::vector<std::string>(std::move(result)); // state_var_RVO
 		this->~FindFilesActorState();
 		static_cast<FindFilesActor*>(this)->finishSendAndDelPromiseRef();
@@ -2686,21 +2798,21 @@ public:
 	}
 	int a_body1cont4(int loopDepth) 
 	{
-															#line 2620 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2732 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 		if (GetLastError() != ERROR_NO_MORE_FILES)
-															#line 2691 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 2803 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 		{
-															#line 2621 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2733 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			TraceEvent(SevError, "FindNextFile") .detail("Directory", directory) .detail("Extension", extension) .GetLastError();
-															#line 2625 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2737 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			FindClose(h);
-															#line 2626 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2738 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			return a_body1Catch1(platform_error(), loopDepth);
-															#line 2699 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 2811 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 		}
-															#line 2628 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2740 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 		FindClose(h);
-															#line 2703 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 2815 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 		loopDepth = a_body1cont1(loopDepth);
 
 		return loopDepth;
@@ -2714,36 +2826,36 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 2608 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2720 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 		std::string name = fd.cFileName;
-															#line 2609 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2721 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 		if ((directoryOnly && acceptDirectory(fd.dwFileAttributes, name, extension)) || (!directoryOnly && acceptFile(fd.dwFileAttributes, name, extension)))
-															#line 2721 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 2833 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 		{
-															#line 2611 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2723 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			result.push_back(name);
-															#line 2725 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 2837 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 		}
-															#line 2613 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2725 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 		if (!FindNextFile(h, &fd))
-															#line 2729 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 2841 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 		{
 			return a_body1break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 2615 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2727 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 		if (async && timestampCounter() - tsc_begin > FLOW_KNOBS->TSC_YIELD_TIME && !g_network->isSimulated())
-															#line 2735 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 2847 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 		{
-															#line 2616 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2728 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			StrictFuture<Void> __when_expr_0 = yield();
-															#line 2616 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2728 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			if (static_cast<FindFilesActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 2741 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 2853 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<FindFilesActor*>(this)->actor_wait_state = 1;
-															#line 2616 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2728 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< FindFilesActor, 0, Void >*>(static_cast<FindFilesActor*>(this)));
-															#line 2746 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 2858 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 			loopDepth = 0;
 		}
 		else
@@ -2774,18 +2886,18 @@ public:
 	}
 	int a_body1loopBody1cont4(Void const& _,int loopDepth) 
 	{
-															#line 2617 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2729 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 		tsc_begin = timestampCounter();
-															#line 2779 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 2891 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont4(Void && _,int loopDepth) 
 	{
-															#line 2617 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2729 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 		tsc_begin = timestampCounter();
-															#line 2788 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 2900 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont1(loopDepth);
 
 		return loopDepth;
@@ -2853,28 +2965,28 @@ public:
 		fdb_probe_actor_exit("findFiles", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 2588 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2700 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 	std::string directory;
-															#line 2588 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2700 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 	std::string extension;
-															#line 2588 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2700 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 	bool directoryOnly;
-															#line 2588 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2700 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 	bool async;
-															#line 2593 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2705 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 	std::vector<std::string> result;
-															#line 2594 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2706 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 	int64_t tsc_begin;
-															#line 2596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2708 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 	WIN32_FIND_DATA fd;
-															#line 2597 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2709 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 	HANDLE h;
-															#line 2872 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 2984 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 };
 // This generated class is to be used only via findFiles()
-															#line 2588 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2700 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 class FindFilesActor final : public Actor<std::vector<std::string>>, public ActorCallback< FindFilesActor, 0, Void >, public FastAllocated<FindFilesActor>, public FindFilesActorState<FindFilesActor> {
-															#line 2877 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 2989 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 public:
 	using FastAllocated<FindFilesActor>::operator new;
 	using FastAllocated<FindFilesActor>::operator delete;
@@ -2883,9 +2995,9 @@ public:
 	void destroy() override { ((Actor<std::vector<std::string>>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< FindFilesActor, 0, Void >;
-															#line 2588 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2700 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 	FindFilesActor(std::string const& directory,std::string const& extension,bool const& directoryOnly,bool const& async) 
-															#line 2888 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 3000 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 		 : Actor<std::vector<std::string>>(),
 		   FindFilesActorState<FindFilesActor>(directory, extension, directoryOnly, async)
 	{
@@ -2909,14 +3021,14 @@ friend struct ActorCallback< FindFilesActor, 0, Void >;
 	}
 };
 }
-															#line 2588 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2700 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 [[nodiscard]] Future<std::vector<std::string>> findFiles( std::string const& directory, std::string const& extension, bool const& directoryOnly, bool const& async ) {
-															#line 2588 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2700 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 	return Future<std::vector<std::string>>(new FindFilesActor(directory, extension, directoryOnly, async));
-															#line 2916 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 3028 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 }
 
-#line 2633 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+#line 2745 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 
 #elif (defined(__linux__) || defined(__APPLE__) || defined(__FreeBSD__))
 #define FILE_ATTRIBUTE_DATA mode_t
@@ -2929,27 +3041,27 @@ bool acceptDirectory(FILE_ATTRIBUTE_DATA fileAttributes, std::string const& name
 	return S_ISDIR(fileAttributes);
 }
 
-															#line 2932 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 3044 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 namespace {
 // This generated class is to be used only via findFiles()
-															#line 2645 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2757 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 template <class FindFilesActor1>
-															#line 2645 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2757 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 class FindFilesActor1State {
-															#line 2939 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 3051 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 public:
-															#line 2645 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2757 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 	FindFilesActor1State(std::string const& directory,std::string const& extension,bool const& directoryOnly,bool const& async) 
-															#line 2645 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
-															#line 2645 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2757 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2757 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 		 : directory(directory),
-															#line 2645 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2757 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 		   extension(extension),
-															#line 2645 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2757 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 		   directoryOnly(directoryOnly),
-															#line 2645 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2757 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 		   async(async)
-															#line 2952 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 3064 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 	{
 		fdb_probe_actor_create("findFiles", reinterpret_cast<unsigned long>(this));
 
@@ -2962,21 +3074,21 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 2649 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2761 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			INJECT_FAULT(platform_error, "findFiles");
-															#line 2650 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2762 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			result = std::vector<std::string>();
-															#line 2651 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2763 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			tsc_begin = timestampCounter();
-															#line 2653 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2765 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			dip = nullptr;
-															#line 2655 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2767 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			if ((dip = opendir(directory.c_str())) != nullptr)
-															#line 2975 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 3087 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 			{
-															#line 2656 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2768 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 				;
-															#line 2979 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 3091 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 				loopDepth = a_body1loopHead1(loopDepth);
 			}
 			else
@@ -3002,11 +3114,11 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 2689 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2801 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 		std::sort(result.begin(), result.end());
-															#line 2690 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2802 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 		if (!static_cast<FindFilesActor1*>(this)->SAV<std::vector<std::string>>::futures) { (void)(result); this->~FindFilesActor1State(); static_cast<FindFilesActor1*>(this)->destroy(); return 0; }
-															#line 3009 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 3121 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 		new (&static_cast<FindFilesActor1*>(this)->SAV< std::vector<std::string> >::value()) std::vector<std::string>(std::move(result)); // state_var_RVO
 		this->~FindFilesActor1State();
 		static_cast<FindFilesActor1*>(this)->finishSendAndDelPromiseRef();
@@ -3016,9 +3128,9 @@ public:
 	}
 	int a_body1cont2(int loopDepth) 
 	{
-															#line 2687 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2799 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 		closedir(dip);
-															#line 3021 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 3133 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 		loopDepth = a_body1cont1(loopDepth);
 
 		return loopDepth;
@@ -3032,63 +3144,63 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 2657 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2769 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 		struct dirent* dit;
-															#line 2658 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2770 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 		dit = readdir(dip);
-															#line 2659 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2771 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 		if (dit == nullptr)
-															#line 3041 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 3153 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 		{
 			return a_body1break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 2662 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2774 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 		std::string name(dit->d_name);
-															#line 2663 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2775 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 		struct stat buf;
-															#line 2664 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2776 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 		if (stat(joinPath(directory, name).c_str(), &buf))
-															#line 3051 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 3163 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 		{
-															#line 2665 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2777 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			bool isError = errno != ENOENT;
-															#line 2666 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2778 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			TraceEvent(isError ? SevError : SevWarn, "StatFailed") .detail("Directory", directory) .detail("Extension", extension) .detail("Name", name) .GetLastError();
-															#line 2671 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2783 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			if (isError)
-															#line 3059 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 3171 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 			{
-															#line 2672 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2784 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 				return a_body1Catch1(platform_error(), std::max(0, loopDepth - 1));
-															#line 3063 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 3175 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 			}
 			else
 			{
 				return a_body1loopHead1(loopDepth); // continue
 			}
 		}
-															#line 2677 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2789 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 		if ((directoryOnly && acceptDirectory(buf.st_mode, name, extension)) || (!directoryOnly && acceptFile(buf.st_mode, name, extension)))
-															#line 3072 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 3184 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 		{
-															#line 2679 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2791 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			result.push_back(name);
-															#line 3076 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 3188 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 		}
-															#line 2681 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2793 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 		if (async && timestampCounter() - tsc_begin > FLOW_KNOBS->TSC_YIELD_TIME && !g_network->isSimulated())
-															#line 3080 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 3192 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 		{
-															#line 2682 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2794 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			StrictFuture<Void> __when_expr_0 = yield();
-															#line 2682 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2794 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			if (static_cast<FindFilesActor1*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 3086 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 3198 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<FindFilesActor1*>(this)->actor_wait_state = 1;
-															#line 2682 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2794 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< FindFilesActor1, 0, Void >*>(static_cast<FindFilesActor1*>(this)));
-															#line 3091 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 3203 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 			loopDepth = 0;
 		}
 		else
@@ -3119,18 +3231,18 @@ public:
 	}
 	int a_body1loopBody1cont7(Void const& _,int loopDepth) 
 	{
-															#line 2683 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2795 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 		tsc_begin = timestampCounter();
-															#line 3124 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 3236 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont7(Void && _,int loopDepth) 
 	{
-															#line 2683 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2795 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 		tsc_begin = timestampCounter();
-															#line 3133 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 3245 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont1(loopDepth);
 
 		return loopDepth;
@@ -3198,26 +3310,26 @@ public:
 		fdb_probe_actor_exit("findFiles", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 2645 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2757 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 	std::string directory;
-															#line 2645 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2757 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 	std::string extension;
-															#line 2645 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2757 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 	bool directoryOnly;
-															#line 2645 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2757 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 	bool async;
-															#line 2650 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2762 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 	std::vector<std::string> result;
-															#line 2651 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2763 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 	int64_t tsc_begin;
-															#line 2653 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2765 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 	DIR* dip;
-															#line 3215 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 3327 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 };
 // This generated class is to be used only via findFiles()
-															#line 2645 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2757 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 class FindFilesActor1 final : public Actor<std::vector<std::string>>, public ActorCallback< FindFilesActor1, 0, Void >, public FastAllocated<FindFilesActor1>, public FindFilesActor1State<FindFilesActor1> {
-															#line 3220 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 3332 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 public:
 	using FastAllocated<FindFilesActor1>::operator new;
 	using FastAllocated<FindFilesActor1>::operator delete;
@@ -3226,9 +3338,9 @@ public:
 	void destroy() override { ((Actor<std::vector<std::string>>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< FindFilesActor1, 0, Void >;
-															#line 2645 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2757 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 	FindFilesActor1(std::string const& directory,std::string const& extension,bool const& directoryOnly,bool const& async) 
-															#line 3231 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 3343 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 		 : Actor<std::vector<std::string>>(),
 		   FindFilesActor1State<FindFilesActor1>(directory, extension, directoryOnly, async)
 	{
@@ -3252,14 +3364,14 @@ friend struct ActorCallback< FindFilesActor1, 0, Void >;
 	}
 };
 }
-															#line 2645 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2757 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 [[nodiscard]] Future<std::vector<std::string>> findFiles( std::string const& directory, std::string const& extension, bool const& directoryOnly, bool const& async ) {
-															#line 2645 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2757 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 	return Future<std::vector<std::string>>(new FindFilesActor1(directory, extension, directoryOnly, async));
-															#line 3259 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 3371 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 }
 
-#line 2692 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+#line 2804 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 
 #else
 #error Port me!
@@ -3297,22 +3409,22 @@ void findFilesRecursively(std::string const& path, std::vector<std::string>& out
 	}
 }
 
-															#line 3300 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 3412 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 // This generated class is to be used only via findFilesRecursivelyAsync()
-															#line 2729 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2841 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 template <class FindFilesRecursivelyAsyncActor>
-															#line 2729 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2841 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 class FindFilesRecursivelyAsyncActorState {
-															#line 3306 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 3418 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 public:
-															#line 2729 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2841 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 	FindFilesRecursivelyAsyncActorState(std::string const& path,std::vector<std::string>* const& out) 
-															#line 2729 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
-															#line 2729 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2841 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2841 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 		 : path(path),
-															#line 2729 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2841 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 		   out(out)
-															#line 3315 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 3427 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 	{
 		fdb_probe_actor_create("findFilesRecursivelyAsync", reinterpret_cast<unsigned long>(this));
 
@@ -3325,16 +3437,16 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 2731 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2843 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			StrictFuture<std::vector<std::string>> __when_expr_0 = listFilesAsync(path, "");
-															#line 2731 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2843 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			if (static_cast<FindFilesRecursivelyAsyncActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 3332 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 3444 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<FindFilesRecursivelyAsyncActor*>(this)->actor_wait_state = 1;
-															#line 2731 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2843 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< FindFilesRecursivelyAsyncActor, 0, std::vector<std::string> >*>(static_cast<FindFilesRecursivelyAsyncActor*>(this)));
-															#line 3337 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 3449 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -3355,31 +3467,31 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 2732 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2844 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 		for( auto const& f : files ) {
-															#line 2733 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2845 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			out->push_back(joinPath(path, f));
-															#line 3362 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 3474 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 		}
-															#line 2736 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2848 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 		StrictFuture<std::vector<std::string>> __when_expr_1 = listDirectoriesAsync(path);
-															#line 2736 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2848 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 		if (static_cast<FindFilesRecursivelyAsyncActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 3368 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 3480 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<FindFilesRecursivelyAsyncActor*>(this)->actor_wait_state = 2;
-															#line 2736 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2848 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< FindFilesRecursivelyAsyncActor, 1, std::vector<std::string> >*>(static_cast<FindFilesRecursivelyAsyncActor*>(this)));
-															#line 3373 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 3485 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1when1(std::vector<std::string> const& __files,int loopDepth) 
 	{
-															#line 2731 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2843 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 		files = __files;
-															#line 3382 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 3494 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 		loopDepth = a_body1cont1(loopDepth);
 
 		return loopDepth;
@@ -3444,18 +3556,18 @@ public:
 	}
 	int a_body1cont2(int loopDepth) 
 	{
-															#line 2737 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2849 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 		RangeForbody1cont2Iterator0 = std::begin(directories);
-															#line 3449 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 3561 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 		loopDepth = a_body1cont2loopHead1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1cont1when1(std::vector<std::string> const& __directories,int loopDepth) 
 	{
-															#line 2736 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2848 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 		directories = __directories;
-															#line 3458 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 3570 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 		loopDepth = a_body1cont2(loopDepth);
 
 		return loopDepth;
@@ -3520,9 +3632,9 @@ public:
 	}
 	int a_body1cont4(int loopDepth) 
 	{
-															#line 2741 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2853 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 		if (!static_cast<FindFilesRecursivelyAsyncActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~FindFilesRecursivelyAsyncActorState(); static_cast<FindFilesRecursivelyAsyncActor*>(this)->destroy(); return 0; }
-															#line 3525 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 3637 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 		new (&static_cast<FindFilesRecursivelyAsyncActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~FindFilesRecursivelyAsyncActorState();
 		static_cast<FindFilesRecursivelyAsyncActor*>(this)->finishSendAndDelPromiseRef();
@@ -3539,30 +3651,30 @@ public:
 	}
 	int a_body1cont2loopBody1(int loopDepth) 
 	{
-															#line 2737 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2849 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 		if (!(RangeForbody1cont2Iterator0 != std::end(directories)))
-															#line 3544 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 3656 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 		{
 			return a_body1cont2break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 2737 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2849 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 		auto const& dir = *RangeForbody1cont2Iterator0;
-															#line 3550 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 3662 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 		{
-															#line 2738 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2850 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			if (dir != "." && dir != "..")
-															#line 3554 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 3666 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 			{
-															#line 2739 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2851 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 				StrictFuture<Void> __when_expr_2 = findFilesRecursivelyAsync(joinPath(path, dir), out);
-															#line 2739 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2851 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 				if (static_cast<FindFilesRecursivelyAsyncActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 3560 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 3672 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 				if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), std::max(0, loopDepth - 1)); else return a_body1cont2loopBody1when1(__when_expr_2.get(), loopDepth); };
 				static_cast<FindFilesRecursivelyAsyncActor*>(this)->actor_wait_state = 3;
-															#line 2739 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2851 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 				__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< FindFilesRecursivelyAsyncActor, 2, Void >*>(static_cast<FindFilesRecursivelyAsyncActor*>(this)));
-															#line 3565 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 3677 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 				loopDepth = 0;
 			}
 			else
@@ -3588,9 +3700,9 @@ public:
 	}
 	int a_body1cont2loopBody1cont1(int loopDepth) 
 	{
-															#line 2737 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2849 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 		++RangeForbody1cont2Iterator0;
-															#line 3593 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 3705 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 		if (loopDepth == 0) return a_body1cont2loopHead1(0);
 
 		return loopDepth;
@@ -3676,22 +3788,22 @@ public:
 		fdb_probe_actor_exit("findFilesRecursivelyAsync", reinterpret_cast<unsigned long>(this), 2);
 
 	}
-															#line 2729 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2841 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 	std::string path;
-															#line 2729 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2841 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 	std::vector<std::string>* out;
-															#line 2731 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2843 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 	std::vector<std::string> files;
-															#line 2736 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2848 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 	std::vector<std::string> directories;
-															#line 2737 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2849 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 	decltype(std::begin(std::declval<std::vector<std::string>>())) RangeForbody1cont2Iterator0;
-															#line 3689 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 3801 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 };
 // This generated class is to be used only via findFilesRecursivelyAsync()
-															#line 2729 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2841 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 class FindFilesRecursivelyAsyncActor final : public Actor<Void>, public ActorCallback< FindFilesRecursivelyAsyncActor, 0, std::vector<std::string> >, public ActorCallback< FindFilesRecursivelyAsyncActor, 1, std::vector<std::string> >, public ActorCallback< FindFilesRecursivelyAsyncActor, 2, Void >, public FastAllocated<FindFilesRecursivelyAsyncActor>, public FindFilesRecursivelyAsyncActorState<FindFilesRecursivelyAsyncActor> {
-															#line 3694 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 3806 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 public:
 	using FastAllocated<FindFilesRecursivelyAsyncActor>::operator new;
 	using FastAllocated<FindFilesRecursivelyAsyncActor>::operator delete;
@@ -3702,9 +3814,9 @@ public:
 friend struct ActorCallback< FindFilesRecursivelyAsyncActor, 0, std::vector<std::string> >;
 friend struct ActorCallback< FindFilesRecursivelyAsyncActor, 1, std::vector<std::string> >;
 friend struct ActorCallback< FindFilesRecursivelyAsyncActor, 2, Void >;
-															#line 2729 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2841 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 	FindFilesRecursivelyAsyncActor(std::string const& path,std::vector<std::string>* const& out) 
-															#line 3707 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 3819 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 		 : Actor<Void>(),
 		   FindFilesRecursivelyAsyncActorState<FindFilesRecursivelyAsyncActor>(path, out)
 	{
@@ -3729,14 +3841,14 @@ friend struct ActorCallback< FindFilesRecursivelyAsyncActor, 2, Void >;
 
 	}
 };
-															#line 2729 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2841 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 [[nodiscard]] Future<Void> findFilesRecursivelyAsync( std::string const& path, std::vector<std::string>* const& out ) {
-															#line 2729 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 2841 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 	return Future<Void>(new FindFilesRecursivelyAsyncActor(path, out));
-															#line 3736 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 3848 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 }
 
-#line 2743 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+#line 2855 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 
 } // namespace platform
 
@@ -3895,54 +4007,54 @@ int64_t fileSize(std::string const& filename) {
 #endif
 }
 
-std::string readFileBytes(std::string const& filename, int maxSize) {
-	std::string s;
-	FILE* f = fopen(filename.c_str(), "rb" FOPEN_CLOEXEC_MODE);
-	if (!f) {
-		TraceEvent(SevWarn, "FileOpenError")
+size_t readFileBytes(std::string const& filename, uint8_t* buff, size_t len) {
+	std::fstream ifs(filename, std::fstream::in | std::fstream::binary);
+	if (!ifs.good()) {
+		TraceEvent("ileBytes_FileOpenError").detail("Filename", filename).GetLastError();
+		throw io_error();
+	}
+
+	size_t bytesRead = len;
+	ifs.seekg(0, std::fstream::beg);
+	ifs.read((char*)buff, len);
+	if (!ifs) {
+		bytesRead = ifs.gcount();
+		TraceEvent("ReadFileBytes_ShortRead")
 		    .detail("Filename", filename)
-		    .detail("Errno", errno)
-		    .detail("ErrorDescription", strerror(errno));
-		throw file_not_readable();
+		    .detail("Requested", len)
+		    .detail("Actual", bytesRead);
 	}
-	try {
-		fseek(f, 0, SEEK_END);
-		size_t size = ftell(f);
-		if (size > maxSize)
-			throw file_too_large();
-		s.resize(size);
-		fseek(f, 0, SEEK_SET);
-		if (!fread(&s[0], size, 1, f))
-			throw file_not_readable();
-	} catch (...) {
-		fclose(f);
-		throw;
+
+	return bytesRead;
+}
+
+std::string readFileBytes(std::string const& filename, int maxSize) {
+	if (!fileExists(filename)) {
+		TraceEvent("ReadFileBytes_FileNotFound").detail("Filename", filename);
+		throw file_not_found();
 	}
-	fclose(f);
-	return s;
+
+	size_t size = fileSize(filename);
+	if (size > maxSize) {
+		TraceEvent("ReadFileBytes_FileTooLarge").detail("Filename", filename);
+		throw file_too_large();
+	}
+
+	std::string ret;
+	ret.resize(size);
+	readFileBytes(filename, (uint8_t*)ret.data(), size);
+
+	return ret;
 }
 
 void writeFileBytes(std::string const& filename, const uint8_t* data, size_t count) {
-	FILE* f = fopen(filename.c_str(), "wb" FOPEN_CLOEXEC_MODE);
-	if (!f) {
-		TraceEvent(SevError, "WriteFileBytes").detail("Filename", filename).GetLastError();
-		throw file_not_writable();
+	std::ofstream ofs(filename, std::fstream::out | std::fstream::binary);
+	if (!ofs.good()) {
+		TraceEvent("WriteFileBytes_FileOpenError").detail("Filename", filename).GetLastError();
+		throw io_error();
 	}
 
-	try {
-		size_t length = fwrite(data, sizeof(uint8_t), count, f);
-		if (length != count) {
-			TraceEvent(SevError, "WriteFileBytes")
-			    .detail("Filename", filename)
-			    .detail("WrittenLength", length)
-			    .GetLastError();
-			throw file_not_writable();
-		}
-	} catch (...) {
-		fclose(f);
-		throw;
-	}
-	fclose(f);
+	ofs.write((const char*)data, count);
 }
 
 void writeFile(std::string const& filename, std::string const& content) {
@@ -4064,19 +4176,19 @@ void outOfMemory() {
 		char* demangled = abi::__cxa_demangle(i->first, nullptr, nullptr, nullptr);
 		if (demangled) {
 			s = demangled;
-			if (StringRef(s).startsWith(LiteralStringRef("(anonymous namespace)::")))
-				s = s.substr(LiteralStringRef("(anonymous namespace)::").size());
+			if (StringRef(s).startsWith("(anonymous namespace)::"_sr))
+				s = s.substr("(anonymous namespace)::"_sr.size());
 			free(demangled);
 		} else
 			s = i->first;
 #else
 		s = i->first;
-		if (StringRef(s).startsWith(LiteralStringRef("class `anonymous namespace'::")))
-			s = s.substr(LiteralStringRef("class `anonymous namespace'::").size());
-		else if (StringRef(s).startsWith(LiteralStringRef("class ")))
-			s = s.substr(LiteralStringRef("class ").size());
-		else if (StringRef(s).startsWith(LiteralStringRef("struct ")))
-			s = s.substr(LiteralStringRef("struct ").size());
+		if (StringRef(s).startsWith("class `anonymous namespace'::"_sr))
+			s = s.substr("class `anonymous namespace'::"_sr.size());
+		else if (StringRef(s).startsWith("class "_sr))
+			s = s.substr("class "_sr.size());
+		else if (StringRef(s).startsWith("struct "_sr))
+			s = s.substr("struct "_sr.size());
 #endif
 		typeNames.emplace_back(s, i->first);
 	}
@@ -4156,10 +4268,10 @@ void outOfMemory() {
 }
 
 // Because the lambda used with nftw below cannot capture
-int __eraseDirectoryRecurseiveCount;
+int __eraseDirectoryRecursiveCount;
 
 int eraseDirectoryRecursive(std::string const& dir) {
-	__eraseDirectoryRecurseiveCount = 0;
+	__eraseDirectoryRecursiveCount = 0;
 #ifdef _WIN32
 	system(("rd /s /q \"" + dir + "\"").c_str());
 #elif defined(__linux__) || defined(__APPLE__) || defined(__FreeBSD__)
@@ -4168,7 +4280,7 @@ int eraseDirectoryRecursive(std::string const& dir) {
 	    [](const char* fpath, const struct stat* sb, int typeflag, struct FTW* ftwbuf) -> int {
 		    int r = remove(fpath);
 		    if (r == 0)
-			    ++__eraseDirectoryRecurseiveCount;
+			    ++__eraseDirectoryRecursiveCount;
 		    return r;
 	    },
 	    64,
@@ -4185,25 +4297,62 @@ int eraseDirectoryRecursive(std::string const& dir) {
 #error Port me!
 #endif
 	// INJECT_FAULT( platform_error, "eraseDirectoryRecursive" );
-	return __eraseDirectoryRecurseiveCount;
+	return __eraseDirectoryRecursiveCount;
 }
 
-bool isHwCrcSupported() {
-#if defined(_WIN32)
-	int info[4];
-	__cpuid(info, 1);
-	return (info[2] & (1 << 20)) != 0;
-#elif defined(__aarch64__)
-	return true; /* force to use crc instructions */
-#elif defined(__powerpc64__)
-	return false; /* force not to use crc instructions */
-#elif defined(__unixish__)
-	uint32_t eax, ebx, ecx, edx, level = 1, count = 0;
-	__cpuid_count(level, count, eax, ebx, ecx, edx);
-	return ((ecx >> 20) & 1) != 0;
-#else
-#error Port me!
-#endif
+TmpFile::TmpFile() : filename("") {
+	createTmpFile(boost::filesystem::temp_directory_path().string(), TmpFile::defaultPrefix);
+}
+
+TmpFile::TmpFile(const std::string& tmpDir) : filename("") {
+	std::string dir = removeWhitespace(tmpDir);
+	createTmpFile(dir, TmpFile::defaultPrefix);
+}
+
+TmpFile::TmpFile(const std::string& tmpDir, const std::string& prefix) : filename("") {
+	std::string dir = removeWhitespace(tmpDir);
+	createTmpFile(dir, prefix);
+}
+
+TmpFile::~TmpFile() {
+	if (!filename.empty()) {
+		destroyFile();
+	}
+}
+
+void TmpFile::createTmpFile(const std::string_view dir, const std::string_view prefix) {
+	std::string modelPattern = "%%%%-%%%%-%%%%-%%%%";
+	boost::format fmter("%s/%s-%s");
+	std::string modelPath = boost::str(boost::format(fmter % dir % prefix % modelPattern));
+	boost::filesystem::path filePath = boost::filesystem::unique_path(modelPath);
+
+	filename = filePath.string();
+
+	// Create empty tmp file
+	std::fstream tmpFile(filename, std::fstream::out);
+	if (!tmpFile.good()) {
+		TraceEvent("TmpFile_CreateFileError").detail("Filename", filename);
+		throw io_error();
+	}
+	TraceEvent("TmpFile_CreateSuccess").detail("Filename", filename);
+}
+
+size_t TmpFile::read(uint8_t* buff, size_t len) {
+	return readFileBytes(filename, buff, len);
+}
+
+void TmpFile::write(const uint8_t* buff, size_t len) {
+	writeFileBytes(filename, buff, len);
+}
+
+bool TmpFile::destroyFile() {
+	bool deleted = deleteFile(filename);
+	if (deleted) {
+		TraceEvent("TmpFileDestory_Success").detail("Filename", filename);
+	} else {
+		TraceEvent("TmpFileDestory_Failed").detail("Filename", filename);
+	}
+	return deleted;
 }
 
 } // namespace platform
@@ -4376,7 +4525,12 @@ void* loadLibrary(const char* lib_path) {
 	void* dlobj = nullptr;
 
 #if defined(__unixish__)
-	dlobj = dlopen(lib_path, RTLD_LAZY | RTLD_LOCAL);
+	dlobj = dlopen(lib_path,
+	               RTLD_LAZY | RTLD_LOCAL
+#ifdef USE_SANITIZER // Keep alive dlopen()-ed libs for symbolized XSAN backtrace
+	                   | RTLD_NODELETE
+#endif
+	);
 	if (dlobj == nullptr) {
 		TraceEvent(SevWarn, "LoadLibraryFailed").detail("Library", lib_path).detail("Error", dlerror());
 	}
@@ -4488,6 +4642,12 @@ void platformInit() {
 #endif
 }
 
+std::vector<std::function<void()>> g_crashHandlerCallbacks;
+
+void registerCrashHandlerCallback(void (*f)()) {
+	g_crashHandlerCallbacks.push_back(f);
+}
+
 // The crashHandler function is registered to handle signals before the process terminates.
 // Basic information about the crash is printed/traced, and stdout and trace events are flushed.
 void crashHandler(int sig) {
@@ -4496,13 +4656,19 @@ void crashHandler(int sig) {
 	//  but the idea is that we're about to crash anyway...
 	std::string backtrace = platform::get_backtrace();
 
-	bool error = (sig != SIGUSR2);
+	bool error = (sig != SIGUSR2 && sig != SIGTERM);
 
-#if (!defined(TLS_DISABLED) && !defined(_WIN32))
 	StreamCipherKey::cleanup();
 	StreamCipher::cleanup();
-	BlobCipherKeyCache::cleanup();
-#endif
+
+	for (auto& f : g_crashHandlerCallbacks) {
+		f();
+	}
+
+	fprintf(error ? stderr : stdout, "SIGNAL: %s (%d)\n", strsignal(sig), sig);
+	if (error) {
+		fprintf(stderr, "Trace: %s\n", backtrace.c_str());
+	}
 
 	fflush(stdout);
 	{
@@ -4514,8 +4680,9 @@ void crashHandler(int sig) {
 	}
 	flushTraceFileVoid();
 
-	fprintf(stderr, "SIGNAL: %s (%d)\n", strsignal(sig), sig);
-	fprintf(stderr, "Trace: %s\n", backtrace.c_str());
+#ifdef USE_GCOV
+	__gcov_flush();
+#endif
 
 	struct sigaction sa;
 	sa.sa_handler = SIG_DFL;
@@ -4555,6 +4722,15 @@ void registerCrashHandler() {
 	sigaction(SIGSEGV, &action, nullptr);
 	sigaction(SIGBUS, &action, nullptr);
 	sigaction(SIGUSR2, &action, nullptr);
+#ifdef USE_GCOV
+	// SIGTERM is the "graceful" way to end an fdbserver process, so we actually
+	// don't want to invoke crashHandler. crashHandler is not actually
+	// async-signal-safe, so we can only justify calling it if we were going to
+	// crash anyway. For USE_GCOV though we need to flush coverage info, which
+	// we do through crashHandler.
+	sigaction(SIGTERM, &action, nullptr);
+#endif
+	sigaction(SIGABRT, &action, nullptr);
 #else
 	// No crash handler for other platforms!
 #endif
@@ -4570,38 +4746,71 @@ extern std::atomic<int64_t> net2RunLoopIterations;
 extern std::atomic<int64_t> net2RunLoopSleeps;
 extern void initProfiling();
 
+namespace {
+
 std::atomic<double> checkThreadTime;
+std::mutex loopProfilerThreadMutex;
+std::optional<pthread_t> loopProfilerThread;
+std::atomic<bool> loopProfilerStopRequested = false;
+
+} // namespace
 #endif
 
-volatile thread_local bool profileThread = false;
-volatile thread_local int profilingEnabled = 1;
+// True if this thread is the thread being profiled. Not to be used from the signal handler.
+thread_local bool profileThread = false;
 
-volatile thread_local int64_t numProfilesDeferred = 0;
-volatile thread_local int64_t numProfilesOverflowed = 0;
-volatile thread_local int64_t numProfilesCaptured = 0;
-volatile thread_local bool profileRequested = false;
+// The thread ID of the profiled thread. This can be compared against the current thread ID
+// to see if we are on the profiled thread. Can be used in the signal handler.
+volatile int64_t profileThreadId = -1;
 
-int64_t getNumProfilesDeferred() {
-	return numProfilesDeferred;
+#ifdef __linux__
+struct sigaction chainedAction;
+#endif
+
+volatile bool profilingEnabled = 1;
+volatile thread_local bool flowProfilingEnabled = 1;
+
+volatile int64_t numProfilesDisabled = 0;
+volatile int64_t numProfilesOverflowed = 0;
+volatile int64_t numProfilesCaptured = 0;
+
+int64_t getNumProfilesDisabled() {
+	if (profileThread) {
+		return numProfilesDisabled;
+	} else {
+		return 0;
+	}
 }
 
 int64_t getNumProfilesOverflowed() {
-	return numProfilesOverflowed;
+	if (profileThread) {
+		return numProfilesOverflowed;
+	} else {
+		return 0;
+	}
 }
 
 int64_t getNumProfilesCaptured() {
-	return numProfilesCaptured;
+	if (profileThread) {
+		return numProfilesCaptured;
+	} else {
+		return 0;
+	}
 }
 
 void profileHandler(int sig) {
 #ifdef __linux__
-	if (!profileThread) {
-		return;
+	if (chainedAction.sa_handler != SIG_DFL && chainedAction.sa_handler != SIG_IGN &&
+	    chainedAction.sa_handler != nullptr) {
+		chainedAction.sa_handler(sig);
 	}
 
-	if (!profilingEnabled) {
-		profileRequested = true;
-		++numProfilesDeferred;
+	// This is not documented in the POSIX list of signal-safe functions, but numbered syscalls are reported to be
+	// async safe in Linux.
+	if (profileThreadId != syscall(__NR_gettid)) {
+		return;
+	} else if (!profilingEnabled) {
+		++numProfilesDisabled;
 		return;
 	}
 
@@ -4624,26 +4833,29 @@ void profileHandler(int sig) {
 	// We can't get the time from a timer() call because it's not signal safe.
 	ps->timestamp = checkThreadTime.is_lock_free() ? checkThreadTime.load() : 0;
 
+#if defined(USE_SANITIZER)
+	// In sanitizer builds the workaround implemented in SignalSafeUnwind.cpp is disabled
+	// so calling backtrace may cause a deadlock
+	size_t size = 0;
+#else
 	// SOMEDAY: should we limit the maximum number of frames from backtrace beyond just available space?
 	size_t size = backtrace(ps->frames, net2backtraces_max - net2backtraces_offset - 2);
+#endif
 
 	ps->length = size;
 
 	net2backtraces_offset += size + 2;
 #else
-	// No slow task profiling for other platforms!
+// No slow task profiling for other platforms!
 #endif
 }
 
 void setProfilingEnabled(int enabled) {
 #ifdef __linux__
-	if (profileThread && enabled && !profilingEnabled && profileRequested) {
-		profilingEnabled = true;
-		profileRequested = false;
-		pthread_kill(pthread_self(), SIGPROF);
-	} else {
+	if (profileThread) {
 		profilingEnabled = enabled;
 	}
+	flowProfilingEnabled = enabled;
 #else
 	// No profiling for other platforms!
 #endif
@@ -4670,7 +4882,7 @@ void* checkThread(void* arg) {
 	double slowTaskLogInterval = minSlowTaskLogInterval;
 	double saturatedLogInterval = minSaturationLogInterval;
 
-	while (true) {
+	while (!loopProfilerStopRequested) {
 		threadSleep(FLOW_KNOBS->RUN_LOOP_PROFILING_INTERVAL);
 
 		int64_t currentRunLoopIterations = net2RunLoopIterations.load();
@@ -4790,120 +5002,152 @@ std::string getExecPath() {
 
 void setupRunLoopProfiler() {
 #ifdef __linux__
-	if (!profileThread && FLOW_KNOBS->RUN_LOOP_PROFILING_INTERVAL > 0) {
+	if (profileThreadId == -1 && FLOW_KNOBS->RUN_LOOP_PROFILING_INTERVAL > 0) {
+		chainedAction.sa_handler = SIG_DFL;
+
 		TraceEvent("StartingRunLoopProfilingThread").detail("Interval", FLOW_KNOBS->RUN_LOOP_PROFILING_INTERVAL);
-		initProfiling();
+
 		profileThread = true;
+		profileThreadId = syscall(__NR_gettid);
+		if (profileThreadId < 0) {
+			TraceEvent(SevWarnAlways, "RunLoopProfilingSetupFailed")
+			    .detail("Reason", "Error getting thread ID")
+			    .GetLastError();
+			return;
+		}
+
+		initProfiling();
 
 		struct sigaction action;
 		action.sa_handler = profileHandler;
 		sigfillset(&action.sa_mask);
 		action.sa_flags = 0;
-		sigaction(SIGPROF, &action, nullptr);
+		if (sigaction(SIGPROF, &action, &chainedAction)) {
+			TraceEvent(SevWarnAlways, "RunLoopProfilingSetupFailed")
+			    .detail("Reason", "Error configuring signal handler")
+			    .GetLastError();
+			return;
+		}
 
 		// Start a thread which will use signals to log stacks on long events
 		pthread_t* mainThread = (pthread_t*)malloc(sizeof(pthread_t));
 		*mainThread = pthread_self();
-		startThread(&checkThread, (void*)mainThread, 0, "fdb-loopprofile");
+		{
+			std::unique_lock<std::mutex> lock(loopProfilerThreadMutex);
+			if (!loopProfilerStopRequested) {
+				loopProfilerThread = startThread(&checkThread, (void*)mainThread, 0, "fdb-loopprofile");
+			}
+		}
 	}
 #else
 	// No slow task profiling for other platforms!
 #endif
 }
 
+void stopRunLoopProfiler() {
+#ifdef __linux__
+	std::unique_lock<std::mutex> lock(loopProfilerThreadMutex);
+	loopProfilerStopRequested.store(true);
+	if (loopProfilerThread) {
+		pthread_join(loopProfilerThread.value(), NULL);
+		loopProfilerThread = {};
+	}
+#endif
+}
+
 // UnitTest for getMemoryInfo
 #ifdef __linux__
-															#line 4816 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 5060 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 namespace {
-// This generated class is to be used only via flowTestCase3819()
-															#line 3819 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
-template <class FlowTestCase3819Actor>
-															#line 3819 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
-class FlowTestCase3819ActorState {
-															#line 4823 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+// This generated class is to be used only via flowTestCase4063()
+															#line 4063 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+template <class FlowTestCase4063Actor>
+															#line 4063 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+class FlowTestCase4063ActorState {
+															#line 5067 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 public:
-															#line 3819 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
-	FlowTestCase3819ActorState(UnitTestParameters const& params) 
-															#line 3819 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
-															#line 3819 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4063 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+	FlowTestCase4063ActorState(UnitTestParameters const& params) 
+															#line 4063 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4063 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 		 : params(params)
-															#line 4830 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 5074 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 	{
-		fdb_probe_actor_create("flowTestCase3819", reinterpret_cast<unsigned long>(this));
+		fdb_probe_actor_create("flowTestCase4063", reinterpret_cast<unsigned long>(this));
 
 	}
-	~FlowTestCase3819ActorState() 
+	~FlowTestCase4063ActorState() 
 	{
-		fdb_probe_actor_destroy("flowTestCase3819", reinterpret_cast<unsigned long>(this));
+		fdb_probe_actor_destroy("flowTestCase4063", reinterpret_cast<unsigned long>(this));
 
 	}
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 3821 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4065 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			printf("UnitTest flow/Platform/getMemoryInfo 1\n");
-															#line 3822 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4066 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			std::string memString = "MemTotal:       24733228 kB\n" "MemFree:         2077580 kB\n" "Buffers:          266940 kB\n" "Cached:         16798292 kB\n" "SwapCached:       210240 kB\n" "Active:         12447724 kB\n" "Inactive:        9175508 kB\n" "Active(anon):    3458596 kB\n" "Inactive(anon):  1102948 kB\n" "Active(file):    8989128 kB\n" "Inactive(file):  8072560 kB\n" "Unevictable:           0 kB\n" "Mlocked:               0 kB\n" "SwapTotal:      25165820 kB\n" "SwapFree:       23680228 kB\n" "Dirty:               200 kB\n" "Writeback:             0 kB\n" "AnonPages:       4415148 kB\n" "Mapped:            62804 kB\n" "Shmem:              3544 kB\n" "Slab:             620144 kB\n" "SReclaimable:     556640 kB\n" "SUnreclaim:        63504 kB\n" "KernelStack:        5240 kB\n" "PageTables:        47292 kB\n" "NFS_Unstable:          0 kB\n" "Bounce:                0 kB\n" "WritebackTmp:          0 kB\n" "CommitLimit:    37532432 kB\n" "Committed_AS:    8603484 kB\n" "VmallocTotal:   34359738367 kB\n" "VmallocUsed:      410576 kB\n";
-															#line 3855 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
-			std::map<StringRef, int64_t> request = { { LiteralStringRef("MemTotal:"), 0 }, { LiteralStringRef("MemFree:"), 0 }, { LiteralStringRef("MemAvailable:"), 0 }, { LiteralStringRef("Buffers:"), 0 }, { LiteralStringRef("Cached:"), 0 }, { LiteralStringRef("SwapTotal:"), 0 }, { LiteralStringRef("SwapFree:"), 0 }, };
-															#line 3862 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4099 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+			std::map<StringRef, int64_t> request = { { "MemTotal:"_sr, 0 }, { "MemFree:"_sr, 0 }, { "MemAvailable:"_sr, 0 }, { "Buffers:"_sr, 0 }, { "Cached:"_sr, 0 }, { "SwapTotal:"_sr, 0 }, { "SwapFree:"_sr, 0 }, };
+															#line 4104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			std::stringstream memInfoStream(memString);
-															#line 3863 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
-			getMemoryInfo(request, memInfoStream);
-															#line 3864 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
-			ASSERT(request[LiteralStringRef("MemTotal:")] == 24733228);
-															#line 3865 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
-			ASSERT(request[LiteralStringRef("MemFree:")] == 2077580);
-															#line 3866 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
-			ASSERT(request[LiteralStringRef("MemAvailable:")] == 0);
-															#line 3867 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
-			ASSERT(request[LiteralStringRef("Buffers:")] == 266940);
-															#line 3868 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
-			ASSERT(request[LiteralStringRef("Cached:")] == 16798292);
-															#line 3869 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
-			ASSERT(request[LiteralStringRef("SwapTotal:")] == 25165820);
-															#line 3870 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
-			ASSERT(request[LiteralStringRef("SwapFree:")] == 23680228);
-															#line 3871 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4105 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+			linux_os::getMemoryInfo(request, memInfoStream);
+															#line 4106 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+			ASSERT(request["MemTotal:"_sr] == 24733228);
+															#line 4107 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+			ASSERT(request["MemFree:"_sr] == 2077580);
+															#line 4108 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+			ASSERT(request["MemAvailable:"_sr] == 0);
+															#line 4109 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+			ASSERT(request["Buffers:"_sr] == 266940);
+															#line 4110 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+			ASSERT(request["Cached:"_sr] == 16798292);
+															#line 4111 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+			ASSERT(request["SwapTotal:"_sr] == 25165820);
+															#line 4112 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+			ASSERT(request["SwapFree:"_sr] == 23680228);
+															#line 4113 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			for( auto& item : request ) {
-															#line 3872 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4114 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 				fmt::print("{}:{}\n", item.first.toString().c_str(), item.second);
-															#line 4871 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 5115 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 			}
-															#line 3875 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4117 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			printf("UnitTest flow/Platform/getMemoryInfo 2\n");
-															#line 3876 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4118 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			std::string memString1 = "Slab:             192816 kB\n" "SReclaimable:     158404 kB\n" "SUnreclaim:        34412 kB\n" "KernelStack:        7152 kB\n" "PageTables:        45284 kB\n" "NFS_Unstable:          0 kB\n" "Bounce:                0 kB\n" "WritebackTmp:          0 kB\n" "MemTotal:       31856496 kB\n" "MemFree:        25492716 kB\n" "MemAvailable:   28470756 kB\n" "Buffers:          313644 kB\n" "Cached:          2956444 kB\n" "SwapCached:            0 kB\n" "Active:          3708432 kB\n" "Inactive:        2163752 kB\n" "Active(anon):    2604524 kB\n" "Inactive(anon):   199896 kB\n" "Active(file):    1103908 kB\n" "Inactive(file):  1963856 kB\n" "Unevictable:           0 kB\n" "Mlocked:               0 kB\n" "SwapTotal:             0 kB\n" "SwapFree:              0 kB\n" "Dirty:                 0 kB\n" "Writeback:             0 kB\n" "AnonPages:       2602108 kB\n" "Mapped:           361088 kB\n" "Shmem:            202332 kB\n" "CommitLimit:    15928248 kB\n" "Committed_AS:    5556756 kB\n" "VmallocTotal:   34359738367 kB\n" "VmallocUsed:      427528 kB\n" "VmallocChunk:   34359283752 kB\n" "HardwareCorrupted:     0 kB\n" "AnonHugePages:   1275904 kB\n";
-															#line 3913 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4155 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			std::stringstream memInfoStream1(memString1);
-															#line 3914 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
-			getMemoryInfo(request, memInfoStream1);
-															#line 3915 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
-			ASSERT(request[LiteralStringRef("MemTotal:")] == 31856496);
-															#line 3916 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
-			ASSERT(request[LiteralStringRef("MemFree:")] == 25492716);
-															#line 3917 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
-			ASSERT(request[LiteralStringRef("MemAvailable:")] == 28470756);
-															#line 3918 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
-			ASSERT(request[LiteralStringRef("Buffers:")] == 313644);
-															#line 3919 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
-			ASSERT(request[LiteralStringRef("Cached:")] == 2956444);
-															#line 3920 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
-			ASSERT(request[LiteralStringRef("SwapTotal:")] == 0);
-															#line 3921 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
-			ASSERT(request[LiteralStringRef("SwapFree:")] == 0);
-															#line 3922 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4156 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+			linux_os::getMemoryInfo(request, memInfoStream1);
+															#line 4157 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+			ASSERT(request["MemTotal:"_sr] == 31856496);
+															#line 4158 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+			ASSERT(request["MemFree:"_sr] == 25492716);
+															#line 4159 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+			ASSERT(request["MemAvailable:"_sr] == 28470756);
+															#line 4160 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+			ASSERT(request["Buffers:"_sr] == 313644);
+															#line 4161 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+			ASSERT(request["Cached:"_sr] == 2956444);
+															#line 4162 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+			ASSERT(request["SwapTotal:"_sr] == 0);
+															#line 4163 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+			ASSERT(request["SwapFree:"_sr] == 0);
+															#line 4164 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			for( auto& item : request ) {
-															#line 3923 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4165 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 				fmt::print("{}:{}\n", item.first.toString().c_str(), item.second);
-															#line 4899 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 5143 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 			}
-															#line 3926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
-			if (!static_cast<FlowTestCase3819Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~FlowTestCase3819ActorState(); static_cast<FlowTestCase3819Actor*>(this)->destroy(); return 0; }
-															#line 4903 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
-			new (&static_cast<FlowTestCase3819Actor*>(this)->SAV< Void >::value()) Void(Void());
-			this->~FlowTestCase3819ActorState();
-			static_cast<FlowTestCase3819Actor*>(this)->finishSendAndDelPromiseRef();
+															#line 4168 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+			if (!static_cast<FlowTestCase4063Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~FlowTestCase4063ActorState(); static_cast<FlowTestCase4063Actor*>(this)->destroy(); return 0; }
+															#line 5147 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+			new (&static_cast<FlowTestCase4063Actor*>(this)->SAV< Void >::value()) Void(Void());
+			this->~FlowTestCase4063ActorState();
+			static_cast<FlowTestCase4063Actor*>(this)->finishSendAndDelPromiseRef();
 			return 0;
 		}
 		catch (Error& error) {
@@ -4916,40 +5160,40 @@ public:
 	}
 	int a_body1Catch1(Error error,int loopDepth=0) 
 	{
-		this->~FlowTestCase3819ActorState();
-		static_cast<FlowTestCase3819Actor*>(this)->sendErrorAndDelPromiseRef(error);
+		this->~FlowTestCase4063ActorState();
+		static_cast<FlowTestCase4063Actor*>(this)->sendErrorAndDelPromiseRef(error);
 		loopDepth = 0;
 
 		return loopDepth;
 	}
-															#line 3819 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4063 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 	UnitTestParameters params;
-															#line 4927 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 5171 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 };
-// This generated class is to be used only via flowTestCase3819()
-															#line 3819 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
-class FlowTestCase3819Actor final : public Actor<Void>, public FastAllocated<FlowTestCase3819Actor>, public FlowTestCase3819ActorState<FlowTestCase3819Actor> {
-															#line 4932 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+// This generated class is to be used only via flowTestCase4063()
+															#line 4063 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+class FlowTestCase4063Actor final : public Actor<Void>, public FastAllocated<FlowTestCase4063Actor>, public FlowTestCase4063ActorState<FlowTestCase4063Actor> {
+															#line 5176 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 public:
-	using FastAllocated<FlowTestCase3819Actor>::operator new;
-	using FastAllocated<FlowTestCase3819Actor>::operator delete;
+	using FastAllocated<FlowTestCase4063Actor>::operator new;
+	using FastAllocated<FlowTestCase4063Actor>::operator delete;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdelete-non-virtual-dtor"
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
-															#line 3819 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
-	FlowTestCase3819Actor(UnitTestParameters const& params) 
-															#line 4942 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 4063 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+	FlowTestCase4063Actor(UnitTestParameters const& params) 
+															#line 5186 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 		 : Actor<Void>(),
-		   FlowTestCase3819ActorState<FlowTestCase3819Actor>(params)
+		   FlowTestCase4063ActorState<FlowTestCase4063Actor>(params)
 	{
-		fdb_probe_actor_enter("flowTestCase3819", reinterpret_cast<unsigned long>(this), -1);
+		fdb_probe_actor_enter("flowTestCase4063", reinterpret_cast<unsigned long>(this), -1);
 		#ifdef ENABLE_SAMPLING
-		this->lineage.setActorName("flowTestCase3819");
+		this->lineage.setActorName("flowTestCase4063");
 		LineageScope _(&this->lineage);
 		#endif
 		this->a_body1();
-		fdb_probe_actor_exit("flowTestCase3819", reinterpret_cast<unsigned long>(this), -1);
+		fdb_probe_actor_exit("flowTestCase4063", reinterpret_cast<unsigned long>(this), -1);
 
 	}
 	void cancel() override
@@ -4962,15 +5206,15 @@ public:
 	}
 };
 }
-															#line 3819 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
-static Future<Void> flowTestCase3819( UnitTestParameters const& params ) {
-															#line 3819 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
-	return Future<Void>(new FlowTestCase3819Actor(params));
-															#line 4969 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 4063 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+static Future<Void> flowTestCase4063( UnitTestParameters const& params ) {
+															#line 4063 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+	return Future<Void>(new FlowTestCase4063Actor(params));
+															#line 5213 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 }
-ACTOR_TEST_CASE(flowTestCase3819, "/flow/Platform/getMemoryInfo")
+ACTOR_TEST_CASE(flowTestCase4063, "/flow/Platform/getMemoryInfo")
 
-#line 3928 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+#line 4170 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 #endif
 
 int testPathFunction(const char* name,
@@ -5092,191 +5336,191 @@ void platformSpecificDirectoryOpsTests(const std::string& cwd, int& errors) {
 void platformSpecificDirectoryOpsTests(const std::string& cwd, int& errors) {}
 #endif
 
-															#line 5095 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 5339 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 namespace {
-// This generated class is to be used only via flowTestCase4049()
-															#line 4049 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
-template <class FlowTestCase4049Actor>
-															#line 4049 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
-class FlowTestCase4049ActorState {
-															#line 5102 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+// This generated class is to be used only via flowTestCase4291()
+															#line 4291 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+template <class FlowTestCase4291Actor>
+															#line 4291 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+class FlowTestCase4291ActorState {
+															#line 5346 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 public:
-															#line 4049 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
-	FlowTestCase4049ActorState(UnitTestParameters const& params) 
-															#line 4049 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
-															#line 4049 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4291 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+	FlowTestCase4291ActorState(UnitTestParameters const& params) 
+															#line 4291 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4291 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 		 : params(params)
-															#line 5109 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 5353 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 	{
-		fdb_probe_actor_create("flowTestCase4049", reinterpret_cast<unsigned long>(this));
+		fdb_probe_actor_create("flowTestCase4291", reinterpret_cast<unsigned long>(this));
 
 	}
-	~FlowTestCase4049ActorState() 
+	~FlowTestCase4291ActorState() 
 	{
-		fdb_probe_actor_destroy("flowTestCase4049", reinterpret_cast<unsigned long>(this));
+		fdb_probe_actor_destroy("flowTestCase4291", reinterpret_cast<unsigned long>(this));
 
 	}
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 4050 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4292 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			int errors = 0;
-															#line 4052 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4294 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction("popPath", popPath, "a", "");
-															#line 4053 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction("popPath", popPath, "a/", "");
-															#line 4054 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4296 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction("popPath", popPath, "a///", "");
-															#line 4055 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4297 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction("popPath", popPath, "a///..", "a/");
-															#line 4056 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4298 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction("popPath", popPath, "a///../", "a/");
-															#line 4057 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4299 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction("popPath", popPath, "a///..//", "a/");
-															#line 4058 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4300 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction("popPath", popPath, "/", "/");
-															#line 4059 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4301 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction("popPath", popPath, "/a", "/");
-															#line 4060 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4302 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction("popPath", popPath, "/a/b", "/a/");
-															#line 4061 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4303 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction("popPath", popPath, "/a/b/", "/a/");
-															#line 4062 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4304 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction("popPath", popPath, "/a/b/..", "/a/b/");
-															#line 4063 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4305 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction("popPath", popPath, "/a/b///..//", "/a/b/");
-															#line 4065 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4307 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction("cleanPath", cleanPath, "/", "/");
-															#line 4066 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4308 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction("cleanPath", cleanPath, "///.///", "/");
-															#line 4067 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4309 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction("cleanPath", cleanPath, "/a/b/.././../c/./././////./d/..//", "/c");
-															#line 4068 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4310 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction("cleanPath", cleanPath, "a/b/.././../c/./././////./d/..//", "c");
-															#line 4069 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction("cleanPath", cleanPath, "..", "..");
-															#line 4070 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4312 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction("cleanPath", cleanPath, "../.././", "../..");
-															#line 4071 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction("cleanPath", cleanPath, "../a/b/..//", "../a");
-															#line 4072 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4314 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction("cleanPath", cleanPath, "a/b/.././../c/./././////./d/..//..", ".");
-															#line 4073 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4315 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction("cleanPath", cleanPath, "/..", "/");
-															#line 4074 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4316 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction("cleanPath", cleanPath, "/../foo/bar///", "/foo/bar");
-															#line 4075 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4317 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction("cleanPath", cleanPath, "/a/b/../.././../", "/");
-															#line 4076 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4318 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction("cleanPath", cleanPath, ".", ".");
-															#line 4079 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4321 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			platform::createDirectory("simfdb/backups/one/two/three");
-															#line 4080 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4322 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			std::string cwd = platform::getWorkingDirectory();
-															#line 4081 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4323 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			platformSpecificDirectoryOpsTests(cwd, errors);
-															#line 4082 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4324 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction2("abspath", abspath, "/", false, false, "/");
-															#line 4083 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4325 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction2("abspath", abspath, "/foo//bar//baz/.././", false, false, "/foo/bar");
-															#line 4084 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4326 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction2("abspath", abspath, "/", true, false, "/");
-															#line 4085 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4327 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction2("abspath", abspath, "", true, false, platform_error());
-															#line 4086 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4328 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction2("abspath", abspath, ".", true, false, cwd);
-															#line 4087 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4329 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction2("abspath", abspath, "/a", true, false, "/a");
-															#line 4088 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4330 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction2("abspath", abspath, "one/two/three/four", false, true, platform_error());
-															#line 4089 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4331 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction2("abspath", abspath, "one/two/three/four", false, false, joinPath(cwd, "one/two/three/four"));
-															#line 4091 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4333 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction2( "abspath", abspath, "one/two/three/./four", false, false, joinPath(cwd, "one/two/three/four"));
-															#line 4093 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4335 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction2( "abspath", abspath, "one/two/three/./four", false, false, joinPath(cwd, "one/two/three/four"));
-															#line 4095 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4337 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction2("abspath", abspath, "one/two/three/./four/..", false, false, joinPath(cwd, "one/two/three"));
-															#line 4097 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4339 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction2( "abspath", abspath, "one/./two/../three/./four", false, false, joinPath(cwd, "one/three/four"));
-															#line 4099 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4341 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction2("abspath", abspath, "one/./two/../three/./four", false, true, platform_error());
-															#line 4100 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4342 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction2("abspath", abspath, "one/two/three/./four", false, true, platform_error());
-															#line 4101 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4343 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction2( "abspath", abspath, "simfdb/backups/one/two/three", false, true, joinPath(cwd, "simfdb/backups/one/two/three"));
-															#line 4103 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4345 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction2("abspath", abspath, "simfdb/backups/one/two/threefoo", false, true, platform_error());
-															#line 4104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4346 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction2( "abspath", abspath, "simfdb/backups/four/../two", false, false, joinPath(cwd, "simfdb/backups/two"));
-															#line 4106 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4348 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction2("abspath", abspath, "simfdb/backups/four/../two", false, true, platform_error());
-															#line 4107 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4349 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction2("abspath", abspath, "simfdb/backups/five/../two", false, true, platform_error());
-															#line 4108 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4350 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction2( "abspath", abspath, "simfdb/backups/five/../two", false, false, joinPath(cwd, "simfdb/backups/two"));
-															#line 4110 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4352 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction2("abspath", abspath, "foo/./../foo2/./bar//", false, false, joinPath(cwd, "foo2/bar"));
-															#line 4111 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4353 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction2("abspath", abspath, "foo/./../foo2/./bar//", false, true, platform_error());
-															#line 4112 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4354 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction2("abspath", abspath, "foo/./../foo2/./bar//", true, false, joinPath(cwd, "foo2/bar"));
-															#line 4113 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4355 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction2("abspath", abspath, "foo/./../foo2/./bar//", true, true, platform_error());
-															#line 4115 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4357 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction2("parentDirectory", parentDirectory, "", true, false, platform_error());
-															#line 4116 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4358 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction2("parentDirectory", parentDirectory, "/", true, false, "/");
-															#line 4117 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4359 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction2("parentDirectory", parentDirectory, "/a", true, false, "/");
-															#line 4118 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4360 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction2("parentDirectory", parentDirectory, ".", false, false, cleanPath(joinPath(cwd, "..")) + "/");
-															#line 4120 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4362 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction2("parentDirectory", parentDirectory, "./foo", false, false, cleanPath(cwd) + "/");
-															#line 4121 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4363 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction2("parentDirectory", parentDirectory, "one/two/three/four", false, true, platform_error());
-															#line 4123 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4365 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction2( "parentDirectory", parentDirectory, "one/two/three/four", false, false, joinPath(cwd, "one/two/three/"));
-															#line 4125 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4367 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction2( "parentDirectory", parentDirectory, "one/two/three/./four", false, false, joinPath(cwd, "one/two/three/"));
-															#line 4127 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4369 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction2( "parentDirectory", parentDirectory, "one/two/three/./four/..", false, false, joinPath(cwd, "one/two/"));
-															#line 4129 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4371 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction2( "parentDirectory", parentDirectory, "one/./two/../three/./four", false, false, joinPath(cwd, "one/three/"));
-															#line 4131 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4373 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction2( "parentDirectory", parentDirectory, "one/./two/../three/./four", false, true, platform_error());
-															#line 4133 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4375 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction2("parentDirectory", parentDirectory, "one/two/three/./four", false, true, platform_error());
-															#line 4135 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4377 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction2("parentDirectory", parentDirectory, "simfdb/backups/one/two/three", false, true, joinPath(cwd, "simfdb/backups/one/two/"));
-															#line 4141 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4383 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction2( "parentDirectory", parentDirectory, "simfdb/backups/one/two/threefoo", false, true, platform_error());
-															#line 4143 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4385 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction2("parentDirectory", parentDirectory, "simfdb/backups/four/../two", false, false, joinPath(cwd, "simfdb/backups/"));
-															#line 4149 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4391 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction2( "parentDirectory", parentDirectory, "simfdb/backups/four/../two", false, true, platform_error());
-															#line 4151 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4393 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction2( "parentDirectory", parentDirectory, "simfdb/backups/five/../two", false, true, platform_error());
-															#line 4153 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4395 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction2("parentDirectory", parentDirectory, "simfdb/backups/five/../two", false, false, joinPath(cwd, "simfdb/backups/"));
-															#line 4159 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4401 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction2( "parentDirectory", parentDirectory, "foo/./../foo2/./bar//", false, false, joinPath(cwd, "foo2/"));
-															#line 4161 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4403 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction2("parentDirectory", parentDirectory, "foo/./../foo2/./bar//", false, true, platform_error());
-															#line 4163 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4405 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction2( "parentDirectory", parentDirectory, "foo/./../foo2/./bar//", true, false, joinPath(cwd, "foo2/"));
-															#line 4165 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4407 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			errors += testPathFunction2("parentDirectory", parentDirectory, "foo/./../foo2/./bar//", true, true, platform_error());
-															#line 4168 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4410 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			printf("%d errors.\n", errors);
-															#line 4170 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4412 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 			ASSERT(errors == 0);
-															#line 4171 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
-			if (!static_cast<FlowTestCase4049Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~FlowTestCase4049ActorState(); static_cast<FlowTestCase4049Actor*>(this)->destroy(); return 0; }
-															#line 5276 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
-			new (&static_cast<FlowTestCase4049Actor*>(this)->SAV< Void >::value()) Void(Void());
-			this->~FlowTestCase4049ActorState();
-			static_cast<FlowTestCase4049Actor*>(this)->finishSendAndDelPromiseRef();
+															#line 4413 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+			if (!static_cast<FlowTestCase4291Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~FlowTestCase4291ActorState(); static_cast<FlowTestCase4291Actor*>(this)->destroy(); return 0; }
+															#line 5520 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+			new (&static_cast<FlowTestCase4291Actor*>(this)->SAV< Void >::value()) Void(Void());
+			this->~FlowTestCase4291ActorState();
+			static_cast<FlowTestCase4291Actor*>(this)->finishSendAndDelPromiseRef();
 			return 0;
 		}
 		catch (Error& error) {
@@ -5289,40 +5533,40 @@ public:
 	}
 	int a_body1Catch1(Error error,int loopDepth=0) 
 	{
-		this->~FlowTestCase4049ActorState();
-		static_cast<FlowTestCase4049Actor*>(this)->sendErrorAndDelPromiseRef(error);
+		this->~FlowTestCase4291ActorState();
+		static_cast<FlowTestCase4291Actor*>(this)->sendErrorAndDelPromiseRef(error);
 		loopDepth = 0;
 
 		return loopDepth;
 	}
-															#line 4049 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+															#line 4291 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
 	UnitTestParameters params;
-															#line 5300 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 5544 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 };
-// This generated class is to be used only via flowTestCase4049()
-															#line 4049 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
-class FlowTestCase4049Actor final : public Actor<Void>, public FastAllocated<FlowTestCase4049Actor>, public FlowTestCase4049ActorState<FlowTestCase4049Actor> {
-															#line 5305 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+// This generated class is to be used only via flowTestCase4291()
+															#line 4291 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+class FlowTestCase4291Actor final : public Actor<Void>, public FastAllocated<FlowTestCase4291Actor>, public FlowTestCase4291ActorState<FlowTestCase4291Actor> {
+															#line 5549 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 public:
-	using FastAllocated<FlowTestCase4049Actor>::operator new;
-	using FastAllocated<FlowTestCase4049Actor>::operator delete;
+	using FastAllocated<FlowTestCase4291Actor>::operator new;
+	using FastAllocated<FlowTestCase4291Actor>::operator delete;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdelete-non-virtual-dtor"
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
-															#line 4049 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
-	FlowTestCase4049Actor(UnitTestParameters const& params) 
-															#line 5315 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 4291 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+	FlowTestCase4291Actor(UnitTestParameters const& params) 
+															#line 5559 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 		 : Actor<Void>(),
-		   FlowTestCase4049ActorState<FlowTestCase4049Actor>(params)
+		   FlowTestCase4291ActorState<FlowTestCase4291Actor>(params)
 	{
-		fdb_probe_actor_enter("flowTestCase4049", reinterpret_cast<unsigned long>(this), -1);
+		fdb_probe_actor_enter("flowTestCase4291", reinterpret_cast<unsigned long>(this), -1);
 		#ifdef ENABLE_SAMPLING
-		this->lineage.setActorName("flowTestCase4049");
+		this->lineage.setActorName("flowTestCase4291");
 		LineageScope _(&this->lineage);
 		#endif
 		this->a_body1();
-		fdb_probe_actor_exit("flowTestCase4049", reinterpret_cast<unsigned long>(this), -1);
+		fdb_probe_actor_exit("flowTestCase4291", reinterpret_cast<unsigned long>(this), -1);
 
 	}
 	void cancel() override
@@ -5335,12 +5579,12 @@ public:
 	}
 };
 }
-															#line 4049 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
-static Future<Void> flowTestCase4049( UnitTestParameters const& params ) {
-															#line 4049 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
-	return Future<Void>(new FlowTestCase4049Actor(params));
-															#line 5342 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
+															#line 4291 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+static Future<Void> flowTestCase4291( UnitTestParameters const& params ) {
+															#line 4291 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+	return Future<Void>(new FlowTestCase4291Actor(params));
+															#line 5586 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.cpp"
 }
-ACTOR_TEST_CASE(flowTestCase4049, "/flow/Platform/directoryOps")
+ACTOR_TEST_CASE(flowTestCase4291, "/flow/Platform/directoryOps")
 
-#line 4173 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"
+#line 4415 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.cpp"

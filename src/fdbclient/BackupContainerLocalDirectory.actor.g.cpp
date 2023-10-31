@@ -22,10 +22,12 @@
 
 #include "fdbclient/BackupContainerLocalDirectory.h"
 #include "fdbrpc/AsyncFileReadAhead.actor.h"
-#include "fdbrpc/IAsyncFile.h"
+#include "flow/IAsyncFile.h"
+#include "flow/FaultInjection.h"
 #include "flow/Platform.actor.h"
 #include "flow/Platform.h"
 #include "fdbrpc/simulator.h"
+#include "fdbrpc/SimulatorProcessInfo.h"
 #include "flow/actorcompiler.h" // This must be the last #include.
 
 namespace {
@@ -68,23 +70,25 @@ public:
 		Future<Void> r = uncancellable(holdWhile(old, m_file->write(old.begin(), size, m_writeOffset)));
 		m_writeOffset += size;
 
+		INJECT_BLOB_FAULT(http_request_failed, "BackupContainerLocalDirectory::flush");
+
 		return r;
 	}
 
-																#line 74 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
+																#line 78 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
 // This generated class is to be used only via finish_impl()
-															#line 72 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 76 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 template <class Finish_implActor>
-															#line 72 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 76 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 class Finish_implActorState {
-															#line 80 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
+															#line 84 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
 public:
-															#line 72 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 76 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 	Finish_implActorState(Reference<BackupFile> const& f) 
-															#line 72 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
-															#line 72 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 76 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 76 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 		 : f(f)
-															#line 87 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
+															#line 91 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
 	{
 		fdb_probe_actor_create("finish_impl", reinterpret_cast<unsigned long>(this));
 
@@ -97,16 +101,16 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 73 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 77 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 			StrictFuture<Void> __when_expr_0 = f->flush(f->m_buffer.size());
-															#line 73 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 77 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 			if (static_cast<Finish_implActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
+															#line 108 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<Finish_implActor*>(this)->actor_wait_state = 1;
-															#line 73 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 77 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< Finish_implActor, 0, Void >*>(static_cast<Finish_implActor*>(this)));
-															#line 109 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
+															#line 113 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -127,32 +131,32 @@ public:
 	}
 	int a_body1cont1(Void const& _,int loopDepth) 
 	{
-															#line 74 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 78 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = f->m_file->truncate(f->size());
-															#line 74 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 78 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 		if (static_cast<Finish_implActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 134 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
+															#line 138 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<Finish_implActor*>(this)->actor_wait_state = 2;
-															#line 74 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 78 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< Finish_implActor, 1, Void >*>(static_cast<Finish_implActor*>(this)));
-															#line 139 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
+															#line 143 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont1(Void && _,int loopDepth) 
 	{
-															#line 74 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 78 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = f->m_file->truncate(f->size());
-															#line 74 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 78 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 		if (static_cast<Finish_implActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 150 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
+															#line 154 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<Finish_implActor*>(this)->actor_wait_state = 2;
-															#line 74 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 78 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< Finish_implActor, 1, Void >*>(static_cast<Finish_implActor*>(this)));
-															#line 155 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
+															#line 159 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -222,32 +226,32 @@ public:
 	}
 	int a_body1cont2(Void const& _,int loopDepth) 
 	{
-															#line 75 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 79 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 		StrictFuture<Void> __when_expr_2 = f->m_file->sync();
-															#line 75 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 79 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 		if (static_cast<Finish_implActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 229 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
+															#line 233 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
 		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1cont2when1(__when_expr_2.get(), loopDepth); };
 		static_cast<Finish_implActor*>(this)->actor_wait_state = 3;
-															#line 75 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 79 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 		__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< Finish_implActor, 2, Void >*>(static_cast<Finish_implActor*>(this)));
-															#line 234 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
+															#line 238 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont2(Void && _,int loopDepth) 
 	{
-															#line 75 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 79 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 		StrictFuture<Void> __when_expr_2 = f->m_file->sync();
-															#line 75 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 79 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 		if (static_cast<Finish_implActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 245 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
+															#line 249 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
 		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1cont2when1(__when_expr_2.get(), loopDepth); };
 		static_cast<Finish_implActor*>(this)->actor_wait_state = 3;
-															#line 75 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 79 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 		__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< Finish_implActor, 2, Void >*>(static_cast<Finish_implActor*>(this)));
-															#line 250 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
+															#line 254 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -317,40 +321,40 @@ public:
 	}
 	int a_body1cont3(Void const& _,int loopDepth) 
 	{
-															#line 76 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 80 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 		std::string name = f->m_file->getFilename();
-															#line 77 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 81 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 		f->m_file.clear();
-															#line 78 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 82 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 		StrictFuture<Void> __when_expr_3 = IAsyncFileSystem::filesystem()->renameFile(name, f->m_finalFullPath);
-															#line 78 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 82 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 		if (static_cast<Finish_implActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 328 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
+															#line 332 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
 		if (__when_expr_3.isReady()) { if (__when_expr_3.isError()) return a_body1Catch1(__when_expr_3.getError(), loopDepth); else return a_body1cont3when1(__when_expr_3.get(), loopDepth); };
 		static_cast<Finish_implActor*>(this)->actor_wait_state = 4;
-															#line 78 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 82 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 		__when_expr_3.addCallbackAndClear(static_cast<ActorCallback< Finish_implActor, 3, Void >*>(static_cast<Finish_implActor*>(this)));
-															#line 333 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
+															#line 337 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont3(Void && _,int loopDepth) 
 	{
-															#line 76 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 80 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 		std::string name = f->m_file->getFilename();
-															#line 77 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 81 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 		f->m_file.clear();
-															#line 78 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 82 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 		StrictFuture<Void> __when_expr_3 = IAsyncFileSystem::filesystem()->renameFile(name, f->m_finalFullPath);
-															#line 78 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 82 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 		if (static_cast<Finish_implActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 348 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
+															#line 352 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
 		if (__when_expr_3.isReady()) { if (__when_expr_3.isError()) return a_body1Catch1(__when_expr_3.getError(), loopDepth); else return a_body1cont3when1(__when_expr_3.get(), loopDepth); };
 		static_cast<Finish_implActor*>(this)->actor_wait_state = 4;
-															#line 78 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 82 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 		__when_expr_3.addCallbackAndClear(static_cast<ActorCallback< Finish_implActor, 3, Void >*>(static_cast<Finish_implActor*>(this)));
-															#line 353 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
+															#line 357 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -420,9 +424,11 @@ public:
 	}
 	int a_body1cont4(Void const& _,int loopDepth) 
 	{
-															#line 79 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 84 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+		INJECT_BLOB_FAULT(http_request_failed, "BackupContainerLocalDirectory::finish");
+															#line 86 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 		if (!static_cast<Finish_implActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~Finish_implActorState(); static_cast<Finish_implActor*>(this)->destroy(); return 0; }
-															#line 425 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
+															#line 431 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
 		new (&static_cast<Finish_implActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~Finish_implActorState();
 		static_cast<Finish_implActor*>(this)->finishSendAndDelPromiseRef();
@@ -432,9 +438,11 @@ public:
 	}
 	int a_body1cont4(Void && _,int loopDepth) 
 	{
-															#line 79 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 84 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+		INJECT_BLOB_FAULT(http_request_failed, "BackupContainerLocalDirectory::finish");
+															#line 86 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 		if (!static_cast<Finish_implActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~Finish_implActorState(); static_cast<Finish_implActor*>(this)->destroy(); return 0; }
-															#line 437 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
+															#line 445 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
 		new (&static_cast<Finish_implActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~Finish_implActorState();
 		static_cast<Finish_implActor*>(this)->finishSendAndDelPromiseRef();
@@ -505,14 +513,14 @@ public:
 		fdb_probe_actor_exit("finish_impl", reinterpret_cast<unsigned long>(this), 3);
 
 	}
-															#line 72 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 76 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 	Reference<BackupFile> f;
-															#line 510 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
+															#line 518 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
 };
 // This generated class is to be used only via finish_impl()
-															#line 72 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 76 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 class Finish_implActor final : public Actor<Void>, public ActorCallback< Finish_implActor, 0, Void >, public ActorCallback< Finish_implActor, 1, Void >, public ActorCallback< Finish_implActor, 2, Void >, public ActorCallback< Finish_implActor, 3, Void >, public FastAllocated<Finish_implActor>, public Finish_implActorState<Finish_implActor> {
-															#line 515 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
+															#line 523 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
 public:
 	using FastAllocated<Finish_implActor>::operator new;
 	using FastAllocated<Finish_implActor>::operator delete;
@@ -524,9 +532,9 @@ friend struct ActorCallback< Finish_implActor, 0, Void >;
 friend struct ActorCallback< Finish_implActor, 1, Void >;
 friend struct ActorCallback< Finish_implActor, 2, Void >;
 friend struct ActorCallback< Finish_implActor, 3, Void >;
-															#line 72 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 76 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 	Finish_implActor(Reference<BackupFile> const& f) 
-															#line 529 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
+															#line 537 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
 		 : Actor<Void>(),
 		   Finish_implActorState<Finish_implActor>(f)
 	{
@@ -552,14 +560,14 @@ friend struct ActorCallback< Finish_implActor, 3, Void >;
 
 	}
 };
-															#line 72 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 76 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 [[nodiscard]] static Future<Void> finish_impl( Reference<BackupFile> const& f ) {
-															#line 72 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 76 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 	return Future<Void>(new Finish_implActor(f));
-															#line 559 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
+															#line 567 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
 }
 
-#line 81 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+#line 88 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 
 	int64_t size() const override { return m_buffer.size() + m_writeOffset; }
 
@@ -576,24 +584,24 @@ private:
 	int m_blockSize;
 };
 
-															#line 579 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
+															#line 587 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
 // This generated class is to be used only via listFiles_impl()
-															#line 97 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 template <class ListFiles_implActor>
-															#line 97 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 class ListFiles_implActorState {
-															#line 585 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
+															#line 593 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
 public:
-															#line 97 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 	ListFiles_implActorState(std::string const& path,std::string const& m_path) 
-															#line 97 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
-															#line 97 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 		 : path(path),
-															#line 97 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 		   m_path(m_path),
-															#line 98 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 105 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 		   files()
-															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
+															#line 604 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
 	{
 		fdb_probe_actor_create("listFiles_impl", reinterpret_cast<unsigned long>(this));
 
@@ -606,16 +614,16 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 99 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 106 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 			StrictFuture<Void> __when_expr_0 = platform::findFilesRecursivelyAsync(joinPath(m_path, path), &files);
-															#line 99 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 106 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 			if (static_cast<ListFiles_implActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 613 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
+															#line 621 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<ListFiles_implActor*>(this)->actor_wait_state = 1;
-															#line 99 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 106 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ListFiles_implActor, 0, Void >*>(static_cast<ListFiles_implActor*>(this)));
-															#line 618 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
+															#line 626 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -636,32 +644,34 @@ public:
 	}
 	int a_body1cont1(Void const& _,int loopDepth) 
 	{
-															#line 101 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 108 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 		BackupContainerFileSystem::FilesAndSizesT results;
-															#line 105 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
-		if (g_network->isSimulated())
-															#line 643 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
-		{
-															#line 106 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
-			files.erase( std::remove_if(files.begin(), files.end(), [](std::string const& f) { return StringRef(f).endsWith(LiteralStringRef(".lnk")); }), files.end());
-															#line 647 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
-		}
 															#line 112 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
-		for( const auto& f : files ) {
-															#line 114 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
-			StringRef s(f);
-															#line 115 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
-			if (!s.endsWith(LiteralStringRef(".part")) && !s.endsWith(LiteralStringRef(".temp")))
+		if (g_network->isSimulated())
+															#line 651 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
+		{
+															#line 113 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+			files.erase(std::remove_if(files.begin(), files.end(), [](std::string const& f) { return StringRef(f).endsWith(".lnk"_sr); }), files.end());
 															#line 655 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
+		}
+															#line 118 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+		for( const auto& f : files ) {
+															#line 120 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+			StringRef s(f);
+															#line 121 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+			if (!s.endsWith(".part"_sr) && !s.endsWith(".temp"_sr))
+															#line 663 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
 			{
-															#line 116 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 122 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 				results.push_back({ f.substr(m_path.size() + 1), ::fileSize(f) });
-															#line 659 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
+															#line 667 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
 			}
 		}
-															#line 119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 125 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+		INJECT_BLOB_FAULT(http_request_failed, "BackupContainerLocalDirectory::listFiles");
+															#line 127 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 		if (!static_cast<ListFiles_implActor*>(this)->SAV<BackupContainerFileSystem::FilesAndSizesT>::futures) { (void)(results); this->~ListFiles_implActorState(); static_cast<ListFiles_implActor*>(this)->destroy(); return 0; }
-															#line 664 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
+															#line 674 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
 		new (&static_cast<ListFiles_implActor*>(this)->SAV< BackupContainerFileSystem::FilesAndSizesT >::value()) BackupContainerFileSystem::FilesAndSizesT(results);
 		this->~ListFiles_implActorState();
 		static_cast<ListFiles_implActor*>(this)->finishSendAndDelPromiseRef();
@@ -671,32 +681,34 @@ public:
 	}
 	int a_body1cont1(Void && _,int loopDepth) 
 	{
-															#line 101 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 108 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 		BackupContainerFileSystem::FilesAndSizesT results;
-															#line 105 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
-		if (g_network->isSimulated())
-															#line 678 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
-		{
-															#line 106 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
-			files.erase( std::remove_if(files.begin(), files.end(), [](std::string const& f) { return StringRef(f).endsWith(LiteralStringRef(".lnk")); }), files.end());
-															#line 682 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
-		}
 															#line 112 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+		if (g_network->isSimulated())
+															#line 688 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
+		{
+															#line 113 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+			files.erase(std::remove_if(files.begin(), files.end(), [](std::string const& f) { return StringRef(f).endsWith(".lnk"_sr); }), files.end());
+															#line 692 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
+		}
+															#line 118 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 		for( const auto& f : files ) {
-															#line 114 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 120 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 			StringRef s(f);
-															#line 115 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
-			if (!s.endsWith(LiteralStringRef(".part")) && !s.endsWith(LiteralStringRef(".temp")))
-															#line 690 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
+															#line 121 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+			if (!s.endsWith(".part"_sr) && !s.endsWith(".temp"_sr))
+															#line 700 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
 			{
-															#line 116 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 122 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 				results.push_back({ f.substr(m_path.size() + 1), ::fileSize(f) });
-															#line 694 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
+															#line 704 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
 			}
 		}
-															#line 119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 125 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+		INJECT_BLOB_FAULT(http_request_failed, "BackupContainerLocalDirectory::listFiles");
+															#line 127 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 		if (!static_cast<ListFiles_implActor*>(this)->SAV<BackupContainerFileSystem::FilesAndSizesT>::futures) { (void)(results); this->~ListFiles_implActorState(); static_cast<ListFiles_implActor*>(this)->destroy(); return 0; }
-															#line 699 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
+															#line 711 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
 		new (&static_cast<ListFiles_implActor*>(this)->SAV< BackupContainerFileSystem::FilesAndSizesT >::value()) BackupContainerFileSystem::FilesAndSizesT(results);
 		this->~ListFiles_implActorState();
 		static_cast<ListFiles_implActor*>(this)->finishSendAndDelPromiseRef();
@@ -767,18 +779,18 @@ public:
 		fdb_probe_actor_exit("listFiles_impl", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 97 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 	std::string path;
-															#line 97 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 	std::string m_path;
-															#line 98 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 105 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 	std::vector<std::string> files;
-															#line 776 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
+															#line 788 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
 };
 // This generated class is to be used only via listFiles_impl()
-															#line 97 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 class ListFiles_implActor final : public Actor<BackupContainerFileSystem::FilesAndSizesT>, public ActorCallback< ListFiles_implActor, 0, Void >, public FastAllocated<ListFiles_implActor>, public ListFiles_implActorState<ListFiles_implActor> {
-															#line 781 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
+															#line 793 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
 public:
 	using FastAllocated<ListFiles_implActor>::operator new;
 	using FastAllocated<ListFiles_implActor>::operator delete;
@@ -787,9 +799,9 @@ public:
 	void destroy() override { ((Actor<BackupContainerFileSystem::FilesAndSizesT>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< ListFiles_implActor, 0, Void >;
-															#line 97 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 	ListFiles_implActor(std::string const& path,std::string const& m_path) 
-															#line 792 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
+															#line 804 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
 		 : Actor<BackupContainerFileSystem::FilesAndSizesT>(),
 		   ListFiles_implActorState<ListFiles_implActor>(path, m_path)
 	{
@@ -812,14 +824,14 @@ friend struct ActorCallback< ListFiles_implActor, 0, Void >;
 
 	}
 };
-															#line 97 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 [[nodiscard]] static Future<BackupContainerFileSystem::FilesAndSizesT> listFiles_impl( std::string const& path, std::string const& m_path ) {
-															#line 97 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+															#line 104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 	return Future<BackupContainerFileSystem::FilesAndSizesT>(new ListFiles_implActor(path, m_path));
-															#line 819 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
+															#line 831 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.g.cpp"
 }
 
-#line 121 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
+#line 129 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainerLocalDirectory.actor.cpp"
 
 } // namespace
 
@@ -852,15 +864,19 @@ BackupContainerLocalDirectory::BackupContainerLocalDirectory(const std::string& 
 	std::string absolutePath = abspath(path);
 
 	if (!g_network->isSimulated() && path != absolutePath) {
-		TraceEvent(SevWarn, "BackupContainerLocalDirectory")
-		    .detail("Description", "Backup path must be absolute (e.g. file:///some/path)")
-		    .detail("URL", url)
-		    .detail("Path", path)
-		    .detail("AbsolutePath", absolutePath);
-		// throw io_error();
-		IBackupContainer::lastOpenError =
-		    format("Backup path '%s' must be the absolute path '%s'", path.c_str(), absolutePath.c_str());
-		throw backup_invalid_url();
+		if (CLIENT_KNOBS->BACKUP_CONTAINER_LOCAL_ALLOW_RELATIVE_PATH) {
+			path = absolutePath;
+		} else {
+			TraceEvent(SevWarn, "BackupContainerLocalDirectory")
+			    .detail("Description", "Backup path must be absolute (e.g. file:///some/path)")
+			    .detail("URL", url)
+			    .detail("Path", path)
+			    .detail("AbsolutePath", absolutePath);
+			// throw io_error();
+			IBackupContainer::lastOpenError =
+			    format("Backup path '%s' must be the absolute path '%s'", path.c_str(), absolutePath.c_str());
+			throw backup_invalid_url();
+		}
 	}
 
 	// Finalized path written to will be will be <path>/backup-<uid>
@@ -879,12 +895,19 @@ Future<std::vector<std::string>> BackupContainerLocalDirectory::listURLs(const s
 	// Remove trailing slashes on path
 	path.erase(path.find_last_not_of("\\/") + 1);
 
-	if (!g_network->isSimulated() && path != abspath(path)) {
-		TraceEvent(SevWarn, "BackupContainerLocalDirectory")
-		    .detail("Description", "Backup path must be absolute (e.g. file:///some/path)")
-		    .detail("URL", url)
-		    .detail("Path", path);
-		throw io_error();
+	std::string absolutePath = abspath(path);
+
+	if (!g_network->isSimulated() && path != absolutePath) {
+		if (CLIENT_KNOBS->BACKUP_CONTAINER_LOCAL_ALLOW_RELATIVE_PATH) {
+			path = absolutePath;
+		} else {
+			TraceEvent(SevWarn, "BackupContainerLocalDirectory")
+			    .detail("Description", "Backup path must be absolute (e.g. file:///some/path)")
+			    .detail("URL", url)
+			    .detail("Path", path)
+			    .detail("AbsolutePath", absolutePath);
+			throw io_error();
+		}
 	}
 	std::vector<std::string> dirs = platform::listDirectories(path);
 	std::vector<std::string> results;
@@ -919,6 +942,7 @@ Future<Reference<IAsyncFile>> BackupContainerLocalDirectory::readFile(const std:
 	if (usesEncryption()) {
 		flags |= IAsyncFile::OPEN_ENCRYPTED;
 	}
+	INJECT_BLOB_FAULT(http_request_failed, "BackupContainerLocalDirectory::readFile");
 	// Simulation does not properly handle opening the same file from multiple machines using a shared filesystem,
 	// so create a symbolic link to make each file opening appear to be unique.  This could also work in production
 	// but only if the source directory is writeable which shouldn't be required for a restore.
@@ -929,10 +953,10 @@ Future<Reference<IAsyncFile>> BackupContainerLocalDirectory::readFile(const std:
 			throw file_not_found();
 		}
 
-		if (g_simulator.getCurrentProcess()->uid == UID()) {
+		if (g_simulator->getCurrentProcess()->uid == UID()) {
 			TraceEvent(SevError, "BackupContainerReadFileOnUnsetProcessID").log();
 		}
-		std::string uniquePath = fullPath + "." + g_simulator.getCurrentProcess()->uid.toString() + ".lnk";
+		std::string uniquePath = fullPath + "." + g_simulator->getCurrentProcess()->uid.toString() + ".lnk";
 		unlink(uniquePath.c_str());
 		ASSERT(symlink(basename(path).c_str(), uniquePath.c_str()) == 0);
 		fullPath = uniquePath;
@@ -970,6 +994,7 @@ Future<Reference<IAsyncFile>> BackupContainerLocalDirectory::readFile(const std:
 }
 
 Future<Reference<IBackupFile>> BackupContainerLocalDirectory::writeFile(const std::string& path) {
+	INJECT_BLOB_FAULT(http_request_failed, "BackupContainerLocalDirectory::writeFile");
 	int flags = IAsyncFile::OPEN_NO_AIO | IAsyncFile::OPEN_UNCACHED | IAsyncFile::OPEN_CREATE |
 	            IAsyncFile::OPEN_ATOMIC_WRITE_AND_CREATE | IAsyncFile::OPEN_READWRITE;
 	if (usesEncryption()) {
@@ -982,8 +1007,13 @@ Future<Reference<IBackupFile>> BackupContainerLocalDirectory::writeFile(const st
 	return map(f, [=](Reference<IAsyncFile> f) { return Reference<IBackupFile>(new BackupFile(path, f, fullPath)); });
 }
 
+Future<Void> BackupContainerLocalDirectory::writeEntireFile(const std::string& path, const std::string& contents) {
+	return writeEntireFileFallback(path, contents);
+}
+
 Future<Void> BackupContainerLocalDirectory::deleteFile(const std::string& path) {
 	::deleteFile(joinPath(m_path, path));
+	INJECT_BLOB_FAULT(http_request_failed, "BackupContainerLocalDirectory::deleteFile");
 	return Void();
 }
 

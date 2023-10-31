@@ -19,12 +19,25 @@
  */
 
 #include "flow/flow.h"
-#include "flow/DeterministicRandom.h"
-#include "flow/UnitTest.h"
-#include "flow/rte_memcpy.h"
-#include "flow/folly_memcpy.h"
+
 #include <stdarg.h>
+
 #include <cinttypes>
+
+#include <openssl/err.h>
+#include <openssl/rand.h>
+
+#include <fmt/format.h>
+
+#include "flow/DeterministicRandom.h"
+#include "flow/Error.h"
+#include "flow/Hostname.h"
+#include "flow/rte_memcpy.h"
+#include "flow/UnitTest.h"
+
+#ifdef WITH_FOLLY_MEMCPY
+#include "folly_memcpy.h"
+#endif
 
 std::atomic<bool> startSampling = false;
 LineageReference rootLineage;
@@ -119,7 +132,7 @@ Reference<IRandom> nondeterministicRandom() {
 }
 
 std::string UID::toString() const {
-	return format("%016llx%016llx", part[0], part[1]);
+	return fmt::format("{:016x}{:016x}", part[0], part[1]);
 }
 
 UID UID::fromString(std::string const& s) {
@@ -127,6 +140,19 @@ UID UID::fromString(std::string const& s) {
 	uint64_t a = 0, b = 0;
 	int r = sscanf(s.c_str(), "%16" SCNx64 "%16" SCNx64, &a, &b);
 	ASSERT(r == 2);
+	return UID(a, b);
+}
+
+UID UID::fromStringThrowsOnFailure(std::string const& s) {
+	if (s.size() != 32) {
+		// invalid string size
+		throw operation_failed();
+	}
+	uint64_t a = 0, b = 0;
+	int r = sscanf(s.c_str(), "%16" SCNx64 "%16" SCNx64, &a, &b);
+	if (r != 2) {
+		throw operation_failed();
+	}
 	return UID(a, b);
 }
 
@@ -246,7 +272,7 @@ int vsformat(std::string& outputString, const char* form, va_list args) {
 		return -1;
 	}
 
-	TEST(true); // large format result
+	CODE_PROBE(true, "large format result");
 
 	outputString.resize(size + 1);
 	size = vsnprintf(&outputString[0], outputString.size(), form, args);
@@ -359,6 +385,77 @@ void enableBuggify(bool enabled, BuggifyType type) {
 	buggifyActivated[int(type)] = enabled;
 }
 
+// Make OpenSSL use DeterministicRandom as RNG source such that simulation runs stay deterministic w/ e.g. signature ops
+void bindDeterministicRandomToOpenssl() {
+	// TODO: implement ifdef branch for 3.x using provider API
+#ifndef OPENSSL_IS_BORINGSSL
+	static const RAND_METHOD method = {
+		// replacement for RAND_seed(), which reseeds OpenSSL RNG
+		[](const void*, int) -> int { return 1; },
+		// replacement for RAND_bytes(), which fills given buffer with random byte sequence
+		[](unsigned char* buf, int length) -> int {
+		    if (g_network)
+			    ASSERT_ABORT(g_network->isSimulated());
+		    deterministicRandom()->randomBytes(buf, length);
+		    return 1;
+		},
+		// replacement for RAND_cleanup(), a no-op for simulation
+		[]() -> void {},
+		// replacement for RAND_add(), which reseeds OpenSSL RNG with randomness hint
+		[](const void*, int, double) -> int { return 1; },
+		// replacement for default pseudobytes getter (same as RAND_bytes by default)
+		[](unsigned char* buf, int length) -> int {
+		    if (g_network)
+			    ASSERT_ABORT(g_network->isSimulated());
+		    deterministicRandom()->randomBytes(buf, length);
+		    return 1;
+		},
+		// status function for PRNG readiness check
+		[]() -> int { return 1; },
+	};
+
+	if (1 != ::RAND_set_rand_method(&method)) {
+		auto ec = ::ERR_get_error();
+		char msg[256]{
+			0,
+		};
+		if (ec) {
+			::ERR_error_string_n(ec, msg, sizeof(msg));
+		}
+		fprintf(stderr,
+		        "ERROR: Failed to bind DeterministicRandom to OpenSSL RNG\n"
+		        "       OpenSSL error message: '%s'\n",
+		        msg);
+		throw internal_error();
+	} else {
+		printf("DeterministicRandom successfully bound to OpenSSL RNG\n");
+	}
+#else // OPENSSL_IS_BORINGSSL
+	static const RAND_METHOD method = {
+		[](const void*, int) -> void {},
+		[](unsigned char* buf, unsigned long length) -> int {
+		    if (g_network)
+			    ASSERT_ABORT(g_network->isSimulated());
+		    ASSERT(length <= std::numeric_limits<int>::max());
+		    deterministicRandom()->randomBytes(buf, length);
+		    return 1;
+		},
+		[]() -> void {},
+		[](const void*, int, double) -> void {},
+		[](unsigned char* buf, unsigned long length) -> int {
+		    if (g_network)
+			    ASSERT_ABORT(g_network->isSimulated());
+		    ASSERT(length <= std::numeric_limits<int>::max());
+		    deterministicRandom()->randomBytes(buf, length);
+		    return 1;
+		},
+		[]() -> int { return 1; },
+	};
+	::RAND_set_rand_method(&method);
+	printf("DeterministicRandom successfully bound to OpenSSL RNG\n");
+#endif // OPENSSL_IS_BORINGSSL
+}
+
 int nChooseK(int n, int k) {
 	assert(n >= k && k >= 0);
 	if (k == 0) {
@@ -457,7 +554,7 @@ TEST_CASE("/flow/FlatBuffers/Standalone") {
 		ASSERT(in == out);
 	}
 	{
-		StringRef in = LiteralStringRef("foobar");
+		StringRef in = "foobar"_sr;
 		Standalone<StringRef> out;
 		ObjectWriter writer(Unversioned());
 		writer.serialize(in);
@@ -472,5 +569,181 @@ TEST_CASE("/flow/FlatBuffers/Standalone") {
 // we need to make sure at least one test of each prefix exists, otherwise
 // the noSim test fails if we compile without RocksDB
 TEST_CASE("noSim/noopTest") {
+	return Void();
+}
+
+struct TestErrorOrMapClass {
+	StringRef value;
+	ErrorOr<StringRef> errorOrValue;
+
+	const StringRef constValue;
+	const ErrorOr<StringRef> constErrorOrValue;
+
+	StringRef getValue() const { return value; }
+	ErrorOr<StringRef> getErrorOrValue() const { return errorOrValue; }
+
+	StringRef const& getValueRef() const { return value; }
+	ErrorOr<StringRef> const& getErrorOrValueRef() const { return errorOrValue; }
+
+	StringRef sub(int x) const { return value.substr(x); }
+	ErrorOr<StringRef> errorOrSub(int x) const { return errorOrValue.map<StringRef>(&StringRef::substr, (int)x); }
+
+	TestErrorOrMapClass(StringRef value, Optional<Error> optionalValueError)
+	  : value(value), constValue(value),
+	    errorOrValue(!optionalValueError.present() ? ErrorOr<StringRef>(value)
+	                                               : ErrorOr<StringRef>(optionalValueError.get())),
+	    constErrorOrValue(!optionalValueError.present() ? ErrorOr<StringRef>(value)
+	                                                    : ErrorOr<StringRef>(optionalValueError.get())) {}
+};
+
+struct TestErrorOrMapClassRef : public TestErrorOrMapClass, public ReferenceCounted<TestErrorOrMapClassRef> {
+	TestErrorOrMapClassRef(StringRef value, Optional<Error> optionalValueError)
+	  : TestErrorOrMapClass(value, optionalValueError) {}
+};
+
+void checkResults(std::vector<ErrorOr<StringRef>> const& results,
+                  StringRef value,
+                  Optional<Error> expectedError,
+                  std::string context) {
+	if (expectedError.present()) {
+		for (int i = 0; i < results.size(); ++i) {
+			if (results[i].present() || results[i].getError().code() != expectedError.get().code()) {
+				fmt::print("Unexpected result at index {} in {}\n", i, context);
+				ASSERT(false);
+			}
+		}
+	} else {
+		for (int i = 0; i < results.size(); ++i) {
+			if (!results[i].present()) {
+				fmt::print("Missing result {} at index {} in {}\n", value.printable(), i, context);
+				ASSERT(false);
+			}
+
+			if (i < results.size() - 1) {
+				if (results[i].get() != value) {
+					fmt::print("Incorrect result {} at index {} in {}: expected {}\n",
+					           results[i].get().printable(),
+					           i,
+					           context,
+					           value.printable());
+					ASSERT(false);
+				}
+			} else {
+				if (results[i].get() != value.substr(5)) {
+					fmt::print("Incorrect result {} at index {} in {}: expected {}\n",
+					           results[i].get().printable(),
+					           i,
+					           context,
+					           value.substr(5).printable());
+					ASSERT(false);
+				}
+			}
+		}
+	}
+}
+
+template <bool IsRef, class T>
+void checkErrorOr(ErrorOr<T> val) {
+	StringRef value;
+	bool isError = !val.present();
+	bool isFlatMapError = isError;
+	Optional<Error> expectedError;
+	std::vector<ErrorOr<StringRef>> mapResults;
+	std::vector<ErrorOr<StringRef>> flatMapResults;
+
+	if (isError) {
+		expectedError = val.getError();
+	}
+
+	if constexpr (IsRef) {
+		if (!isError && !val.get()) {
+			isError = isFlatMapError = true;
+			expectedError = default_error_or();
+		}
+		if (!isError) {
+			value = val.get()->value;
+			isFlatMapError = !val.get()->errorOrValue.present();
+			if (isFlatMapError) {
+				expectedError = val.get()->errorOrValue.getError();
+			}
+		}
+		mapResults.push_back(val.mapRef(&TestErrorOrMapClass::value));
+		mapResults.push_back(val.mapRef(&TestErrorOrMapClass::constValue));
+		mapResults.push_back(val.mapRef(&TestErrorOrMapClass::getValue));
+		mapResults.push_back(val.mapRef(&TestErrorOrMapClass::getValueRef));
+		mapResults.push_back(val.mapRef(&TestErrorOrMapClass::sub, 5));
+
+		flatMapResults.push_back(val.flatMap([](auto t) { return t ? t->errorOrValue : ErrorOr<StringRef>(); }));
+		flatMapResults.push_back(val.flatMapRef(&TestErrorOrMapClass::errorOrValue));
+		flatMapResults.push_back(val.flatMapRef(&TestErrorOrMapClass::constErrorOrValue));
+		flatMapResults.push_back(val.flatMapRef(&TestErrorOrMapClass::getErrorOrValue));
+		flatMapResults.push_back(val.flatMapRef(&TestErrorOrMapClass::getErrorOrValueRef));
+		flatMapResults.push_back(val.flatMapRef(&TestErrorOrMapClass::errorOrSub, 5));
+	} else {
+		if (!isError) {
+			value = val.get().value;
+			isFlatMapError = !val.get().errorOrValue.present();
+			if (isFlatMapError) {
+				expectedError = val.get().errorOrValue.getError();
+			}
+		}
+		mapResults.push_back(val.map([](auto t) { return t.value; }));
+		mapResults.push_back(val.map(&TestErrorOrMapClass::value));
+		mapResults.push_back(val.map(&TestErrorOrMapClass::constValue));
+		mapResults.push_back(val.map(&TestErrorOrMapClass::getValue));
+		mapResults.push_back(val.map(&TestErrorOrMapClass::getValueRef));
+		mapResults.push_back(val.map(&TestErrorOrMapClass::sub, 5));
+
+		flatMapResults.push_back(val.flatMap([](auto t) { return t.errorOrValue; }));
+		flatMapResults.push_back(val.flatMap(&TestErrorOrMapClass::errorOrValue));
+		flatMapResults.push_back(val.flatMap(&TestErrorOrMapClass::constErrorOrValue));
+		flatMapResults.push_back(val.flatMap(&TestErrorOrMapClass::getErrorOrValue));
+		flatMapResults.push_back(val.flatMap(&TestErrorOrMapClass::getErrorOrValueRef));
+		flatMapResults.push_back(val.flatMap(&TestErrorOrMapClass::errorOrSub, 5));
+	}
+
+	checkResults(mapResults, value, isError ? expectedError : Optional<Error>(), IsRef ? "ref map" : "non-ref map");
+	checkResults(flatMapResults,
+	             value,
+	             isFlatMapError ? expectedError : Optional<Error>(),
+	             IsRef ? "ref flat map" : "non-ref flat map");
+}
+
+TEST_CASE("/flow/ErrorOr/Map") {
+	// ErrorOr<T>
+	checkErrorOr<false>(ErrorOr<TestErrorOrMapClass>());
+	checkErrorOr<false>(ErrorOr<TestErrorOrMapClass>(transaction_too_old()));
+	checkErrorOr<false>(ErrorOr<TestErrorOrMapClass>(TestErrorOrMapClass("test_string"_sr, {})));
+	checkErrorOr<false>(ErrorOr<TestErrorOrMapClass>(TestErrorOrMapClass("test_string"_sr, default_error_or())));
+	checkErrorOr<false>(ErrorOr<TestErrorOrMapClass>(TestErrorOrMapClass("test_string"_sr, transaction_too_old())));
+
+	// ErrorOr<Reference<T>>
+	checkErrorOr<true>(ErrorOr<Reference<TestErrorOrMapClassRef>>());
+	checkErrorOr<true>(ErrorOr<Reference<TestErrorOrMapClassRef>>(Reference<TestErrorOrMapClassRef>()));
+	checkErrorOr<true>(ErrorOr<Reference<TestErrorOrMapClassRef>>(transaction_too_old()));
+	checkErrorOr<true>(ErrorOr<Reference<TestErrorOrMapClassRef>>(
+	    makeReference<TestErrorOrMapClassRef>("test_string"_sr, Optional<Error>())));
+	checkErrorOr<true>(ErrorOr<Reference<TestErrorOrMapClassRef>>(
+	    makeReference<TestErrorOrMapClassRef>("test_string"_sr, Optional<Error>(default_error_or()))));
+	checkErrorOr<true>(ErrorOr<Reference<TestErrorOrMapClassRef>>(
+	    makeReference<TestErrorOrMapClassRef>("test_string"_sr, Optional<Error>(transaction_too_old()))));
+
+	// ErrorOr<T*>
+	checkErrorOr<true>(ErrorOr<TestErrorOrMapClass*>());
+	checkErrorOr<true>(ErrorOr<TestErrorOrMapClass*>(nullptr));
+	checkErrorOr<true>(ErrorOr<TestErrorOrMapClassRef*>(transaction_too_old()));
+
+	auto ptr = new TestErrorOrMapClass("test_string"_sr, Optional<Error>());
+	checkErrorOr<true>(ErrorOr<TestErrorOrMapClass*>(ptr));
+	delete ptr;
+
+	ptr = new TestErrorOrMapClass("test_string"_sr, default_error_or());
+	checkErrorOr<true>(ErrorOr<TestErrorOrMapClass*>(ptr));
+	delete ptr;
+
+	ptr = new TestErrorOrMapClass("test_string"_sr, transaction_too_old());
+	checkErrorOr<true>(ErrorOr<TestErrorOrMapClass*>(ptr));
+	delete ptr;
+
 	return Void();
 }

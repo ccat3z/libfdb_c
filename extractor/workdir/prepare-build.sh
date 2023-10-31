@@ -5,7 +5,7 @@ set -ex
 WORKDIR="$(realpath "$(dirname "$0")")"
 
 FOUNDATIONDB_GIT=https://github.com/apple/foundationdb.git
-FOUNDATIONDB_TAG=${FOUNDATIONDB_TAG:?FOUNDATIONDB_TAG is required}
+FOUNDATIONDB_TAG=7.3.25
 FOUNDATIONDB_REPO=${FOUNDATIONDB_REPO:?FOUNDATIONDB_REPO is required}
 FOUNDATIONDB_BUILDDIR=${FOUNDATIONDB_BUILDDIR:?FOUNDATIONDB_BUILDDIR is required}
 
@@ -21,11 +21,11 @@ git reset HEAD --hard
 git clean -dffx
 
 # Apply patchs
-for patch in fix-fmt-format.patch build-c-binding-only.patch backport-doctest.patch
+for patch in fix-fmt-cxx20.patch # build-c-binding-only.patch fix-fmt-format.patch backport-doctest.patch
 do
     git apply "${WORKDIR}/patches/${patch}"
 done
 
 # Configure build
 # rm -rf "${FOUNDATIONDB_BUILDDIR}"
-cmake -B "${FOUNDATIONDB_BUILDDIR}" -DCMAKE_BUILD_TYPE=Debug -G Ninja "${FOUNDATIONDB_REPO}"
+cmake -B "${FOUNDATIONDB_BUILDDIR}" -DCMAKE_BUILD_TYPE=Debug -DUSE_JEMALLOC=OFF -G Ninja "${FOUNDATIONDB_REPO}"

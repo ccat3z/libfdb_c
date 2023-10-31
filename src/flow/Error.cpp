@@ -34,8 +34,6 @@ std::set<int> debugErrorSet = std::set<int>{ error_code_platform_error };
 #define SHOULD_LOG_ERROR(x) (debugErrorSet.count(x) > 0)
 #endif
 
-#include <iostream>
-
 Error Error::fromUnvalidatedCode(int code) {
 	if (code < 0 || code > 30000) {
 		Error e = Error::fromCode(error_code_unknown_error);
@@ -77,17 +75,17 @@ Error internal_error_impl(const char* msg, const char* file, int line) {
 }
 
 Error internal_error_impl(const char* a_nm,
-                          long long a,
+                          std::string const& a,
                           const char* op_nm,
                           const char* b_nm,
-                          long long b,
+                          std::string const& b,
                           const char* file,
                           int line) {
 	fprintf(stderr, "Assertion failed @ %s %d:\n", file, line);
 	fprintf(stderr, "  expression:\n");
 	fprintf(stderr, "              %s %s %s\n", a_nm, op_nm, b_nm);
 	fprintf(stderr, "  expands to:\n");
-	fprintf(stderr, "              %lld %s %lld\n\n", a, op_nm, b);
+	fprintf(stderr, "              %s %s %s\n\n", a.c_str(), op_nm, b.c_str());
 	fprintf(stderr, "  %s\n", platform::get_backtrace().c_str());
 
 	TraceEvent(SevError, "InternalError")
@@ -180,11 +178,18 @@ Error Error::asInjectedFault() const {
 	return e;
 }
 
+AttributeNotFoundError::AttributeNotFoundError(const std::string& missingAttribute_)
+  : Error(error_code_attribute_not_found), missingAttribute(missingAttribute_) {}
+
+const std::string& AttributeNotFoundError::getMissingAttribute() const {
+	return missingAttribute;
+}
+
 ErrorCodeTable::ErrorCodeTable() {
 #define ERROR(name, number, description)                                                                               \
 	addCode(number, #name, description);                                                                               \
 	enum { Duplicate_Error_Code_##number = 0 };
-#include "error_definitions.h"
+#include "flow/error_definitions.h"
 }
 
 void ErrorCodeTable::addCode(int code, const char* name, const char* description) {
@@ -198,6 +203,20 @@ bool isAssertDisabled(int line) {
 void breakpoint_me() {
 	return;
 }
+
+// FIXME: combine with bindings/c/fdb_c.cpp fdb_error_predicate function
+const std::set<int> transactionRetryableErrors = { error_code_not_committed,
+	                                               error_code_transaction_too_old,
+	                                               error_code_future_version,
+	                                               error_code_commit_proxy_memory_limit_exceeded,
+	                                               error_code_grv_proxy_memory_limit_exceeded,
+	                                               error_code_process_behind,
+	                                               error_code_batch_transaction_throttled,
+	                                               error_code_tag_throttled,
+	                                               error_code_proxy_tag_throttled,
+	                                               // maybe committed error
+	                                               error_code_cluster_version_changed,
+	                                               error_code_commit_unknown_result };
 
 TEST_CASE("/flow/AssertTest") {
 	// this is mostly checking bug for bug compatibility with the C integer / sign promotion rules.

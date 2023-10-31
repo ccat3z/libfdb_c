@@ -47,7 +47,7 @@ void wait(std::shared_ptr<FDBFuture> future) {
 int main() {
   using namespace std::chrono_literals;
 
-  assert_fdb_error(fdb_select_api_version(FDB_API_VERSION));
+  assert_fdb_error(fdb_select_api_version(710));
 
   // Start network
   assert_fdb_error(fdb_setup_network());

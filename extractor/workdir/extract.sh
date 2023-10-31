@@ -1,6 +1,6 @@
 #! /bin/bash
 
-set -ex
+set -exu
 
 OUTPUT_DIR="$1"
 [ -d "$OUTPUT_DIR" ] || exit 1
@@ -24,28 +24,53 @@ function convert_fdb_source() {
     rm -rf "${OUTPUT_DIR}/${_subdir}"
     mkdir -p "${OUTPUT_DIR}/${_subdir}"
 
-    for path in "${FOUNDATIONDB_REPO}/${_subdir}/"*; do
+    find "${FOUNDATIONDB_REPO}/${_subdir}/" -type f -print0 | 
+    while IFS= read -r -d '' path; do
+        dir="$(realpath --relative-to="${FOUNDATIONDB_REPO}/${_subdir}" "$(dirname "$path")")/"
+        [ "$dir" = "./" ] && dir=
         file="$(basename "$path")"
-        if [[ " ${_skip_source[@]} " =~ " $file " ]]; then
-            echo "Skip $file"
-        elif [[ " ${_copy_source[@]} " =~ " $file " ]]; then
-            cp "$path" "${OUTPUT_DIR}/${_subdir}/${file}"
+
+        skip=N
+        copy=N
+
+        parent_dir="${dir}${file}"
+        while [ "$parent_dir" != "." ]; do
+            if [[ " ${_skip_source[@]} " =~ " $parent_dir " ]]; then
+                skip=Y
+                break;
+            fi
+            parent_dir="$(dirname "$parent_dir")"
+        done
+
+        if [ "$skip" = "Y" ]; then
+            echo "Skip $dir$file"
+        elif [[ " ${_copy_source[@]} " =~ " $dir$file " ]]; then
+            copy=Y
         elif [[ "$file" =~ ^(.*)\.(h|cpp)$ ]]; then
-            _target="${OUTPUT_DIR}/${_subdir}/${file}"
+            _target="${OUTPUT_DIR}/${_subdir}/${dir}${file}"
+
+            mkdir -p "$(dirname "$_target")"
             sed  "$path" \
                 -e 's|contrib/fmt-8.1.1/include/||' \
-                -e 's|flow/stacktrace.h|absl/debugging/stacktrace.h|' \
-                -e 's|fdbrpc/md5/md5.h|openssl/md5.h|;' \
+                -e 's|stacktrace/stacktrace.h|absl/debugging/stacktrace.h|' \
+                -e 's|md5/md5.h|openssl/md5.h|;' \
                 > "$_target"
 
             if [[ "$file" =~ ^(.*)\.actor\.(h|cpp)$ ]]; then
-                _actor_target="${OUTPUT_DIR}/${_subdir}/${BASH_REMATCH[1]}.actor.g.${BASH_REMATCH[2]}"
+                _actor_target="${OUTPUT_DIR}/${_subdir}/${dir}${BASH_REMATCH[1]}.actor.g.${BASH_REMATCH[2]}"
                 $ACTORCOMPILER "$_target" "$_actor_target" --generate-probes
             fi
         elif [[ "$file" =~ ^(.*).h.cmake$ ]]; then
-            cp "$FOUNDATIONDB_BUILDDIR/${_subdir}/${BASH_REMATCH[1]}.h" "${OUTPUT_DIR}/${_subdir}/${BASH_REMATCH[1]}.h"
+            _incdir="${OUTPUT_DIR}/${_subdir}/include/${_subdir}"
+            mkdir -p "$_incdir"
+            cp "$FOUNDATIONDB_BUILDDIR/${_subdir}/include/${_subdir}/${BASH_REMATCH[1]}.h" "${_incdir}/${BASH_REMATCH[1]}.h"
         else
-            cp -R "$path" "${OUTPUT_DIR}/${_subdir}/${file}"
+            copy=Y
+        fi
+
+        if [ "$copy" = "Y" ]; then
+            mkdir -p "${OUTPUT_DIR}/${_subdir}/${dir}"
+            cp "$path" "${OUTPUT_DIR}/${_subdir}/${dir}${file}"
         fi
     done
     cp "${WORKDIR}/cmake/${_subdir}.cmake" "${OUTPUT_DIR}/${_subdir}/CMakeLists.txt"
@@ -59,9 +84,7 @@ _skip_source=(
     coveragetool
     actorcompiler
     no_intellisense.opt
-    stacktrace_internal
-    stacktrace.amalgamation.cpp
-    stacktrace.h
+    ApiVersions.cmake
 )
 _copy_source=(
     config.h.cmake
@@ -74,19 +97,20 @@ _skip_source=(
     CMakeLists.txt
     README.md
     actorFuzz.py
+    tests
+
+    TokenSign
 
     # Depends
     libcoroutine # use boost coro impl
-    md5          # use openssl impl
-    # libb64
     # libeio
 )
 _copy_source=()
 convert_fdb_source
 
 # fdbrpc requires fdbserver/Knobs.h
-mkdir "${OUTPUT_DIR}/fdbserver"
-cp "${FOUNDATIONDB_REPO}/fdbserver/Knobs.h" "${OUTPUT_DIR}/fdbserver/Knobs.h"
+mkdir -p "${OUTPUT_DIR}/fdbserver/include/fdbserver"
+cp "${FOUNDATIONDB_REPO}/fdbserver/include/fdbserver/Knobs.h" "${OUTPUT_DIR}/fdbserver/include/fdbserver/Knobs.h"
 
 # fdbclient
 _subdir=fdbclient
@@ -96,14 +120,8 @@ _skip_source=(
     azurestorage.cmake
     vexillographer  
 
-    # Depends
-    rapidxml        # required by s3
-    rapidjson       # required by unit test
-    # json_spirit
-    # sha1
-
     # Disable AZURE
-    BackupContainerAzureBlobStore.actor.cpp
+    azure_backup
 
     # Disable S3
     S3BlobStore.actor.cpp
@@ -111,11 +129,17 @@ _skip_source=(
 _copy_source=()
 convert_fdb_source
 $VEXILLOGRAPHER "${FOUNDATIONDB_REPO}/fdbclient/vexillographer/fdb.options" cpp "${OUTPUT_DIR}/fdbclient/FDBOptions.g"
+mv "${OUTPUT_DIR}"/fdbclient{,/include/fdbclient}/FDBOptions.g.h
+$VEXILLOGRAPHER "${FOUNDATIONDB_REPO}/fdbclient/vexillographer/fdb.options" c "${OUTPUT_DIR}/fdbclient/include/fdbclient/fdb_c_options.g.h"
 
 # bindings/c
 mkdir -p "${OUTPUT_DIR}/bindings/c"
 cp "${FOUNDATIONDB_REPO}/bindings/c/fdb_c.cpp" "${OUTPUT_DIR}/bindings/c/fdb_c.cpp"
 cp -r "${FOUNDATIONDB_REPO}/bindings/c/foundationdb" "${OUTPUT_DIR}/bindings/c/foundationdb"
+
+rm "${OUTPUT_DIR}/bindings/c/foundationdb/fdb_c_apiversion.h.cmake"
+cp {"${FOUNDATIONDB_BUILDDIR}","${OUTPUT_DIR}"}/bindings/c/foundationdb/fdb_c_apiversion.g.h
+
 $VEXILLOGRAPHER "${FOUNDATIONDB_REPO}/fdbclient/vexillographer/fdb.options" c "${OUTPUT_DIR}/bindings/c/foundationdb/fdb_c_options.g.h"
 function generate_fdb_c_asm() {
     _os="${1}"
@@ -134,3 +158,8 @@ generate_fdb_c_asm linux aarch64
 generate_fdb_c_asm osx aarch64
 cp "${WORKDIR}/cmake/fdb_c.cmake" "${OUTPUT_DIR}/bindings/c/CMakeLists.txt"
 
+mkdir "${OUTPUT_DIR}/contrib"
+for dep in crc32 SimpleOpt libb64
+do
+    cp -R "${FOUNDATIONDB_REPO}/contrib/${dep}" "${OUTPUT_DIR}/contrib/${dep}"
+done

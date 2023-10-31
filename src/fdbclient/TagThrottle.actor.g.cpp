@@ -20,11 +20,15 @@
  * limitations under the License.
  */
 
-#include "fdbclient/TagThrottle.actor.h"
 #include "fdbclient/CommitProxyInterface.h"
 #include "fdbclient/DatabaseContext.h"
+#include "fdbclient/SystemData.h"
+#include "fdbclient/TagThrottle.actor.h"
+#include "fdbclient/Tuple.h"
 
 #include "flow/actorcompiler.h" // has to be last include
+
+double const ClientTagThrottleLimits::NO_EXPIRATION = std::numeric_limits<double>::max();
 
 void TagSet::addTag(TransactionTagRef tag) {
 	ASSERT(CLIENT_KNOBS->MAX_TRANSACTION_TAG_LENGTH < 256); // Tag length is encoded with a single byte
@@ -126,70 +130,104 @@ TagThrottleValue TagThrottleValue::fromValue(const ValueRef& value) {
 	return throttleValue;
 }
 
-FDB_DEFINE_BOOLEAN_PARAM(ContainsRecommended);
-FDB_DEFINE_BOOLEAN_PARAM(Capitalize);
+KeyRangeRef const tagQuotaKeys = KeyRangeRef("\xff/tagQuota/"_sr, "\xff/tagQuota0"_sr);
+KeyRef const tagQuotaPrefix = tagQuotaKeys.begin;
 
-															#line 132 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.cpp"
+Key ThrottleApi::getTagQuotaKey(TransactionTagRef tag) {
+	return tag.withPrefix(tagQuotaPrefix);
+}
+
+bool ThrottleApi::TagQuotaValue::isValid() const {
+	return reservedQuota <= totalQuota && reservedQuota >= 0;
+}
+
+Value ThrottleApi::TagQuotaValue::toValue() const {
+	return Tuple::makeTuple(reservedQuota, totalQuota).pack();
+}
+
+ThrottleApi::TagQuotaValue ThrottleApi::TagQuotaValue::fromValue(ValueRef value) {
+	auto tuple = Tuple::unpack(value);
+	if (tuple.size() != 2) {
+		throw invalid_throttle_quota_value();
+	}
+	TagQuotaValue result;
+	try {
+		result.reservedQuota = tuple.getInt(0);
+		result.totalQuota = tuple.getInt(1);
+	} catch (Error& e) {
+		TraceEvent(SevWarnAlways, "TagQuotaValueFailedToDeserialize").error(e);
+		throw invalid_throttle_quota_value();
+	}
+	if (!result.isValid()) {
+		TraceEvent(SevWarnAlways, "TagQuotaValueInvalidQuotas")
+		    .detail("ReservedQuota", result.reservedQuota)
+		    .detail("TotalQuota", result.totalQuota);
+		throw invalid_throttle_quota_value();
+	}
+	return result;
+}
+
+															#line 170 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.cpp"
 namespace {
-// This generated class is to be used only via flowTestCase130()
-															#line 130 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.cpp"
-template <class FlowTestCase130Actor>
-															#line 130 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.cpp"
-class FlowTestCase130ActorState {
-															#line 139 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.cpp"
+// This generated class is to be used only via flowTestCase168()
+															#line 168 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.cpp"
+template <class FlowTestCase168Actor>
+															#line 168 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.cpp"
+class FlowTestCase168ActorState {
+															#line 177 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.cpp"
 public:
-															#line 130 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.cpp"
-	FlowTestCase130ActorState(UnitTestParameters const& params) 
-															#line 130 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.cpp"
-															#line 130 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.cpp"
+															#line 168 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.cpp"
+	FlowTestCase168ActorState(UnitTestParameters const& params) 
+															#line 168 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.cpp"
+															#line 168 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.cpp"
 		 : params(params)
-															#line 146 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.cpp"
+															#line 184 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.cpp"
 	{
-		fdb_probe_actor_create("flowTestCase130", reinterpret_cast<unsigned long>(this));
+		fdb_probe_actor_create("flowTestCase168", reinterpret_cast<unsigned long>(this));
 
 	}
-	~FlowTestCase130ActorState() 
+	~FlowTestCase168ActorState() 
 	{
-		fdb_probe_actor_destroy("flowTestCase130", reinterpret_cast<unsigned long>(this));
+		fdb_probe_actor_destroy("flowTestCase168", reinterpret_cast<unsigned long>(this));
 
 	}
 	int a_body1(int loopDepth=0) 
 	{
 		try {
 			{
-															#line 132 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.cpp"
+															#line 170 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.cpp"
 				TagSet tagSet;
-															#line 133 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.cpp"
+															#line 171 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.cpp"
 				tagSet.addTag("a"_sr);
-															#line 134 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.cpp"
+															#line 172 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.cpp"
 				ASSERT(tagSet.toString() == "tag `a'");
-															#line 135 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.cpp"
+															#line 173 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.cpp"
 				ASSERT(tagSet.toString(Capitalize::True) == "Tag `a'");
-															#line 168 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.cpp"
+															#line 206 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.cpp"
 			}
 			{
-															#line 139 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.cpp"
+															#line 177 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.cpp"
 				TagSet tagSet;
-															#line 140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.cpp"
+															#line 178 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.cpp"
 				tagSet.addTag("a"_sr);
-															#line 141 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.cpp"
+															#line 179 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.cpp"
 				tagSet.addTag("b"_sr);
-															#line 142 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.cpp"
+															#line 180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.cpp"
 				auto tagString = tagSet.toString();
-															#line 143 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.cpp"
+															#line 181 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.cpp"
 				ASSERT(tagString == "tags (`a', `b')" || tagString == "tags (`b', `a')");
-															#line 144 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.cpp"
+															#line 182 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.cpp"
 				auto capitalizedTagString = tagSet.toString(Capitalize::True);
-															#line 145 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.cpp"
+															#line 183 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.cpp"
 				ASSERT(capitalizedTagString == "Tags (`a', `b')" || capitalizedTagString == "Tags (`b', `a')");
-															#line 185 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.cpp"
+															#line 223 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.cpp"
 			}
-															#line 147 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.cpp"
-			if (!static_cast<FlowTestCase130Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~FlowTestCase130ActorState(); static_cast<FlowTestCase130Actor*>(this)->destroy(); return 0; }
-															#line 189 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.cpp"
-			new (&static_cast<FlowTestCase130Actor*>(this)->SAV< Void >::value()) Void(Void());
-			this->~FlowTestCase130ActorState();
-			static_cast<FlowTestCase130Actor*>(this)->finishSendAndDelPromiseRef();
+															#line 185 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.cpp"
+			if (!static_cast<FlowTestCase168Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~FlowTestCase168ActorState(); static_cast<FlowTestCase168Actor*>(this)->destroy(); return 0; }
+															#line 227 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.cpp"
+			new (&static_cast<FlowTestCase168Actor*>(this)->SAV< Void >::value()) Void(Void());
+			this->~FlowTestCase168ActorState();
+			static_cast<FlowTestCase168Actor*>(this)->finishSendAndDelPromiseRef();
 			return 0;
 		}
 		catch (Error& error) {
@@ -202,40 +240,40 @@ public:
 	}
 	int a_body1Catch1(Error error,int loopDepth=0) 
 	{
-		this->~FlowTestCase130ActorState();
-		static_cast<FlowTestCase130Actor*>(this)->sendErrorAndDelPromiseRef(error);
+		this->~FlowTestCase168ActorState();
+		static_cast<FlowTestCase168Actor*>(this)->sendErrorAndDelPromiseRef(error);
 		loopDepth = 0;
 
 		return loopDepth;
 	}
-															#line 130 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.cpp"
+															#line 168 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.cpp"
 	UnitTestParameters params;
-															#line 213 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.cpp"
+															#line 251 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.cpp"
 };
-// This generated class is to be used only via flowTestCase130()
-															#line 130 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.cpp"
-class FlowTestCase130Actor final : public Actor<Void>, public FastAllocated<FlowTestCase130Actor>, public FlowTestCase130ActorState<FlowTestCase130Actor> {
-															#line 218 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.cpp"
+// This generated class is to be used only via flowTestCase168()
+															#line 168 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.cpp"
+class FlowTestCase168Actor final : public Actor<Void>, public FastAllocated<FlowTestCase168Actor>, public FlowTestCase168ActorState<FlowTestCase168Actor> {
+															#line 256 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.cpp"
 public:
-	using FastAllocated<FlowTestCase130Actor>::operator new;
-	using FastAllocated<FlowTestCase130Actor>::operator delete;
+	using FastAllocated<FlowTestCase168Actor>::operator new;
+	using FastAllocated<FlowTestCase168Actor>::operator delete;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdelete-non-virtual-dtor"
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
-															#line 130 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.cpp"
-	FlowTestCase130Actor(UnitTestParameters const& params) 
-															#line 228 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.cpp"
+															#line 168 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.cpp"
+	FlowTestCase168Actor(UnitTestParameters const& params) 
+															#line 266 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.cpp"
 		 : Actor<Void>(),
-		   FlowTestCase130ActorState<FlowTestCase130Actor>(params)
+		   FlowTestCase168ActorState<FlowTestCase168Actor>(params)
 	{
-		fdb_probe_actor_enter("flowTestCase130", reinterpret_cast<unsigned long>(this), -1);
+		fdb_probe_actor_enter("flowTestCase168", reinterpret_cast<unsigned long>(this), -1);
 		#ifdef ENABLE_SAMPLING
-		this->lineage.setActorName("flowTestCase130");
+		this->lineage.setActorName("flowTestCase168");
 		LineageScope _(&this->lineage);
 		#endif
 		this->a_body1();
-		fdb_probe_actor_exit("flowTestCase130", reinterpret_cast<unsigned long>(this), -1);
+		fdb_probe_actor_exit("flowTestCase168", reinterpret_cast<unsigned long>(this), -1);
 
 	}
 	void cancel() override
@@ -248,12 +286,12 @@ public:
 	}
 };
 }
-															#line 130 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.cpp"
-static Future<Void> flowTestCase130( UnitTestParameters const& params ) {
-															#line 130 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.cpp"
-	return Future<Void>(new FlowTestCase130Actor(params));
-															#line 255 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.cpp"
+															#line 168 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.cpp"
+static Future<Void> flowTestCase168( UnitTestParameters const& params ) {
+															#line 168 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.cpp"
+	return Future<Void>(new FlowTestCase168Actor(params));
+															#line 293 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.cpp"
 }
-ACTOR_TEST_CASE(flowTestCase130, "TagSet/toString")
+ACTOR_TEST_CASE(flowTestCase168, "TagSet/toString")
 
-#line 149 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.cpp"
+#line 187 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.cpp"

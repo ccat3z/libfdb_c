@@ -1,0 +1,36 @@
+diff --git a/flow/TLSTest.cpp b/flow/TLSTest.cpp
+index ebbbdacd3..d988dd899 100644
+--- a/flow/TLSTest.cpp
++++ b/flow/TLSTest.cpp
+@@ -31,25 +31,25 @@
+ std::FILE* outp = stdout;
+ 
+ template <class... Args>
+-void log(Args&&... args) {
++void log(fmt::format_string<Args...> fmt, Args&&... args) {
+ 	auto buf = fmt::memory_buffer{};
+-	fmt::format_to(std::back_inserter(buf), std::forward<Args>(args)...);
++	fmt::format_to(std::back_inserter(buf), fmt, std::forward<Args>(args)...);
+ 	fmt::print(outp, "{}\n", std::string_view(buf.data(), buf.size()));
+ }
+ 
+ template <class... Args>
+-void logc(Args&&... args) {
++void logc(fmt::format_string<Args...> fmt, Args&&... args) {
+ 	auto buf = fmt::memory_buffer{};
+ 	fmt::format_to(std::back_inserter(buf), "[CLIENT] ");
+-	fmt::format_to(std::back_inserter(buf), std::forward<Args>(args)...);
++	fmt::format_to(std::back_inserter(buf), fmt, std::forward<Args>(args)...);
+ 	fmt::print(outp, "{}\n", std::string_view(buf.data(), buf.size()));
+ }
+ 
+ template <class... Args>
+-void logs(Args&&... args) {
++void logs(fmt::format_string<Args...> fmt, Args&&... args) {
+ 	auto buf = fmt::memory_buffer{};
+ 	fmt::format_to(std::back_inserter(buf), "[SERVER] ");
+-	fmt::format_to(std::back_inserter(buf), std::forward<Args>(args)...);
++	fmt::format_to(std::back_inserter(buf), fmt, std::forward<Args>(args)...);
+ 	fmt::print(outp, "{}\n", std::string_view(buf.data(), buf.size()));
+ }
+ 

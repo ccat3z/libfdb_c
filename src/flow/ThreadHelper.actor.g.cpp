@@ -21,6 +21,7 @@
  */
 
 #include <string>
+#include <thread>
 
 #include "flow/flow.h"
 #include "flow/network.h"
@@ -47,61 +48,61 @@ struct ThreadFutureCancelObj {
 };
 
 // This unit test should be running with TSAN enabled binary
-															#line 50 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
+															#line 51 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
 namespace {
-// This generated class is to be used only via flowTestCase48()
-															#line 48 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
-template <class FlowTestCase48Actor>
-															#line 48 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
-class FlowTestCase48ActorState {
-															#line 57 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
+// This generated class is to be used only via flowTestCase49()
+															#line 49 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
+template <class FlowTestCase49Actor>
+															#line 49 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
+class FlowTestCase49ActorState {
+															#line 58 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
 public:
-															#line 48 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
-	FlowTestCase48ActorState(UnitTestParameters const& params) 
-															#line 48 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
-															#line 48 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
+															#line 49 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
+	FlowTestCase49ActorState(UnitTestParameters const& params) 
+															#line 49 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
+															#line 49 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
 		 : params(params)
-															#line 64 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
+															#line 65 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
 	{
-		fdb_probe_actor_create("flowTestCase48", reinterpret_cast<unsigned long>(this));
+		fdb_probe_actor_create("flowTestCase49", reinterpret_cast<unsigned long>(this));
 
 	}
-	~FlowTestCase48ActorState() 
+	~FlowTestCase49ActorState() 
 	{
-		fdb_probe_actor_destroy("flowTestCase48", reinterpret_cast<unsigned long>(this));
+		fdb_probe_actor_destroy("flowTestCase49", reinterpret_cast<unsigned long>(this));
 
 	}
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 50 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
-			if (g_network->isSimulated())
-															#line 79 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
-			{
 															#line 51 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
-				if (!static_cast<FlowTestCase48Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~FlowTestCase48ActorState(); static_cast<FlowTestCase48Actor*>(this)->destroy(); return 0; }
-															#line 83 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
-				new (&static_cast<FlowTestCase48Actor*>(this)->SAV< Void >::value()) Void(Void());
-				this->~FlowTestCase48ActorState();
-				static_cast<FlowTestCase48Actor*>(this)->finishSendAndDelPromiseRef();
+			if (g_network->isSimulated())
+															#line 80 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
+			{
+															#line 52 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
+				if (!static_cast<FlowTestCase49Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~FlowTestCase49ActorState(); static_cast<FlowTestCase49Actor*>(this)->destroy(); return 0; }
+															#line 84 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
+				new (&static_cast<FlowTestCase49Actor*>(this)->SAV< Void >::value()) Void(Void());
+				this->~FlowTestCase49ActorState();
+				static_cast<FlowTestCase49Actor*>(this)->finishSendAndDelPromiseRef();
 				return 0;
 			}
-															#line 52 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
-			auto* tsav = new ThreadSingleAssignmentVar<Void>;
 															#line 53 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
-			thread = std::thread{ ThreadFutureSendObj{ tsav } };
+			auto* tsav = new ThreadSingleAssignmentVar<Void>;
 															#line 54 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
+			thread = std::thread{ ThreadFutureSendObj{ tsav } };
+															#line 55 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
 			ThreadFuture<Void> f(tsav);
-															#line 56 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
+															#line 57 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
 			StrictFuture<Void> __when_expr_0 = safeThreadFutureToFuture(f);
-															#line 56 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
-			if (static_cast<FlowTestCase48Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 99 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
+															#line 57 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
+			if (static_cast<FlowTestCase49Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
+															#line 100 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
-			static_cast<FlowTestCase48Actor*>(this)->actor_wait_state = 1;
-															#line 56 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
-			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase48Actor, 0, Void >*>(static_cast<FlowTestCase48Actor*>(this)));
-															#line 104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
+			static_cast<FlowTestCase49Actor*>(this)->actor_wait_state = 1;
+															#line 57 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
+			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase49Actor, 0, Void >*>(static_cast<FlowTestCase49Actor*>(this)));
+															#line 105 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -114,36 +115,36 @@ public:
 	}
 	int a_body1Catch1(Error error,int loopDepth=0) 
 	{
-		this->~FlowTestCase48ActorState();
-		static_cast<FlowTestCase48Actor*>(this)->sendErrorAndDelPromiseRef(error);
+		this->~FlowTestCase49ActorState();
+		static_cast<FlowTestCase49Actor*>(this)->sendErrorAndDelPromiseRef(error);
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont1(Void const& _,int loopDepth) 
 	{
-															#line 57 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
-		thread.join();
 															#line 58 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
-		if (!static_cast<FlowTestCase48Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~FlowTestCase48ActorState(); static_cast<FlowTestCase48Actor*>(this)->destroy(); return 0; }
-															#line 129 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
-		new (&static_cast<FlowTestCase48Actor*>(this)->SAV< Void >::value()) Void(Void());
-		this->~FlowTestCase48ActorState();
-		static_cast<FlowTestCase48Actor*>(this)->finishSendAndDelPromiseRef();
+		thread.join();
+															#line 59 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
+		if (!static_cast<FlowTestCase49Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~FlowTestCase49ActorState(); static_cast<FlowTestCase49Actor*>(this)->destroy(); return 0; }
+															#line 130 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
+		new (&static_cast<FlowTestCase49Actor*>(this)->SAV< Void >::value()) Void(Void());
+		this->~FlowTestCase49ActorState();
+		static_cast<FlowTestCase49Actor*>(this)->finishSendAndDelPromiseRef();
 		return 0;
 
 		return loopDepth;
 	}
 	int a_body1cont1(Void && _,int loopDepth) 
 	{
-															#line 57 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
-		thread.join();
 															#line 58 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
-		if (!static_cast<FlowTestCase48Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~FlowTestCase48ActorState(); static_cast<FlowTestCase48Actor*>(this)->destroy(); return 0; }
-															#line 143 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
-		new (&static_cast<FlowTestCase48Actor*>(this)->SAV< Void >::value()) Void(Void());
-		this->~FlowTestCase48ActorState();
-		static_cast<FlowTestCase48Actor*>(this)->finishSendAndDelPromiseRef();
+		thread.join();
+															#line 59 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
+		if (!static_cast<FlowTestCase49Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~FlowTestCase49ActorState(); static_cast<FlowTestCase49Actor*>(this)->destroy(); return 0; }
+															#line 144 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
+		new (&static_cast<FlowTestCase49Actor*>(this)->SAV< Void >::value()) Void(Void());
+		this->~FlowTestCase49ActorState();
+		static_cast<FlowTestCase49Actor*>(this)->finishSendAndDelPromiseRef();
 		return 0;
 
 		return loopDepth;
@@ -162,13 +163,13 @@ public:
 	}
 	void a_exitChoose1() 
 	{
-		if (static_cast<FlowTestCase48Actor*>(this)->actor_wait_state > 0) static_cast<FlowTestCase48Actor*>(this)->actor_wait_state = 0;
-		static_cast<FlowTestCase48Actor*>(this)->ActorCallback< FlowTestCase48Actor, 0, Void >::remove();
+		if (static_cast<FlowTestCase49Actor*>(this)->actor_wait_state > 0) static_cast<FlowTestCase49Actor*>(this)->actor_wait_state = 0;
+		static_cast<FlowTestCase49Actor*>(this)->ActorCallback< FlowTestCase49Actor, 0, Void >::remove();
 
 	}
-	void a_callback_fire(ActorCallback< FlowTestCase48Actor, 0, Void >*,Void const& value) 
+	void a_callback_fire(ActorCallback< FlowTestCase49Actor, 0, Void >*,Void const& value) 
 	{
-		fdb_probe_actor_enter("flowTestCase48", reinterpret_cast<unsigned long>(this), 0);
+		fdb_probe_actor_enter("flowTestCase49", reinterpret_cast<unsigned long>(this), 0);
 		a_exitChoose1();
 		try {
 			a_body1when1(value, 0);
@@ -178,12 +179,12 @@ public:
 		} catch (...) {
 			a_body1Catch1(unknown_error(), 0);
 		}
-		fdb_probe_actor_exit("flowTestCase48", reinterpret_cast<unsigned long>(this), 0);
+		fdb_probe_actor_exit("flowTestCase49", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-	void a_callback_fire(ActorCallback< FlowTestCase48Actor, 0, Void >*,Void && value) 
+	void a_callback_fire(ActorCallback< FlowTestCase49Actor, 0, Void >*,Void && value) 
 	{
-		fdb_probe_actor_enter("flowTestCase48", reinterpret_cast<unsigned long>(this), 0);
+		fdb_probe_actor_enter("flowTestCase49", reinterpret_cast<unsigned long>(this), 0);
 		a_exitChoose1();
 		try {
 			a_body1when1(std::move(value), 0);
@@ -193,12 +194,12 @@ public:
 		} catch (...) {
 			a_body1Catch1(unknown_error(), 0);
 		}
-		fdb_probe_actor_exit("flowTestCase48", reinterpret_cast<unsigned long>(this), 0);
+		fdb_probe_actor_exit("flowTestCase49", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-	void a_callback_error(ActorCallback< FlowTestCase48Actor, 0, Void >*,Error err) 
+	void a_callback_error(ActorCallback< FlowTestCase49Actor, 0, Void >*,Error err) 
 	{
-		fdb_probe_actor_enter("flowTestCase48", reinterpret_cast<unsigned long>(this), 0);
+		fdb_probe_actor_enter("flowTestCase49", reinterpret_cast<unsigned long>(this), 0);
 		a_exitChoose1();
 		try {
 			a_body1Catch1(err, 0);
@@ -208,40 +209,40 @@ public:
 		} catch (...) {
 			a_body1Catch1(unknown_error(), 0);
 		}
-		fdb_probe_actor_exit("flowTestCase48", reinterpret_cast<unsigned long>(this), 0);
+		fdb_probe_actor_exit("flowTestCase49", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 48 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
+															#line 49 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
 	UnitTestParameters params;
-															#line 53 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
+															#line 54 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
 	std::thread thread;
-															#line 218 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
+															#line 219 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
 };
-// This generated class is to be used only via flowTestCase48()
-															#line 48 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
-class FlowTestCase48Actor final : public Actor<Void>, public ActorCallback< FlowTestCase48Actor, 0, Void >, public FastAllocated<FlowTestCase48Actor>, public FlowTestCase48ActorState<FlowTestCase48Actor> {
-															#line 223 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
+// This generated class is to be used only via flowTestCase49()
+															#line 49 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
+class FlowTestCase49Actor final : public Actor<Void>, public ActorCallback< FlowTestCase49Actor, 0, Void >, public FastAllocated<FlowTestCase49Actor>, public FlowTestCase49ActorState<FlowTestCase49Actor> {
+															#line 224 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
 public:
-	using FastAllocated<FlowTestCase48Actor>::operator new;
-	using FastAllocated<FlowTestCase48Actor>::operator delete;
+	using FastAllocated<FlowTestCase49Actor>::operator new;
+	using FastAllocated<FlowTestCase49Actor>::operator delete;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdelete-non-virtual-dtor"
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
-friend struct ActorCallback< FlowTestCase48Actor, 0, Void >;
-															#line 48 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
-	FlowTestCase48Actor(UnitTestParameters const& params) 
-															#line 234 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
+friend struct ActorCallback< FlowTestCase49Actor, 0, Void >;
+															#line 49 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
+	FlowTestCase49Actor(UnitTestParameters const& params) 
+															#line 235 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
 		 : Actor<Void>(),
-		   FlowTestCase48ActorState<FlowTestCase48Actor>(params)
+		   FlowTestCase49ActorState<FlowTestCase49Actor>(params)
 	{
-		fdb_probe_actor_enter("flowTestCase48", reinterpret_cast<unsigned long>(this), -1);
+		fdb_probe_actor_enter("flowTestCase49", reinterpret_cast<unsigned long>(this), -1);
 		#ifdef ENABLE_SAMPLING
-		this->lineage.setActorName("flowTestCase48");
+		this->lineage.setActorName("flowTestCase49");
 		LineageScope _(&this->lineage);
 		#endif
 		this->a_body1();
-		fdb_probe_actor_exit("flowTestCase48", reinterpret_cast<unsigned long>(this), -1);
+		fdb_probe_actor_exit("flowTestCase49", reinterpret_cast<unsigned long>(this), -1);
 
 	}
 	void cancel() override
@@ -249,78 +250,78 @@ friend struct ActorCallback< FlowTestCase48Actor, 0, Void >;
 		auto wait_state = this->actor_wait_state;
 		this->actor_wait_state = -1;
 		switch (wait_state) {
-		case 1: this->a_callback_error((ActorCallback< FlowTestCase48Actor, 0, Void >*)0, actor_cancelled()); break;
+		case 1: this->a_callback_error((ActorCallback< FlowTestCase49Actor, 0, Void >*)0, actor_cancelled()); break;
 		}
 
 	}
 };
 }
-															#line 48 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
-static Future<Void> flowTestCase48( UnitTestParameters const& params ) {
-															#line 48 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
-	return Future<Void>(new FlowTestCase48Actor(params));
-															#line 262 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
+															#line 49 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
+static Future<Void> flowTestCase49( UnitTestParameters const& params ) {
+															#line 49 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
+	return Future<Void>(new FlowTestCase49Actor(params));
+															#line 263 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
 }
-ACTOR_TEST_CASE(flowTestCase48, "/flow/safeThreadFutureToFuture/Send")
+ACTOR_TEST_CASE(flowTestCase49, "/flow/safeThreadFutureToFuture/Send")
 
-#line 60 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
+#line 61 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
 
 // Test the case where the underlying threadFuture is cancelled
-															#line 269 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
+															#line 270 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
 namespace {
-// This generated class is to be used only via flowTestCase62()
-															#line 62 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
-template <class FlowTestCase62Actor>
-															#line 62 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
-class FlowTestCase62ActorState {
-															#line 276 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
+// This generated class is to be used only via flowTestCase63()
+															#line 63 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
+template <class FlowTestCase63Actor>
+															#line 63 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
+class FlowTestCase63ActorState {
+															#line 277 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
 public:
-															#line 62 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
-	FlowTestCase62ActorState(UnitTestParameters const& params) 
-															#line 62 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
-															#line 62 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
+															#line 63 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
+	FlowTestCase63ActorState(UnitTestParameters const& params) 
+															#line 63 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
+															#line 63 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
 		 : params(params)
-															#line 283 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
+															#line 284 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
 	{
-		fdb_probe_actor_create("flowTestCase62", reinterpret_cast<unsigned long>(this));
+		fdb_probe_actor_create("flowTestCase63", reinterpret_cast<unsigned long>(this));
 
 	}
-	~FlowTestCase62ActorState() 
+	~FlowTestCase63ActorState() 
 	{
-		fdb_probe_actor_destroy("flowTestCase62", reinterpret_cast<unsigned long>(this));
+		fdb_probe_actor_destroy("flowTestCase63", reinterpret_cast<unsigned long>(this));
 
 	}
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 64 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
-			if (g_network->isSimulated())
-															#line 298 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
-			{
 															#line 65 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
-				if (!static_cast<FlowTestCase62Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~FlowTestCase62ActorState(); static_cast<FlowTestCase62Actor*>(this)->destroy(); return 0; }
-															#line 302 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
-				new (&static_cast<FlowTestCase62Actor*>(this)->SAV< Void >::value()) Void(Void());
-				this->~FlowTestCase62ActorState();
-				static_cast<FlowTestCase62Actor*>(this)->finishSendAndDelPromiseRef();
+			if (g_network->isSimulated())
+															#line 299 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
+			{
+															#line 66 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
+				if (!static_cast<FlowTestCase63Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~FlowTestCase63ActorState(); static_cast<FlowTestCase63Actor*>(this)->destroy(); return 0; }
+															#line 303 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
+				new (&static_cast<FlowTestCase63Actor*>(this)->SAV< Void >::value()) Void(Void());
+				this->~FlowTestCase63ActorState();
+				static_cast<FlowTestCase63Actor*>(this)->finishSendAndDelPromiseRef();
 				return 0;
 			}
-															#line 66 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
-			ThreadFuture<Void> f = onMainThread([]() -> Future<Void> { return Never(); });
 															#line 67 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
+			ThreadFuture<Void> f = onMainThread([]() -> Future<Void> { return Never(); });
+															#line 68 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
 			thread = std::thread{ ThreadFutureCancelObj(f) };
-															#line 312 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
+															#line 313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
 			try {
-															#line 69 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
+															#line 70 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
 				StrictFuture<Void> __when_expr_0 = safeThreadFutureToFuture(f);
-															#line 69 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
-				if (static_cast<FlowTestCase62Actor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), loopDepth);
-															#line 318 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
+															#line 70 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
+				if (static_cast<FlowTestCase63Actor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), loopDepth);
+															#line 319 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
 				if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch2(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
-				static_cast<FlowTestCase62Actor*>(this)->actor_wait_state = 1;
-															#line 69 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
-				__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase62Actor, 0, Void >*>(static_cast<FlowTestCase62Actor*>(this)));
-															#line 323 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
+				static_cast<FlowTestCase63Actor*>(this)->actor_wait_state = 1;
+															#line 70 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
+				__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase63Actor, 0, Void >*>(static_cast<FlowTestCase63Actor*>(this)));
+															#line 324 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
 				loopDepth = 0;
 			}
 			catch (Error& error) {
@@ -339,22 +340,22 @@ public:
 	}
 	int a_body1Catch1(Error error,int loopDepth=0) 
 	{
-		this->~FlowTestCase62ActorState();
-		static_cast<FlowTestCase62Actor*>(this)->sendErrorAndDelPromiseRef(error);
+		this->~FlowTestCase63ActorState();
+		static_cast<FlowTestCase63Actor*>(this)->sendErrorAndDelPromiseRef(error);
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 74 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
-		thread.join();
 															#line 75 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
-		if (!static_cast<FlowTestCase62Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~FlowTestCase62ActorState(); static_cast<FlowTestCase62Actor*>(this)->destroy(); return 0; }
-															#line 354 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
-		new (&static_cast<FlowTestCase62Actor*>(this)->SAV< Void >::value()) Void(Void());
-		this->~FlowTestCase62ActorState();
-		static_cast<FlowTestCase62Actor*>(this)->finishSendAndDelPromiseRef();
+		thread.join();
+															#line 76 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
+		if (!static_cast<FlowTestCase63Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~FlowTestCase63ActorState(); static_cast<FlowTestCase63Actor*>(this)->destroy(); return 0; }
+															#line 355 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
+		new (&static_cast<FlowTestCase63Actor*>(this)->SAV< Void >::value()) Void(Void());
+		this->~FlowTestCase63ActorState();
+		static_cast<FlowTestCase63Actor*>(this)->finishSendAndDelPromiseRef();
 		return 0;
 
 		return loopDepth;
@@ -362,9 +363,9 @@ public:
 	int a_body1Catch2(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 72 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
+															#line 73 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
 			ASSERT(e.code() == error_code_actor_cancelled);
-															#line 367 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
+															#line 368 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
 			loopDepth = a_body1cont1(loopDepth);
 		}
 		catch (Error& error) {
@@ -377,18 +378,18 @@ public:
 	}
 	int a_body1cont3(Void const& _,int loopDepth) 
 	{
-															#line 70 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
+															#line 71 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
 		ASSERT(false);
-															#line 382 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
+															#line 383 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
 		loopDepth = a_body1cont5(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1cont3(Void && _,int loopDepth) 
 	{
-															#line 70 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
+															#line 71 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
 		ASSERT(false);
-															#line 391 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
+															#line 392 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
 		loopDepth = a_body1cont5(loopDepth);
 
 		return loopDepth;
@@ -407,13 +408,13 @@ public:
 	}
 	void a_exitChoose1() 
 	{
-		if (static_cast<FlowTestCase62Actor*>(this)->actor_wait_state > 0) static_cast<FlowTestCase62Actor*>(this)->actor_wait_state = 0;
-		static_cast<FlowTestCase62Actor*>(this)->ActorCallback< FlowTestCase62Actor, 0, Void >::remove();
+		if (static_cast<FlowTestCase63Actor*>(this)->actor_wait_state > 0) static_cast<FlowTestCase63Actor*>(this)->actor_wait_state = 0;
+		static_cast<FlowTestCase63Actor*>(this)->ActorCallback< FlowTestCase63Actor, 0, Void >::remove();
 
 	}
-	void a_callback_fire(ActorCallback< FlowTestCase62Actor, 0, Void >*,Void const& value) 
+	void a_callback_fire(ActorCallback< FlowTestCase63Actor, 0, Void >*,Void const& value) 
 	{
-		fdb_probe_actor_enter("flowTestCase62", reinterpret_cast<unsigned long>(this), 0);
+		fdb_probe_actor_enter("flowTestCase63", reinterpret_cast<unsigned long>(this), 0);
 		a_exitChoose1();
 		try {
 			a_body1when1(value, 0);
@@ -423,12 +424,12 @@ public:
 		} catch (...) {
 			a_body1Catch2(unknown_error(), 0);
 		}
-		fdb_probe_actor_exit("flowTestCase62", reinterpret_cast<unsigned long>(this), 0);
+		fdb_probe_actor_exit("flowTestCase63", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-	void a_callback_fire(ActorCallback< FlowTestCase62Actor, 0, Void >*,Void && value) 
+	void a_callback_fire(ActorCallback< FlowTestCase63Actor, 0, Void >*,Void && value) 
 	{
-		fdb_probe_actor_enter("flowTestCase62", reinterpret_cast<unsigned long>(this), 0);
+		fdb_probe_actor_enter("flowTestCase63", reinterpret_cast<unsigned long>(this), 0);
 		a_exitChoose1();
 		try {
 			a_body1when1(std::move(value), 0);
@@ -438,12 +439,12 @@ public:
 		} catch (...) {
 			a_body1Catch2(unknown_error(), 0);
 		}
-		fdb_probe_actor_exit("flowTestCase62", reinterpret_cast<unsigned long>(this), 0);
+		fdb_probe_actor_exit("flowTestCase63", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-	void a_callback_error(ActorCallback< FlowTestCase62Actor, 0, Void >*,Error err) 
+	void a_callback_error(ActorCallback< FlowTestCase63Actor, 0, Void >*,Error err) 
 	{
-		fdb_probe_actor_enter("flowTestCase62", reinterpret_cast<unsigned long>(this), 0);
+		fdb_probe_actor_enter("flowTestCase63", reinterpret_cast<unsigned long>(this), 0);
 		a_exitChoose1();
 		try {
 			a_body1Catch2(err, 0);
@@ -453,7 +454,7 @@ public:
 		} catch (...) {
 			a_body1Catch2(unknown_error(), 0);
 		}
-		fdb_probe_actor_exit("flowTestCase62", reinterpret_cast<unsigned long>(this), 0);
+		fdb_probe_actor_exit("flowTestCase63", reinterpret_cast<unsigned long>(this), 0);
 
 	}
 	int a_body1cont5(int loopDepth) 
@@ -469,37 +470,37 @@ public:
 
 		return loopDepth;
 	}
-															#line 62 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
+															#line 63 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
 	UnitTestParameters params;
-															#line 67 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
+															#line 68 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
 	std::thread thread;
-															#line 476 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
+															#line 477 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
 };
-// This generated class is to be used only via flowTestCase62()
-															#line 62 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
-class FlowTestCase62Actor final : public Actor<Void>, public ActorCallback< FlowTestCase62Actor, 0, Void >, public FastAllocated<FlowTestCase62Actor>, public FlowTestCase62ActorState<FlowTestCase62Actor> {
-															#line 481 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
+// This generated class is to be used only via flowTestCase63()
+															#line 63 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
+class FlowTestCase63Actor final : public Actor<Void>, public ActorCallback< FlowTestCase63Actor, 0, Void >, public FastAllocated<FlowTestCase63Actor>, public FlowTestCase63ActorState<FlowTestCase63Actor> {
+															#line 482 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
 public:
-	using FastAllocated<FlowTestCase62Actor>::operator new;
-	using FastAllocated<FlowTestCase62Actor>::operator delete;
+	using FastAllocated<FlowTestCase63Actor>::operator new;
+	using FastAllocated<FlowTestCase63Actor>::operator delete;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdelete-non-virtual-dtor"
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
-friend struct ActorCallback< FlowTestCase62Actor, 0, Void >;
-															#line 62 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
-	FlowTestCase62Actor(UnitTestParameters const& params) 
-															#line 492 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
+friend struct ActorCallback< FlowTestCase63Actor, 0, Void >;
+															#line 63 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
+	FlowTestCase63Actor(UnitTestParameters const& params) 
+															#line 493 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
 		 : Actor<Void>(),
-		   FlowTestCase62ActorState<FlowTestCase62Actor>(params)
+		   FlowTestCase63ActorState<FlowTestCase63Actor>(params)
 	{
-		fdb_probe_actor_enter("flowTestCase62", reinterpret_cast<unsigned long>(this), -1);
+		fdb_probe_actor_enter("flowTestCase63", reinterpret_cast<unsigned long>(this), -1);
 		#ifdef ENABLE_SAMPLING
-		this->lineage.setActorName("flowTestCase62");
+		this->lineage.setActorName("flowTestCase63");
 		LineageScope _(&this->lineage);
 		#endif
 		this->a_body1();
-		fdb_probe_actor_exit("flowTestCase62", reinterpret_cast<unsigned long>(this), -1);
+		fdb_probe_actor_exit("flowTestCase63", reinterpret_cast<unsigned long>(this), -1);
 
 	}
 	void cancel() override
@@ -507,18 +508,18 @@ friend struct ActorCallback< FlowTestCase62Actor, 0, Void >;
 		auto wait_state = this->actor_wait_state;
 		this->actor_wait_state = -1;
 		switch (wait_state) {
-		case 1: this->a_callback_error((ActorCallback< FlowTestCase62Actor, 0, Void >*)0, actor_cancelled()); break;
+		case 1: this->a_callback_error((ActorCallback< FlowTestCase63Actor, 0, Void >*)0, actor_cancelled()); break;
 		}
 
 	}
 };
 }
-															#line 62 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
-static Future<Void> flowTestCase62( UnitTestParameters const& params ) {
-															#line 62 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
-	return Future<Void>(new FlowTestCase62Actor(params));
-															#line 520 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
+															#line 63 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
+static Future<Void> flowTestCase63( UnitTestParameters const& params ) {
+															#line 63 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
+	return Future<Void>(new FlowTestCase63Actor(params));
+															#line 521 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.cpp"
 }
-ACTOR_TEST_CASE(flowTestCase62, "/flow/safeThreadFutureToFuture/Cancel")
+ACTOR_TEST_CASE(flowTestCase63, "/flow/safeThreadFutureToFuture/Cancel")
 
-#line 77 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"
+#line 78 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.cpp"

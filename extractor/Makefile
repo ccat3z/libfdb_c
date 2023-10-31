@@ -5,8 +5,7 @@ OUTPUT_DIR_REAL = $(realpath $(OUTPUT_DIR))
 
 BUILDER_DOCKER_FLAGS = \
 	-u $(shell id -u):$(shell id -g) \
-	-v "$(CURDIR)/$(EXTRACT_WORKDIR):$(CURDIR)/$(EXTRACT_WORKDIR)" \
-	-e FOUNDATIONDB_TAG="7.1.41"
+	-v "$(CURDIR)/$(EXTRACT_WORKDIR):$(CURDIR)/$(EXTRACT_WORKDIR)"
 
 .PHONY: all docker-image extract build-tests clean
 

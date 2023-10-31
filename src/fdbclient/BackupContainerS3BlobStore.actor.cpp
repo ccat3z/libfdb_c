@@ -20,9 +20,7 @@
 
 #include "fdbclient/AsyncFileS3BlobStore.actor.h"
 #include "fdbclient/BackupContainerS3BlobStore.h"
-#if (!defined(TLS_DISABLED) && !defined(_WIN32))
 #include "fdbrpc/AsyncFileEncrypted.h"
-#endif
 #include "fdbrpc/AsyncFileReadAhead.actor.h"
 #include "flow/actorcompiler.h" // This must be the last #include.
 
@@ -134,19 +132,32 @@ const std::string BackupContainerS3BlobStoreImpl::DATAFOLDER = "data";
 const std::string BackupContainerS3BlobStoreImpl::INDEXFOLDER = "backups";
 
 std::string BackupContainerS3BlobStore::dataPath(const std::string& path) {
-	return BackupContainerS3BlobStoreImpl::DATAFOLDER + "/" + m_name + "/" + path;
+	// if backup, include the backup data prefix.
+	// if m_name ends in a trailing slash, don't add another
+	std::string dataPath = "";
+	if (isBackup) {
+		dataPath = BackupContainerS3BlobStoreImpl::DATAFOLDER + "/";
+	}
+	if (!m_name.empty() && m_name.back() == '/') {
+		dataPath += m_name + path;
+	} else {
+		dataPath += m_name + "/" + path;
+	}
+	return dataPath;
 }
 
 // Get the path of the backups's index entry
 std::string BackupContainerS3BlobStore::indexEntry() {
+	ASSERT(isBackup);
 	return BackupContainerS3BlobStoreImpl::INDEXFOLDER + "/" + m_name;
 }
 
 BackupContainerS3BlobStore::BackupContainerS3BlobStore(Reference<S3BlobStoreEndpoint> bstore,
                                                        const std::string& name,
                                                        const S3BlobStoreEndpoint::ParametersT& params,
-                                                       const Optional<std::string>& encryptionKeyFileName)
-  : m_bstore(bstore), m_name(name), m_bucket("FDB_BACKUPS_V2") {
+                                                       const Optional<std::string>& encryptionKeyFileName,
+                                                       bool isBackup)
+  : m_bstore(bstore), m_name(name), m_bucket("FDB_BACKUPS_V2"), isBackup(isBackup) {
 	setEncryptionKey(encryptionKeyFileName);
 	// Currently only one parameter is supported, "bucket"
 	for (const auto& [name, value] : params) {
@@ -174,16 +185,16 @@ std::string BackupContainerS3BlobStore::getURLFormat() {
 Future<Reference<IAsyncFile>> BackupContainerS3BlobStore::readFile(const std::string& path) {
 	Reference<IAsyncFile> f = makeReference<AsyncFileS3BlobStoreRead>(m_bstore, m_bucket, dataPath(path));
 
-#if ENCRYPTION_ENABLED
 	if (usesEncryption()) {
 		f = makeReference<AsyncFileEncrypted>(f, AsyncFileEncrypted::Mode::READ_ONLY);
 	}
-#endif
-	f = makeReference<AsyncFileReadAheadCache>(f,
-	                                           m_bstore->knobs.read_block_size,
-	                                           m_bstore->knobs.read_ahead_blocks,
-	                                           m_bstore->knobs.concurrent_reads_per_file,
-	                                           m_bstore->knobs.read_cache_blocks_per_file);
+	if (m_bstore->knobs.enable_read_cache) {
+		f = makeReference<AsyncFileReadAheadCache>(f,
+		                                           m_bstore->knobs.read_block_size,
+		                                           m_bstore->knobs.read_ahead_blocks,
+		                                           m_bstore->knobs.concurrent_reads_per_file,
+		                                           m_bstore->knobs.read_cache_blocks_per_file);
+	}
 	return f;
 }
 
@@ -194,12 +205,14 @@ Future<std::vector<std::string>> BackupContainerS3BlobStore::listURLs(Reference<
 
 Future<Reference<IBackupFile>> BackupContainerS3BlobStore::writeFile(const std::string& path) {
 	Reference<IAsyncFile> f = makeReference<AsyncFileS3BlobStoreWrite>(m_bstore, m_bucket, dataPath(path));
-#if ENCRYPTION_ENABLED
 	if (usesEncryption()) {
 		f = makeReference<AsyncFileEncrypted>(f, AsyncFileEncrypted::Mode::APPEND_ONLY);
 	}
-#endif
 	return Future<Reference<IBackupFile>>(makeReference<BackupContainerS3BlobStoreImpl::BackupFile>(path, f));
+}
+
+Future<Void> BackupContainerS3BlobStore::writeEntireFile(const std::string& path, const std::string& fileContents) {
+	return m_bstore->writeEntireFile(m_bucket, dataPath(path), fileContents);
 }
 
 Future<Void> BackupContainerS3BlobStore::deleteFile(const std::string& path) {

@@ -26,7 +26,6 @@
 #include "fdbclient/DatabaseContext.h"
 #include "fdbclient/IKnobCollection.h"
 #include "fdbclient/SimpleConfigTransaction.h"
-#include "fdbserver/Knobs.h"
 #include "flow/Arena.h"
 #include "flow/actorcompiler.h" // This must be the last #include.
 
@@ -39,20 +38,20 @@ class SimpleConfigTransactionImpl {
 	Optional<UID> dID;
 	Database cx;
 
-																#line 42 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+																#line 41 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 // This generated class is to be used only via getGeneration()
-															#line 40 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 39 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 template <class GetGenerationActor>
-															#line 40 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 39 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 class GetGenerationActorState {
-															#line 48 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 47 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 public:
-															#line 40 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 39 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 	GetGenerationActorState(SimpleConfigTransactionImpl* const& self) 
-															#line 40 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
-															#line 40 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 39 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 39 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 		 : self(self)
-															#line 55 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 54 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 	{
 		fdb_probe_actor_create("getGeneration", reinterpret_cast<unsigned long>(this));
 
@@ -65,44 +64,44 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 41 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 40 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			if (self->dID.present())
-															#line 70 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 69 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			{
-															#line 42 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 41 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 				TraceEvent("SimpleConfigTransactionGettingReadVersion", self->dID.get());
-															#line 74 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 73 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			}
-															#line 44 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 43 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			reply = ConfigTransactionGetGenerationReply();
-															#line 45 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 44 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			if (self->cti.hostname.present())
-															#line 80 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 79 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			{
-															#line 46 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
-				StrictFuture<Void> __when_expr_0 = store(reply, retryGetReplyFromHostname(ConfigTransactionGetGenerationRequest{}, self->cti.hostname.get(), WLTOKEN_CONFIGTXN_GETGENERATION));
-															#line 46 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 45 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+				StrictFuture<Void> __when_expr_0 = store(reply, retryGetReplyFromHostname(ConfigTransactionGetGenerationRequest{ 0, Optional<Version>() }, self->cti.hostname.get(), WLTOKEN_CONFIGTXN_GETGENERATION));
+															#line 45 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 				if (static_cast<GetGenerationActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 86 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 85 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 				if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 				static_cast<GetGenerationActor*>(this)->actor_wait_state = 1;
-															#line 46 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 45 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 				__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< GetGenerationActor, 0, Void >*>(static_cast<GetGenerationActor*>(this)));
-															#line 91 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 90 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 				loopDepth = 0;
 			}
 			else
 			{
-															#line 51 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
-				StrictFuture<Void> __when_expr_1 = store(reply, retryBrokenPromise(self->cti.getGeneration, ConfigTransactionGetGenerationRequest{}));
-															#line 51 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 50 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+				StrictFuture<Void> __when_expr_1 = store(reply, retryBrokenPromise(self->cti.getGeneration, ConfigTransactionGetGenerationRequest{ 0, Optional<Version>() }));
+															#line 50 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 				if (static_cast<GetGenerationActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 100 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 99 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 				if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1when2(__when_expr_1.get(), loopDepth); };
 				static_cast<GetGenerationActor*>(this)->actor_wait_state = 2;
-															#line 51 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 50 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 				__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< GetGenerationActor, 1, Void >*>(static_cast<GetGenerationActor*>(this)));
-															#line 105 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 				loopDepth = 0;
 			}
 		}
@@ -124,17 +123,17 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 53 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
-		if (self->dID.present())
-															#line 129 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
-		{
 															#line 54 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+		if (self->dID.present())
+															#line 128 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+		{
+															#line 55 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			TraceEvent("SimpleConfigTransactionGotReadVersion", self->dID.get()) .detail("Version", reply.generation.liveVersion);
-															#line 133 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 132 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 		}
-															#line 57 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 58 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 		if (!static_cast<GetGenerationActor*>(this)->SAV<ConfigGeneration>::futures) { (void)(reply.generation); this->~GetGenerationActorState(); static_cast<GetGenerationActor*>(this)->destroy(); return 0; }
-															#line 137 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 136 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 		new (&static_cast<GetGenerationActor*>(this)->SAV< ConfigGeneration >::value()) ConfigGeneration(reply.generation);
 		this->~GetGenerationActorState();
 		static_cast<GetGenerationActor*>(this)->finishSendAndDelPromiseRef();
@@ -292,16 +291,16 @@ public:
 		fdb_probe_actor_exit("getGeneration", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 40 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 39 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 	SimpleConfigTransactionImpl* self;
-															#line 44 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 43 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 	ConfigTransactionGetGenerationReply reply;
-															#line 299 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 298 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 };
 // This generated class is to be used only via getGeneration()
-															#line 40 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 39 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 class GetGenerationActor final : public Actor<ConfigGeneration>, public ActorCallback< GetGenerationActor, 0, Void >, public ActorCallback< GetGenerationActor, 1, Void >, public FastAllocated<GetGenerationActor>, public GetGenerationActorState<GetGenerationActor> {
-															#line 304 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 303 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 public:
 	using FastAllocated<GetGenerationActor>::operator new;
 	using FastAllocated<GetGenerationActor>::operator delete;
@@ -311,9 +310,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< GetGenerationActor, 0, Void >;
 friend struct ActorCallback< GetGenerationActor, 1, Void >;
-															#line 40 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 39 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 	GetGenerationActor(SimpleConfigTransactionImpl* const& self) 
-															#line 316 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 315 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 		 : Actor<ConfigGeneration>(),
 		   GetGenerationActorState<GetGenerationActor>(self)
 	{
@@ -337,31 +336,31 @@ friend struct ActorCallback< GetGenerationActor, 1, Void >;
 
 	}
 };
-															#line 40 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 39 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 [[nodiscard]] static Future<ConfigGeneration> getGeneration( SimpleConfigTransactionImpl* const& self ) {
-															#line 40 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 39 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 	return Future<ConfigGeneration>(new GetGenerationActor(self));
-															#line 344 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 343 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 }
 
-#line 59 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+#line 60 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 
-																#line 349 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+																#line 348 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 // This generated class is to be used only via get()
-															#line 60 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 61 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 template <class GetActor>
-															#line 60 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 61 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 class GetActorState {
-															#line 355 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 354 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 public:
-															#line 60 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 61 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 	GetActorState(SimpleConfigTransactionImpl* const& self,KeyRef const& key) 
-															#line 60 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
-															#line 60 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 61 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 61 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 		 : self(self),
-															#line 60 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 61 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 		   key(key)
-															#line 364 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 363 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 	{
 		fdb_probe_actor_create("get", reinterpret_cast<unsigned long>(this));
 
@@ -374,26 +373,26 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 61 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
-			if (!self->getGenerationFuture.isValid())
-															#line 379 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
-			{
 															#line 62 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+			if (!self->getGenerationFuture.isValid())
+															#line 378 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+			{
+															#line 63 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 				self->getGenerationFuture = getGeneration(self);
-															#line 383 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 382 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			}
-															#line 64 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 65 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			configKey = ConfigKey::decodeKey(key);
-															#line 65 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 66 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			StrictFuture<ConfigGeneration> __when_expr_0 = self->getGenerationFuture;
-															#line 65 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 66 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			if (static_cast<GetActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 391 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 390 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<GetActor*>(this)->actor_wait_state = 1;
-															#line 65 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 66 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< GetActor, 0, ConfigGeneration >*>(static_cast<GetActor*>(this)));
-															#line 396 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 395 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -414,44 +413,44 @@ public:
 	}
 	int a_body1cont1(ConfigGeneration const& generation,int loopDepth) 
 	{
-															#line 66 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
-		if (self->dID.present())
-															#line 419 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
-		{
 															#line 67 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
-			TraceEvent("SimpleConfigTransactionGettingValue", self->dID.get()) .detail("ConfigClass", configKey.configClass) .detail("KnobName", configKey.knobName);
-															#line 423 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
-		}
-															#line 71 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
-		reply = ConfigTransactionGetReply();
-															#line 72 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
-		if (self->cti.hostname.present())
-															#line 429 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+		if (self->dID.present())
+															#line 418 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 		{
+															#line 68 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+			TraceEvent("SimpleConfigTransactionGettingValue", self->dID.get()) .detail("ConfigClass", configKey.configClass) .detail("KnobName", configKey.knobName);
+															#line 422 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+		}
+															#line 72 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+		reply = ConfigTransactionGetReply();
 															#line 73 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
-			StrictFuture<Void> __when_expr_1 = store(reply, retryGetReplyFromHostname(ConfigTransactionGetRequest{ generation, configKey }, self->cti.hostname.get(), WLTOKEN_CONFIGTXN_GET));
-															#line 73 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+		if (self->cti.hostname.present())
+															#line 428 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+		{
+															#line 74 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+			StrictFuture<Void> __when_expr_1 = store(reply, retryGetReplyFromHostname(ConfigTransactionGetRequest{ 0, generation, configKey }, self->cti.hostname.get(), WLTOKEN_CONFIGTXN_GET));
+															#line 74 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			if (static_cast<GetActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 435 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 434 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 			static_cast<GetActor*>(this)->actor_wait_state = 2;
-															#line 73 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 74 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< GetActor, 1, Void >*>(static_cast<GetActor*>(this)));
-															#line 440 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 439 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			loopDepth = 0;
 		}
 		else
 		{
-															#line 78 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
-			StrictFuture<Void> __when_expr_2 = store(reply, retryBrokenPromise(self->cti.get, ConfigTransactionGetRequest{ generation, configKey }));
-															#line 78 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 79 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+			StrictFuture<Void> __when_expr_2 = store(reply, retryBrokenPromise(self->cti.get, ConfigTransactionGetRequest{ 0, generation, configKey }));
+															#line 79 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			if (static_cast<GetActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 449 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 448 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1cont1when2(__when_expr_2.get(), loopDepth); };
 			static_cast<GetActor*>(this)->actor_wait_state = 3;
-															#line 78 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 79 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< GetActor, 2, Void >*>(static_cast<GetActor*>(this)));
-															#line 454 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 453 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			loopDepth = 0;
 		}
 
@@ -459,44 +458,44 @@ public:
 	}
 	int a_body1cont1(ConfigGeneration && generation,int loopDepth) 
 	{
-															#line 66 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
-		if (self->dID.present())
-															#line 464 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
-		{
 															#line 67 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
-			TraceEvent("SimpleConfigTransactionGettingValue", self->dID.get()) .detail("ConfigClass", configKey.configClass) .detail("KnobName", configKey.knobName);
-															#line 468 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
-		}
-															#line 71 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
-		reply = ConfigTransactionGetReply();
-															#line 72 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
-		if (self->cti.hostname.present())
-															#line 474 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+		if (self->dID.present())
+															#line 463 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 		{
+															#line 68 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+			TraceEvent("SimpleConfigTransactionGettingValue", self->dID.get()) .detail("ConfigClass", configKey.configClass) .detail("KnobName", configKey.knobName);
+															#line 467 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+		}
+															#line 72 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+		reply = ConfigTransactionGetReply();
 															#line 73 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
-			StrictFuture<Void> __when_expr_1 = store(reply, retryGetReplyFromHostname(ConfigTransactionGetRequest{ generation, configKey }, self->cti.hostname.get(), WLTOKEN_CONFIGTXN_GET));
-															#line 73 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+		if (self->cti.hostname.present())
+															#line 473 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+		{
+															#line 74 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+			StrictFuture<Void> __when_expr_1 = store(reply, retryGetReplyFromHostname(ConfigTransactionGetRequest{ 0, generation, configKey }, self->cti.hostname.get(), WLTOKEN_CONFIGTXN_GET));
+															#line 74 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			if (static_cast<GetActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 480 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 479 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 			static_cast<GetActor*>(this)->actor_wait_state = 2;
-															#line 73 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 74 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< GetActor, 1, Void >*>(static_cast<GetActor*>(this)));
-															#line 485 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 484 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			loopDepth = 0;
 		}
 		else
 		{
-															#line 78 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
-			StrictFuture<Void> __when_expr_2 = store(reply, retryBrokenPromise(self->cti.get, ConfigTransactionGetRequest{ generation, configKey }));
-															#line 78 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 79 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+			StrictFuture<Void> __when_expr_2 = store(reply, retryBrokenPromise(self->cti.get, ConfigTransactionGetRequest{ 0, generation, configKey }));
+															#line 79 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			if (static_cast<GetActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 494 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 493 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1cont1when2(__when_expr_2.get(), loopDepth); };
 			static_cast<GetActor*>(this)->actor_wait_state = 3;
-															#line 78 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 79 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< GetActor, 2, Void >*>(static_cast<GetActor*>(this)));
-															#line 499 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 498 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			loopDepth = 0;
 		}
 
@@ -567,21 +566,21 @@ public:
 	}
 	int a_body1cont3(int loopDepth) 
 	{
-															#line 80 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 82 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 		if (self->dID.present())
-															#line 572 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 571 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 		{
-															#line 81 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 83 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			TraceEvent("SimpleConfigTransactionGotValue", self->dID.get()) .detail("Value", reply.value.get().toString());
-															#line 576 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 575 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 		}
-															#line 84 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 86 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 		if (reply.value.present())
-															#line 580 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 579 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 		{
-															#line 85 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 87 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			if (!static_cast<GetActor*>(this)->SAV<Optional<Value>>::futures) { (void)(reply.value.get().toValue()); this->~GetActorState(); static_cast<GetActor*>(this)->destroy(); return 0; }
-															#line 584 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 583 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			new (&static_cast<GetActor*>(this)->SAV< Optional<Value> >::value()) Optional<Value>(reply.value.get().toValue());
 			this->~GetActorState();
 			static_cast<GetActor*>(this)->finishSendAndDelPromiseRef();
@@ -589,9 +588,9 @@ public:
 		}
 		else
 		{
-															#line 87 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 89 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			if (!static_cast<GetActor*>(this)->SAV<Optional<Value>>::futures) { (void)(Optional<Value>{}); this->~GetActorState(); static_cast<GetActor*>(this)->destroy(); return 0; }
-															#line 594 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 593 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			new (&static_cast<GetActor*>(this)->SAV< Optional<Value> >::value()) Optional<Value>(Optional<Value>{});
 			this->~GetActorState();
 			static_cast<GetActor*>(this)->finishSendAndDelPromiseRef();
@@ -750,20 +749,20 @@ public:
 		fdb_probe_actor_exit("get", reinterpret_cast<unsigned long>(this), 2);
 
 	}
-															#line 60 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 61 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 	SimpleConfigTransactionImpl* self;
-															#line 60 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 61 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 	KeyRef key;
-															#line 64 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 65 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 	ConfigKey configKey;
-															#line 71 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 72 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 	ConfigTransactionGetReply reply;
-															#line 761 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 760 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 };
 // This generated class is to be used only via get()
-															#line 60 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 61 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 class GetActor final : public Actor<Optional<Value>>, public ActorCallback< GetActor, 0, ConfigGeneration >, public ActorCallback< GetActor, 1, Void >, public ActorCallback< GetActor, 2, Void >, public FastAllocated<GetActor>, public GetActorState<GetActor> {
-															#line 766 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 765 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 public:
 	using FastAllocated<GetActor>::operator new;
 	using FastAllocated<GetActor>::operator delete;
@@ -774,9 +773,9 @@ public:
 friend struct ActorCallback< GetActor, 0, ConfigGeneration >;
 friend struct ActorCallback< GetActor, 1, Void >;
 friend struct ActorCallback< GetActor, 2, Void >;
-															#line 60 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 61 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 	GetActor(SimpleConfigTransactionImpl* const& self,KeyRef const& key) 
-															#line 779 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 778 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 		 : Actor<Optional<Value>>(),
 		   GetActorState<GetActor>(self, key)
 	{
@@ -801,29 +800,29 @@ friend struct ActorCallback< GetActor, 2, Void >;
 
 	}
 };
-															#line 60 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 61 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 [[nodiscard]] static Future<Optional<Value>> get( SimpleConfigTransactionImpl* const& self, KeyRef const& key ) {
-															#line 60 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 61 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 	return Future<Optional<Value>>(new GetActor(self, key));
-															#line 808 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 807 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 }
 
-#line 90 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+#line 92 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 
-																#line 813 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+																#line 812 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 // This generated class is to be used only via getConfigClasses()
-															#line 91 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 93 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 template <class GetConfigClassesActor>
-															#line 91 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 93 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 class GetConfigClassesActorState {
-															#line 819 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 818 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 public:
-															#line 91 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 93 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 	GetConfigClassesActorState(SimpleConfigTransactionImpl* const& self) 
-															#line 91 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
-															#line 91 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 93 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 93 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 		 : self(self)
-															#line 826 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 825 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 	{
 		fdb_probe_actor_create("getConfigClasses", reinterpret_cast<unsigned long>(this));
 
@@ -836,24 +835,24 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 92 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 94 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			if (!self->getGenerationFuture.isValid())
-															#line 841 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 840 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			{
-															#line 93 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 95 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 				self->getGenerationFuture = getGeneration(self);
-															#line 845 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 844 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			}
-															#line 95 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 97 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			StrictFuture<ConfigGeneration> __when_expr_0 = self->getGenerationFuture;
-															#line 95 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 97 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			if (static_cast<GetConfigClassesActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 851 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 850 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<GetConfigClassesActor*>(this)->actor_wait_state = 1;
-															#line 95 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 97 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< GetConfigClassesActor, 0, ConfigGeneration >*>(static_cast<GetConfigClassesActor*>(this)));
-															#line 856 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 855 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -874,36 +873,36 @@ public:
 	}
 	int a_body1cont1(ConfigGeneration const& generation,int loopDepth) 
 	{
-															#line 96 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 98 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 		reply = ConfigTransactionGetConfigClassesReply();
-															#line 97 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 99 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 		if (self->cti.hostname.present())
-															#line 881 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 880 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 		{
-															#line 98 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
-			StrictFuture<Void> __when_expr_1 = store(reply, retryGetReplyFromHostname(ConfigTransactionGetConfigClassesRequest{ generation }, self->cti.hostname.get(), WLTOKEN_CONFIGTXN_GETCLASSES));
-															#line 98 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 100 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+			StrictFuture<Void> __when_expr_1 = store(reply, retryGetReplyFromHostname(ConfigTransactionGetConfigClassesRequest{ 0, generation }, self->cti.hostname.get(), WLTOKEN_CONFIGTXN_GETCLASSES));
+															#line 100 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			if (static_cast<GetConfigClassesActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 887 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 886 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 			static_cast<GetConfigClassesActor*>(this)->actor_wait_state = 2;
-															#line 98 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 100 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< GetConfigClassesActor, 1, Void >*>(static_cast<GetConfigClassesActor*>(this)));
-															#line 892 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 891 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			loopDepth = 0;
 		}
 		else
 		{
-															#line 103 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
-			StrictFuture<Void> __when_expr_2 = store( reply, retryBrokenPromise(self->cti.getClasses, ConfigTransactionGetConfigClassesRequest{ generation }));
-															#line 103 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 105 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+			StrictFuture<Void> __when_expr_2 = store( reply, retryBrokenPromise(self->cti.getClasses, ConfigTransactionGetConfigClassesRequest{ 0, generation }));
+															#line 105 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			if (static_cast<GetConfigClassesActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 901 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 900 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1cont1when2(__when_expr_2.get(), loopDepth); };
 			static_cast<GetConfigClassesActor*>(this)->actor_wait_state = 3;
-															#line 103 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 105 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< GetConfigClassesActor, 2, Void >*>(static_cast<GetConfigClassesActor*>(this)));
-															#line 906 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 905 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			loopDepth = 0;
 		}
 
@@ -911,36 +910,36 @@ public:
 	}
 	int a_body1cont1(ConfigGeneration && generation,int loopDepth) 
 	{
-															#line 96 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 98 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 		reply = ConfigTransactionGetConfigClassesReply();
-															#line 97 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 99 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 		if (self->cti.hostname.present())
-															#line 918 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 917 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 		{
-															#line 98 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
-			StrictFuture<Void> __when_expr_1 = store(reply, retryGetReplyFromHostname(ConfigTransactionGetConfigClassesRequest{ generation }, self->cti.hostname.get(), WLTOKEN_CONFIGTXN_GETCLASSES));
-															#line 98 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 100 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+			StrictFuture<Void> __when_expr_1 = store(reply, retryGetReplyFromHostname(ConfigTransactionGetConfigClassesRequest{ 0, generation }, self->cti.hostname.get(), WLTOKEN_CONFIGTXN_GETCLASSES));
+															#line 100 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			if (static_cast<GetConfigClassesActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 924 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 923 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 			static_cast<GetConfigClassesActor*>(this)->actor_wait_state = 2;
-															#line 98 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 100 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< GetConfigClassesActor, 1, Void >*>(static_cast<GetConfigClassesActor*>(this)));
-															#line 929 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 928 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			loopDepth = 0;
 		}
 		else
 		{
-															#line 103 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
-			StrictFuture<Void> __when_expr_2 = store( reply, retryBrokenPromise(self->cti.getClasses, ConfigTransactionGetConfigClassesRequest{ generation }));
-															#line 103 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 105 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+			StrictFuture<Void> __when_expr_2 = store( reply, retryBrokenPromise(self->cti.getClasses, ConfigTransactionGetConfigClassesRequest{ 0, generation }));
+															#line 105 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			if (static_cast<GetConfigClassesActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 938 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 937 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1cont1when2(__when_expr_2.get(), loopDepth); };
 			static_cast<GetConfigClassesActor*>(this)->actor_wait_state = 3;
-															#line 103 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 105 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< GetConfigClassesActor, 2, Void >*>(static_cast<GetConfigClassesActor*>(this)));
-															#line 943 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 942 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			loopDepth = 0;
 		}
 
@@ -1011,17 +1010,17 @@ public:
 	}
 	int a_body1cont3(int loopDepth) 
 	{
-															#line 107 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
-		RangeResult result;
-															#line 108 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
-		for( const auto& configClass : reply.configClasses ) {
 															#line 109 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
-			result.push_back_deep(result.arena(), KeyValueRef(configClass, ""_sr));
-															#line 1020 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
-		}
+		RangeResult result;
+															#line 110 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+		for( const auto& configClass : reply.configClasses ) {
 															#line 111 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+			result.push_back_deep(result.arena(), KeyValueRef(configClass, ""_sr));
+															#line 1019 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+		}
+															#line 113 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 		if (!static_cast<GetConfigClassesActor*>(this)->SAV<RangeResult>::futures) { (void)(result); this->~GetConfigClassesActorState(); static_cast<GetConfigClassesActor*>(this)->destroy(); return 0; }
-															#line 1024 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 1023 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 		new (&static_cast<GetConfigClassesActor*>(this)->SAV< RangeResult >::value()) RangeResult(result);
 		this->~GetConfigClassesActorState();
 		static_cast<GetConfigClassesActor*>(this)->finishSendAndDelPromiseRef();
@@ -1179,16 +1178,16 @@ public:
 		fdb_probe_actor_exit("getConfigClasses", reinterpret_cast<unsigned long>(this), 2);
 
 	}
-															#line 91 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 93 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 	SimpleConfigTransactionImpl* self;
-															#line 96 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 98 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 	ConfigTransactionGetConfigClassesReply reply;
-															#line 1186 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 1185 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 };
 // This generated class is to be used only via getConfigClasses()
-															#line 91 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 93 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 class GetConfigClassesActor final : public Actor<RangeResult>, public ActorCallback< GetConfigClassesActor, 0, ConfigGeneration >, public ActorCallback< GetConfigClassesActor, 1, Void >, public ActorCallback< GetConfigClassesActor, 2, Void >, public FastAllocated<GetConfigClassesActor>, public GetConfigClassesActorState<GetConfigClassesActor> {
-															#line 1191 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 1190 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 public:
 	using FastAllocated<GetConfigClassesActor>::operator new;
 	using FastAllocated<GetConfigClassesActor>::operator delete;
@@ -1199,9 +1198,9 @@ public:
 friend struct ActorCallback< GetConfigClassesActor, 0, ConfigGeneration >;
 friend struct ActorCallback< GetConfigClassesActor, 1, Void >;
 friend struct ActorCallback< GetConfigClassesActor, 2, Void >;
-															#line 91 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 93 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 	GetConfigClassesActor(SimpleConfigTransactionImpl* const& self) 
-															#line 1204 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 1203 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 		 : Actor<RangeResult>(),
 		   GetConfigClassesActorState<GetConfigClassesActor>(self)
 	{
@@ -1226,31 +1225,31 @@ friend struct ActorCallback< GetConfigClassesActor, 2, Void >;
 
 	}
 };
-															#line 91 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 93 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 [[nodiscard]] static Future<RangeResult> getConfigClasses( SimpleConfigTransactionImpl* const& self ) {
-															#line 91 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 93 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 	return Future<RangeResult>(new GetConfigClassesActor(self));
-															#line 1233 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 1232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 }
 
-#line 113 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+#line 115 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 
-																#line 1238 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+																#line 1237 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 // This generated class is to be used only via getKnobs()
-															#line 114 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 116 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 template <class GetKnobsActor>
-															#line 114 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 116 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 class GetKnobsActorState {
-															#line 1244 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 1243 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 public:
-															#line 114 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 116 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 	GetKnobsActorState(SimpleConfigTransactionImpl* const& self,Optional<Key> const& configClass) 
-															#line 114 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
-															#line 114 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 116 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 116 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 		 : self(self),
-															#line 114 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 116 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 		   configClass(configClass)
-															#line 1253 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 1252 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 	{
 		fdb_probe_actor_create("getKnobs", reinterpret_cast<unsigned long>(this));
 
@@ -1263,24 +1262,24 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 115 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 117 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			if (!self->getGenerationFuture.isValid())
-															#line 1268 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 1267 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			{
-															#line 116 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 118 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 				self->getGenerationFuture = getGeneration(self);
-															#line 1272 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 1271 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			}
-															#line 118 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 120 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			StrictFuture<ConfigGeneration> __when_expr_0 = self->getGenerationFuture;
-															#line 118 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 120 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			if (static_cast<GetKnobsActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 1278 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 1277 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<GetKnobsActor*>(this)->actor_wait_state = 1;
-															#line 118 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 120 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< GetKnobsActor, 0, ConfigGeneration >*>(static_cast<GetKnobsActor*>(this)));
-															#line 1283 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 1282 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -1301,36 +1300,36 @@ public:
 	}
 	int a_body1cont1(ConfigGeneration const& generation,int loopDepth) 
 	{
-															#line 119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 121 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 		reply = ConfigTransactionGetKnobsReply();
-															#line 120 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 122 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 		if (self->cti.hostname.present())
-															#line 1308 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 1307 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 		{
-															#line 121 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
-			StrictFuture<Void> __when_expr_1 = store(reply, retryGetReplyFromHostname(ConfigTransactionGetKnobsRequest{ generation, configClass }, self->cti.hostname.get(), WLTOKEN_CONFIGTXN_GETKNOBS));
-															#line 121 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 123 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+			StrictFuture<Void> __when_expr_1 = store(reply, retryGetReplyFromHostname(ConfigTransactionGetKnobsRequest{ 0, generation, configClass }, self->cti.hostname.get(), WLTOKEN_CONFIGTXN_GETKNOBS));
+															#line 123 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			if (static_cast<GetKnobsActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 1314 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 1313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 			static_cast<GetKnobsActor*>(this)->actor_wait_state = 2;
-															#line 121 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 123 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< GetKnobsActor, 1, Void >*>(static_cast<GetKnobsActor*>(this)));
-															#line 1319 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 1318 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			loopDepth = 0;
 		}
 		else
 		{
-															#line 126 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
-			StrictFuture<Void> __when_expr_2 = store( reply, retryBrokenPromise(self->cti.getKnobs, ConfigTransactionGetKnobsRequest{ generation, configClass }));
-															#line 126 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 128 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+			StrictFuture<Void> __when_expr_2 = store(reply, retryBrokenPromise(self->cti.getKnobs, ConfigTransactionGetKnobsRequest{ 0, generation, configClass }));
+															#line 128 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			if (static_cast<GetKnobsActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 1328 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 1327 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1cont1when2(__when_expr_2.get(), loopDepth); };
 			static_cast<GetKnobsActor*>(this)->actor_wait_state = 3;
-															#line 126 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 128 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< GetKnobsActor, 2, Void >*>(static_cast<GetKnobsActor*>(this)));
-															#line 1333 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 1332 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			loopDepth = 0;
 		}
 
@@ -1338,36 +1337,36 @@ public:
 	}
 	int a_body1cont1(ConfigGeneration && generation,int loopDepth) 
 	{
-															#line 119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 121 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 		reply = ConfigTransactionGetKnobsReply();
-															#line 120 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 122 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 		if (self->cti.hostname.present())
-															#line 1345 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 1344 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 		{
-															#line 121 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
-			StrictFuture<Void> __when_expr_1 = store(reply, retryGetReplyFromHostname(ConfigTransactionGetKnobsRequest{ generation, configClass }, self->cti.hostname.get(), WLTOKEN_CONFIGTXN_GETKNOBS));
-															#line 121 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 123 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+			StrictFuture<Void> __when_expr_1 = store(reply, retryGetReplyFromHostname(ConfigTransactionGetKnobsRequest{ 0, generation, configClass }, self->cti.hostname.get(), WLTOKEN_CONFIGTXN_GETKNOBS));
+															#line 123 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			if (static_cast<GetKnobsActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 1351 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 1350 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 			static_cast<GetKnobsActor*>(this)->actor_wait_state = 2;
-															#line 121 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 123 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< GetKnobsActor, 1, Void >*>(static_cast<GetKnobsActor*>(this)));
-															#line 1356 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 1355 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			loopDepth = 0;
 		}
 		else
 		{
-															#line 126 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
-			StrictFuture<Void> __when_expr_2 = store( reply, retryBrokenPromise(self->cti.getKnobs, ConfigTransactionGetKnobsRequest{ generation, configClass }));
-															#line 126 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 128 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+			StrictFuture<Void> __when_expr_2 = store(reply, retryBrokenPromise(self->cti.getKnobs, ConfigTransactionGetKnobsRequest{ 0, generation, configClass }));
+															#line 128 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			if (static_cast<GetKnobsActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 1365 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 1364 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1cont1when2(__when_expr_2.get(), loopDepth); };
 			static_cast<GetKnobsActor*>(this)->actor_wait_state = 3;
-															#line 126 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 128 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< GetKnobsActor, 2, Void >*>(static_cast<GetKnobsActor*>(this)));
-															#line 1370 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 1369 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			loopDepth = 0;
 		}
 
@@ -1438,17 +1437,17 @@ public:
 	}
 	int a_body1cont3(int loopDepth) 
 	{
-															#line 130 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
-		RangeResult result;
-															#line 131 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
-		for( const auto& knobName : reply.knobNames ) {
 															#line 132 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
-			result.push_back_deep(result.arena(), KeyValueRef(knobName, ""_sr));
-															#line 1447 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
-		}
+		RangeResult result;
+															#line 133 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+		for( const auto& knobName : reply.knobNames ) {
 															#line 134 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+			result.push_back_deep(result.arena(), KeyValueRef(knobName, ""_sr));
+															#line 1446 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+		}
+															#line 136 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 		if (!static_cast<GetKnobsActor*>(this)->SAV<RangeResult>::futures) { (void)(result); this->~GetKnobsActorState(); static_cast<GetKnobsActor*>(this)->destroy(); return 0; }
-															#line 1451 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 1450 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 		new (&static_cast<GetKnobsActor*>(this)->SAV< RangeResult >::value()) RangeResult(result);
 		this->~GetKnobsActorState();
 		static_cast<GetKnobsActor*>(this)->finishSendAndDelPromiseRef();
@@ -1606,18 +1605,18 @@ public:
 		fdb_probe_actor_exit("getKnobs", reinterpret_cast<unsigned long>(this), 2);
 
 	}
-															#line 114 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 116 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 	SimpleConfigTransactionImpl* self;
-															#line 114 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 116 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 	Optional<Key> configClass;
-															#line 119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 121 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 	ConfigTransactionGetKnobsReply reply;
-															#line 1615 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 1614 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 };
 // This generated class is to be used only via getKnobs()
-															#line 114 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 116 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 class GetKnobsActor final : public Actor<RangeResult>, public ActorCallback< GetKnobsActor, 0, ConfigGeneration >, public ActorCallback< GetKnobsActor, 1, Void >, public ActorCallback< GetKnobsActor, 2, Void >, public FastAllocated<GetKnobsActor>, public GetKnobsActorState<GetKnobsActor> {
-															#line 1620 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 1619 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 public:
 	using FastAllocated<GetKnobsActor>::operator new;
 	using FastAllocated<GetKnobsActor>::operator delete;
@@ -1628,9 +1627,9 @@ public:
 friend struct ActorCallback< GetKnobsActor, 0, ConfigGeneration >;
 friend struct ActorCallback< GetKnobsActor, 1, Void >;
 friend struct ActorCallback< GetKnobsActor, 2, Void >;
-															#line 114 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 116 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 	GetKnobsActor(SimpleConfigTransactionImpl* const& self,Optional<Key> const& configClass) 
-															#line 1633 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 1632 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 		 : Actor<RangeResult>(),
 		   GetKnobsActorState<GetKnobsActor>(self, configClass)
 	{
@@ -1655,29 +1654,29 @@ friend struct ActorCallback< GetKnobsActor, 2, Void >;
 
 	}
 };
-															#line 114 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 116 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 [[nodiscard]] static Future<RangeResult> getKnobs( SimpleConfigTransactionImpl* const& self, Optional<Key> const& configClass ) {
-															#line 114 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 116 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 	return Future<RangeResult>(new GetKnobsActor(self, configClass));
-															#line 1662 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 1661 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 }
 
-#line 136 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+#line 138 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 
-																#line 1667 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+																#line 1666 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 // This generated class is to be used only via commit()
-															#line 137 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 139 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 template <class CommitActor>
-															#line 137 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 139 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 class CommitActorState {
-															#line 1673 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 1672 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 public:
-															#line 137 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 139 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 	CommitActorState(SimpleConfigTransactionImpl* const& self) 
-															#line 137 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
-															#line 137 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 139 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 139 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 		 : self(self)
-															#line 1680 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 1679 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 	{
 		fdb_probe_actor_create("commit", reinterpret_cast<unsigned long>(this));
 
@@ -1690,24 +1689,26 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 138 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			if (!self->getGenerationFuture.isValid())
-															#line 1695 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 1694 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			{
-															#line 139 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 141 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 				self->getGenerationFuture = getGeneration(self);
-															#line 1699 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 1698 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			}
-															#line 141 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 143 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+			self->toCommit.coordinatorsHash = 0;
+															#line 144 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			StrictFuture<Void> __when_expr_0 = store(self->toCommit.generation, self->getGenerationFuture);
-															#line 141 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 144 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			if (static_cast<CommitActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 1705 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 1706 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<CommitActor*>(this)->actor_wait_state = 1;
-															#line 141 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 144 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< CommitActor, 0, Void >*>(static_cast<CommitActor*>(this)));
-															#line 1710 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 1711 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -1728,36 +1729,36 @@ public:
 	}
 	int a_body1cont1(Void const& _,int loopDepth) 
 	{
-															#line 142 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 145 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 		self->toCommit.annotation.timestamp = now();
-															#line 143 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 146 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 		if (self->cti.hostname.present())
-															#line 1735 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 1736 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 		{
-															#line 144 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 147 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			StrictFuture<Void> __when_expr_1 = retryGetReplyFromHostname(self->toCommit, self->cti.hostname.get(), WLTOKEN_CONFIGTXN_COMMIT);
-															#line 144 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 147 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			if (static_cast<CommitActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 1741 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 1742 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 			static_cast<CommitActor*>(this)->actor_wait_state = 2;
-															#line 144 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 147 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< CommitActor, 1, Void >*>(static_cast<CommitActor*>(this)));
-															#line 1746 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 1747 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			loopDepth = 0;
 		}
 		else
 		{
-															#line 146 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 149 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			StrictFuture<Void> __when_expr_2 = retryBrokenPromise(self->cti.commit, self->toCommit);
-															#line 146 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 149 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			if (static_cast<CommitActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 1755 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 1756 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1cont1when2(__when_expr_2.get(), loopDepth); };
 			static_cast<CommitActor*>(this)->actor_wait_state = 3;
-															#line 146 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 149 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< CommitActor, 2, Void >*>(static_cast<CommitActor*>(this)));
-															#line 1760 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 1761 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			loopDepth = 0;
 		}
 
@@ -1765,36 +1766,36 @@ public:
 	}
 	int a_body1cont1(Void && _,int loopDepth) 
 	{
-															#line 142 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 145 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 		self->toCommit.annotation.timestamp = now();
-															#line 143 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 146 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 		if (self->cti.hostname.present())
-															#line 1772 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 1773 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 		{
-															#line 144 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 147 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			StrictFuture<Void> __when_expr_1 = retryGetReplyFromHostname(self->toCommit, self->cti.hostname.get(), WLTOKEN_CONFIGTXN_COMMIT);
-															#line 144 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 147 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			if (static_cast<CommitActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 1778 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 1779 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 			static_cast<CommitActor*>(this)->actor_wait_state = 2;
-															#line 144 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 147 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< CommitActor, 1, Void >*>(static_cast<CommitActor*>(this)));
-															#line 1783 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 1784 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			loopDepth = 0;
 		}
 		else
 		{
-															#line 146 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 149 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			StrictFuture<Void> __when_expr_2 = retryBrokenPromise(self->cti.commit, self->toCommit);
-															#line 146 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 149 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			if (static_cast<CommitActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 1792 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 1793 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1cont1when2(__when_expr_2.get(), loopDepth); };
 			static_cast<CommitActor*>(this)->actor_wait_state = 3;
-															#line 146 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 149 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< CommitActor, 2, Void >*>(static_cast<CommitActor*>(this)));
-															#line 1797 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 1798 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			loopDepth = 0;
 		}
 
@@ -1865,11 +1866,11 @@ public:
 	}
 	int a_body1cont3(int loopDepth) 
 	{
-															#line 148 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 151 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 		self->committed = true;
-															#line 149 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 152 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 		if (!static_cast<CommitActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~CommitActorState(); static_cast<CommitActor*>(this)->destroy(); return 0; }
-															#line 1872 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 1873 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 		new (&static_cast<CommitActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~CommitActorState();
 		static_cast<CommitActor*>(this)->finishSendAndDelPromiseRef();
@@ -2027,14 +2028,14 @@ public:
 		fdb_probe_actor_exit("commit", reinterpret_cast<unsigned long>(this), 2);
 
 	}
-															#line 137 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 139 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 	SimpleConfigTransactionImpl* self;
-															#line 2032 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 2033 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 };
 // This generated class is to be used only via commit()
-															#line 137 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 139 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 class CommitActor final : public Actor<Void>, public ActorCallback< CommitActor, 0, Void >, public ActorCallback< CommitActor, 1, Void >, public ActorCallback< CommitActor, 2, Void >, public FastAllocated<CommitActor>, public CommitActorState<CommitActor> {
-															#line 2037 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 2038 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 public:
 	using FastAllocated<CommitActor>::operator new;
 	using FastAllocated<CommitActor>::operator delete;
@@ -2045,9 +2046,9 @@ public:
 friend struct ActorCallback< CommitActor, 0, Void >;
 friend struct ActorCallback< CommitActor, 1, Void >;
 friend struct ActorCallback< CommitActor, 2, Void >;
-															#line 137 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 139 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 	CommitActor(SimpleConfigTransactionImpl* const& self) 
-															#line 2050 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 2051 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 		 : Actor<Void>(),
 		   CommitActorState<CommitActor>(self)
 	{
@@ -2072,31 +2073,31 @@ friend struct ActorCallback< CommitActor, 2, Void >;
 
 	}
 };
-															#line 137 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 139 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 [[nodiscard]] static Future<Void> commit( SimpleConfigTransactionImpl* const& self ) {
-															#line 137 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 139 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 	return Future<Void>(new CommitActor(self));
-															#line 2079 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 2080 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 }
 
-#line 151 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+#line 154 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 
-																#line 2084 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+																#line 2085 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 // This generated class is to be used only via onError()
-															#line 152 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 155 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 template <class OnErrorActor>
-															#line 152 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 155 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 class OnErrorActorState {
-															#line 2090 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 2091 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 public:
-															#line 152 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 155 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 	OnErrorActorState(SimpleConfigTransactionImpl* const& self,Error const& e) 
-															#line 152 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
-															#line 152 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 155 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 155 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 		 : self(self),
-															#line 152 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 155 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 		   e(e)
-															#line 2099 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 2100 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 	{
 		fdb_probe_actor_create("onError", reinterpret_cast<unsigned long>(this));
 
@@ -2109,20 +2110,20 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 154 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 157 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 			if (e.code() == error_code_transaction_too_old || e.code() == error_code_not_committed)
-															#line 2114 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 2115 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 			{
-															#line 155 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 158 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 				StrictFuture<Void> __when_expr_0 = delay((1 << self->numRetries++) * 0.01 * deterministicRandom()->random01());
-															#line 155 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 158 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 				if (static_cast<OnErrorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 2120 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 2121 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 				if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 				static_cast<OnErrorActor*>(this)->actor_wait_state = 1;
-															#line 155 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 158 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 				__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< OnErrorActor, 0, Void >*>(static_cast<OnErrorActor*>(this)));
-															#line 2125 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 2126 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 				loopDepth = 0;
 			}
 			else
@@ -2148,19 +2149,19 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 159 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 162 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 		return a_body1Catch1(e, loopDepth);
-															#line 2153 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 2154 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 
 		return loopDepth;
 	}
 	int a_body1cont2(Void const& _,int loopDepth) 
 	{
-															#line 156 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 159 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 		self->reset();
-															#line 157 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 160 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 		if (!static_cast<OnErrorActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~OnErrorActorState(); static_cast<OnErrorActor*>(this)->destroy(); return 0; }
-															#line 2163 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 2164 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 		new (&static_cast<OnErrorActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~OnErrorActorState();
 		static_cast<OnErrorActor*>(this)->finishSendAndDelPromiseRef();
@@ -2170,11 +2171,11 @@ public:
 	}
 	int a_body1cont2(Void && _,int loopDepth) 
 	{
-															#line 156 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 159 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 		self->reset();
-															#line 157 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 160 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 		if (!static_cast<OnErrorActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~OnErrorActorState(); static_cast<OnErrorActor*>(this)->destroy(); return 0; }
-															#line 2177 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 2178 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 		new (&static_cast<OnErrorActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~OnErrorActorState();
 		static_cast<OnErrorActor*>(this)->finishSendAndDelPromiseRef();
@@ -2245,16 +2246,16 @@ public:
 		fdb_probe_actor_exit("onError", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 152 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 155 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 	SimpleConfigTransactionImpl* self;
-															#line 152 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 155 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 	Error e;
-															#line 2252 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 2253 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 };
 // This generated class is to be used only via onError()
-															#line 152 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 155 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 class OnErrorActor final : public Actor<Void>, public ActorCallback< OnErrorActor, 0, Void >, public FastAllocated<OnErrorActor>, public OnErrorActorState<OnErrorActor> {
-															#line 2257 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 2258 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 public:
 	using FastAllocated<OnErrorActor>::operator new;
 	using FastAllocated<OnErrorActor>::operator delete;
@@ -2263,9 +2264,9 @@ public:
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< OnErrorActor, 0, Void >;
-															#line 152 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 155 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 	OnErrorActor(SimpleConfigTransactionImpl* const& self,Error const& e) 
-															#line 2268 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 2269 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 		 : Actor<Void>(),
 		   OnErrorActorState<OnErrorActor>(self, e)
 	{
@@ -2288,14 +2289,14 @@ friend struct ActorCallback< OnErrorActor, 0, Void >;
 
 	}
 };
-															#line 152 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 155 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 [[nodiscard]] static Future<Void> onError( SimpleConfigTransactionImpl* const& self, Error const& e ) {
-															#line 152 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+															#line 155 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 	return Future<Void>(new OnErrorActor(self, e));
-															#line 2295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
+															#line 2296 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.g.cpp"
 }
 
-#line 161 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
+#line 164 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SimpleConfigTransaction.actor.cpp"
 
 public:
 	SimpleConfigTransactionImpl(Database const& cx) : cx(cx) {
@@ -2429,6 +2430,14 @@ Future<Void> SimpleConfigTransaction::commit() {
 
 Version SimpleConfigTransaction::getCommittedVersion() const {
 	return impl->getCommittedVersion();
+}
+
+double SimpleConfigTransaction::getTagThrottledDuration() const {
+	return 0.0;
+}
+
+int64_t SimpleConfigTransaction::getTotalCost() const {
+	return 0;
 }
 
 int64_t SimpleConfigTransaction::getApproximateSize() const {

@@ -21,6 +21,7 @@
  */
 
 #include "fdbclient/DatabaseContext.h"
+#include "fdbclient/MonitorLeader.h"
 #include "fdbclient/PaxosConfigTransaction.h"
 #include "flow/actorcompiler.h" // must be last include
 
@@ -36,13 +37,16 @@ class CommitQuorum {
 	Standalone<VectorRef<ConfigMutationRef>> mutations;
 	ConfigCommitAnnotation annotation;
 
-	ConfigTransactionCommitRequest getCommitRequest(ConfigGeneration generation) const {
-		return ConfigTransactionCommitRequest(generation, mutations, annotation);
+	ConfigTransactionCommitRequest getCommitRequest(ConfigGeneration generation,
+	                                                CoordinatorsHash coordinatorsHash) const {
+		return ConfigTransactionCommitRequest(coordinatorsHash, generation, mutations, annotation);
 	}
 
 	void updateResult() {
 		if (successful >= ctis.size() / 2 + 1 && result.canBeSet()) {
-			result.send(Void());
+			// Calling send could delete this
+			auto local = this->result;
+			local.send(Void());
 		} else if (failed >= ctis.size() / 2 + 1 && result.canBeSet()) {
 			// Rollforwards could cause a version that didn't have quorum to
 			// commit, so send commit_unknown_result instead of commit_failed.
@@ -62,24 +66,26 @@ class CommitQuorum {
 		}
 	}
 
-																#line 65 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+																#line 69 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 // This generated class is to be used only via addRequestActor()
-															#line 63 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 67 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 template <class AddRequestActorActor>
-															#line 63 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 67 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 class AddRequestActorActorState {
-															#line 71 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 75 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 public:
-															#line 63 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-	AddRequestActorActorState(CommitQuorum* const& self,ConfigGeneration const& generation,ConfigTransactionInterface const& cti) 
-															#line 63 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-															#line 63 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 67 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+	AddRequestActorActorState(CommitQuorum* const& self,ConfigGeneration const& generation,CoordinatorsHash const& coordinatorsHash,ConfigTransactionInterface const& cti) 
+															#line 67 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 67 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		 : self(self),
-															#line 63 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 67 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		   generation(generation),
-															#line 63 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 67 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+		   coordinatorsHash(coordinatorsHash),
+															#line 67 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		   cti(cti)
-															#line 82 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 88 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 	{
 		fdb_probe_actor_create("addRequestActor", reinterpret_cast<unsigned long>(this));
 
@@ -93,34 +99,34 @@ public:
 	{
 		try {
 			try {
-															#line 67 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 72 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 				if (cti.hostname.present())
-															#line 98 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
-				{
-															#line 68 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-					StrictFuture<Void> __when_expr_0 = timeoutError(retryGetReplyFromHostname( self->getCommitRequest(generation), cti.hostname.get(), WLTOKEN_CONFIGTXN_COMMIT), CLIENT_KNOBS->COMMIT_QUORUM_TIMEOUT);
-															#line 68 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-					if (static_cast<AddRequestActorActor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), loopDepth);
 															#line 104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+				{
+															#line 73 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+					StrictFuture<Void> __when_expr_0 = timeoutError(retryGetReplyFromHostname(self->getCommitRequest(generation, coordinatorsHash), cti.hostname.get(), WLTOKEN_CONFIGTXN_COMMIT), CLIENT_KNOBS->COMMIT_QUORUM_TIMEOUT);
+															#line 73 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+					if (static_cast<AddRequestActorActor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), loopDepth);
+															#line 110 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 					if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch2(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 					static_cast<AddRequestActorActor*>(this)->actor_wait_state = 1;
-															#line 68 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 73 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 					__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< AddRequestActorActor, 0, Void >*>(static_cast<AddRequestActorActor*>(this)));
-															#line 109 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 115 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 					loopDepth = 0;
 				}
 				else
 				{
-															#line 72 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-					StrictFuture<Void> __when_expr_1 = timeoutError(cti.commit.getReply(self->getCommitRequest(generation)), CLIENT_KNOBS->COMMIT_QUORUM_TIMEOUT);
-															#line 72 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 78 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+					StrictFuture<Void> __when_expr_1 = timeoutError(cti.commit.getReply(self->getCommitRequest(generation, coordinatorsHash)), CLIENT_KNOBS->COMMIT_QUORUM_TIMEOUT);
+															#line 78 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 					if (static_cast<AddRequestActorActor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), loopDepth);
-															#line 118 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 124 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 					if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch2(__when_expr_1.getError(), loopDepth); else return a_body1when2(__when_expr_1.get(), loopDepth); };
 					static_cast<AddRequestActorActor*>(this)->actor_wait_state = 2;
-															#line 72 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 78 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 					__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< AddRequestActorActor, 1, Void >*>(static_cast<AddRequestActorActor*>(this)));
-															#line 123 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 129 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 					loopDepth = 0;
 				}
 			}
@@ -148,11 +154,11 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 88 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 94 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		self->updateResult();
-															#line 89 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 95 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		if (!static_cast<AddRequestActorActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~AddRequestActorActorState(); static_cast<AddRequestActorActor*>(this)->destroy(); return 0; }
-															#line 155 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 161 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 		new (&static_cast<AddRequestActorActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~AddRequestActorActorState();
 		static_cast<AddRequestActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -163,27 +169,27 @@ public:
 	int a_body1Catch2(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 78 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 84 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 			if (e.code() == error_code_actor_cancelled)
-															#line 168 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 174 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 			{
-															#line 79 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 85 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 				return a_body1Catch1(e, loopDepth);
-															#line 172 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 178 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 			}
-															#line 82 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 88 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 			if (e.code() == error_code_not_committed || e.code() == error_code_timed_out)
-															#line 176 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 182 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 			{
-															#line 83 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 89 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 				++self->failed;
-															#line 180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 186 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 			}
 			else
 			{
-															#line 85 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 91 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 				++self->maybeCommitted;
-															#line 186 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 192 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 			}
 			loopDepth = a_body1cont1(loopDepth);
 		}
@@ -197,9 +203,9 @@ public:
 	}
 	int a_body1cont2(int loopDepth) 
 	{
-															#line 75 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 81 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		++self->successful;
-															#line 202 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 208 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 		loopDepth = a_body1cont6(loopDepth);
 
 		return loopDepth;
@@ -367,18 +373,20 @@ public:
 
 		return loopDepth;
 	}
-															#line 63 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 67 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 	CommitQuorum* self;
-															#line 63 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 67 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 	ConfigGeneration generation;
-															#line 63 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 67 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+	CoordinatorsHash coordinatorsHash;
+															#line 67 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 	ConfigTransactionInterface cti;
-															#line 376 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 384 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 };
 // This generated class is to be used only via addRequestActor()
-															#line 63 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 67 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 class AddRequestActorActor final : public Actor<Void>, public ActorCallback< AddRequestActorActor, 0, Void >, public ActorCallback< AddRequestActorActor, 1, Void >, public FastAllocated<AddRequestActorActor>, public AddRequestActorActorState<AddRequestActorActor> {
-															#line 381 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 389 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 public:
 	using FastAllocated<AddRequestActorActor>::operator new;
 	using FastAllocated<AddRequestActorActor>::operator delete;
@@ -388,11 +396,11 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< AddRequestActorActor, 0, Void >;
 friend struct ActorCallback< AddRequestActorActor, 1, Void >;
-															#line 63 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-	AddRequestActorActor(CommitQuorum* const& self,ConfigGeneration const& generation,ConfigTransactionInterface const& cti) 
-															#line 393 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 67 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+	AddRequestActorActor(CommitQuorum* const& self,ConfigGeneration const& generation,CoordinatorsHash const& coordinatorsHash,ConfigTransactionInterface const& cti) 
+															#line 401 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 		 : Actor<Void>(),
-		   AddRequestActorActorState<AddRequestActorActor>(self, generation, cti)
+		   AddRequestActorActorState<AddRequestActorActor>(self, generation, coordinatorsHash, cti)
 	{
 		fdb_probe_actor_enter("addRequestActor", reinterpret_cast<unsigned long>(this), -1);
 		#ifdef ENABLE_SAMPLING
@@ -414,14 +422,14 @@ friend struct ActorCallback< AddRequestActorActor, 1, Void >;
 
 	}
 };
-															#line 63 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-[[nodiscard]] static Future<Void> addRequestActor( CommitQuorum* const& self, ConfigGeneration const& generation, ConfigTransactionInterface const& cti ) {
-															#line 63 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-	return Future<Void>(new AddRequestActorActor(self, generation, cti));
-															#line 421 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 67 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+[[nodiscard]] static Future<Void> addRequestActor( CommitQuorum* const& self, ConfigGeneration const& generation, CoordinatorsHash const& coordinatorsHash, ConfigTransactionInterface const& cti ) {
+															#line 67 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+	return Future<Void>(new AddRequestActorActor(self, generation, coordinatorsHash, cti));
+															#line 429 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 }
 
-#line 91 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+#line 97 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 
 public:
 	CommitQuorum() = default;
@@ -443,11 +451,11 @@ public:
 	}
 	void setTimestamp() { annotation.timestamp = now(); }
 	size_t expectedSize() const { return annotation.expectedSize() + mutations.expectedSize(); }
-	Future<Void> commit(ConfigGeneration generation) {
+	Future<Void> commit(ConfigGeneration generation, CoordinatorsHash coordinatorsHash) {
 		// Send commit message to all replicas, even those that did not return the used replica.
 		// This way, slow replicas are kept up date.
 		for (const auto& cti : ctis) {
-			actors.add(addRequestActor(this, generation, cti));
+			actors.add(addRequestActor(this, generation, coordinatorsHash, cti));
 		}
 		return result.getFuture();
 	}
@@ -456,30 +464,32 @@ public:
 
 class GetGenerationQuorum {
 	ActorCollection actors{ false };
+	CoordinatorsHash coordinatorsHash{ 0 };
 	std::vector<ConfigTransactionInterface> ctis;
 	std::map<ConfigGeneration, std::vector<ConfigTransactionInterface>> seenGenerations;
 	Promise<ConfigGeneration> result;
 	size_t totalRepliesReceived{ 0 };
 	size_t maxAgreement{ 0 };
+	Future<Void> coordinatorsChangedFuture;
 	Optional<Version> lastSeenLiveVersion;
 	Future<ConfigGeneration> getGenerationFuture;
 
-																#line 467 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+																#line 477 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 // This generated class is to be used only via addRequestActor()
-															#line 133 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 141 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 template <class AddRequestActorActor1>
-															#line 133 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 141 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 class AddRequestActorActor1State {
-															#line 473 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 483 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 public:
-															#line 133 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 141 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 	AddRequestActorActor1State(GetGenerationQuorum* const& self,ConfigTransactionInterface const& cti) 
-															#line 133 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-															#line 133 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 141 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 141 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		 : self(self),
-															#line 133 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 141 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		   cti(cti)
-															#line 482 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 492 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 	{
 		fdb_probe_actor_create("addRequestActor", reinterpret_cast<unsigned long>(this));
 
@@ -492,9 +502,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 134 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 142 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 			;
-															#line 497 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 507 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -515,9 +525,9 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 186 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 203 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		if (!static_cast<AddRequestActorActor1*>(this)->SAV<Void>::futures) { (void)(Void()); this->~AddRequestActorActor1State(); static_cast<AddRequestActorActor1*>(this)->destroy(); return 0; }
-															#line 520 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 530 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 		new (&static_cast<AddRequestActorActor1*>(this)->SAV< Void >::value()) Void(Void());
 		this->~AddRequestActorActor1State();
 		static_cast<AddRequestActorActor1*>(this)->finishSendAndDelPromiseRef();
@@ -535,36 +545,36 @@ public:
 	int a_body1loopBody1(int loopDepth) 
 	{
 		try {
-															#line 136 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 144 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 			reply = ConfigTransactionGetGenerationReply();
-															#line 137 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 145 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 			if (cti.hostname.present())
-															#line 542 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 552 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 			{
-															#line 138 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-				StrictFuture<Void> __when_expr_0 = timeoutError(store(reply, retryGetReplyFromHostname( ConfigTransactionGetGenerationRequest{ self->lastSeenLiveVersion }, cti.hostname.get(), WLTOKEN_CONFIGTXN_GETGENERATION)), CLIENT_KNOBS->GET_GENERATION_QUORUM_TIMEOUT);
-															#line 138 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 146 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+				StrictFuture<Void> __when_expr_0 = timeoutError(store(reply, retryGetReplyFromHostname( ConfigTransactionGetGenerationRequest{ self->coordinatorsHash, self->lastSeenLiveVersion }, cti.hostname.get(), WLTOKEN_CONFIGTXN_GETGENERATION)), CLIENT_KNOBS->GET_GENERATION_QUORUM_TIMEOUT);
+															#line 146 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 				if (static_cast<AddRequestActorActor1*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 548 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 558 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 				if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1loopBody1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 				static_cast<AddRequestActorActor1*>(this)->actor_wait_state = 1;
-															#line 138 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 146 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 				__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< AddRequestActorActor1, 0, Void >*>(static_cast<AddRequestActorActor1*>(this)));
-															#line 553 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 563 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 				loopDepth = 0;
 			}
 			else
 			{
-															#line 145 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-				StrictFuture<Void> __when_expr_1 = timeoutError(store(reply, cti.getGeneration.getReply( ConfigTransactionGetGenerationRequest{ self->lastSeenLiveVersion })), CLIENT_KNOBS->GET_GENERATION_QUORUM_TIMEOUT);
-															#line 145 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 154 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+				StrictFuture<Void> __when_expr_1 = timeoutError(store(reply, cti.getGeneration.getReply(ConfigTransactionGetGenerationRequest{ self->coordinatorsHash, self->lastSeenLiveVersion })), CLIENT_KNOBS->GET_GENERATION_QUORUM_TIMEOUT);
+															#line 154 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 				if (static_cast<AddRequestActorActor1*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 562 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 572 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 				if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1loopBody1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1loopBody1when2(__when_expr_1.get(), loopDepth); };
 				static_cast<AddRequestActorActor1*>(this)->actor_wait_state = 2;
-															#line 145 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 154 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 				__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< AddRequestActorActor1, 1, Void >*>(static_cast<AddRequestActorActor1*>(this)));
-															#line 567 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 577 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 				loopDepth = 0;
 			}
 		}
@@ -592,37 +602,37 @@ public:
 	int a_body1loopBody1Catch1(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 170 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 187 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 			if (e.code() == error_code_broken_promise)
-															#line 597 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 607 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 			{
 				return a_body1loopHead1(loopDepth); // continue
 			}
 			else
 			{
-															#line 172 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 189 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 				if (e.code() == error_code_timed_out)
-															#line 605 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 615 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 				{
-															#line 173 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 190 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 					++self->totalRepliesReceived;
-															#line 174 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 191 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 					if (self->totalRepliesReceived == self->ctis.size() && self->result.canBeSet() && !self->result.isError())
-															#line 611 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 621 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 					{
-															#line 177 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 194 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 						auto local = self->result;
-															#line 178 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 195 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 						local.sendError(failed_to_reach_quorum());
-															#line 617 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 627 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 					}
 					return a_body1break1(loopDepth==0?0:loopDepth-1); // break
 				}
 				else
 				{
-															#line 182 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 199 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 					return a_body1Catch1(e, std::max(0, loopDepth - 1));
-															#line 625 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 635 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 				}
 			}
 		}
@@ -636,41 +646,41 @@ public:
 	}
 	int a_body1loopBody1cont2(int loopDepth) 
 	{
-															#line 151 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 160 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		++self->totalRepliesReceived;
-															#line 152 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 161 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		auto gen = reply.generation;
-															#line 153 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 162 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		self->lastSeenLiveVersion = std::max(gen.liveVersion, self->lastSeenLiveVersion.orDefault(::invalidVersion));
-															#line 155 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 164 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		auto& replicas = self->seenGenerations[gen];
-															#line 156 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 165 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		replicas.push_back(cti);
-															#line 157 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 166 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		self->maxAgreement = std::max(replicas.size(), self->maxAgreement);
-															#line 158 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 175 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		if (replicas.size() >= self->ctis.size() / 2 + 1 && !self->result.isSet())
-															#line 653 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 663 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 		{
-															#line 159 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 176 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 			self->result.send(gen);
-															#line 657 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 667 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 		}
 		else
 		{
-															#line 160 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 177 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 			if (self->maxAgreement + (self->ctis.size() - self->totalRepliesReceived) < (self->ctis.size() / 2 + 1))
-															#line 663 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
-			{
-															#line 162 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-				if (!self->result.isError())
-															#line 667 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
-				{
-															#line 164 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-					auto local = self->result;
-															#line 165 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-					local.sendError(failed_to_reach_quorum());
 															#line 673 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+			{
+															#line 179 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+				if (!self->result.isError())
+															#line 677 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+				{
+															#line 181 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+					auto local = self->result;
+															#line 182 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+					local.sendError(failed_to_reach_quorum());
+															#line 683 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 				}
 			}
 		}
@@ -828,18 +838,18 @@ public:
 		fdb_probe_actor_exit("addRequestActor", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 133 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 141 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 	GetGenerationQuorum* self;
-															#line 133 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 141 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 	ConfigTransactionInterface cti;
-															#line 136 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 144 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 	ConfigTransactionGetGenerationReply reply;
-															#line 837 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 847 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 };
 // This generated class is to be used only via addRequestActor()
-															#line 133 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 141 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 class AddRequestActorActor1 final : public Actor<Void>, public ActorCallback< AddRequestActorActor1, 0, Void >, public ActorCallback< AddRequestActorActor1, 1, Void >, public FastAllocated<AddRequestActorActor1>, public AddRequestActorActor1State<AddRequestActorActor1> {
-															#line 842 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 852 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 public:
 	using FastAllocated<AddRequestActorActor1>::operator new;
 	using FastAllocated<AddRequestActorActor1>::operator delete;
@@ -849,9 +859,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< AddRequestActorActor1, 0, Void >;
 friend struct ActorCallback< AddRequestActorActor1, 1, Void >;
-															#line 133 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 141 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 	AddRequestActorActor1(GetGenerationQuorum* const& self,ConfigTransactionInterface const& cti) 
-															#line 854 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 864 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 		 : Actor<Void>(),
 		   AddRequestActorActor1State<AddRequestActorActor1>(self, cti)
 	{
@@ -875,31 +885,31 @@ friend struct ActorCallback< AddRequestActorActor1, 1, Void >;
 
 	}
 };
-															#line 133 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 141 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 [[nodiscard]] static Future<Void> addRequestActor( GetGenerationQuorum* const& self, ConfigTransactionInterface const& cti ) {
-															#line 133 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 141 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 	return Future<Void>(new AddRequestActorActor1(self, cti));
-															#line 882 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 892 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 }
 
-#line 188 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+#line 205 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 
-																#line 887 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+																#line 897 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 // This generated class is to be used only via getGenerationActor()
-															#line 189 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 206 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 template <class GetGenerationActorActor>
-															#line 189 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 206 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 class GetGenerationActorActorState {
-															#line 893 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 903 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 public:
-															#line 189 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 206 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 	GetGenerationActorActorState(GetGenerationQuorum* const& self) 
-															#line 189 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-															#line 189 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 206 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 206 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		 : self(self),
-															#line 190 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		   retries(0)
-															#line 902 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 912 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 	{
 		fdb_probe_actor_create("getGenerationActor", reinterpret_cast<unsigned long>(this));
 
@@ -912,9 +922,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 191 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 208 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 			;
-															#line 917 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 927 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -942,29 +952,29 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 192 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 209 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		for( const auto& cti : self->ctis ) {
-															#line 193 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 210 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 			self->actors.add(addRequestActor(self, cti));
-															#line 949 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 959 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 		}
 		try {
-															#line 197 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 214 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 			StrictFuture<ConfigGeneration> __when_expr_0 = self->result.getFuture();
-															#line 196 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 213 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 			if (static_cast<GetGenerationActorActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 956 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 966 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1loopBody1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
-															#line 200 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 217 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 			StrictFuture<Void> __when_expr_1 = self->actors.getResult();
-															#line 960 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 970 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1loopBody1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1loopBody1when2(__when_expr_1.get(), loopDepth); };
 			static_cast<GetGenerationActorActor*>(this)->actor_wait_state = 1;
-															#line 197 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 214 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< GetGenerationActorActor, 0, ConfigGeneration >*>(static_cast<GetGenerationActorActor*>(this)));
-															#line 200 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 217 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 			__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< GetGenerationActorActor, 1, Void >*>(static_cast<GetGenerationActorActor*>(this)));
-															#line 967 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 977 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -984,29 +994,46 @@ public:
 	int a_body1loopBody1Catch1(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 205 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 222 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 			if (e.code() == error_code_failed_to_reach_quorum)
-															#line 989 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 999 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 			{
-															#line 206 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-				TEST(true);
-															#line 207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-				StrictFuture<Void> __when_expr_2 = delayJittered( std::clamp(0.005 * (1 << retries), 0.0, CLIENT_KNOBS->TIMEOUT_RETRY_UPPER_BOUND));
-															#line 207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-				if (static_cast<GetGenerationActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 997 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
-				if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1Catch1when1(__when_expr_2.get(), loopDepth); };
-				static_cast<GetGenerationActorActor*>(this)->actor_wait_state = 2;
-															#line 207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-				__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< GetGenerationActorActor, 2, Void >*>(static_cast<GetGenerationActorActor*>(this)));
-															#line 1002 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
-				loopDepth = 0;
+															#line 223 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+				CODE_PROBE(true, "Failed to reach quorum getting generation");
+															#line 224 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+				if (self->coordinatorsChangedFuture.isReady())
+															#line 1005 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+				{
+															#line 225 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+					return a_body1Catch1(coordinators_changed(), std::max(0, loopDepth - 1));
+															#line 1009 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+				}
+															#line 227 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+				if (deterministicRandom()->random01() < 0.95)
+															#line 1013 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+				{
+															#line 230 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+					StrictFuture<Void> __when_expr_2 = delayJittered(std::clamp( 0.006 * (1 << std::min(retries, 30)), 0.0, CLIENT_KNOBS->TIMEOUT_RETRY_UPPER_BOUND));
+															#line 230 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+					if (static_cast<GetGenerationActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
+															#line 1019 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+					if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1Catch1when1(__when_expr_2.get(), loopDepth); };
+					static_cast<GetGenerationActorActor*>(this)->actor_wait_state = 2;
+															#line 230 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+					__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< GetGenerationActorActor, 2, Void >*>(static_cast<GetGenerationActorActor*>(this)));
+															#line 1024 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+					loopDepth = 0;
+				}
+				else
+				{
+					loopDepth = a_body1loopBody1Catch1cont2(loopDepth);
+				}
 			}
 			else
 			{
-															#line 216 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 247 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 				return a_body1Catch1(e, std::max(0, loopDepth - 1));
-															#line 1009 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 1036 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 			}
 		}
 		catch (Error& error) {
@@ -1025,9 +1052,9 @@ public:
 	}
 	int a_body1loopBody1when1(ConfigGeneration const& generation,int loopDepth) 
 	{
-															#line 198 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 215 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		if (!static_cast<GetGenerationActorActor*>(this)->SAV<ConfigGeneration>::futures) { (void)(generation); this->~GetGenerationActorActorState(); static_cast<GetGenerationActorActor*>(this)->destroy(); return 0; }
-															#line 1030 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 1057 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 		new (&static_cast<GetGenerationActorActor*>(this)->SAV< ConfigGeneration >::value()) ConfigGeneration(generation);
 		this->~GetGenerationActorActorState();
 		static_cast<GetGenerationActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -1037,9 +1064,9 @@ public:
 	}
 	int a_body1loopBody1when1(ConfigGeneration && generation,int loopDepth) 
 	{
-															#line 198 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 215 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		if (!static_cast<GetGenerationActorActor*>(this)->SAV<ConfigGeneration>::futures) { (void)(generation); this->~GetGenerationActorActorState(); static_cast<GetGenerationActorActor*>(this)->destroy(); return 0; }
-															#line 1042 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 1069 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 		new (&static_cast<GetGenerationActorActor*>(this)->SAV< ConfigGeneration >::value()) ConfigGeneration(generation);
 		this->~GetGenerationActorActorState();
 		static_cast<GetGenerationActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -1049,18 +1076,18 @@ public:
 	}
 	int a_body1loopBody1when2(Void const& _,int loopDepth) 
 	{
-															#line 201 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 218 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		ASSERT(false);
-															#line 1054 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 1081 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont3(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1when2(Void && _,int loopDepth) 
 	{
-															#line 201 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 218 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		ASSERT(false);
-															#line 1063 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 1090 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont3(loopDepth);
 
 		return loopDepth;
@@ -1181,53 +1208,52 @@ public:
 
 		return loopDepth;
 	}
-	int a_body1loopBody1Catch1cont2(Void const& _,int loopDepth) 
+	int a_body1loopBody1Catch1cont2(int loopDepth) 
 	{
-															#line 209 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-		++retries;
-															#line 210 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-		self->actors.clear(false);
-															#line 211 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-		self->seenGenerations.clear();
-															#line 212 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-		self->result.reset();
-															#line 213 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-		self->totalRepliesReceived = 0;
-															#line 214 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-		self->maxAgreement = 0;
-															#line 1198 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
-		loopDepth = a_body1loopBody1Catch1cont1(loopDepth);
+															#line 233 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+		if (deterministicRandom()->random01() < 0.05)
+															#line 1215 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+		{
+															#line 237 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+			StrictFuture<Void> __when_expr_3 = delay(CLIENT_KNOBS->GET_GENERATION_QUORUM_TIMEOUT * (deterministicRandom()->random01() + 1.0));
+															#line 237 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+			if (static_cast<GetGenerationActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
+															#line 1221 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+			if (__when_expr_3.isReady()) { if (__when_expr_3.isError()) return a_body1Catch1(__when_expr_3.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1Catch1cont2when1(__when_expr_3.get(), loopDepth); };
+			static_cast<GetGenerationActorActor*>(this)->actor_wait_state = 3;
+															#line 237 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+			__when_expr_3.addCallbackAndClear(static_cast<ActorCallback< GetGenerationActorActor, 3, Void >*>(static_cast<GetGenerationActorActor*>(this)));
+															#line 1226 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+			loopDepth = 0;
+		}
+		else
+		{
+			loopDepth = a_body1loopBody1Catch1cont5(loopDepth);
+		}
 
 		return loopDepth;
 	}
-	int a_body1loopBody1Catch1cont2(Void && _,int loopDepth) 
+	int a_body1loopBody1Catch1cont4(Void const& _,int loopDepth) 
 	{
-															#line 209 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-		++retries;
-															#line 210 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-		self->actors.clear(false);
-															#line 211 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-		self->seenGenerations.clear();
-															#line 212 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-		self->result.reset();
-															#line 213 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-		self->totalRepliesReceived = 0;
-															#line 214 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-		self->maxAgreement = 0;
-															#line 1217 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
-		loopDepth = a_body1loopBody1Catch1cont1(loopDepth);
+		loopDepth = a_body1loopBody1Catch1cont2(loopDepth);
+
+		return loopDepth;
+	}
+	int a_body1loopBody1Catch1cont4(Void && _,int loopDepth) 
+	{
+		loopDepth = a_body1loopBody1Catch1cont2(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1Catch1when1(Void const& _,int loopDepth) 
 	{
-		loopDepth = a_body1loopBody1Catch1cont2(_, loopDepth);
+		loopDepth = a_body1loopBody1Catch1cont4(_, loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1Catch1when1(Void && _,int loopDepth) 
 	{
-		loopDepth = a_body1loopBody1Catch1cont2(std::move(_), loopDepth);
+		loopDepth = a_body1loopBody1Catch1cont4(std::move(_), loopDepth);
 
 		return loopDepth;
 	}
@@ -1282,16 +1308,110 @@ public:
 		fdb_probe_actor_exit("getGenerationActor", reinterpret_cast<unsigned long>(this), 2);
 
 	}
-															#line 189 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+	int a_body1loopBody1Catch1cont5(int loopDepth) 
+	{
+															#line 240 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+		++retries;
+															#line 241 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+		self->actors.clear(false);
+															#line 242 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+		self->seenGenerations.clear();
+															#line 243 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+		self->result.reset();
+															#line 244 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+		self->totalRepliesReceived = 0;
+															#line 245 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+		self->maxAgreement = 0;
+															#line 1325 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+		loopDepth = a_body1loopBody1Catch1cont1(loopDepth);
+
+		return loopDepth;
+	}
+	int a_body1loopBody1Catch1cont6(Void const& _,int loopDepth) 
+	{
+		loopDepth = a_body1loopBody1Catch1cont5(loopDepth);
+
+		return loopDepth;
+	}
+	int a_body1loopBody1Catch1cont6(Void && _,int loopDepth) 
+	{
+		loopDepth = a_body1loopBody1Catch1cont5(loopDepth);
+
+		return loopDepth;
+	}
+	int a_body1loopBody1Catch1cont2when1(Void const& _,int loopDepth) 
+	{
+		loopDepth = a_body1loopBody1Catch1cont6(_, loopDepth);
+
+		return loopDepth;
+	}
+	int a_body1loopBody1Catch1cont2when1(Void && _,int loopDepth) 
+	{
+		loopDepth = a_body1loopBody1Catch1cont6(std::move(_), loopDepth);
+
+		return loopDepth;
+	}
+	void a_exitChoose3() 
+	{
+		if (static_cast<GetGenerationActorActor*>(this)->actor_wait_state > 0) static_cast<GetGenerationActorActor*>(this)->actor_wait_state = 0;
+		static_cast<GetGenerationActorActor*>(this)->ActorCallback< GetGenerationActorActor, 3, Void >::remove();
+
+	}
+	void a_callback_fire(ActorCallback< GetGenerationActorActor, 3, Void >*,Void const& value) 
+	{
+		fdb_probe_actor_enter("getGenerationActor", reinterpret_cast<unsigned long>(this), 3);
+		a_exitChoose3();
+		try {
+			a_body1loopBody1Catch1cont2when1(value, 0);
+		}
+		catch (Error& error) {
+			a_body1Catch1(error, 0);
+		} catch (...) {
+			a_body1Catch1(unknown_error(), 0);
+		}
+		fdb_probe_actor_exit("getGenerationActor", reinterpret_cast<unsigned long>(this), 3);
+
+	}
+	void a_callback_fire(ActorCallback< GetGenerationActorActor, 3, Void >*,Void && value) 
+	{
+		fdb_probe_actor_enter("getGenerationActor", reinterpret_cast<unsigned long>(this), 3);
+		a_exitChoose3();
+		try {
+			a_body1loopBody1Catch1cont2when1(std::move(value), 0);
+		}
+		catch (Error& error) {
+			a_body1Catch1(error, 0);
+		} catch (...) {
+			a_body1Catch1(unknown_error(), 0);
+		}
+		fdb_probe_actor_exit("getGenerationActor", reinterpret_cast<unsigned long>(this), 3);
+
+	}
+	void a_callback_error(ActorCallback< GetGenerationActorActor, 3, Void >*,Error err) 
+	{
+		fdb_probe_actor_enter("getGenerationActor", reinterpret_cast<unsigned long>(this), 3);
+		a_exitChoose3();
+		try {
+			a_body1Catch1(err, 0);
+		}
+		catch (Error& error) {
+			a_body1Catch1(error, 0);
+		} catch (...) {
+			a_body1Catch1(unknown_error(), 0);
+		}
+		fdb_probe_actor_exit("getGenerationActor", reinterpret_cast<unsigned long>(this), 3);
+
+	}
+															#line 206 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 	GetGenerationQuorum* self;
-															#line 190 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 	int retries;
-															#line 1289 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 1409 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 };
 // This generated class is to be used only via getGenerationActor()
-															#line 189 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-class GetGenerationActorActor final : public Actor<ConfigGeneration>, public ActorCallback< GetGenerationActorActor, 0, ConfigGeneration >, public ActorCallback< GetGenerationActorActor, 1, Void >, public ActorCallback< GetGenerationActorActor, 2, Void >, public FastAllocated<GetGenerationActorActor>, public GetGenerationActorActorState<GetGenerationActorActor> {
-															#line 1294 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 206 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+class GetGenerationActorActor final : public Actor<ConfigGeneration>, public ActorCallback< GetGenerationActorActor, 0, ConfigGeneration >, public ActorCallback< GetGenerationActorActor, 1, Void >, public ActorCallback< GetGenerationActorActor, 2, Void >, public ActorCallback< GetGenerationActorActor, 3, Void >, public FastAllocated<GetGenerationActorActor>, public GetGenerationActorActorState<GetGenerationActorActor> {
+															#line 1414 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 public:
 	using FastAllocated<GetGenerationActorActor>::operator new;
 	using FastAllocated<GetGenerationActorActor>::operator delete;
@@ -1302,9 +1422,10 @@ public:
 friend struct ActorCallback< GetGenerationActorActor, 0, ConfigGeneration >;
 friend struct ActorCallback< GetGenerationActorActor, 1, Void >;
 friend struct ActorCallback< GetGenerationActorActor, 2, Void >;
-															#line 189 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+friend struct ActorCallback< GetGenerationActorActor, 3, Void >;
+															#line 206 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 	GetGenerationActorActor(GetGenerationQuorum* const& self) 
-															#line 1307 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 1428 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 		 : Actor<ConfigGeneration>(),
 		   GetGenerationActorActorState<GetGenerationActorActor>(self)
 	{
@@ -1324,24 +1445,28 @@ friend struct ActorCallback< GetGenerationActorActor, 2, Void >;
 		switch (wait_state) {
 		case 1: this->a_callback_error((ActorCallback< GetGenerationActorActor, 0, ConfigGeneration >*)0, actor_cancelled()); break;
 		case 2: this->a_callback_error((ActorCallback< GetGenerationActorActor, 2, Void >*)0, actor_cancelled()); break;
+		case 3: this->a_callback_error((ActorCallback< GetGenerationActorActor, 3, Void >*)0, actor_cancelled()); break;
 		}
 
 	}
 };
-															#line 189 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 206 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 [[nodiscard]] static Future<ConfigGeneration> getGenerationActor( GetGenerationQuorum* const& self ) {
-															#line 189 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 206 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 	return Future<ConfigGeneration>(new GetGenerationActorActor(self));
-															#line 1335 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 1457 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 }
 
-#line 221 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+#line 252 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 
 public:
 	GetGenerationQuorum() = default;
-	explicit GetGenerationQuorum(std::vector<ConfigTransactionInterface> const& ctis,
+	explicit GetGenerationQuorum(CoordinatorsHash coordinatorsHash,
+	                             std::vector<ConfigTransactionInterface> const& ctis,
+	                             Future<Void> coordinatorsChangedFuture,
 	                             Optional<Version> const& lastSeenLiveVersion = {})
-	  : ctis(ctis), lastSeenLiveVersion(lastSeenLiveVersion) {}
+	  : coordinatorsHash(coordinatorsHash), ctis(ctis), coordinatorsChangedFuture(coordinatorsChangedFuture),
+	    lastSeenLiveVersion(lastSeenLiveVersion) {}
 	Future<ConfigGeneration> getGeneration() {
 		if (!getGenerationFuture.isValid()) {
 			getGenerationFuture = getGenerationActor(this);
@@ -1362,31 +1487,33 @@ public:
 };
 
 class PaxosConfigTransactionImpl {
+	CoordinatorsHash coordinatorsHash{ 0 };
 	std::vector<ConfigTransactionInterface> ctis;
 	GetGenerationQuorum getGenerationQuorum;
 	CommitQuorum commitQuorum;
 	int numRetries{ 0 };
 	Optional<UID> dID;
 	Database cx;
+	Future<Void> watchClusterFileFuture;
 
-																#line 1372 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+																#line 1499 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 // This generated class is to be used only via get()
-															#line 254 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 290 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 template <class GetActor>
-															#line 254 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 290 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 class GetActorState {
-															#line 1378 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 1505 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 public:
-															#line 254 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 290 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 	GetActorState(PaxosConfigTransactionImpl* const& self,Key const& key) 
-															#line 254 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-															#line 254 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 290 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 290 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		 : self(self),
-															#line 254 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 290 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		   key(key),
-															#line 255 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 291 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		   configKey(ConfigKey::decodeKey(key))
-															#line 1389 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 1516 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 	{
 		fdb_probe_actor_create("get", reinterpret_cast<unsigned long>(this));
 
@@ -1399,9 +1526,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 256 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 292 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 			;
-															#line 1404 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 1531 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -1430,16 +1557,16 @@ public:
 	int a_body1loopBody1(int loopDepth) 
 	{
 		try {
-															#line 258 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 294 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 			StrictFuture<ConfigGeneration> __when_expr_0 = self->getGenerationQuorum.getGeneration();
-															#line 258 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 294 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 			if (static_cast<GetActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 1437 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 1564 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1loopBody1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<GetActor*>(this)->actor_wait_state = 1;
-															#line 258 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 294 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< GetActor, 0, ConfigGeneration >*>(static_cast<GetActor*>(this)));
-															#line 1442 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 1569 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -1459,17 +1586,17 @@ public:
 	int a_body1loopBody1Catch1(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 281 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-			if (e.code() != error_code_timed_out && e.code() != error_code_broken_promise)
-															#line 1464 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 317 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+			if (e.code() != error_code_timed_out && e.code() != error_code_broken_promise && e.code() != error_code_coordinators_changed)
+															#line 1591 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 			{
-															#line 282 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 319 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 				return a_body1Catch1(e, std::max(0, loopDepth - 1));
-															#line 1468 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 1595 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 			}
-															#line 284 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 321 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 			self->reset();
-															#line 1472 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 1599 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 			loopDepth = a_body1loopBody1cont1(loopDepth);
 		}
 		catch (Error& error) {
@@ -1482,40 +1609,40 @@ public:
 	}
 	int a_body1loopBody1cont2(int loopDepth) 
 	{
-															#line 259 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		readReplicas = self->getGenerationQuorum.getReadReplicas();
-															#line 261 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 297 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		std::vector<Future<Void>> fs;
-															#line 262 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 298 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		for( ConfigTransactionInterface& readReplica : readReplicas ) {
-															#line 263 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 299 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 			if (readReplica.hostname.present())
-															#line 1493 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 1620 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 			{
-															#line 264 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 300 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 				fs.push_back(tryInitializeRequestStream( &readReplica.get, readReplica.hostname.get(), WLTOKEN_CONFIGTXN_GET));
-															#line 1497 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 1624 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 			}
 		}
-															#line 268 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 304 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = waitForAll(fs);
-															#line 268 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 304 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		if (static_cast<GetActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 1504 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 1631 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1loopBody1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1loopBody1cont2when1(__when_expr_1.get(), loopDepth); };
 		static_cast<GetActor*>(this)->actor_wait_state = 2;
-															#line 268 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 304 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< GetActor, 1, Void >*>(static_cast<GetActor*>(this)));
-															#line 1509 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 1636 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1loopBody1when1(ConfigGeneration const& __generation,int loopDepth) 
 	{
-															#line 258 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 294 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		generation = __generation;
-															#line 1518 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 1645 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont2(loopDepth);
 
 		return loopDepth;
@@ -1580,36 +1707,36 @@ public:
 	}
 	int a_body1loopBody1cont3(Void const& _,int loopDepth) 
 	{
-															#line 269 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 305 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		configNodes = Reference<ConfigTransactionInfo>(new ConfigTransactionInfo(readReplicas));
-															#line 270 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-		StrictFuture<ConfigTransactionGetReply> __when_expr_2 = timeoutError(basicLoadBalance(configNodes, &ConfigTransactionInterface::get, ConfigTransactionGetRequest{ generation, configKey }), CLIENT_KNOBS->GET_KNOB_TIMEOUT);
-															#line 270 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 306 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+		StrictFuture<ConfigTransactionGetReply> __when_expr_2 = timeoutError( basicLoadBalance(configNodes, &ConfigTransactionInterface::get, ConfigTransactionGetRequest{ self->coordinatorsHash, generation, configKey }), CLIENT_KNOBS->GET_KNOB_TIMEOUT);
+															#line 306 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		if (static_cast<GetActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 1589 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 1716 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1loopBody1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1loopBody1cont3when1(__when_expr_2.get(), loopDepth); };
 		static_cast<GetActor*>(this)->actor_wait_state = 3;
-															#line 270 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 306 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< GetActor, 2, ConfigTransactionGetReply >*>(static_cast<GetActor*>(this)));
-															#line 1594 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 1721 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont3(Void && _,int loopDepth) 
 	{
-															#line 269 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 305 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		configNodes = Reference<ConfigTransactionInfo>(new ConfigTransactionInfo(readReplicas));
-															#line 270 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-		StrictFuture<ConfigTransactionGetReply> __when_expr_2 = timeoutError(basicLoadBalance(configNodes, &ConfigTransactionInterface::get, ConfigTransactionGetRequest{ generation, configKey }), CLIENT_KNOBS->GET_KNOB_TIMEOUT);
-															#line 270 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 306 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+		StrictFuture<ConfigTransactionGetReply> __when_expr_2 = timeoutError( basicLoadBalance(configNodes, &ConfigTransactionInterface::get, ConfigTransactionGetRequest{ self->coordinatorsHash, generation, configKey }), CLIENT_KNOBS->GET_KNOB_TIMEOUT);
+															#line 306 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		if (static_cast<GetActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 1607 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 1734 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1loopBody1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1loopBody1cont3when1(__when_expr_2.get(), loopDepth); };
 		static_cast<GetActor*>(this)->actor_wait_state = 3;
-															#line 270 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 306 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< GetActor, 2, ConfigTransactionGetReply >*>(static_cast<GetActor*>(this)));
-															#line 1612 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 1739 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -1679,13 +1806,13 @@ public:
 	}
 	int a_body1loopBody1cont6(ConfigTransactionGetReply const& reply,int loopDepth) 
 	{
-															#line 275 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		if (reply.value.present())
-															#line 1684 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 1811 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 		{
-															#line 276 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 312 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 			if (!static_cast<GetActor*>(this)->SAV<Optional<Value>>::futures) { (void)(reply.value.get().toValue()); this->~GetActorState(); static_cast<GetActor*>(this)->destroy(); return 0; }
-															#line 1688 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 1815 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 			new (&static_cast<GetActor*>(this)->SAV< Optional<Value> >::value()) Optional<Value>(reply.value.get().toValue());
 			this->~GetActorState();
 			static_cast<GetActor*>(this)->finishSendAndDelPromiseRef();
@@ -1693,9 +1820,9 @@ public:
 		}
 		else
 		{
-															#line 278 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 314 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 			if (!static_cast<GetActor*>(this)->SAV<Optional<Value>>::futures) { (void)(Optional<Value>{}); this->~GetActorState(); static_cast<GetActor*>(this)->destroy(); return 0; }
-															#line 1698 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 1825 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 			new (&static_cast<GetActor*>(this)->SAV< Optional<Value> >::value()) Optional<Value>(Optional<Value>{});
 			this->~GetActorState();
 			static_cast<GetActor*>(this)->finishSendAndDelPromiseRef();
@@ -1706,13 +1833,13 @@ public:
 	}
 	int a_body1loopBody1cont6(ConfigTransactionGetReply && reply,int loopDepth) 
 	{
-															#line 275 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		if (reply.value.present())
-															#line 1711 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 1838 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 		{
-															#line 276 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 312 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 			if (!static_cast<GetActor*>(this)->SAV<Optional<Value>>::futures) { (void)(reply.value.get().toValue()); this->~GetActorState(); static_cast<GetActor*>(this)->destroy(); return 0; }
-															#line 1715 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 1842 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 			new (&static_cast<GetActor*>(this)->SAV< Optional<Value> >::value()) Optional<Value>(reply.value.get().toValue());
 			this->~GetActorState();
 			static_cast<GetActor*>(this)->finishSendAndDelPromiseRef();
@@ -1720,9 +1847,9 @@ public:
 		}
 		else
 		{
-															#line 278 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 314 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 			if (!static_cast<GetActor*>(this)->SAV<Optional<Value>>::futures) { (void)(Optional<Value>{}); this->~GetActorState(); static_cast<GetActor*>(this)->destroy(); return 0; }
-															#line 1725 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 1852 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 			new (&static_cast<GetActor*>(this)->SAV< Optional<Value> >::value()) Optional<Value>(Optional<Value>{});
 			this->~GetActorState();
 			static_cast<GetActor*>(this)->finishSendAndDelPromiseRef();
@@ -1794,24 +1921,24 @@ public:
 		fdb_probe_actor_exit("get", reinterpret_cast<unsigned long>(this), 2);
 
 	}
-															#line 254 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 290 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 	PaxosConfigTransactionImpl* self;
-															#line 254 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 290 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 	Key key;
-															#line 255 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 291 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 	ConfigKey configKey;
-															#line 258 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 294 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 	ConfigGeneration generation;
-															#line 259 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 	std::vector<ConfigTransactionInterface> readReplicas;
-															#line 269 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 305 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 	Reference<ConfigTransactionInfo> configNodes;
-															#line 1809 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 1936 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 };
 // This generated class is to be used only via get()
-															#line 254 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 290 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 class GetActor final : public Actor<Optional<Value>>, public ActorCallback< GetActor, 0, ConfigGeneration >, public ActorCallback< GetActor, 1, Void >, public ActorCallback< GetActor, 2, ConfigTransactionGetReply >, public FastAllocated<GetActor>, public GetActorState<GetActor> {
-															#line 1814 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 1941 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 public:
 	using FastAllocated<GetActor>::operator new;
 	using FastAllocated<GetActor>::operator delete;
@@ -1822,9 +1949,9 @@ public:
 friend struct ActorCallback< GetActor, 0, ConfigGeneration >;
 friend struct ActorCallback< GetActor, 1, Void >;
 friend struct ActorCallback< GetActor, 2, ConfigTransactionGetReply >;
-															#line 254 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 290 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 	GetActor(PaxosConfigTransactionImpl* const& self,Key const& key) 
-															#line 1827 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 1954 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 		 : Actor<Optional<Value>>(),
 		   GetActorState<GetActor>(self, key)
 	{
@@ -1849,29 +1976,29 @@ friend struct ActorCallback< GetActor, 2, ConfigTransactionGetReply >;
 
 	}
 };
-															#line 254 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 290 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 [[nodiscard]] static Future<Optional<Value>> get( PaxosConfigTransactionImpl* const& self, Key const& key ) {
-															#line 254 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 290 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 	return Future<Optional<Value>>(new GetActor(self, key));
-															#line 1856 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 1983 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 }
 
-#line 288 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+#line 325 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 
-																#line 1861 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+																#line 1988 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 // This generated class is to be used only via getConfigClasses()
-															#line 289 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 326 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 template <class GetConfigClassesActor>
-															#line 289 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 326 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 class GetConfigClassesActorState {
-															#line 1867 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 1994 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 public:
-															#line 289 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 326 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 	GetConfigClassesActorState(PaxosConfigTransactionImpl* const& self) 
-															#line 289 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-															#line 289 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 326 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 326 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		 : self(self)
-															#line 1874 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 2001 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 	{
 		fdb_probe_actor_create("getConfigClasses", reinterpret_cast<unsigned long>(this));
 
@@ -1884,17 +2011,10 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 290 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-			StrictFuture<ConfigGeneration> __when_expr_0 = self->getGenerationQuorum.getGeneration();
-															#line 290 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-			if (static_cast<GetConfigClassesActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 1891 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
-			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
-			static_cast<GetConfigClassesActor*>(this)->actor_wait_state = 1;
-															#line 290 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< GetConfigClassesActor, 0, ConfigGeneration >*>(static_cast<GetConfigClassesActor*>(this)));
-															#line 1896 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
-			loopDepth = 0;
+															#line 327 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+			;
+															#line 2016 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
 			loopDepth = a_body1Catch1(error, loopDepth);
@@ -1912,50 +2032,110 @@ public:
 
 		return loopDepth;
 	}
-	int a_body1cont1(int loopDepth) 
+	int a_body1loopHead1(int loopDepth) 
 	{
-															#line 291 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-		readReplicas = self->getGenerationQuorum.getReadReplicas();
-															#line 292 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-		std::vector<Future<Void>> fs;
-															#line 293 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-		for( ConfigTransactionInterface& readReplica : readReplicas ) {
-															#line 294 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-			if (readReplica.hostname.present())
-															#line 1925 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+		int oldLoopDepth = ++loopDepth;
+		while (loopDepth == oldLoopDepth) loopDepth = a_body1loopBody1(loopDepth);
+
+		return loopDepth;
+	}
+	int a_body1loopBody1(int loopDepth) 
+	{
+		try {
+															#line 329 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+			StrictFuture<ConfigGeneration> __when_expr_0 = self->getGenerationQuorum.getGeneration();
+															#line 329 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+			if (static_cast<GetConfigClassesActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
+															#line 2049 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1loopBody1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
+			static_cast<GetConfigClassesActor*>(this)->actor_wait_state = 1;
+															#line 329 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< GetConfigClassesActor, 0, ConfigGeneration >*>(static_cast<GetConfigClassesActor*>(this)));
+															#line 2054 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+			loopDepth = 0;
+		}
+		catch (Error& error) {
+			loopDepth = a_body1loopBody1Catch1(error, loopDepth);
+		} catch (...) {
+			loopDepth = a_body1loopBody1Catch1(unknown_error(), loopDepth);
+		}
+
+		return loopDepth;
+	}
+	int a_body1loopBody1cont1(int loopDepth) 
+	{
+		if (loopDepth == 0) return a_body1loopHead1(0);
+
+		return loopDepth;
+	}
+	int a_body1loopBody1Catch1(const Error& e,int loopDepth=0) 
+	{
+		try {
+															#line 352 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+			if (e.code() != error_code_coordinators_changed)
+															#line 2076 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 			{
-															#line 295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 353 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+				return a_body1Catch1(e, std::max(0, loopDepth - 1));
+															#line 2080 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+			}
+															#line 355 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+			self->reset();
+															#line 2084 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+			loopDepth = a_body1loopBody1cont1(loopDepth);
+		}
+		catch (Error& error) {
+			loopDepth = a_body1Catch1(error, std::max(0, loopDepth - 1));
+		} catch (...) {
+			loopDepth = a_body1Catch1(unknown_error(), std::max(0, loopDepth - 1));
+		}
+
+		return loopDepth;
+	}
+	int a_body1loopBody1cont2(int loopDepth) 
+	{
+															#line 330 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+		readReplicas = self->getGenerationQuorum.getReadReplicas();
+															#line 332 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+		std::vector<Future<Void>> fs;
+															#line 333 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+		for( ConfigTransactionInterface& readReplica : readReplicas ) {
+															#line 334 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+			if (readReplica.hostname.present())
+															#line 2105 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+			{
+															#line 335 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 				fs.push_back(tryInitializeRequestStream( &readReplica.getClasses, readReplica.hostname.get(), WLTOKEN_CONFIGTXN_GETCLASSES));
-															#line 1929 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 2109 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 			}
 		}
-															#line 299 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 339 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = waitForAll(fs);
-															#line 299 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-		if (static_cast<GetConfigClassesActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 1936 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
-		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
+															#line 339 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+		if (static_cast<GetConfigClassesActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
+															#line 2116 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1loopBody1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1loopBody1cont2when1(__when_expr_1.get(), loopDepth); };
 		static_cast<GetConfigClassesActor*>(this)->actor_wait_state = 2;
-															#line 299 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 339 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< GetConfigClassesActor, 1, Void >*>(static_cast<GetConfigClassesActor*>(this)));
-															#line 1941 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 2121 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
-	int a_body1when1(ConfigGeneration const& __generation,int loopDepth) 
+	int a_body1loopBody1when1(ConfigGeneration const& __generation,int loopDepth) 
 	{
-															#line 290 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 329 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		generation = __generation;
-															#line 1950 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
-		loopDepth = a_body1cont1(loopDepth);
+															#line 2130 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+		loopDepth = a_body1loopBody1cont2(loopDepth);
 
 		return loopDepth;
 	}
-	int a_body1when1(ConfigGeneration && __generation,int loopDepth) 
+	int a_body1loopBody1when1(ConfigGeneration && __generation,int loopDepth) 
 	{
 		generation = std::move(__generation);
-		loopDepth = a_body1cont1(loopDepth);
+		loopDepth = a_body1loopBody1cont2(loopDepth);
 
 		return loopDepth;
 	}
@@ -1970,12 +2150,12 @@ public:
 		fdb_probe_actor_enter("getConfigClasses", reinterpret_cast<unsigned long>(this), 0);
 		a_exitChoose1();
 		try {
-			a_body1when1(value, 0);
+			a_body1loopBody1when1(value, 0);
 		}
 		catch (Error& error) {
-			a_body1Catch1(error, 0);
+			a_body1loopBody1Catch1(error, 0);
 		} catch (...) {
-			a_body1Catch1(unknown_error(), 0);
+			a_body1loopBody1Catch1(unknown_error(), 0);
 		}
 		fdb_probe_actor_exit("getConfigClasses", reinterpret_cast<unsigned long>(this), 0);
 
@@ -1985,12 +2165,12 @@ public:
 		fdb_probe_actor_enter("getConfigClasses", reinterpret_cast<unsigned long>(this), 0);
 		a_exitChoose1();
 		try {
-			a_body1when1(std::move(value), 0);
+			a_body1loopBody1when1(std::move(value), 0);
 		}
 		catch (Error& error) {
-			a_body1Catch1(error, 0);
+			a_body1loopBody1Catch1(error, 0);
 		} catch (...) {
-			a_body1Catch1(unknown_error(), 0);
+			a_body1loopBody1Catch1(unknown_error(), 0);
 		}
 		fdb_probe_actor_exit("getConfigClasses", reinterpret_cast<unsigned long>(this), 0);
 
@@ -2000,61 +2180,61 @@ public:
 		fdb_probe_actor_enter("getConfigClasses", reinterpret_cast<unsigned long>(this), 0);
 		a_exitChoose1();
 		try {
-			a_body1Catch1(err, 0);
+			a_body1loopBody1Catch1(err, 0);
 		}
 		catch (Error& error) {
-			a_body1Catch1(error, 0);
+			a_body1loopBody1Catch1(error, 0);
 		} catch (...) {
-			a_body1Catch1(unknown_error(), 0);
+			a_body1loopBody1Catch1(unknown_error(), 0);
 		}
 		fdb_probe_actor_exit("getConfigClasses", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-	int a_body1cont2(Void const& _,int loopDepth) 
+	int a_body1loopBody1cont3(Void const& _,int loopDepth) 
 	{
-															#line 300 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 340 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		configNodes = Reference<ConfigTransactionInfo>(new ConfigTransactionInfo(readReplicas));
-															#line 301 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-		StrictFuture<ConfigTransactionGetConfigClassesReply> __when_expr_2 = basicLoadBalance(configNodes, &ConfigTransactionInterface::getClasses, ConfigTransactionGetConfigClassesRequest{ generation });
-															#line 301 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-		if (static_cast<GetConfigClassesActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 2021 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
-		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1cont2when1(__when_expr_2.get(), loopDepth); };
+															#line 341 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+		StrictFuture<ConfigTransactionGetConfigClassesReply> __when_expr_2 = basicLoadBalance(configNodes, &ConfigTransactionInterface::getClasses, ConfigTransactionGetConfigClassesRequest{ self->coordinatorsHash, generation });
+															#line 341 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+		if (static_cast<GetConfigClassesActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
+															#line 2201 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1loopBody1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1loopBody1cont3when1(__when_expr_2.get(), loopDepth); };
 		static_cast<GetConfigClassesActor*>(this)->actor_wait_state = 3;
-															#line 301 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 341 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< GetConfigClassesActor, 2, ConfigTransactionGetConfigClassesReply >*>(static_cast<GetConfigClassesActor*>(this)));
-															#line 2026 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 2206 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
-	int a_body1cont2(Void && _,int loopDepth) 
+	int a_body1loopBody1cont3(Void && _,int loopDepth) 
 	{
-															#line 300 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 340 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		configNodes = Reference<ConfigTransactionInfo>(new ConfigTransactionInfo(readReplicas));
-															#line 301 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-		StrictFuture<ConfigTransactionGetConfigClassesReply> __when_expr_2 = basicLoadBalance(configNodes, &ConfigTransactionInterface::getClasses, ConfigTransactionGetConfigClassesRequest{ generation });
-															#line 301 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-		if (static_cast<GetConfigClassesActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 2039 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
-		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1cont2when1(__when_expr_2.get(), loopDepth); };
+															#line 341 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+		StrictFuture<ConfigTransactionGetConfigClassesReply> __when_expr_2 = basicLoadBalance(configNodes, &ConfigTransactionInterface::getClasses, ConfigTransactionGetConfigClassesRequest{ self->coordinatorsHash, generation });
+															#line 341 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+		if (static_cast<GetConfigClassesActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
+															#line 2219 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1loopBody1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1loopBody1cont3when1(__when_expr_2.get(), loopDepth); };
 		static_cast<GetConfigClassesActor*>(this)->actor_wait_state = 3;
-															#line 301 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 341 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< GetConfigClassesActor, 2, ConfigTransactionGetConfigClassesReply >*>(static_cast<GetConfigClassesActor*>(this)));
-															#line 2044 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 2224 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
-	int a_body1cont1when1(Void const& _,int loopDepth) 
+	int a_body1loopBody1cont2when1(Void const& _,int loopDepth) 
 	{
-		loopDepth = a_body1cont2(_, loopDepth);
+		loopDepth = a_body1loopBody1cont3(_, loopDepth);
 
 		return loopDepth;
 	}
-	int a_body1cont1when1(Void && _,int loopDepth) 
+	int a_body1loopBody1cont2when1(Void && _,int loopDepth) 
 	{
-		loopDepth = a_body1cont2(std::move(_), loopDepth);
+		loopDepth = a_body1loopBody1cont3(std::move(_), loopDepth);
 
 		return loopDepth;
 	}
@@ -2069,12 +2249,12 @@ public:
 		fdb_probe_actor_enter("getConfigClasses", reinterpret_cast<unsigned long>(this), 1);
 		a_exitChoose2();
 		try {
-			a_body1cont1when1(value, 0);
+			a_body1loopBody1cont2when1(value, 0);
 		}
 		catch (Error& error) {
-			a_body1Catch1(error, 0);
+			a_body1loopBody1Catch1(error, 0);
 		} catch (...) {
-			a_body1Catch1(unknown_error(), 0);
+			a_body1loopBody1Catch1(unknown_error(), 0);
 		}
 		fdb_probe_actor_exit("getConfigClasses", reinterpret_cast<unsigned long>(this), 1);
 
@@ -2084,12 +2264,12 @@ public:
 		fdb_probe_actor_enter("getConfigClasses", reinterpret_cast<unsigned long>(this), 1);
 		a_exitChoose2();
 		try {
-			a_body1cont1when1(std::move(value), 0);
+			a_body1loopBody1cont2when1(std::move(value), 0);
 		}
 		catch (Error& error) {
-			a_body1Catch1(error, 0);
+			a_body1loopBody1Catch1(error, 0);
 		} catch (...) {
-			a_body1Catch1(unknown_error(), 0);
+			a_body1loopBody1Catch1(unknown_error(), 0);
 		}
 		fdb_probe_actor_exit("getConfigClasses", reinterpret_cast<unsigned long>(this), 1);
 
@@ -2099,31 +2279,31 @@ public:
 		fdb_probe_actor_enter("getConfigClasses", reinterpret_cast<unsigned long>(this), 1);
 		a_exitChoose2();
 		try {
-			a_body1Catch1(err, 0);
+			a_body1loopBody1Catch1(err, 0);
 		}
 		catch (Error& error) {
-			a_body1Catch1(error, 0);
+			a_body1loopBody1Catch1(error, 0);
 		} catch (...) {
-			a_body1Catch1(unknown_error(), 0);
+			a_body1loopBody1Catch1(unknown_error(), 0);
 		}
 		fdb_probe_actor_exit("getConfigClasses", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-	int a_body1cont5(ConfigTransactionGetConfigClassesReply const& reply,int loopDepth) 
+	int a_body1loopBody1cont6(ConfigTransactionGetConfigClassesReply const& reply,int loopDepth) 
 	{
-															#line 305 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 345 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		RangeResult result;
-															#line 306 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 346 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		result.reserve(result.arena(), reply.configClasses.size());
-															#line 307 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 347 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		for( const auto& configClass : reply.configClasses ) {
-															#line 308 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 348 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 			result.push_back_deep(result.arena(), KeyValueRef(configClass, ""_sr));
-															#line 2122 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 2302 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 		}
-															#line 310 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 350 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		if (!static_cast<GetConfigClassesActor*>(this)->SAV<RangeResult>::futures) { (void)(result); this->~GetConfigClassesActorState(); static_cast<GetConfigClassesActor*>(this)->destroy(); return 0; }
-															#line 2126 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 2306 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 		new (&static_cast<GetConfigClassesActor*>(this)->SAV< RangeResult >::value()) RangeResult(result);
 		this->~GetConfigClassesActorState();
 		static_cast<GetConfigClassesActor*>(this)->finishSendAndDelPromiseRef();
@@ -2131,21 +2311,21 @@ public:
 
 		return loopDepth;
 	}
-	int a_body1cont5(ConfigTransactionGetConfigClassesReply && reply,int loopDepth) 
+	int a_body1loopBody1cont6(ConfigTransactionGetConfigClassesReply && reply,int loopDepth) 
 	{
-															#line 305 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 345 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		RangeResult result;
-															#line 306 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 346 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		result.reserve(result.arena(), reply.configClasses.size());
-															#line 307 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 347 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		for( const auto& configClass : reply.configClasses ) {
-															#line 308 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 348 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 			result.push_back_deep(result.arena(), KeyValueRef(configClass, ""_sr));
-															#line 2144 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 2324 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 		}
-															#line 310 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 350 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		if (!static_cast<GetConfigClassesActor*>(this)->SAV<RangeResult>::futures) { (void)(result); this->~GetConfigClassesActorState(); static_cast<GetConfigClassesActor*>(this)->destroy(); return 0; }
-															#line 2148 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 2328 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 		new (&static_cast<GetConfigClassesActor*>(this)->SAV< RangeResult >::value()) RangeResult(result);
 		this->~GetConfigClassesActorState();
 		static_cast<GetConfigClassesActor*>(this)->finishSendAndDelPromiseRef();
@@ -2153,15 +2333,15 @@ public:
 
 		return loopDepth;
 	}
-	int a_body1cont2when1(ConfigTransactionGetConfigClassesReply const& reply,int loopDepth) 
+	int a_body1loopBody1cont3when1(ConfigTransactionGetConfigClassesReply const& reply,int loopDepth) 
 	{
-		loopDepth = a_body1cont5(reply, loopDepth);
+		loopDepth = a_body1loopBody1cont6(reply, loopDepth);
 
 		return loopDepth;
 	}
-	int a_body1cont2when1(ConfigTransactionGetConfigClassesReply && reply,int loopDepth) 
+	int a_body1loopBody1cont3when1(ConfigTransactionGetConfigClassesReply && reply,int loopDepth) 
 	{
-		loopDepth = a_body1cont5(std::move(reply), loopDepth);
+		loopDepth = a_body1loopBody1cont6(std::move(reply), loopDepth);
 
 		return loopDepth;
 	}
@@ -2176,12 +2356,12 @@ public:
 		fdb_probe_actor_enter("getConfigClasses", reinterpret_cast<unsigned long>(this), 2);
 		a_exitChoose3();
 		try {
-			a_body1cont2when1(value, 0);
+			a_body1loopBody1cont3when1(value, 0);
 		}
 		catch (Error& error) {
-			a_body1Catch1(error, 0);
+			a_body1loopBody1Catch1(error, 0);
 		} catch (...) {
-			a_body1Catch1(unknown_error(), 0);
+			a_body1loopBody1Catch1(unknown_error(), 0);
 		}
 		fdb_probe_actor_exit("getConfigClasses", reinterpret_cast<unsigned long>(this), 2);
 
@@ -2191,12 +2371,12 @@ public:
 		fdb_probe_actor_enter("getConfigClasses", reinterpret_cast<unsigned long>(this), 2);
 		a_exitChoose3();
 		try {
-			a_body1cont2when1(std::move(value), 0);
+			a_body1loopBody1cont3when1(std::move(value), 0);
 		}
 		catch (Error& error) {
-			a_body1Catch1(error, 0);
+			a_body1loopBody1Catch1(error, 0);
 		} catch (...) {
-			a_body1Catch1(unknown_error(), 0);
+			a_body1loopBody1Catch1(unknown_error(), 0);
 		}
 		fdb_probe_actor_exit("getConfigClasses", reinterpret_cast<unsigned long>(this), 2);
 
@@ -2206,30 +2386,30 @@ public:
 		fdb_probe_actor_enter("getConfigClasses", reinterpret_cast<unsigned long>(this), 2);
 		a_exitChoose3();
 		try {
-			a_body1Catch1(err, 0);
+			a_body1loopBody1Catch1(err, 0);
 		}
 		catch (Error& error) {
-			a_body1Catch1(error, 0);
+			a_body1loopBody1Catch1(error, 0);
 		} catch (...) {
-			a_body1Catch1(unknown_error(), 0);
+			a_body1loopBody1Catch1(unknown_error(), 0);
 		}
 		fdb_probe_actor_exit("getConfigClasses", reinterpret_cast<unsigned long>(this), 2);
 
 	}
-															#line 289 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 326 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 	PaxosConfigTransactionImpl* self;
-															#line 290 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 329 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 	ConfigGeneration generation;
-															#line 291 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 330 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 	std::vector<ConfigTransactionInterface> readReplicas;
-															#line 300 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 340 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 	Reference<ConfigTransactionInfo> configNodes;
-															#line 2227 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 2407 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 };
 // This generated class is to be used only via getConfigClasses()
-															#line 289 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 326 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 class GetConfigClassesActor final : public Actor<RangeResult>, public ActorCallback< GetConfigClassesActor, 0, ConfigGeneration >, public ActorCallback< GetConfigClassesActor, 1, Void >, public ActorCallback< GetConfigClassesActor, 2, ConfigTransactionGetConfigClassesReply >, public FastAllocated<GetConfigClassesActor>, public GetConfigClassesActorState<GetConfigClassesActor> {
-															#line 2232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 2412 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 public:
 	using FastAllocated<GetConfigClassesActor>::operator new;
 	using FastAllocated<GetConfigClassesActor>::operator delete;
@@ -2240,9 +2420,9 @@ public:
 friend struct ActorCallback< GetConfigClassesActor, 0, ConfigGeneration >;
 friend struct ActorCallback< GetConfigClassesActor, 1, Void >;
 friend struct ActorCallback< GetConfigClassesActor, 2, ConfigTransactionGetConfigClassesReply >;
-															#line 289 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 326 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 	GetConfigClassesActor(PaxosConfigTransactionImpl* const& self) 
-															#line 2245 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 2425 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 		 : Actor<RangeResult>(),
 		   GetConfigClassesActorState<GetConfigClassesActor>(self)
 	{
@@ -2267,31 +2447,31 @@ friend struct ActorCallback< GetConfigClassesActor, 2, ConfigTransactionGetConfi
 
 	}
 };
-															#line 289 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 326 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 [[nodiscard]] static Future<RangeResult> getConfigClasses( PaxosConfigTransactionImpl* const& self ) {
-															#line 289 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 326 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 	return Future<RangeResult>(new GetConfigClassesActor(self));
-															#line 2274 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 2454 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 }
 
-#line 312 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+#line 359 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 
-																#line 2279 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+																#line 2459 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 // This generated class is to be used only via getKnobs()
-															#line 313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 360 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 template <class GetKnobsActor>
-															#line 313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 360 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 class GetKnobsActorState {
-															#line 2285 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 2465 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 public:
-															#line 313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 360 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 	GetKnobsActorState(PaxosConfigTransactionImpl* const& self,Optional<Key> const& configClass) 
-															#line 313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-															#line 313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 360 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 360 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		 : self(self),
-															#line 313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 360 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		   configClass(configClass)
-															#line 2294 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 2474 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 	{
 		fdb_probe_actor_create("getKnobs", reinterpret_cast<unsigned long>(this));
 
@@ -2304,17 +2484,10 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 314 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-			StrictFuture<ConfigGeneration> __when_expr_0 = self->getGenerationQuorum.getGeneration();
-															#line 314 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-			if (static_cast<GetKnobsActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 2311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
-			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
-			static_cast<GetKnobsActor*>(this)->actor_wait_state = 1;
-															#line 314 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< GetKnobsActor, 0, ConfigGeneration >*>(static_cast<GetKnobsActor*>(this)));
-															#line 2316 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
-			loopDepth = 0;
+															#line 361 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+			;
+															#line 2489 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
 			loopDepth = a_body1Catch1(error, loopDepth);
@@ -2332,50 +2505,110 @@ public:
 
 		return loopDepth;
 	}
-	int a_body1cont1(int loopDepth) 
+	int a_body1loopHead1(int loopDepth) 
 	{
-															#line 315 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-		readReplicas = self->getGenerationQuorum.getReadReplicas();
-															#line 316 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-		std::vector<Future<Void>> fs;
-															#line 317 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-		for( ConfigTransactionInterface& readReplica : readReplicas ) {
-															#line 318 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-			if (readReplica.hostname.present())
-															#line 2345 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+		int oldLoopDepth = ++loopDepth;
+		while (loopDepth == oldLoopDepth) loopDepth = a_body1loopBody1(loopDepth);
+
+		return loopDepth;
+	}
+	int a_body1loopBody1(int loopDepth) 
+	{
+		try {
+															#line 363 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+			StrictFuture<ConfigGeneration> __when_expr_0 = self->getGenerationQuorum.getGeneration();
+															#line 363 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+			if (static_cast<GetKnobsActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
+															#line 2522 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1loopBody1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
+			static_cast<GetKnobsActor*>(this)->actor_wait_state = 1;
+															#line 363 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< GetKnobsActor, 0, ConfigGeneration >*>(static_cast<GetKnobsActor*>(this)));
+															#line 2527 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+			loopDepth = 0;
+		}
+		catch (Error& error) {
+			loopDepth = a_body1loopBody1Catch1(error, loopDepth);
+		} catch (...) {
+			loopDepth = a_body1loopBody1Catch1(unknown_error(), loopDepth);
+		}
+
+		return loopDepth;
+	}
+	int a_body1loopBody1cont1(int loopDepth) 
+	{
+		if (loopDepth == 0) return a_body1loopHead1(0);
+
+		return loopDepth;
+	}
+	int a_body1loopBody1Catch1(const Error& e,int loopDepth=0) 
+	{
+		try {
+															#line 386 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+			if (e.code() != error_code_coordinators_changed)
+															#line 2549 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 			{
-															#line 319 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 387 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+				return a_body1Catch1(e, std::max(0, loopDepth - 1));
+															#line 2553 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+			}
+															#line 389 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+			self->reset();
+															#line 2557 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+			loopDepth = a_body1loopBody1cont1(loopDepth);
+		}
+		catch (Error& error) {
+			loopDepth = a_body1Catch1(error, std::max(0, loopDepth - 1));
+		} catch (...) {
+			loopDepth = a_body1Catch1(unknown_error(), std::max(0, loopDepth - 1));
+		}
+
+		return loopDepth;
+	}
+	int a_body1loopBody1cont2(int loopDepth) 
+	{
+															#line 364 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+		readReplicas = self->getGenerationQuorum.getReadReplicas();
+															#line 366 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+		std::vector<Future<Void>> fs;
+															#line 367 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+		for( ConfigTransactionInterface& readReplica : readReplicas ) {
+															#line 368 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+			if (readReplica.hostname.present())
+															#line 2578 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+			{
+															#line 369 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 				fs.push_back(tryInitializeRequestStream( &readReplica.getKnobs, readReplica.hostname.get(), WLTOKEN_CONFIGTXN_GETKNOBS));
-															#line 2349 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 2582 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 			}
 		}
-															#line 323 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 373 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = waitForAll(fs);
-															#line 323 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-		if (static_cast<GetKnobsActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 2356 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
-		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
+															#line 373 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+		if (static_cast<GetKnobsActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
+															#line 2589 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1loopBody1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1loopBody1cont2when1(__when_expr_1.get(), loopDepth); };
 		static_cast<GetKnobsActor*>(this)->actor_wait_state = 2;
-															#line 323 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 373 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< GetKnobsActor, 1, Void >*>(static_cast<GetKnobsActor*>(this)));
-															#line 2361 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 2594 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
-	int a_body1when1(ConfigGeneration const& __generation,int loopDepth) 
+	int a_body1loopBody1when1(ConfigGeneration const& __generation,int loopDepth) 
 	{
-															#line 314 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 363 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		generation = __generation;
-															#line 2370 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
-		loopDepth = a_body1cont1(loopDepth);
+															#line 2603 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+		loopDepth = a_body1loopBody1cont2(loopDepth);
 
 		return loopDepth;
 	}
-	int a_body1when1(ConfigGeneration && __generation,int loopDepth) 
+	int a_body1loopBody1when1(ConfigGeneration && __generation,int loopDepth) 
 	{
 		generation = std::move(__generation);
-		loopDepth = a_body1cont1(loopDepth);
+		loopDepth = a_body1loopBody1cont2(loopDepth);
 
 		return loopDepth;
 	}
@@ -2390,12 +2623,12 @@ public:
 		fdb_probe_actor_enter("getKnobs", reinterpret_cast<unsigned long>(this), 0);
 		a_exitChoose1();
 		try {
-			a_body1when1(value, 0);
+			a_body1loopBody1when1(value, 0);
 		}
 		catch (Error& error) {
-			a_body1Catch1(error, 0);
+			a_body1loopBody1Catch1(error, 0);
 		} catch (...) {
-			a_body1Catch1(unknown_error(), 0);
+			a_body1loopBody1Catch1(unknown_error(), 0);
 		}
 		fdb_probe_actor_exit("getKnobs", reinterpret_cast<unsigned long>(this), 0);
 
@@ -2405,12 +2638,12 @@ public:
 		fdb_probe_actor_enter("getKnobs", reinterpret_cast<unsigned long>(this), 0);
 		a_exitChoose1();
 		try {
-			a_body1when1(std::move(value), 0);
+			a_body1loopBody1when1(std::move(value), 0);
 		}
 		catch (Error& error) {
-			a_body1Catch1(error, 0);
+			a_body1loopBody1Catch1(error, 0);
 		} catch (...) {
-			a_body1Catch1(unknown_error(), 0);
+			a_body1loopBody1Catch1(unknown_error(), 0);
 		}
 		fdb_probe_actor_exit("getKnobs", reinterpret_cast<unsigned long>(this), 0);
 
@@ -2420,61 +2653,61 @@ public:
 		fdb_probe_actor_enter("getKnobs", reinterpret_cast<unsigned long>(this), 0);
 		a_exitChoose1();
 		try {
-			a_body1Catch1(err, 0);
+			a_body1loopBody1Catch1(err, 0);
 		}
 		catch (Error& error) {
-			a_body1Catch1(error, 0);
+			a_body1loopBody1Catch1(error, 0);
 		} catch (...) {
-			a_body1Catch1(unknown_error(), 0);
+			a_body1loopBody1Catch1(unknown_error(), 0);
 		}
 		fdb_probe_actor_exit("getKnobs", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-	int a_body1cont2(Void const& _,int loopDepth) 
+	int a_body1loopBody1cont3(Void const& _,int loopDepth) 
 	{
-															#line 324 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 374 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		configNodes = Reference<ConfigTransactionInfo>(new ConfigTransactionInfo(readReplicas));
-															#line 325 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-		StrictFuture<ConfigTransactionGetKnobsReply> __when_expr_2 = basicLoadBalance(configNodes, &ConfigTransactionInterface::getKnobs, ConfigTransactionGetKnobsRequest{ generation, configClass });
-															#line 325 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-		if (static_cast<GetKnobsActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 2441 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
-		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1cont2when1(__when_expr_2.get(), loopDepth); };
+															#line 375 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+		StrictFuture<ConfigTransactionGetKnobsReply> __when_expr_2 = basicLoadBalance( configNodes, &ConfigTransactionInterface::getKnobs, ConfigTransactionGetKnobsRequest{ self->coordinatorsHash, generation, configClass });
+															#line 375 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+		if (static_cast<GetKnobsActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
+															#line 2674 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1loopBody1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1loopBody1cont3when1(__when_expr_2.get(), loopDepth); };
 		static_cast<GetKnobsActor*>(this)->actor_wait_state = 3;
-															#line 325 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 375 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< GetKnobsActor, 2, ConfigTransactionGetKnobsReply >*>(static_cast<GetKnobsActor*>(this)));
-															#line 2446 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 2679 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
-	int a_body1cont2(Void && _,int loopDepth) 
+	int a_body1loopBody1cont3(Void && _,int loopDepth) 
 	{
-															#line 324 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 374 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		configNodes = Reference<ConfigTransactionInfo>(new ConfigTransactionInfo(readReplicas));
-															#line 325 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-		StrictFuture<ConfigTransactionGetKnobsReply> __when_expr_2 = basicLoadBalance(configNodes, &ConfigTransactionInterface::getKnobs, ConfigTransactionGetKnobsRequest{ generation, configClass });
-															#line 325 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-		if (static_cast<GetKnobsActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 2459 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
-		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1cont2when1(__when_expr_2.get(), loopDepth); };
+															#line 375 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+		StrictFuture<ConfigTransactionGetKnobsReply> __when_expr_2 = basicLoadBalance( configNodes, &ConfigTransactionInterface::getKnobs, ConfigTransactionGetKnobsRequest{ self->coordinatorsHash, generation, configClass });
+															#line 375 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+		if (static_cast<GetKnobsActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
+															#line 2692 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1loopBody1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1loopBody1cont3when1(__when_expr_2.get(), loopDepth); };
 		static_cast<GetKnobsActor*>(this)->actor_wait_state = 3;
-															#line 325 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 375 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< GetKnobsActor, 2, ConfigTransactionGetKnobsReply >*>(static_cast<GetKnobsActor*>(this)));
-															#line 2464 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 2697 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
-	int a_body1cont1when1(Void const& _,int loopDepth) 
+	int a_body1loopBody1cont2when1(Void const& _,int loopDepth) 
 	{
-		loopDepth = a_body1cont2(_, loopDepth);
+		loopDepth = a_body1loopBody1cont3(_, loopDepth);
 
 		return loopDepth;
 	}
-	int a_body1cont1when1(Void && _,int loopDepth) 
+	int a_body1loopBody1cont2when1(Void && _,int loopDepth) 
 	{
-		loopDepth = a_body1cont2(std::move(_), loopDepth);
+		loopDepth = a_body1loopBody1cont3(std::move(_), loopDepth);
 
 		return loopDepth;
 	}
@@ -2489,12 +2722,12 @@ public:
 		fdb_probe_actor_enter("getKnobs", reinterpret_cast<unsigned long>(this), 1);
 		a_exitChoose2();
 		try {
-			a_body1cont1when1(value, 0);
+			a_body1loopBody1cont2when1(value, 0);
 		}
 		catch (Error& error) {
-			a_body1Catch1(error, 0);
+			a_body1loopBody1Catch1(error, 0);
 		} catch (...) {
-			a_body1Catch1(unknown_error(), 0);
+			a_body1loopBody1Catch1(unknown_error(), 0);
 		}
 		fdb_probe_actor_exit("getKnobs", reinterpret_cast<unsigned long>(this), 1);
 
@@ -2504,12 +2737,12 @@ public:
 		fdb_probe_actor_enter("getKnobs", reinterpret_cast<unsigned long>(this), 1);
 		a_exitChoose2();
 		try {
-			a_body1cont1when1(std::move(value), 0);
+			a_body1loopBody1cont2when1(std::move(value), 0);
 		}
 		catch (Error& error) {
-			a_body1Catch1(error, 0);
+			a_body1loopBody1Catch1(error, 0);
 		} catch (...) {
-			a_body1Catch1(unknown_error(), 0);
+			a_body1loopBody1Catch1(unknown_error(), 0);
 		}
 		fdb_probe_actor_exit("getKnobs", reinterpret_cast<unsigned long>(this), 1);
 
@@ -2519,31 +2752,31 @@ public:
 		fdb_probe_actor_enter("getKnobs", reinterpret_cast<unsigned long>(this), 1);
 		a_exitChoose2();
 		try {
-			a_body1Catch1(err, 0);
+			a_body1loopBody1Catch1(err, 0);
 		}
 		catch (Error& error) {
-			a_body1Catch1(error, 0);
+			a_body1loopBody1Catch1(error, 0);
 		} catch (...) {
-			a_body1Catch1(unknown_error(), 0);
+			a_body1loopBody1Catch1(unknown_error(), 0);
 		}
 		fdb_probe_actor_exit("getKnobs", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-	int a_body1cont5(ConfigTransactionGetKnobsReply const& reply,int loopDepth) 
+	int a_body1loopBody1cont6(ConfigTransactionGetKnobsReply const& reply,int loopDepth) 
 	{
-															#line 329 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 379 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		RangeResult result;
-															#line 330 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 380 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		result.reserve(result.arena(), reply.knobNames.size());
-															#line 331 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 381 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		for( const auto& knobName : reply.knobNames ) {
-															#line 332 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 382 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 			result.push_back_deep(result.arena(), KeyValueRef(knobName, ""_sr));
-															#line 2542 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 2775 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 		}
-															#line 334 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 384 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		if (!static_cast<GetKnobsActor*>(this)->SAV<RangeResult>::futures) { (void)(result); this->~GetKnobsActorState(); static_cast<GetKnobsActor*>(this)->destroy(); return 0; }
-															#line 2546 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 2779 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 		new (&static_cast<GetKnobsActor*>(this)->SAV< RangeResult >::value()) RangeResult(result);
 		this->~GetKnobsActorState();
 		static_cast<GetKnobsActor*>(this)->finishSendAndDelPromiseRef();
@@ -2551,21 +2784,21 @@ public:
 
 		return loopDepth;
 	}
-	int a_body1cont5(ConfigTransactionGetKnobsReply && reply,int loopDepth) 
+	int a_body1loopBody1cont6(ConfigTransactionGetKnobsReply && reply,int loopDepth) 
 	{
-															#line 329 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 379 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		RangeResult result;
-															#line 330 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 380 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		result.reserve(result.arena(), reply.knobNames.size());
-															#line 331 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 381 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		for( const auto& knobName : reply.knobNames ) {
-															#line 332 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 382 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 			result.push_back_deep(result.arena(), KeyValueRef(knobName, ""_sr));
-															#line 2564 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 2797 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 		}
-															#line 334 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 384 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		if (!static_cast<GetKnobsActor*>(this)->SAV<RangeResult>::futures) { (void)(result); this->~GetKnobsActorState(); static_cast<GetKnobsActor*>(this)->destroy(); return 0; }
-															#line 2568 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 2801 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 		new (&static_cast<GetKnobsActor*>(this)->SAV< RangeResult >::value()) RangeResult(result);
 		this->~GetKnobsActorState();
 		static_cast<GetKnobsActor*>(this)->finishSendAndDelPromiseRef();
@@ -2573,15 +2806,15 @@ public:
 
 		return loopDepth;
 	}
-	int a_body1cont2when1(ConfigTransactionGetKnobsReply const& reply,int loopDepth) 
+	int a_body1loopBody1cont3when1(ConfigTransactionGetKnobsReply const& reply,int loopDepth) 
 	{
-		loopDepth = a_body1cont5(reply, loopDepth);
+		loopDepth = a_body1loopBody1cont6(reply, loopDepth);
 
 		return loopDepth;
 	}
-	int a_body1cont2when1(ConfigTransactionGetKnobsReply && reply,int loopDepth) 
+	int a_body1loopBody1cont3when1(ConfigTransactionGetKnobsReply && reply,int loopDepth) 
 	{
-		loopDepth = a_body1cont5(std::move(reply), loopDepth);
+		loopDepth = a_body1loopBody1cont6(std::move(reply), loopDepth);
 
 		return loopDepth;
 	}
@@ -2596,12 +2829,12 @@ public:
 		fdb_probe_actor_enter("getKnobs", reinterpret_cast<unsigned long>(this), 2);
 		a_exitChoose3();
 		try {
-			a_body1cont2when1(value, 0);
+			a_body1loopBody1cont3when1(value, 0);
 		}
 		catch (Error& error) {
-			a_body1Catch1(error, 0);
+			a_body1loopBody1Catch1(error, 0);
 		} catch (...) {
-			a_body1Catch1(unknown_error(), 0);
+			a_body1loopBody1Catch1(unknown_error(), 0);
 		}
 		fdb_probe_actor_exit("getKnobs", reinterpret_cast<unsigned long>(this), 2);
 
@@ -2611,12 +2844,12 @@ public:
 		fdb_probe_actor_enter("getKnobs", reinterpret_cast<unsigned long>(this), 2);
 		a_exitChoose3();
 		try {
-			a_body1cont2when1(std::move(value), 0);
+			a_body1loopBody1cont3when1(std::move(value), 0);
 		}
 		catch (Error& error) {
-			a_body1Catch1(error, 0);
+			a_body1loopBody1Catch1(error, 0);
 		} catch (...) {
-			a_body1Catch1(unknown_error(), 0);
+			a_body1loopBody1Catch1(unknown_error(), 0);
 		}
 		fdb_probe_actor_exit("getKnobs", reinterpret_cast<unsigned long>(this), 2);
 
@@ -2626,32 +2859,32 @@ public:
 		fdb_probe_actor_enter("getKnobs", reinterpret_cast<unsigned long>(this), 2);
 		a_exitChoose3();
 		try {
-			a_body1Catch1(err, 0);
+			a_body1loopBody1Catch1(err, 0);
 		}
 		catch (Error& error) {
-			a_body1Catch1(error, 0);
+			a_body1loopBody1Catch1(error, 0);
 		} catch (...) {
-			a_body1Catch1(unknown_error(), 0);
+			a_body1loopBody1Catch1(unknown_error(), 0);
 		}
 		fdb_probe_actor_exit("getKnobs", reinterpret_cast<unsigned long>(this), 2);
 
 	}
-															#line 313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 360 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 	PaxosConfigTransactionImpl* self;
-															#line 313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 360 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 	Optional<Key> configClass;
-															#line 314 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 363 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 	ConfigGeneration generation;
-															#line 315 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 364 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 	std::vector<ConfigTransactionInterface> readReplicas;
-															#line 324 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 374 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 	Reference<ConfigTransactionInfo> configNodes;
-															#line 2649 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 2882 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 };
 // This generated class is to be used only via getKnobs()
-															#line 313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 360 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 class GetKnobsActor final : public Actor<RangeResult>, public ActorCallback< GetKnobsActor, 0, ConfigGeneration >, public ActorCallback< GetKnobsActor, 1, Void >, public ActorCallback< GetKnobsActor, 2, ConfigTransactionGetKnobsReply >, public FastAllocated<GetKnobsActor>, public GetKnobsActorState<GetKnobsActor> {
-															#line 2654 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 2887 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 public:
 	using FastAllocated<GetKnobsActor>::operator new;
 	using FastAllocated<GetKnobsActor>::operator delete;
@@ -2662,9 +2895,9 @@ public:
 friend struct ActorCallback< GetKnobsActor, 0, ConfigGeneration >;
 friend struct ActorCallback< GetKnobsActor, 1, Void >;
 friend struct ActorCallback< GetKnobsActor, 2, ConfigTransactionGetKnobsReply >;
-															#line 313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 360 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 	GetKnobsActor(PaxosConfigTransactionImpl* const& self,Optional<Key> const& configClass) 
-															#line 2667 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 2900 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 		 : Actor<RangeResult>(),
 		   GetKnobsActorState<GetKnobsActor>(self, configClass)
 	{
@@ -2689,29 +2922,29 @@ friend struct ActorCallback< GetKnobsActor, 2, ConfigTransactionGetKnobsReply >;
 
 	}
 };
-															#line 313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 360 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 [[nodiscard]] static Future<RangeResult> getKnobs( PaxosConfigTransactionImpl* const& self, Optional<Key> const& configClass ) {
-															#line 313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 360 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 	return Future<RangeResult>(new GetKnobsActor(self, configClass));
-															#line 2696 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 2929 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 }
 
-#line 336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+#line 393 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 
-																#line 2701 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+																#line 2934 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 // This generated class is to be used only via commit()
-															#line 337 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 394 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 template <class CommitActor>
-															#line 337 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 394 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 class CommitActorState {
-															#line 2707 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 2940 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 public:
-															#line 337 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 394 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 	CommitActorState(PaxosConfigTransactionImpl* const& self) 
-															#line 337 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-															#line 337 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 394 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 394 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		 : self(self)
-															#line 2714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 2947 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 	{
 		fdb_probe_actor_create("commit", reinterpret_cast<unsigned long>(this));
 
@@ -2724,17 +2957,10 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 338 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-			StrictFuture<ConfigGeneration> __when_expr_0 = self->getGenerationQuorum.getGeneration();
-															#line 338 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-			if (static_cast<CommitActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 2731 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
-			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
-			static_cast<CommitActor*>(this)->actor_wait_state = 1;
-															#line 338 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< CommitActor, 0, ConfigGeneration >*>(static_cast<CommitActor*>(this)));
-															#line 2736 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
-			loopDepth = 0;
+															#line 395 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+			;
+															#line 2962 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
 			loopDepth = a_body1Catch1(error, loopDepth);
@@ -2752,51 +2978,111 @@ public:
 
 		return loopDepth;
 	}
-	int a_body1cont1(ConfigGeneration const& generation,int loopDepth) 
+	int a_body1loopHead1(int loopDepth) 
 	{
-															#line 339 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+		int oldLoopDepth = ++loopDepth;
+		while (loopDepth == oldLoopDepth) loopDepth = a_body1loopBody1(loopDepth);
+
+		return loopDepth;
+	}
+	int a_body1loopBody1(int loopDepth) 
+	{
+		try {
+															#line 397 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+			StrictFuture<ConfigGeneration> __when_expr_0 = self->getGenerationQuorum.getGeneration();
+															#line 397 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+			if (static_cast<CommitActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
+															#line 2995 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1loopBody1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
+			static_cast<CommitActor*>(this)->actor_wait_state = 1;
+															#line 397 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< CommitActor, 0, ConfigGeneration >*>(static_cast<CommitActor*>(this)));
+															#line 3000 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+			loopDepth = 0;
+		}
+		catch (Error& error) {
+			loopDepth = a_body1loopBody1Catch1(error, loopDepth);
+		} catch (...) {
+			loopDepth = a_body1loopBody1Catch1(unknown_error(), loopDepth);
+		}
+
+		return loopDepth;
+	}
+	int a_body1loopBody1cont1(int loopDepth) 
+	{
+		if (loopDepth == 0) return a_body1loopHead1(0);
+
+		return loopDepth;
+	}
+	int a_body1loopBody1Catch1(const Error& e,int loopDepth=0) 
+	{
+		try {
+															#line 402 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+			if (e.code() != error_code_coordinators_changed)
+															#line 3022 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+			{
+															#line 403 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+				return a_body1Catch1(e, std::max(0, loopDepth - 1));
+															#line 3026 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+			}
+															#line 405 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+			self->reset();
+															#line 3030 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+			loopDepth = a_body1loopBody1cont1(loopDepth);
+		}
+		catch (Error& error) {
+			loopDepth = a_body1Catch1(error, std::max(0, loopDepth - 1));
+		} catch (...) {
+			loopDepth = a_body1Catch1(unknown_error(), std::max(0, loopDepth - 1));
+		}
+
+		return loopDepth;
+	}
+	int a_body1loopBody1cont2(ConfigGeneration const& generation,int loopDepth) 
+	{
+															#line 398 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		self->commitQuorum.setTimestamp();
-															#line 340 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-		StrictFuture<Void> __when_expr_1 = self->commitQuorum.commit(generation);
-															#line 340 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-		if (static_cast<CommitActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 2763 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
-		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
+															#line 399 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+		StrictFuture<Void> __when_expr_1 = self->commitQuorum.commit(generation, self->coordinatorsHash);
+															#line 399 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+		if (static_cast<CommitActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
+															#line 3049 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1loopBody1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1loopBody1cont2when1(__when_expr_1.get(), loopDepth); };
 		static_cast<CommitActor*>(this)->actor_wait_state = 2;
-															#line 340 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 399 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< CommitActor, 1, Void >*>(static_cast<CommitActor*>(this)));
-															#line 2768 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 3054 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
-	int a_body1cont1(ConfigGeneration && generation,int loopDepth) 
+	int a_body1loopBody1cont2(ConfigGeneration && generation,int loopDepth) 
 	{
-															#line 339 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 398 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		self->commitQuorum.setTimestamp();
-															#line 340 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-		StrictFuture<Void> __when_expr_1 = self->commitQuorum.commit(generation);
-															#line 340 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-		if (static_cast<CommitActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 2781 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
-		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
+															#line 399 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+		StrictFuture<Void> __when_expr_1 = self->commitQuorum.commit(generation, self->coordinatorsHash);
+															#line 399 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+		if (static_cast<CommitActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
+															#line 3067 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1loopBody1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1loopBody1cont2when1(__when_expr_1.get(), loopDepth); };
 		static_cast<CommitActor*>(this)->actor_wait_state = 2;
-															#line 340 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 399 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< CommitActor, 1, Void >*>(static_cast<CommitActor*>(this)));
-															#line 2786 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 3072 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
-	int a_body1when1(ConfigGeneration const& generation,int loopDepth) 
+	int a_body1loopBody1when1(ConfigGeneration const& generation,int loopDepth) 
 	{
-		loopDepth = a_body1cont1(generation, loopDepth);
+		loopDepth = a_body1loopBody1cont2(generation, loopDepth);
 
 		return loopDepth;
 	}
-	int a_body1when1(ConfigGeneration && generation,int loopDepth) 
+	int a_body1loopBody1when1(ConfigGeneration && generation,int loopDepth) 
 	{
-		loopDepth = a_body1cont1(std::move(generation), loopDepth);
+		loopDepth = a_body1loopBody1cont2(std::move(generation), loopDepth);
 
 		return loopDepth;
 	}
@@ -2811,12 +3097,12 @@ public:
 		fdb_probe_actor_enter("commit", reinterpret_cast<unsigned long>(this), 0);
 		a_exitChoose1();
 		try {
-			a_body1when1(value, 0);
+			a_body1loopBody1when1(value, 0);
 		}
 		catch (Error& error) {
-			a_body1Catch1(error, 0);
+			a_body1loopBody1Catch1(error, 0);
 		} catch (...) {
-			a_body1Catch1(unknown_error(), 0);
+			a_body1loopBody1Catch1(unknown_error(), 0);
 		}
 		fdb_probe_actor_exit("commit", reinterpret_cast<unsigned long>(this), 0);
 
@@ -2826,12 +3112,12 @@ public:
 		fdb_probe_actor_enter("commit", reinterpret_cast<unsigned long>(this), 0);
 		a_exitChoose1();
 		try {
-			a_body1when1(std::move(value), 0);
+			a_body1loopBody1when1(std::move(value), 0);
 		}
 		catch (Error& error) {
-			a_body1Catch1(error, 0);
+			a_body1loopBody1Catch1(error, 0);
 		} catch (...) {
-			a_body1Catch1(unknown_error(), 0);
+			a_body1loopBody1Catch1(unknown_error(), 0);
 		}
 		fdb_probe_actor_exit("commit", reinterpret_cast<unsigned long>(this), 0);
 
@@ -2841,21 +3127,21 @@ public:
 		fdb_probe_actor_enter("commit", reinterpret_cast<unsigned long>(this), 0);
 		a_exitChoose1();
 		try {
-			a_body1Catch1(err, 0);
+			a_body1loopBody1Catch1(err, 0);
 		}
 		catch (Error& error) {
-			a_body1Catch1(error, 0);
+			a_body1loopBody1Catch1(error, 0);
 		} catch (...) {
-			a_body1Catch1(unknown_error(), 0);
+			a_body1loopBody1Catch1(unknown_error(), 0);
 		}
 		fdb_probe_actor_exit("commit", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-	int a_body1cont2(Void const& _,int loopDepth) 
+	int a_body1loopBody1cont3(Void const& _,int loopDepth) 
 	{
-															#line 341 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 400 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		if (!static_cast<CommitActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~CommitActorState(); static_cast<CommitActor*>(this)->destroy(); return 0; }
-															#line 2858 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 3144 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 		new (&static_cast<CommitActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~CommitActorState();
 		static_cast<CommitActor*>(this)->finishSendAndDelPromiseRef();
@@ -2863,11 +3149,11 @@ public:
 
 		return loopDepth;
 	}
-	int a_body1cont2(Void && _,int loopDepth) 
+	int a_body1loopBody1cont3(Void && _,int loopDepth) 
 	{
-															#line 341 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 400 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		if (!static_cast<CommitActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~CommitActorState(); static_cast<CommitActor*>(this)->destroy(); return 0; }
-															#line 2870 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 3156 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 		new (&static_cast<CommitActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~CommitActorState();
 		static_cast<CommitActor*>(this)->finishSendAndDelPromiseRef();
@@ -2875,15 +3161,15 @@ public:
 
 		return loopDepth;
 	}
-	int a_body1cont1when1(Void const& _,int loopDepth) 
+	int a_body1loopBody1cont2when1(Void const& _,int loopDepth) 
 	{
-		loopDepth = a_body1cont2(_, loopDepth);
+		loopDepth = a_body1loopBody1cont3(_, loopDepth);
 
 		return loopDepth;
 	}
-	int a_body1cont1when1(Void && _,int loopDepth) 
+	int a_body1loopBody1cont2when1(Void && _,int loopDepth) 
 	{
-		loopDepth = a_body1cont2(std::move(_), loopDepth);
+		loopDepth = a_body1loopBody1cont3(std::move(_), loopDepth);
 
 		return loopDepth;
 	}
@@ -2898,12 +3184,12 @@ public:
 		fdb_probe_actor_enter("commit", reinterpret_cast<unsigned long>(this), 1);
 		a_exitChoose2();
 		try {
-			a_body1cont1when1(value, 0);
+			a_body1loopBody1cont2when1(value, 0);
 		}
 		catch (Error& error) {
-			a_body1Catch1(error, 0);
+			a_body1loopBody1Catch1(error, 0);
 		} catch (...) {
-			a_body1Catch1(unknown_error(), 0);
+			a_body1loopBody1Catch1(unknown_error(), 0);
 		}
 		fdb_probe_actor_exit("commit", reinterpret_cast<unsigned long>(this), 1);
 
@@ -2913,12 +3199,12 @@ public:
 		fdb_probe_actor_enter("commit", reinterpret_cast<unsigned long>(this), 1);
 		a_exitChoose2();
 		try {
-			a_body1cont1when1(std::move(value), 0);
+			a_body1loopBody1cont2when1(std::move(value), 0);
 		}
 		catch (Error& error) {
-			a_body1Catch1(error, 0);
+			a_body1loopBody1Catch1(error, 0);
 		} catch (...) {
-			a_body1Catch1(unknown_error(), 0);
+			a_body1loopBody1Catch1(unknown_error(), 0);
 		}
 		fdb_probe_actor_exit("commit", reinterpret_cast<unsigned long>(this), 1);
 
@@ -2928,24 +3214,24 @@ public:
 		fdb_probe_actor_enter("commit", reinterpret_cast<unsigned long>(this), 1);
 		a_exitChoose2();
 		try {
-			a_body1Catch1(err, 0);
+			a_body1loopBody1Catch1(err, 0);
 		}
 		catch (Error& error) {
-			a_body1Catch1(error, 0);
+			a_body1loopBody1Catch1(error, 0);
 		} catch (...) {
-			a_body1Catch1(unknown_error(), 0);
+			a_body1loopBody1Catch1(unknown_error(), 0);
 		}
 		fdb_probe_actor_exit("commit", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 337 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 394 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 	PaxosConfigTransactionImpl* self;
-															#line 2943 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 3229 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 };
 // This generated class is to be used only via commit()
-															#line 337 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 394 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 class CommitActor final : public Actor<Void>, public ActorCallback< CommitActor, 0, ConfigGeneration >, public ActorCallback< CommitActor, 1, Void >, public FastAllocated<CommitActor>, public CommitActorState<CommitActor> {
-															#line 2948 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 3234 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 public:
 	using FastAllocated<CommitActor>::operator new;
 	using FastAllocated<CommitActor>::operator delete;
@@ -2955,9 +3241,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< CommitActor, 0, ConfigGeneration >;
 friend struct ActorCallback< CommitActor, 1, Void >;
-															#line 337 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 394 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 	CommitActor(PaxosConfigTransactionImpl* const& self) 
-															#line 2960 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 3246 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 		 : Actor<Void>(),
 		   CommitActorState<CommitActor>(self)
 	{
@@ -2981,31 +3267,31 @@ friend struct ActorCallback< CommitActor, 1, Void >;
 
 	}
 };
-															#line 337 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 394 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 [[nodiscard]] static Future<Void> commit( PaxosConfigTransactionImpl* const& self ) {
-															#line 337 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 394 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 	return Future<Void>(new CommitActor(self));
-															#line 2988 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 3274 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 }
 
-#line 343 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+#line 409 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 
-																#line 2993 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+																#line 3279 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 // This generated class is to be used only via onError()
-															#line 344 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 410 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 template <class OnErrorActor>
-															#line 344 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 410 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 class OnErrorActorState {
-															#line 2999 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 3285 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 public:
-															#line 344 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 410 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 	OnErrorActorState(PaxosConfigTransactionImpl* const& self,Error const& e) 
-															#line 344 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
-															#line 344 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 410 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 410 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		 : self(self),
-															#line 344 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 410 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		   e(e)
-															#line 3008 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 3294 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 	{
 		fdb_probe_actor_create("onError", reinterpret_cast<unsigned long>(this));
 
@@ -3018,22 +3304,22 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 346 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 412 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 			TraceEvent("ConfigIncrementOnError").error(e).detail("NumRetries", self->numRetries);
-															#line 347 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 413 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 			if (e.code() == error_code_transaction_too_old || e.code() == error_code_not_committed)
-															#line 3025 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 3311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 			{
-															#line 348 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 414 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 				StrictFuture<Void> __when_expr_0 = delay(std::clamp((1 << self->numRetries++) * 0.01 * deterministicRandom()->random01(), 0.0, CLIENT_KNOBS->TIMEOUT_RETRY_UPPER_BOUND));
-															#line 348 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 414 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 				if (static_cast<OnErrorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 3031 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 3317 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 				if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 				static_cast<OnErrorActor*>(this)->actor_wait_state = 1;
-															#line 348 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 414 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 				__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< OnErrorActor, 0, Void >*>(static_cast<OnErrorActor*>(this)));
-															#line 3036 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 3322 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 				loopDepth = 0;
 			}
 			else
@@ -3059,19 +3345,19 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 354 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 420 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		return a_body1Catch1(e, loopDepth);
-															#line 3064 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 3350 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 
 		return loopDepth;
 	}
 	int a_body1cont2(Void const& _,int loopDepth) 
 	{
-															#line 351 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 417 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		self->reset();
-															#line 352 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 418 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		if (!static_cast<OnErrorActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~OnErrorActorState(); static_cast<OnErrorActor*>(this)->destroy(); return 0; }
-															#line 3074 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 3360 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 		new (&static_cast<OnErrorActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~OnErrorActorState();
 		static_cast<OnErrorActor*>(this)->finishSendAndDelPromiseRef();
@@ -3081,11 +3367,11 @@ public:
 	}
 	int a_body1cont2(Void && _,int loopDepth) 
 	{
-															#line 351 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 417 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		self->reset();
-															#line 352 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 418 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 		if (!static_cast<OnErrorActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~OnErrorActorState(); static_cast<OnErrorActor*>(this)->destroy(); return 0; }
-															#line 3088 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 3374 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 		new (&static_cast<OnErrorActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~OnErrorActorState();
 		static_cast<OnErrorActor*>(this)->finishSendAndDelPromiseRef();
@@ -3156,16 +3442,16 @@ public:
 		fdb_probe_actor_exit("onError", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 344 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 410 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 	PaxosConfigTransactionImpl* self;
-															#line 344 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 410 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 	Error e;
-															#line 3163 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 3449 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 };
 // This generated class is to be used only via onError()
-															#line 344 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 410 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 class OnErrorActor final : public Actor<Void>, public ActorCallback< OnErrorActor, 0, Void >, public FastAllocated<OnErrorActor>, public OnErrorActorState<OnErrorActor> {
-															#line 3168 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 3454 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 public:
 	using FastAllocated<OnErrorActor>::operator new;
 	using FastAllocated<OnErrorActor>::operator delete;
@@ -3174,9 +3460,9 @@ public:
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< OnErrorActor, 0, Void >;
-															#line 344 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 410 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 	OnErrorActor(PaxosConfigTransactionImpl* const& self,Error const& e) 
-															#line 3179 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 3465 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 		 : Actor<Void>(),
 		   OnErrorActorState<OnErrorActor>(self, e)
 	{
@@ -3199,14 +3485,242 @@ friend struct ActorCallback< OnErrorActor, 0, Void >;
 
 	}
 };
-															#line 344 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 410 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 [[nodiscard]] static Future<Void> onError( PaxosConfigTransactionImpl* const& self, Error const& e ) {
-															#line 344 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 410 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 	return Future<Void>(new OnErrorActor(self, e));
-															#line 3206 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+															#line 3492 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
 }
 
-#line 356 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+#line 422 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+
+	// Returns when the cluster interface updates with a new connection string.
+																#line 3498 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+// This generated class is to be used only via watchClusterFile()
+															#line 424 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+template <class WatchClusterFileActor>
+															#line 424 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+class WatchClusterFileActorState {
+															#line 3504 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+public:
+															#line 424 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+	WatchClusterFileActorState(Database const& cx) 
+															#line 424 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+															#line 424 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+		 : cx(cx),
+															#line 425 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+		   leaderMonitor(monitorLeader<ClusterInterface>(cx->getConnectionRecord(), cx->statusClusterInterface)),
+															#line 427 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+		   connectionString(cx->getConnectionRecord()->getConnectionString().toString())
+															#line 3515 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+	{
+		fdb_probe_actor_create("watchClusterFile", reinterpret_cast<unsigned long>(this));
+
+	}
+	~WatchClusterFileActorState() 
+	{
+		fdb_probe_actor_destroy("watchClusterFile", reinterpret_cast<unsigned long>(this));
+
+	}
+	int a_body1(int loopDepth=0) 
+	{
+		try {
+															#line 429 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+			;
+															#line 3530 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+			loopDepth = a_body1loopHead1(loopDepth);
+		}
+		catch (Error& error) {
+			loopDepth = a_body1Catch1(error, loopDepth);
+		} catch (...) {
+			loopDepth = a_body1Catch1(unknown_error(), loopDepth);
+		}
+
+		return loopDepth;
+	}
+	int a_body1Catch1(Error error,int loopDepth=0) 
+	{
+		this->~WatchClusterFileActorState();
+		static_cast<WatchClusterFileActor*>(this)->sendErrorAndDelPromiseRef(error);
+		loopDepth = 0;
+
+		return loopDepth;
+	}
+	int a_body1loopHead1(int loopDepth) 
+	{
+		int oldLoopDepth = ++loopDepth;
+		while (loopDepth == oldLoopDepth) loopDepth = a_body1loopBody1(loopDepth);
+
+		return loopDepth;
+	}
+	int a_body1loopBody1(int loopDepth) 
+	{
+															#line 430 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+		StrictFuture<Void> __when_expr_0 = cx->statusClusterInterface->onChange();
+															#line 430 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+		if (static_cast<WatchClusterFileActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
+															#line 3562 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+		if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
+		static_cast<WatchClusterFileActor*>(this)->actor_wait_state = 1;
+															#line 430 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+		__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< WatchClusterFileActor, 0, Void >*>(static_cast<WatchClusterFileActor*>(this)));
+															#line 3567 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+		loopDepth = 0;
+
+		return loopDepth;
+	}
+	int a_body1loopBody1cont1(Void const& _,int loopDepth) 
+	{
+															#line 431 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+		if (cx->getConnectionRecord()->getConnectionString().toString() != connectionString)
+															#line 3576 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+		{
+															#line 432 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+			if (!static_cast<WatchClusterFileActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~WatchClusterFileActorState(); static_cast<WatchClusterFileActor*>(this)->destroy(); return 0; }
+															#line 3580 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+			new (&static_cast<WatchClusterFileActor*>(this)->SAV< Void >::value()) Void(Void());
+			this->~WatchClusterFileActorState();
+			static_cast<WatchClusterFileActor*>(this)->finishSendAndDelPromiseRef();
+			return 0;
+		}
+		if (loopDepth == 0) return a_body1loopHead1(0);
+
+		return loopDepth;
+	}
+	int a_body1loopBody1cont1(Void && _,int loopDepth) 
+	{
+															#line 431 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+		if (cx->getConnectionRecord()->getConnectionString().toString() != connectionString)
+															#line 3594 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+		{
+															#line 432 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+			if (!static_cast<WatchClusterFileActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~WatchClusterFileActorState(); static_cast<WatchClusterFileActor*>(this)->destroy(); return 0; }
+															#line 3598 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+			new (&static_cast<WatchClusterFileActor*>(this)->SAV< Void >::value()) Void(Void());
+			this->~WatchClusterFileActorState();
+			static_cast<WatchClusterFileActor*>(this)->finishSendAndDelPromiseRef();
+			return 0;
+		}
+		if (loopDepth == 0) return a_body1loopHead1(0);
+
+		return loopDepth;
+	}
+	int a_body1loopBody1when1(Void const& _,int loopDepth) 
+	{
+		loopDepth = a_body1loopBody1cont1(_, loopDepth);
+
+		return loopDepth;
+	}
+	int a_body1loopBody1when1(Void && _,int loopDepth) 
+	{
+		loopDepth = a_body1loopBody1cont1(std::move(_), loopDepth);
+
+		return loopDepth;
+	}
+	void a_exitChoose1() 
+	{
+		if (static_cast<WatchClusterFileActor*>(this)->actor_wait_state > 0) static_cast<WatchClusterFileActor*>(this)->actor_wait_state = 0;
+		static_cast<WatchClusterFileActor*>(this)->ActorCallback< WatchClusterFileActor, 0, Void >::remove();
+
+	}
+	void a_callback_fire(ActorCallback< WatchClusterFileActor, 0, Void >*,Void const& value) 
+	{
+		fdb_probe_actor_enter("watchClusterFile", reinterpret_cast<unsigned long>(this), 0);
+		a_exitChoose1();
+		try {
+			a_body1loopBody1when1(value, 0);
+		}
+		catch (Error& error) {
+			a_body1Catch1(error, 0);
+		} catch (...) {
+			a_body1Catch1(unknown_error(), 0);
+		}
+		fdb_probe_actor_exit("watchClusterFile", reinterpret_cast<unsigned long>(this), 0);
+
+	}
+	void a_callback_fire(ActorCallback< WatchClusterFileActor, 0, Void >*,Void && value) 
+	{
+		fdb_probe_actor_enter("watchClusterFile", reinterpret_cast<unsigned long>(this), 0);
+		a_exitChoose1();
+		try {
+			a_body1loopBody1when1(std::move(value), 0);
+		}
+		catch (Error& error) {
+			a_body1Catch1(error, 0);
+		} catch (...) {
+			a_body1Catch1(unknown_error(), 0);
+		}
+		fdb_probe_actor_exit("watchClusterFile", reinterpret_cast<unsigned long>(this), 0);
+
+	}
+	void a_callback_error(ActorCallback< WatchClusterFileActor, 0, Void >*,Error err) 
+	{
+		fdb_probe_actor_enter("watchClusterFile", reinterpret_cast<unsigned long>(this), 0);
+		a_exitChoose1();
+		try {
+			a_body1Catch1(err, 0);
+		}
+		catch (Error& error) {
+			a_body1Catch1(error, 0);
+		} catch (...) {
+			a_body1Catch1(unknown_error(), 0);
+		}
+		fdb_probe_actor_exit("watchClusterFile", reinterpret_cast<unsigned long>(this), 0);
+
+	}
+															#line 424 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+	Database cx;
+															#line 425 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+	Future<Void> leaderMonitor;
+															#line 427 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+	std::string connectionString;
+															#line 3677 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+};
+// This generated class is to be used only via watchClusterFile()
+															#line 424 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+class WatchClusterFileActor final : public Actor<Void>, public ActorCallback< WatchClusterFileActor, 0, Void >, public FastAllocated<WatchClusterFileActor>, public WatchClusterFileActorState<WatchClusterFileActor> {
+															#line 3682 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+public:
+	using FastAllocated<WatchClusterFileActor>::operator new;
+	using FastAllocated<WatchClusterFileActor>::operator delete;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdelete-non-virtual-dtor"
+	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
+#pragma clang diagnostic pop
+friend struct ActorCallback< WatchClusterFileActor, 0, Void >;
+															#line 424 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+	WatchClusterFileActor(Database const& cx) 
+															#line 3693 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+		 : Actor<Void>(),
+		   WatchClusterFileActorState<WatchClusterFileActor>(cx)
+	{
+		fdb_probe_actor_enter("watchClusterFile", reinterpret_cast<unsigned long>(this), -1);
+		#ifdef ENABLE_SAMPLING
+		this->lineage.setActorName("watchClusterFile");
+		LineageScope _(&this->lineage);
+		#endif
+		this->a_body1();
+		fdb_probe_actor_exit("watchClusterFile", reinterpret_cast<unsigned long>(this), -1);
+
+	}
+	void cancel() override
+	{
+		auto wait_state = this->actor_wait_state;
+		this->actor_wait_state = -1;
+		switch (wait_state) {
+		case 1: this->a_callback_error((ActorCallback< WatchClusterFileActor, 0, Void >*)0, actor_cancelled()); break;
+		}
+
+	}
+};
+															#line 424 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+[[nodiscard]] static Future<Void> watchClusterFile( Database const& cx ) {
+															#line 424 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
+	return Future<Void>(new WatchClusterFileActor(cx));
+															#line 3720 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.g.cpp"
+}
+
+#line 436 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/PaxosConfigTransaction.actor.cpp"
 
 public:
 	Future<Version> getReadVersion() {
@@ -3253,7 +3767,25 @@ public:
 	void debugTransaction(UID dID) { this->dID = dID; }
 
 	void reset() {
-		getGenerationQuorum = GetGenerationQuorum{ ctis };
+		ctis.clear();
+		// Re-read connection string. If the cluster file changed, this will
+		// return the updated value.
+		const ClusterConnectionString& cs = cx->getConnectionRecord()->getConnectionString();
+		ctis.reserve(cs.hostnames.size() + cs.coords.size());
+		for (const auto& h : cs.hostnames) {
+			ctis.emplace_back(h);
+		}
+		for (const auto& c : cs.coords) {
+			ctis.emplace_back(c);
+		}
+		coordinatorsHash = std::hash<std::string>()(cx->getConnectionRecord()->getConnectionString().toString());
+		if (!cx->statusLeaderMon.isValid() || cx->statusLeaderMon.isReady()) {
+			cx->statusClusterInterface = makeReference<AsyncVar<Optional<ClusterInterface>>>();
+			cx->statusLeaderMon = watchClusterFile(cx);
+		}
+		getGenerationQuorum = GetGenerationQuorum{
+			coordinatorsHash, ctis, cx->statusLeaderMon, getGenerationQuorum.getLastSeenLiveVersion()
+		};
 		commitQuorum = CommitQuorum{ ctis };
 	}
 
@@ -3274,21 +3806,10 @@ public:
 
 	Future<Void> commit() { return commit(this); }
 
-	PaxosConfigTransactionImpl(Database const& cx) : cx(cx) {
-		const ClusterConnectionString& cs = cx->getConnectionRecord()->getConnectionString();
-		ctis.reserve(cs.hostnames.size() + cs.coords.size());
-		for (const auto& h : cs.hostnames) {
-			ctis.emplace_back(h);
-		}
-		for (const auto& c : cs.coords) {
-			ctis.emplace_back(c);
-		}
-		getGenerationQuorum = GetGenerationQuorum{ ctis };
-		commitQuorum = CommitQuorum{ ctis };
-	}
+	PaxosConfigTransactionImpl(Database const& cx) : cx(cx) { reset(); }
 
 	PaxosConfigTransactionImpl(std::vector<ConfigTransactionInterface> const& ctis)
-	  : ctis(ctis), getGenerationQuorum(ctis), commitQuorum(ctis) {}
+	  : ctis(ctis), getGenerationQuorum(0, ctis, Future<Void>()), commitQuorum(ctis) {}
 };
 
 Future<Version> PaxosConfigTransaction::getReadVersion() {
@@ -3339,6 +3860,14 @@ Future<Void> PaxosConfigTransaction::commit() {
 
 Version PaxosConfigTransaction::getCommittedVersion() const {
 	return impl->getCommittedVersion();
+}
+
+double PaxosConfigTransaction::getTagThrottledDuration() const {
+	return 0.0;
+}
+
+int64_t PaxosConfigTransaction::getTotalCost() const {
+	return 0;
 }
 
 int64_t PaxosConfigTransaction::getApproximateSize() const {

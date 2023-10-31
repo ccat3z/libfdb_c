@@ -350,7 +350,7 @@ public:
 															#line 44 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.cpp"
 		   expected(expected),
 															#line 45 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.cpp"
-		   next()
+		   next(0)
 															#line 354 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.g.cpp"
 	{
 		fdb_probe_actor_create("consume", reinterpret_cast<unsigned long>(this));

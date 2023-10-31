@@ -23,38 +23,50 @@
 #include "boost/asio/buffer.hpp"
 #include "boost/asio/ip/address.hpp"
 #include "boost/system/system_error.hpp"
+#include "flow/Arena.h"
 #include "flow/Platform.h"
 #include "flow/Trace.h"
 #include <algorithm>
 #include <memory>
+#ifndef BOOST_SYSTEM_NO_LIB
 #define BOOST_SYSTEM_NO_LIB
+#endif
+#ifndef BOOST_DATE_TIME_NO_LIB
 #define BOOST_DATE_TIME_NO_LIB
+#endif
+#ifndef BOOST_REGEX_NO_LIB
 #define BOOST_REGEX_NO_LIB
+#endif
 #include <boost/asio.hpp>
+#include "boost/asio/ssl.hpp"
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <boost/range.hpp>
 #include <boost/algorithm/string/join.hpp>
 #include "flow/network.h"
 #include "flow/IThreadPool.h"
 
+#include "flow/IAsyncFile.h"
 #include "flow/ActorCollection.h"
-#include "flow/ThreadSafeQueue.h"
+#include "flow/TaskQueue.h"
 #include "flow/ThreadHelper.actor.h"
+#include "flow/ChaosMetrics.h"
 #include "flow/TDMetric.actor.h"
 #include "flow/AsioReactor.h"
 #include "flow/Profiler.h"
 #include "flow/ProtocolVersion.h"
 #include "flow/SendBufferIterator.h"
 #include "flow/TLSConfig.actor.h"
+#include "flow/WatchFile.actor.h"
 #include "flow/genericactors.actor.h"
 #include "flow/Util.h"
+#include "flow/UnitTest.h"
+#include "flow/ScopeExit.h"
+#include "flow/IUDPSocket.h"
+#include "flow/IConnection.h"
 
 #ifdef ADDRESS_SANITIZER
 #include <sanitizer/lsan_interface.h>
 #endif
-
-// See the comment in TLSConfig.actor.h for the explanation of why this module breaking include was done.
-#include "fdbrpc/IAsyncFile.h"
 
 #ifdef WIN32
 #include <mmsystem.h>
@@ -96,33 +108,33 @@ void initProfiling() {
 #endif
 
 template<> struct Descriptor<struct SlowTask> {
-	static StringRef typeName() { return LiteralStringRef("SlowTask"); }
+	static StringRef typeName() { return "SlowTask"_sr; }
 	typedef SlowTask type;
 	struct clocksDescriptor {
-		static StringRef name() { return LiteralStringRef("clocks"); }
-		static StringRef typeName() { return LiteralStringRef("int64_t"); }
-		static StringRef comment() { return LiteralStringRef(" clocks"); }
+		static StringRef name() { return "clocks"_sr; }
+		static StringRef typeName() { return "int64_t"_sr; }
+		static StringRef comment() { return " clocks"_sr; }
 		typedef int64_t type;
 		static inline type get(SlowTask& from);
 	};
 	struct durationDescriptor {
-		static StringRef name() { return LiteralStringRef("duration"); }
-		static StringRef typeName() { return LiteralStringRef("int64_t"); }
-		static StringRef comment() { return LiteralStringRef(" ns"); }
+		static StringRef name() { return "duration"_sr; }
+		static StringRef typeName() { return "int64_t"_sr; }
+		static StringRef comment() { return " ns"_sr; }
 		typedef int64_t type;
 		static inline type get(SlowTask& from);
 	};
 	struct priorityDescriptor {
-		static StringRef name() { return LiteralStringRef("priority"); }
-		static StringRef typeName() { return LiteralStringRef("int64_t"); }
-		static StringRef comment() { return LiteralStringRef(" priority level"); }
+		static StringRef name() { return "priority"_sr; }
+		static StringRef typeName() { return "int64_t"_sr; }
+		static StringRef comment() { return " priority level"_sr; }
 		typedef int64_t type;
 		static inline type get(SlowTask& from);
 	};
 	struct numYieldsDescriptor {
-		static StringRef name() { return LiteralStringRef("numYields"); }
-		static StringRef typeName() { return LiteralStringRef("int64_t"); }
-		static StringRef comment() { return LiteralStringRef(" count"); }
+		static StringRef name() { return "numYields"_sr; }
+		static StringRef typeName() { return "int64_t"_sr; }
+		static StringRef comment() { return " count"_sr; }
 		typedef int64_t type;
 		static inline type get(SlowTask& from);
 	};
@@ -139,7 +151,7 @@ int64_t Descriptor<SlowTask>::clocksDescriptor::get(SlowTask& from) { return fro
 int64_t Descriptor<SlowTask>::durationDescriptor::get(SlowTask& from) { return from.duration; }
 int64_t Descriptor<SlowTask>::priorityDescriptor::get(SlowTask& from) { return from.priority; }
 int64_t Descriptor<SlowTask>::numYieldsDescriptor::get(SlowTask& from) { return from.numYields; }
-#line 101 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+#line 113 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 
 
 namespace N2 { // No indent, it's the whole file
@@ -150,27 +162,6 @@ class Connection;
 
 // Outlives main
 Net2* g_net2 = nullptr;
-
-class Task {
-public:
-	virtual void operator()() = 0;
-};
-
-struct OrderedTask {
-	int64_t priority;
-	TaskPriority taskID;
-	Task* task;
-	OrderedTask(int64_t priority, TaskPriority taskID, Task* task) : priority(priority), taskID(taskID), task(task) {}
-	bool operator<(OrderedTask const& rhs) const { return priority < rhs.priority; }
-};
-
-template <class T>
-class ReadyQueue : public std::priority_queue<T, std::vector<T>> {
-public:
-	typedef typename std::priority_queue<T, std::vector<T>>::size_type size_type;
-	ReadyQueue(size_type capacity = 0) { reserve(capacity); };
-	void reserve(size_type capacity) { this->c.reserve(capacity); }
-};
 
 thread_local INetwork* thread_network = 0;
 
@@ -257,7 +248,7 @@ public:
 		globals[id] = v;
 	}
 
-	ProtocolVersion protocolVersion() const override { return currentProtocolVersion; }
+	ProtocolVersion protocolVersion() const override { return currentProtocolVersion(); }
 
 	std::vector<flowGlobalType> globals;
 
@@ -274,13 +265,12 @@ public:
 	// private:
 
 	ASIOReactor reactor;
-#ifndef TLS_DISABLED
 	AsyncVar<Reference<ReferencedObject<boost::asio::ssl::context>>> sslContextVar;
 	Reference<IThreadPool> sslHandshakerPool;
 	int sslHandshakerThreadsStarted;
 	int sslPoolHandshakesInProgress;
-#endif
 	TLSConfig tlsConfig;
+	Reference<TLSPolicy> activeTlsPolicy;
 	Future<Void> backgroundCertRefresh;
 	ETLSInitState tlsInitializedState;
 
@@ -289,8 +279,8 @@ public:
 	int64_t tscBegin, tscEnd;
 	double taskBegin;
 	TaskPriority currentTaskID;
-	uint64_t tasksIssued;
 	TDMetricCollection tdmetrics;
+	MetricCollection metrics;
 	ChaosMetrics chaosMetrics;
 	// we read now() from a different thread. On Intel, reading a double is atomic anyways, but on other platforms it's
 	// not. For portability this should be atomic
@@ -309,20 +299,21 @@ public:
 
 	NetworkMetrics::PriorityStats* lastPriorityStats;
 
-	ReadyQueue<OrderedTask> ready;
-	ThreadSafeQueue<OrderedTask> threadReady;
+	struct PromiseTask final : public FastAllocated<PromiseTask> {
+		Promise<Void> promise;
+		PromiseTask() {}
+		explicit PromiseTask(Promise<Void>&& promise) noexcept : promise(std::move(promise)) {}
 
-	struct DelayedTask : OrderedTask {
-		double at;
-		DelayedTask(double at, int64_t priority, TaskPriority taskID, Task* task)
-		  : OrderedTask(priority, taskID, task), at(at) {}
-		bool operator<(DelayedTask const& rhs) const { return at > rhs.at; } // Ordering is reversed for priority_queue
+		void operator()() {
+			promise.send(Void());
+			delete this;
+		}
 	};
-	std::priority_queue<DelayedTask, std::vector<DelayedTask>> timers;
+
+	TaskQueue<PromiseTask> taskQueue;
 
 	void checkForSlowTask(int64_t tscBegin, int64_t tscEnd, double duration, TaskPriority priority);
 	bool check_yield(TaskPriority taskId, int64_t tscNow);
-	void processThreadReady();
 	void trackAtPriority(TaskPriority priority, double now);
 	void stopImmediately() {
 #ifdef ADDRESS_SANITIZER
@@ -330,10 +321,7 @@ public:
 		__lsan_do_leak_check();
 #endif
 		stopped = true;
-		decltype(ready) _1;
-		ready.swap(_1);
-		decltype(timers) _2;
-		timers.swap(_2);
+		taskQueue.clear();
 	}
 
 	Future<Void> timeOffsetLogger;
@@ -349,9 +337,6 @@ public:
 	Int64MetricHandle countWrites;
 	Int64MetricHandle countUDPWrites;
 	Int64MetricHandle countRunLoop;
-	Int64MetricHandle countCantSleep;
-	Int64MetricHandle countWontSleep;
-	Int64MetricHandle countTimers;
 	Int64MetricHandle countTasks;
 	Int64MetricHandle countYields;
 	Int64MetricHandle countYieldBigStack;
@@ -397,31 +382,35 @@ static udp::endpoint udpEndpoint(NetworkAddress const& n) {
 
 class BindPromise {
 	Promise<Void> p;
-	const char* errContext;
+	std::variant<const char*, AuditedEvent> errContext;
 	UID errID;
 
 public:
 	BindPromise(const char* errContext, UID errID) : errContext(errContext), errID(errID) {}
+	BindPromise(AuditedEvent auditedEvent, UID errID) : errContext(auditedEvent), errID(errID) {}
 	BindPromise(BindPromise const& r) : p(r.p), errContext(r.errContext), errID(r.errID) {}
 	BindPromise(BindPromise&& r) noexcept : p(std::move(r.p)), errContext(r.errContext), errID(r.errID) {}
 
-	Future<Void> getFuture() { return p.getFuture(); }
+	Future<Void> getFuture() const { return p.getFuture(); }
 
 	void operator()(const boost::system::error_code& error, size_t bytesWritten = 0) {
 		try {
 			if (error) {
 				// Log the error...
 				{
-					TraceEvent evt(SevWarn, errContext, errID);
+					std::optional<TraceEvent> traceEvent;
+					if (std::holds_alternative<AuditedEvent>(errContext))
+						traceEvent.emplace(SevWarn, std::get<AuditedEvent>(errContext), errID);
+					else
+						traceEvent.emplace(SevWarn, std::get<const char*>(errContext), errID);
+					TraceEvent& evt = *traceEvent;
 					evt.suppressFor(1.0).detail("ErrorCode", error.value()).detail("Message", error.message());
-#ifndef TLS_DISABLED
 					// There is no function in OpenSSL to use to check if an error code is from OpenSSL,
 					// but all OpenSSL errors have a non-zero "library" code set in bits 24-32, and linux
 					// error codes should never go that high.
 					if (error.value() >= (1 << 24L)) {
 						evt.detail("WhichMeans", TLSPolicy::ErrorString(error));
 					}
-#endif
 				}
 
 				p.sendError(connection_failed());
@@ -446,24 +435,24 @@ public:
 	  : id(nondeterministicRandom()->randomUniqueID()), socket(io_service) {}
 
 	// This is not part of the IConnection interface, because it is wrapped by INetwork::connect()
-																#line 449 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+																#line 438 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 // This generated class is to be used only via connect()
-															#line 407 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 396 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 template <class ConnectActor>
-															#line 407 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 396 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 class ConnectActorState {
-															#line 455 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 444 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 public:
-															#line 407 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 396 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	ConnectActorState(boost::asio::io_service* const& ios,NetworkAddress const& addr) 
-															#line 407 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-															#line 407 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 396 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 396 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		 : ios(ios),
-															#line 407 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 396 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		   addr(addr),
-															#line 408 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 397 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		   self(new Connection(*ios))
-															#line 466 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 455 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 	{
 		fdb_probe_actor_create("connect", reinterpret_cast<unsigned long>(this));
 
@@ -476,28 +465,28 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 410 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 399 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			self->peer_address = addr;
-															#line 481 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 470 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 			try {
-															#line 412 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 401 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 				auto to = tcpEndpoint(addr);
-															#line 413 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 402 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 				BindPromise p("N2_ConnectError", self->id);
-															#line 414 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 403 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 				Future<Void> onConnected = p.getFuture();
-															#line 415 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 404 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 				self->socket.async_connect(to, std::move(p));
-															#line 417 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 406 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 				StrictFuture<Void> __when_expr_0 = onConnected;
-															#line 417 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 406 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 				if (static_cast<ConnectActor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), loopDepth);
-															#line 495 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 484 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 				if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch2(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 				static_cast<ConnectActor*>(this)->actor_wait_state = 1;
-															#line 417 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 406 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 				__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ConnectActor, 0, Void >*>(static_cast<ConnectActor*>(this)));
-															#line 500 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 489 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 				loopDepth = 0;
 			}
 			catch (Error& error) {
@@ -525,11 +514,11 @@ public:
 	int a_body1Catch2(const Error& __current_error,int loopDepth=0) 
 	{
 		try {
-															#line 422 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 411 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			self->closeSocket();
-															#line 423 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 412 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			return a_body1Catch1(__current_error, loopDepth);
-															#line 532 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 521 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		}
 		catch (Error& error) {
 			loopDepth = a_body1Catch1(error, loopDepth);
@@ -541,11 +530,11 @@ public:
 	}
 	int a_body1cont2(Void const& _,int loopDepth) 
 	{
-															#line 418 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 407 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		self->init();
-															#line 419 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 408 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		if (!static_cast<ConnectActor*>(this)->SAV<Reference<IConnection>>::futures) { (void)(self); this->~ConnectActorState(); static_cast<ConnectActor*>(this)->destroy(); return 0; }
-															#line 548 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 537 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		new (&static_cast<ConnectActor*>(this)->SAV< Reference<IConnection> >::value()) Reference<IConnection>(std::move(self)); // state_var_RVO
 		this->~ConnectActorState();
 		static_cast<ConnectActor*>(this)->finishSendAndDelPromiseRef();
@@ -555,11 +544,11 @@ public:
 	}
 	int a_body1cont2(Void && _,int loopDepth) 
 	{
-															#line 418 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 407 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		self->init();
-															#line 419 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 408 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		if (!static_cast<ConnectActor*>(this)->SAV<Reference<IConnection>>::futures) { (void)(self); this->~ConnectActorState(); static_cast<ConnectActor*>(this)->destroy(); return 0; }
-															#line 562 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 551 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		new (&static_cast<ConnectActor*>(this)->SAV< Reference<IConnection> >::value()) Reference<IConnection>(std::move(self)); // state_var_RVO
 		this->~ConnectActorState();
 		static_cast<ConnectActor*>(this)->finishSendAndDelPromiseRef();
@@ -630,18 +619,18 @@ public:
 		fdb_probe_actor_exit("connect", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 407 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 396 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	boost::asio::io_service* ios;
-															#line 407 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 396 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	NetworkAddress addr;
-															#line 408 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 397 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	Reference<Connection> self;
-															#line 639 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 628 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 };
 // This generated class is to be used only via connect()
-															#line 407 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 396 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 class ConnectActor final : public Actor<Reference<IConnection>>, public ActorCallback< ConnectActor, 0, Void >, public FastAllocated<ConnectActor>, public ConnectActorState<ConnectActor> {
-															#line 644 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 633 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 public:
 	using FastAllocated<ConnectActor>::operator new;
 	using FastAllocated<ConnectActor>::operator delete;
@@ -650,9 +639,9 @@ public:
 	void destroy() override { ((Actor<Reference<IConnection>>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< ConnectActor, 0, Void >;
-															#line 407 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 396 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	ConnectActor(boost::asio::io_service* const& ios,NetworkAddress const& addr) 
-															#line 655 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 644 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		 : Actor<Reference<IConnection>>(),
 		   ConnectActorState<ConnectActor>(ios, addr)
 	{
@@ -675,14 +664,14 @@ friend struct ActorCallback< ConnectActor, 0, Void >;
 
 	}
 };
-															#line 407 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 396 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 [[nodiscard]] static Future<Reference<IConnection>> connect( boost::asio::io_service* const& ios, NetworkAddress const& addr ) {
-															#line 407 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 396 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	return Future<Reference<IConnection>>(new ConnectActor(ios, addr));
-															#line 682 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 671 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 }
 
-#line 426 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+#line 415 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 
 	// This is not part of the IConnection interface, because it is wrapped by IListener::accept()
 	void accept(NetworkAddress peerAddr) {
@@ -770,6 +759,8 @@ friend struct ActorCallback< ConnectActor, 0, Void >;
 
 	NetworkAddress getPeerAddress() const override { return peer_address; }
 
+	bool hasTrustedPeer() const override { return true; }
+
 	UID getDebugID() const override { return id; }
 
 	tcp::socket& getSocket() override { return socket; }
@@ -801,6 +792,7 @@ private:
 		if (error)
 			TraceEvent(SevWarn, "N2_CloseError", id)
 			    .suppressFor(1.0)
+			    .detail("PeerAddr", peer_address)
 			    .detail("ErrorCode", error.value())
 			    .detail("Message", error.message());
 	}
@@ -808,6 +800,7 @@ private:
 	void onReadError(const boost::system::error_code& error) {
 		TraceEvent(SevWarn, "N2_ReadError", id)
 		    .suppressFor(1.0)
+		    .detail("PeerAddr", peer_address)
 		    .detail("ErrorCode", error.value())
 		    .detail("Message", error.message());
 		closeSocket();
@@ -815,6 +808,7 @@ private:
 	void onWriteError(const boost::system::error_code& error) {
 		TraceEvent(SevWarn, "N2_WriteError", id)
 		    .suppressFor(1.0)
+		    .detail("PeerAddr", peer_address)
 		    .detail("ErrorCode", error.value())
 		    .detail("Message", error.message());
 		closeSocket();
@@ -859,26 +853,26 @@ class UDPSocket : public IUDPSocket, ReferenceCounted<UDPSocket> {
 	bool isPublic = false;
 
 public:
-																#line 862 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+																#line 856 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 // This generated class is to be used only via connect()
-															#line 602 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 template <class ConnectActor1>
-															#line 602 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 class ConnectActor1State {
-															#line 868 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 862 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 public:
-															#line 602 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	ConnectActor1State(boost::asio::io_service* const& io_service,Optional<NetworkAddress> const& toAddress,bool const& isV6) 
-															#line 602 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-															#line 602 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		 : io_service(io_service),
-															#line 602 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		   toAddress(toAddress),
-															#line 602 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		   isV6(isV6),
-															#line 605 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 599 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		   self(new UDPSocket(*io_service, toAddress, isV6))
-															#line 881 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 875 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 	{
 		fdb_probe_actor_create("connect", reinterpret_cast<unsigned long>(this));
 
@@ -891,43 +885,43 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 606 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 600 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			ASSERT(!toAddress.present() || toAddress.get().ip.isV6() == isV6);
-															#line 607 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 601 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			if (!toAddress.present())
-															#line 898 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 892 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 			{
-															#line 608 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 602 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 				if (!static_cast<ConnectActor1*>(this)->SAV<Reference<IUDPSocket>>::futures) { (void)(self); this->~ConnectActor1State(); static_cast<ConnectActor1*>(this)->destroy(); return 0; }
-															#line 902 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 896 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 				new (&static_cast<ConnectActor1*>(this)->SAV< Reference<IUDPSocket> >::value()) Reference<IUDPSocket>(std::move(self)); // state_var_RVO
 				this->~ConnectActor1State();
 				static_cast<ConnectActor1*>(this)->finishSendAndDelPromiseRef();
 				return 0;
 			}
 			try {
-															#line 611 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 605 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 				if (toAddress.present())
-															#line 911 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 905 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 				{
-															#line 612 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 606 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 					auto to = udpEndpoint(toAddress.get());
-															#line 613 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 607 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 					BindPromise p("N2_UDPConnectError", self->id);
-															#line 614 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 608 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 					Future<Void> onConnected = p.getFuture();
-															#line 615 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 609 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 					self->socket.async_connect(to, std::move(p));
-															#line 617 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 611 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 					StrictFuture<Void> __when_expr_0 = onConnected;
-															#line 617 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 611 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 					if (static_cast<ConnectActor1*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), loopDepth);
-															#line 925 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 919 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 					if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch2(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 					static_cast<ConnectActor1*>(this)->actor_wait_state = 1;
-															#line 617 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 611 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 					__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ConnectActor1, 0, Void >*>(static_cast<ConnectActor1*>(this)));
-															#line 930 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 924 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 					loopDepth = 0;
 				}
 				else
@@ -960,11 +954,11 @@ public:
 	int a_body1Catch2(const Error& __current_error,int loopDepth=0) 
 	{
 		try {
-															#line 622 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 616 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			self->closeSocket();
-															#line 623 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 617 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			return a_body1Catch1(__current_error, loopDepth);
-															#line 967 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 961 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		}
 		catch (Error& error) {
 			loopDepth = a_body1Catch1(error, loopDepth);
@@ -976,11 +970,11 @@ public:
 	}
 	int a_body1cont3(int loopDepth) 
 	{
-															#line 619 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 613 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		self->init();
-															#line 620 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 614 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		if (!static_cast<ConnectActor1*>(this)->SAV<Reference<IUDPSocket>>::futures) { (void)(self); this->~ConnectActor1State(); static_cast<ConnectActor1*>(this)->destroy(); return 0; }
-															#line 983 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 977 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		new (&static_cast<ConnectActor1*>(this)->SAV< Reference<IUDPSocket> >::value()) Reference<IUDPSocket>(std::move(self)); // state_var_RVO
 		this->~ConnectActor1State();
 		static_cast<ConnectActor1*>(this)->finishSendAndDelPromiseRef();
@@ -1063,20 +1057,20 @@ public:
 		fdb_probe_actor_exit("connect", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 602 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	boost::asio::io_service* io_service;
-															#line 602 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	Optional<NetworkAddress> toAddress;
-															#line 602 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	bool isV6;
-															#line 605 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 599 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	Reference<UDPSocket> self;
-															#line 1074 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 1068 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 };
 // This generated class is to be used only via connect()
-															#line 602 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 class ConnectActor1 final : public Actor<Reference<IUDPSocket>>, public ActorCallback< ConnectActor1, 0, Void >, public FastAllocated<ConnectActor1>, public ConnectActor1State<ConnectActor1> {
-															#line 1079 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 1073 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 public:
 	using FastAllocated<ConnectActor1>::operator new;
 	using FastAllocated<ConnectActor1>::operator delete;
@@ -1085,9 +1079,9 @@ public:
 	void destroy() override { ((Actor<Reference<IUDPSocket>>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< ConnectActor1, 0, Void >;
-															#line 602 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	ConnectActor1(boost::asio::io_service* const& io_service,Optional<NetworkAddress> const& toAddress,bool const& isV6) 
-															#line 1090 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 1084 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		 : Actor<Reference<IUDPSocket>>(),
 		   ConnectActor1State<ConnectActor1>(io_service, toAddress, isV6)
 	{
@@ -1110,14 +1104,14 @@ friend struct ActorCallback< ConnectActor1, 0, Void >;
 
 	}
 };
-															#line 602 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 [[nodiscard]] static Future<Reference<IUDPSocket>> connect( boost::asio::io_service* const& io_service, Optional<NetworkAddress> const& toAddress, bool const& isV6 ) {
-															#line 602 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	return Future<Reference<IUDPSocket>>(new ConnectActor1(io_service, toAddress, isV6));
-															#line 1117 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 1111 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 }
 
-#line 626 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+#line 620 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 
 	void close() override { closeSocket(); }
 
@@ -1261,24 +1255,24 @@ public:
 	NetworkAddress getListenAddress() const override { return listenAddress; }
 
 private:
-																#line 1264 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+																#line 1258 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 // This generated class is to be used only via doAccept()
-															#line 769 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 763 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 template <class DoAcceptActor>
-															#line 769 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 763 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 class DoAcceptActorState {
-															#line 1270 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 1264 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 public:
-															#line 769 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 763 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	DoAcceptActorState(Listener* const& self) 
-															#line 769 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-															#line 769 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 763 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 763 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		 : self(self),
-															#line 770 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 764 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		   conn(new Connection(self->io_service)),
-															#line 771 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 765 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		   peer_endpoint()
-															#line 1281 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 1275 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 	{
 		fdb_probe_actor_create("doAccept", reinterpret_cast<unsigned long>(this));
 
@@ -1292,22 +1286,22 @@ public:
 	{
 		try {
 			try {
-															#line 773 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 767 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 				BindPromise p("N2_AcceptError", UID());
-															#line 774 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 768 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 				auto f = p.getFuture();
-															#line 775 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 769 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 				self->acceptor.async_accept(conn->getSocket(), peer_endpoint, std::move(p));
-															#line 776 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 770 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 				StrictFuture<Void> __when_expr_0 = f;
-															#line 776 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 770 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 				if (static_cast<DoAcceptActor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), loopDepth);
-															#line 1305 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 1299 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 				if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch2(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 				static_cast<DoAcceptActor*>(this)->actor_wait_state = 1;
-															#line 776 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 770 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 				__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< DoAcceptActor, 0, Void >*>(static_cast<DoAcceptActor*>(this)));
-															#line 1310 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 1304 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 				loopDepth = 0;
 			}
 			catch (Error& error) {
@@ -1335,11 +1329,11 @@ public:
 	int a_body1Catch2(const Error& __current_error,int loopDepth=0) 
 	{
 		try {
-															#line 783 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 777 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			conn->close();
-															#line 784 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 778 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			return a_body1Catch1(__current_error, loopDepth);
-															#line 1342 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 1336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		}
 		catch (Error& error) {
 			loopDepth = a_body1Catch1(error, loopDepth);
@@ -1351,13 +1345,13 @@ public:
 	}
 	int a_body1cont2(Void const& _,int loopDepth) 
 	{
-															#line 777 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 771 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		auto peer_address = peer_endpoint.address().is_v6() ? IPAddress(peer_endpoint.address().to_v6().to_bytes()) : IPAddress(peer_endpoint.address().to_v4().to_ulong());
-															#line 779 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 773 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		conn->accept(NetworkAddress(peer_address, peer_endpoint.port()));
-															#line 781 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 775 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		if (!static_cast<DoAcceptActor*>(this)->SAV<Reference<IConnection>>::futures) { (void)(conn); this->~DoAcceptActorState(); static_cast<DoAcceptActor*>(this)->destroy(); return 0; }
-															#line 1360 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 1354 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		new (&static_cast<DoAcceptActor*>(this)->SAV< Reference<IConnection> >::value()) Reference<IConnection>(std::move(conn)); // state_var_RVO
 		this->~DoAcceptActorState();
 		static_cast<DoAcceptActor*>(this)->finishSendAndDelPromiseRef();
@@ -1367,13 +1361,13 @@ public:
 	}
 	int a_body1cont2(Void && _,int loopDepth) 
 	{
-															#line 777 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 771 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		auto peer_address = peer_endpoint.address().is_v6() ? IPAddress(peer_endpoint.address().to_v6().to_bytes()) : IPAddress(peer_endpoint.address().to_v4().to_ulong());
-															#line 779 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 773 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		conn->accept(NetworkAddress(peer_address, peer_endpoint.port()));
-															#line 781 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 775 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		if (!static_cast<DoAcceptActor*>(this)->SAV<Reference<IConnection>>::futures) { (void)(conn); this->~DoAcceptActorState(); static_cast<DoAcceptActor*>(this)->destroy(); return 0; }
-															#line 1376 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 1370 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		new (&static_cast<DoAcceptActor*>(this)->SAV< Reference<IConnection> >::value()) Reference<IConnection>(std::move(conn)); // state_var_RVO
 		this->~DoAcceptActorState();
 		static_cast<DoAcceptActor*>(this)->finishSendAndDelPromiseRef();
@@ -1444,18 +1438,18 @@ public:
 		fdb_probe_actor_exit("doAccept", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 769 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 763 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	Listener* self;
-															#line 770 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 764 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	Reference<Connection> conn;
-															#line 771 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 765 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	tcp::acceptor::endpoint_type peer_endpoint;
-															#line 1453 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 1447 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 };
 // This generated class is to be used only via doAccept()
-															#line 769 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 763 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 class DoAcceptActor final : public Actor<Reference<IConnection>>, public ActorCallback< DoAcceptActor, 0, Void >, public FastAllocated<DoAcceptActor>, public DoAcceptActorState<DoAcceptActor> {
-															#line 1458 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 1452 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 public:
 	using FastAllocated<DoAcceptActor>::operator new;
 	using FastAllocated<DoAcceptActor>::operator delete;
@@ -1464,9 +1458,9 @@ public:
 	void destroy() override { ((Actor<Reference<IConnection>>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< DoAcceptActor, 0, Void >;
-															#line 769 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 763 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	DoAcceptActor(Listener* const& self) 
-															#line 1469 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 1463 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		 : Actor<Reference<IConnection>>(),
 		   DoAcceptActorState<DoAcceptActor>(self)
 	{
@@ -1489,17 +1483,16 @@ friend struct ActorCallback< DoAcceptActor, 0, Void >;
 
 	}
 };
-															#line 769 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 763 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 [[nodiscard]] static Future<Reference<IConnection>> doAccept( Listener* const& self ) {
-															#line 769 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 763 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	return Future<Reference<IConnection>>(new DoAcceptActor(self));
-															#line 1496 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 1490 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 }
 
-#line 787 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+#line 781 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 };
 
-#ifndef TLS_DISABLED
 typedef boost::asio::ssl::stream<boost::asio::ip::tcp::socket&> ssl_socket;
 
 struct SSLHandshakerThread final : IThreadPoolReceiver {
@@ -1527,8 +1520,8 @@ struct SSLHandshakerThread final : IThreadPoolReceiver {
 			}
 			if (h.err.failed()) {
 				TraceEvent(SevWarn,
-				           h.type == ssl_socket::handshake_type::client ? "N2_ConnectHandshakeError"
-				                                                        : "N2_AcceptHandshakeError")
+				           h.type == ssl_socket::handshake_type::client ? "N2_ConnectHandshakeError"_audit
+				                                                        : "N2_AcceptHandshakeError"_audit)
 				    .detail("ErrorCode", h.err.value())
 				    .detail("ErrorMsg", h.err.message().c_str())
 				    .detail("BackgroundThread", true);
@@ -1538,8 +1531,8 @@ struct SSLHandshakerThread final : IThreadPoolReceiver {
 			}
 		} catch (...) {
 			TraceEvent(SevWarn,
-			           h.type == ssl_socket::handshake_type::client ? "N2_ConnectHandshakeUnknownError"
-			                                                        : "N2_AcceptHandshakeUnknownError")
+			           h.type == ssl_socket::handshake_type::client ? "N2_ConnectHandshakeUnknownError"_audit
+			                                                        : "N2_AcceptHandshakeUnknownError"_audit)
 			    .detail("BackgroundThread", true);
 			h.done.sendError(connection_failed());
 		}
@@ -1556,33 +1549,33 @@ public:
 	explicit SSLConnection(boost::asio::io_service& io_service,
 	                       Reference<ReferencedObject<boost::asio::ssl::context>> context)
 	  : id(nondeterministicRandom()->randomUniqueID()), socket(io_service), ssl_sock(socket, context->mutate()),
-	    sslContext(context) {}
+	    sslContext(context), has_trusted_peer(false) {}
 
 	explicit SSLConnection(Reference<ReferencedObject<boost::asio::ssl::context>> context, tcp::socket* existingSocket)
 	  : id(nondeterministicRandom()->randomUniqueID()), socket(std::move(*existingSocket)),
 	    ssl_sock(socket, context->mutate()), sslContext(context) {}
 
 	// This is not part of the IConnection interface, because it is wrapped by INetwork::connect()
-																#line 1566 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+																#line 1559 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 // This generated class is to be used only via connect()
-															#line 853 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 846 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 template <class ConnectActor2>
-															#line 853 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 846 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 class ConnectActor2State {
-															#line 1572 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 1565 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 public:
-															#line 853 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 846 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	ConnectActor2State(boost::asio::io_service* const& ios,Reference<ReferencedObject<boost::asio::ssl::context>> const& context,NetworkAddress const& addr,tcp::socket* const& existingSocket = nullptr) 
-															#line 853 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-															#line 853 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 846 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 846 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		 : ios(ios),
-															#line 853 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 846 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		   context(context),
-															#line 853 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 846 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		   addr(addr),
-															#line 853 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 846 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		   existingSocket(existingSocket)
-															#line 1585 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 1578 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 	{
 		fdb_probe_actor_create("connect", reinterpret_cast<unsigned long>(this));
 
@@ -1595,34 +1588,34 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 857 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 850 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			std::pair<IPAddress, uint16_t> peerIP = std::make_pair(addr.ip, addr.port);
-															#line 858 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 851 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			auto iter(g_network->networkInfo.serverTLSConnectionThrottler.find(peerIP));
-															#line 859 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 852 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			if (iter != g_network->networkInfo.serverTLSConnectionThrottler.end())
-															#line 1604 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 1597 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 			{
-															#line 860 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 853 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 				if (now() < iter->second.second)
-															#line 1608 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 1601 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 				{
-															#line 861 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 854 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 					if (iter->second.first >= FLOW_KNOBS->TLS_CLIENT_CONNECTION_THROTTLE_ATTEMPTS)
-															#line 1612 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 1605 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 					{
-															#line 862 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 855 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 						TraceEvent("TLSOutgoingConnectionThrottlingWarning").suppressFor(1.0).detail("PeerIP", addr);
-															#line 863 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 856 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 						StrictFuture<Void> __when_expr_0 = delay(FLOW_KNOBS->CONNECTION_MONITOR_TIMEOUT);
-															#line 863 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 856 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 						if (static_cast<ConnectActor2*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 1620 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 1613 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 						if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 						static_cast<ConnectActor2*>(this)->actor_wait_state = 1;
-															#line 863 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 856 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 						__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ConnectActor2, 0, Void >*>(static_cast<ConnectActor2*>(this)));
-															#line 1625 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 1618 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 						loopDepth = 0;
 					}
 					else
@@ -1632,9 +1625,9 @@ public:
 				}
 				else
 				{
-															#line 867 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 860 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 					g_network->networkInfo.serverTLSConnectionThrottler.erase(peerIP);
-															#line 1637 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 1630 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 					loopDepth = a_body1cont2(loopDepth);
 				}
 			}
@@ -1661,48 +1654,48 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 871 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 864 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		if (existingSocket != nullptr)
-															#line 1666 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 1659 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		{
-															#line 872 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 865 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			Reference<SSLConnection> self(new SSLConnection(context, existingSocket));
-															#line 873 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 866 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			self->peer_address = addr;
-															#line 874 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 867 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			self->init();
-															#line 875 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 868 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			if (!static_cast<ConnectActor2*>(this)->SAV<Reference<IConnection>>::futures) { (void)(self); this->~ConnectActor2State(); static_cast<ConnectActor2*>(this)->destroy(); return 0; }
-															#line 1676 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 1669 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 			new (&static_cast<ConnectActor2*>(this)->SAV< Reference<IConnection> >::value()) Reference<IConnection>(self);
 			this->~ConnectActor2State();
 			static_cast<ConnectActor2*>(this)->finishSendAndDelPromiseRef();
 			return 0;
 		}
-															#line 878 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 871 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		self = Reference<SSLConnection>(new SSLConnection(*ios, context));
-															#line 879 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 872 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		self->peer_address = addr;
-															#line 1686 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 1679 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		try {
-															#line 881 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 874 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			auto to = tcpEndpoint(self->peer_address);
-															#line 882 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 875 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			BindPromise p("N2_ConnectError", self->id);
-															#line 883 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 876 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			Future<Void> onConnected = p.getFuture();
-															#line 884 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 877 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			self->socket.async_connect(to, std::move(p));
-															#line 886 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 879 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			StrictFuture<Void> __when_expr_1 = onConnected;
-															#line 886 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 879 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			if (static_cast<ConnectActor2*>(this)->actor_wait_state < 0) return a_body1cont1Catch1(actor_cancelled(), loopDepth);
-															#line 1700 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 1693 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1cont1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 			static_cast<ConnectActor2*>(this)->actor_wait_state = 2;
-															#line 886 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 879 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< ConnectActor2, 1, Void >*>(static_cast<ConnectActor2*>(this)));
-															#line 1705 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 1698 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -1727,17 +1720,17 @@ public:
 	}
 	int a_body1cont4(Void const& _,int loopDepth) 
 	{
-															#line 864 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 857 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		return a_body1Catch1(connection_failed(), loopDepth);
-															#line 1732 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 1725 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 
 		return loopDepth;
 	}
 	int a_body1cont4(Void && _,int loopDepth) 
 	{
-															#line 864 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 857 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		return a_body1Catch1(connection_failed(), loopDepth);
-															#line 1740 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 1733 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 
 		return loopDepth;
 	}
@@ -1807,11 +1800,11 @@ public:
 	int a_body1cont1Catch1(const Error& __current_error,int loopDepth=0) 
 	{
 		try {
-															#line 891 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 884 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			self->closeSocket();
-															#line 892 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 885 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			return a_body1Catch1(__current_error, loopDepth);
-															#line 1814 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 1807 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		}
 		catch (Error& error) {
 			loopDepth = a_body1Catch1(error, loopDepth);
@@ -1823,11 +1816,11 @@ public:
 	}
 	int a_body1cont9(Void const& _,int loopDepth) 
 	{
-															#line 887 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 880 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		self->init();
-															#line 888 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 881 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		if (!static_cast<ConnectActor2*>(this)->SAV<Reference<IConnection>>::futures) { (void)(self); this->~ConnectActor2State(); static_cast<ConnectActor2*>(this)->destroy(); return 0; }
-															#line 1830 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 1823 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		new (&static_cast<ConnectActor2*>(this)->SAV< Reference<IConnection> >::value()) Reference<IConnection>(std::move(self)); // state_var_RVO
 		this->~ConnectActor2State();
 		static_cast<ConnectActor2*>(this)->finishSendAndDelPromiseRef();
@@ -1837,11 +1830,11 @@ public:
 	}
 	int a_body1cont9(Void && _,int loopDepth) 
 	{
-															#line 887 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 880 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		self->init();
-															#line 888 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 881 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		if (!static_cast<ConnectActor2*>(this)->SAV<Reference<IConnection>>::futures) { (void)(self); this->~ConnectActor2State(); static_cast<ConnectActor2*>(this)->destroy(); return 0; }
-															#line 1844 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 1837 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		new (&static_cast<ConnectActor2*>(this)->SAV< Reference<IConnection> >::value()) Reference<IConnection>(std::move(self)); // state_var_RVO
 		this->~ConnectActor2State();
 		static_cast<ConnectActor2*>(this)->finishSendAndDelPromiseRef();
@@ -1912,22 +1905,22 @@ public:
 		fdb_probe_actor_exit("connect", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 853 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 846 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	boost::asio::io_service* ios;
-															#line 853 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 846 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	Reference<ReferencedObject<boost::asio::ssl::context>> context;
-															#line 853 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 846 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	NetworkAddress addr;
-															#line 853 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 846 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	tcp::socket* existingSocket;
-															#line 878 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 871 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	Reference<SSLConnection> self;
-															#line 1925 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 1918 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 };
 // This generated class is to be used only via connect()
-															#line 853 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 846 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 class ConnectActor2 final : public Actor<Reference<IConnection>>, public ActorCallback< ConnectActor2, 0, Void >, public ActorCallback< ConnectActor2, 1, Void >, public FastAllocated<ConnectActor2>, public ConnectActor2State<ConnectActor2> {
-															#line 1930 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 1923 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 public:
 	using FastAllocated<ConnectActor2>::operator new;
 	using FastAllocated<ConnectActor2>::operator delete;
@@ -1937,9 +1930,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< ConnectActor2, 0, Void >;
 friend struct ActorCallback< ConnectActor2, 1, Void >;
-															#line 853 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 846 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	ConnectActor2(boost::asio::io_service* const& ios,Reference<ReferencedObject<boost::asio::ssl::context>> const& context,NetworkAddress const& addr,tcp::socket* const& existingSocket = nullptr) 
-															#line 1942 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 1935 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		 : Actor<Reference<IConnection>>(),
 		   ConnectActor2State<ConnectActor2>(ios, context, addr, existingSocket)
 	{
@@ -1963,14 +1956,14 @@ friend struct ActorCallback< ConnectActor2, 1, Void >;
 
 	}
 };
-															#line 853 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 846 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 [[nodiscard]] static Future<Reference<IConnection>> connect( boost::asio::io_service* const& ios, Reference<ReferencedObject<boost::asio::ssl::context>> const& context, NetworkAddress const& addr, tcp::socket* const& existingSocket = nullptr ) {
-															#line 853 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 846 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	return Future<Reference<IConnection>>(new ConnectActor2(ios, context, addr, existingSocket));
-															#line 1970 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 1963 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 }
 
-#line 895 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+#line 888 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 
 	// This is not part of the IConnection interface, because it is wrapped by IListener::accept()
 	void accept(NetworkAddress peerAddr) {
@@ -1978,24 +1971,24 @@ friend struct ActorCallback< ConnectActor2, 1, Void >;
 		init();
 	}
 
-																#line 1981 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+																#line 1974 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 // This generated class is to be used only via doAcceptHandshake()
-															#line 902 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 895 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 template <class DoAcceptHandshakeActor>
-															#line 902 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 895 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 class DoAcceptHandshakeActorState {
-															#line 1987 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 1980 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 public:
-															#line 902 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 895 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	DoAcceptHandshakeActorState(Reference<SSLConnection> const& self,Promise<Void> const& connected) 
-															#line 902 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-															#line 902 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 895 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 895 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		 : self(self),
-															#line 902 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 895 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		   connected(connected),
-															#line 903 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 896 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		   holder()
-															#line 1998 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 1991 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 	{
 		fdb_probe_actor_create("doAcceptHandshake", reinterpret_cast<unsigned long>(this));
 
@@ -2009,41 +2002,43 @@ public:
 	{
 		try {
 			try {
-															#line 906 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 899 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 				Future<Void> onHandshook;
-															#line 909 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 900 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+				ConfigureSSLStream(N2::g_net2->activeTlsPolicy, self->ssl_sock, [conn = self.getPtr()](bool verifyOk) { conn->has_trusted_peer = verifyOk; });
+															#line 905 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 				if (N2::g_net2->sslPoolHandshakesInProgress < N2::g_net2->sslHandshakerThreadsStarted)
-															#line 2016 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2011 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 				{
-															#line 910 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 906 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 					holder = Hold(&N2::g_net2->sslPoolHandshakesInProgress);
-															#line 911 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 907 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 					auto handshake = new SSLHandshakerThread::Handshake(self->ssl_sock, boost::asio::ssl::stream_base::server);
-															#line 913 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 909 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 					onHandshook = handshake->done.getFuture();
-															#line 914 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 910 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 					N2::g_net2->sslHandshakerPool->post(handshake);
-															#line 2026 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2021 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 				}
 				else
 				{
-															#line 917 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-					BindPromise p("N2_AcceptHandshakeError", UID());
-															#line 918 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 913 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+					BindPromise p("N2_AcceptHandshakeError"_audit, UID());
+															#line 914 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 					onHandshook = p.getFuture();
-															#line 919 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 915 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 					self->ssl_sock.async_handshake(boost::asio::ssl::stream_base::server, std::move(p));
-															#line 2036 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2031 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 				}
-															#line 921 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 917 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 				StrictFuture<Void> __when_expr_0 = onHandshook;
-															#line 921 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 917 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 				if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch2(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
-															#line 2042 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2037 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 				static_cast<DoAcceptHandshakeActor*>(this)->actor_wait_state = 1;
-															#line 921 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 917 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 				__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< DoAcceptHandshakeActor, 0, Void >*>(static_cast<DoAcceptHandshakeActor*>(this)));
-															#line 2046 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2041 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 				loopDepth = 0;
 			}
 			catch (Error& error) {
@@ -2076,11 +2071,11 @@ public:
 	int a_body1Catch2(const Error& __current_error,int loopDepth=0) 
 	{
 		try {
-															#line 925 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 921 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			self->closeSocket();
-															#line 926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 922 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			connected.sendError(connection_failed());
-															#line 2083 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2078 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 			loopDepth = a_body1cont1(loopDepth);
 		}
 		catch (Error& error) {
@@ -2093,30 +2088,30 @@ public:
 	}
 	int a_body1cont2(Void const& _,int loopDepth) 
 	{
-															#line 922 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 918 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = delay(0, TaskPriority::Handshake);
-															#line 922 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 918 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch2(__when_expr_1.getError(), loopDepth); else return a_body1cont2when1(__when_expr_1.get(), loopDepth); };
-															#line 2100 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2095 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		static_cast<DoAcceptHandshakeActor*>(this)->actor_wait_state = 2;
-															#line 922 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 918 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< DoAcceptHandshakeActor, 1, Void >*>(static_cast<DoAcceptHandshakeActor*>(this)));
-															#line 2104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2099 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont2(Void && _,int loopDepth) 
 	{
-															#line 922 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 918 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = delay(0, TaskPriority::Handshake);
-															#line 922 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 918 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch2(__when_expr_1.getError(), loopDepth); else return a_body1cont2when1(__when_expr_1.get(), loopDepth); };
-															#line 2115 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2110 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		static_cast<DoAcceptHandshakeActor*>(this)->actor_wait_state = 2;
-															#line 922 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 918 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< DoAcceptHandshakeActor, 1, Void >*>(static_cast<DoAcceptHandshakeActor*>(this)));
-															#line 2119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2114 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -2186,18 +2181,18 @@ public:
 	}
 	int a_body1cont5(Void const& _,int loopDepth) 
 	{
-															#line 923 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 919 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		connected.send(Void());
-															#line 2191 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2186 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		loopDepth = a_body1cont7(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1cont5(Void && _,int loopDepth) 
 	{
-															#line 923 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 919 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		connected.send(Void());
-															#line 2200 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2195 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		loopDepth = a_body1cont7(loopDepth);
 
 		return loopDepth;
@@ -2280,25 +2275,25 @@ public:
 	}
 	int a_body1cont8(int loopDepth) 
 	{
-															#line 902 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 895 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		delete static_cast<DoAcceptHandshakeActor*>(this);
-															#line 2285 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2280 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		return 0;
 
 		return loopDepth;
 	}
-															#line 902 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 895 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	Reference<SSLConnection> self;
-															#line 902 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 895 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	Promise<Void> connected;
-															#line 903 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 896 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	Hold<int> holder;
-															#line 2296 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2291 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 };
 // This generated class is to be used only via doAcceptHandshake()
-															#line 902 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 895 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 class DoAcceptHandshakeActor final : public Actor<void>, public ActorCallback< DoAcceptHandshakeActor, 0, Void >, public ActorCallback< DoAcceptHandshakeActor, 1, Void >, public FastAllocated<DoAcceptHandshakeActor>, public DoAcceptHandshakeActorState<DoAcceptHandshakeActor> {
-															#line 2301 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2296 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 public:
 	using FastAllocated<DoAcceptHandshakeActor>::operator new;
 	using FastAllocated<DoAcceptHandshakeActor>::operator delete;
@@ -2308,9 +2303,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< DoAcceptHandshakeActor, 0, Void >;
 friend struct ActorCallback< DoAcceptHandshakeActor, 1, Void >;
-															#line 902 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 895 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	DoAcceptHandshakeActor(Reference<SSLConnection> const& self,Promise<Void> const& connected) 
-															#line 2313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2308 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		 : Actor<void>(),
 		   DoAcceptHandshakeActorState<DoAcceptHandshakeActor>(self, connected)
 	{
@@ -2324,31 +2319,31 @@ friend struct ActorCallback< DoAcceptHandshakeActor, 1, Void >;
 
 	}
 };
-															#line 902 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 895 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 static void doAcceptHandshake( Reference<SSLConnection> const& self, Promise<Void> const& connected ) {
-															#line 902 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 895 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	new DoAcceptHandshakeActor(self, connected);
-															#line 2331 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2326 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 }
 
-#line 929 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+#line 925 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 
-																#line 2336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+																#line 2331 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 // This generated class is to be used only via acceptHandshakeWrapper()
-															#line 930 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 template <class AcceptHandshakeWrapperActor>
-															#line 930 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 class AcceptHandshakeWrapperActorState {
-															#line 2342 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2337 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 public:
-															#line 930 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	AcceptHandshakeWrapperActorState(Reference<SSLConnection> const& self) 
-															#line 930 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-															#line 930 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		 : self(self),
-															#line 931 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 927 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		   peerIP()
-															#line 2351 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2346 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 	{
 		fdb_probe_actor_create("acceptHandshakeWrapper", reinterpret_cast<unsigned long>(this));
 
@@ -2361,34 +2356,34 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 932 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 928 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			peerIP = std::make_pair(self->getPeerAddress().ip, static_cast<uint16_t>(0));
-															#line 933 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 929 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			auto iter(g_network->networkInfo.serverTLSConnectionThrottler.find(peerIP));
-															#line 934 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 930 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			if (iter != g_network->networkInfo.serverTLSConnectionThrottler.end())
-															#line 2370 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2365 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 			{
-															#line 935 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 931 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 				if (now() < iter->second.second)
-															#line 2374 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2369 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 				{
-															#line 936 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 932 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 					if (iter->second.first >= FLOW_KNOBS->TLS_SERVER_CONNECTION_THROTTLE_ATTEMPTS)
-															#line 2378 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2373 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 					{
-															#line 937 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 933 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 						TraceEvent("TLSIncomingConnectionThrottlingWarning") .suppressFor(1.0) .detail("PeerIP", peerIP.first.toString());
-															#line 940 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 936 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 						StrictFuture<Void> __when_expr_0 = delay(FLOW_KNOBS->CONNECTION_MONITOR_TIMEOUT);
-															#line 940 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 936 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 						if (static_cast<AcceptHandshakeWrapperActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 2386 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2381 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 						if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 						static_cast<AcceptHandshakeWrapperActor*>(this)->actor_wait_state = 1;
-															#line 940 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 936 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 						__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< AcceptHandshakeWrapperActor, 0, Void >*>(static_cast<AcceptHandshakeWrapperActor*>(this)));
-															#line 2391 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2386 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 						loopDepth = 0;
 					}
 					else
@@ -2398,9 +2393,9 @@ public:
 				}
 				else
 				{
-															#line 945 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 941 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 					g_network->networkInfo.serverTLSConnectionThrottler.erase(peerIP);
-															#line 2403 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2398 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 					loopDepth = a_body1cont2(loopDepth);
 				}
 			}
@@ -2427,16 +2422,16 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 949 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 945 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = g_network->networkInfo.handshakeLock->take();
-															#line 949 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 945 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		if (static_cast<AcceptHandshakeWrapperActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 2434 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2429 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<AcceptHandshakeWrapperActor*>(this)->actor_wait_state = 2;
-															#line 949 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 945 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< AcceptHandshakeWrapperActor, 1, Void >*>(static_cast<AcceptHandshakeWrapperActor*>(this)));
-															#line 2439 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2434 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -2455,21 +2450,21 @@ public:
 	}
 	int a_body1cont4(Void const& _,int loopDepth) 
 	{
-															#line 941 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 937 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		self->closeSocket();
-															#line 942 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 938 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		return a_body1Catch1(connection_failed(), loopDepth);
-															#line 2462 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2457 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 
 		return loopDepth;
 	}
 	int a_body1cont4(Void && _,int loopDepth) 
 	{
-															#line 941 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 937 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		self->closeSocket();
-															#line 942 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 938 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		return a_body1Catch1(connection_failed(), loopDepth);
-															#line 2472 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2467 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 
 		return loopDepth;
 	}
@@ -2538,30 +2533,30 @@ public:
 	}
 	int a_body1cont7(Void const& _,int loopDepth) 
 	{
-															#line 950 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 946 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		releaser = FlowLock::Releaser(*g_network->networkInfo.handshakeLock);
-															#line 952 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 948 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		Promise<Void> connected;
-															#line 953 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 949 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		doAcceptHandshake(self, connected);
-															#line 2547 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2542 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		try {
-															#line 956 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 952 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			StrictFuture<Void> __when_expr_2 = connected.getFuture();
-															#line 955 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 951 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			if (static_cast<AcceptHandshakeWrapperActor*>(this)->actor_wait_state < 0) return a_body1cont7Catch1(actor_cancelled(), loopDepth);
-															#line 2553 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2548 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 			if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1cont7Catch1(__when_expr_2.getError(), loopDepth); else return a_body1cont7when1(__when_expr_2.get(), loopDepth); };
-															#line 959 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 955 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			StrictFuture<Void> __when_expr_3 = delay(FLOW_KNOBS->CONNECTION_MONITOR_TIMEOUT);
-															#line 2557 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2552 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 			if (__when_expr_3.isReady()) { if (__when_expr_3.isError()) return a_body1cont7Catch1(__when_expr_3.getError(), loopDepth); else return a_body1cont7when2(__when_expr_3.get(), loopDepth); };
 			static_cast<AcceptHandshakeWrapperActor*>(this)->actor_wait_state = 3;
-															#line 956 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 952 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< AcceptHandshakeWrapperActor, 2, Void >*>(static_cast<AcceptHandshakeWrapperActor*>(this)));
-															#line 959 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 955 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			__when_expr_3.addCallbackAndClear(static_cast<ActorCallback< AcceptHandshakeWrapperActor, 3, Void >*>(static_cast<AcceptHandshakeWrapperActor*>(this)));
-															#line 2564 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2559 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -2574,30 +2569,30 @@ public:
 	}
 	int a_body1cont7(Void && _,int loopDepth) 
 	{
-															#line 950 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 946 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		releaser = FlowLock::Releaser(*g_network->networkInfo.handshakeLock);
-															#line 952 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 948 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		Promise<Void> connected;
-															#line 953 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 949 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		doAcceptHandshake(self, connected);
-															#line 2583 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2578 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		try {
-															#line 956 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 952 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			StrictFuture<Void> __when_expr_2 = connected.getFuture();
-															#line 955 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 951 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			if (static_cast<AcceptHandshakeWrapperActor*>(this)->actor_wait_state < 0) return a_body1cont7Catch1(actor_cancelled(), loopDepth);
-															#line 2589 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2584 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 			if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1cont7Catch1(__when_expr_2.getError(), loopDepth); else return a_body1cont7when1(__when_expr_2.get(), loopDepth); };
-															#line 959 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 955 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			StrictFuture<Void> __when_expr_3 = delay(FLOW_KNOBS->CONNECTION_MONITOR_TIMEOUT);
-															#line 2593 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2588 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 			if (__when_expr_3.isReady()) { if (__when_expr_3.isError()) return a_body1cont7Catch1(__when_expr_3.getError(), loopDepth); else return a_body1cont7when2(__when_expr_3.get(), loopDepth); };
 			static_cast<AcceptHandshakeWrapperActor*>(this)->actor_wait_state = 3;
-															#line 956 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 952 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< AcceptHandshakeWrapperActor, 2, Void >*>(static_cast<AcceptHandshakeWrapperActor*>(this)));
-															#line 959 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 955 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			__when_expr_3.addCallbackAndClear(static_cast<ActorCallback< AcceptHandshakeWrapperActor, 3, Void >*>(static_cast<AcceptHandshakeWrapperActor*>(this)));
-															#line 2600 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2595 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -2674,32 +2669,32 @@ public:
 	int a_body1cont7Catch1(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 964 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 960 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			if (e.code() != error_code_actor_cancelled)
-															#line 2679 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2674 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 			{
-															#line 965 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 961 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 				auto iter(g_network->networkInfo.serverTLSConnectionThrottler.find(peerIP));
-															#line 966 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 962 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 				if (iter != g_network->networkInfo.serverTLSConnectionThrottler.end())
-															#line 2685 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2680 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 				{
-															#line 967 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 963 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 					iter->second.first++;
-															#line 2689 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2684 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 				}
 				else
 				{
-															#line 969 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 965 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 					g_network->networkInfo.serverTLSConnectionThrottler[peerIP] = std::make_pair(0, now() + FLOW_KNOBS->TLS_SERVER_CONNECTION_THROTTLE_TIMEOUT);
-															#line 2695 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2690 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 				}
 			}
-															#line 974 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 970 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			self->closeSocket();
-															#line 975 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 971 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			return a_body1Catch1(e, loopDepth);
-															#line 2702 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2697 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		}
 		catch (Error& error) {
 			loopDepth = a_body1Catch1(error, loopDepth);
@@ -2711,9 +2706,9 @@ public:
 	}
 	int a_body1cont7when1(Void const& _,int loopDepth) 
 	{
-															#line 957 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 953 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		if (!static_cast<AcceptHandshakeWrapperActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~AcceptHandshakeWrapperActorState(); static_cast<AcceptHandshakeWrapperActor*>(this)->destroy(); return 0; }
-															#line 2716 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2711 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		new (&static_cast<AcceptHandshakeWrapperActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~AcceptHandshakeWrapperActorState();
 		static_cast<AcceptHandshakeWrapperActor*>(this)->finishSendAndDelPromiseRef();
@@ -2723,9 +2718,9 @@ public:
 	}
 	int a_body1cont7when1(Void && _,int loopDepth) 
 	{
-															#line 957 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 953 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		if (!static_cast<AcceptHandshakeWrapperActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~AcceptHandshakeWrapperActorState(); static_cast<AcceptHandshakeWrapperActor*>(this)->destroy(); return 0; }
-															#line 2728 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2723 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		new (&static_cast<AcceptHandshakeWrapperActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~AcceptHandshakeWrapperActorState();
 		static_cast<AcceptHandshakeWrapperActor*>(this)->finishSendAndDelPromiseRef();
@@ -2735,17 +2730,17 @@ public:
 	}
 	int a_body1cont7when2(Void const& _,int loopDepth) 
 	{
-															#line 960 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 956 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		return a_body1cont7Catch1(connection_failed(), loopDepth);
-															#line 2740 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2735 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 
 		return loopDepth;
 	}
 	int a_body1cont7when2(Void && _,int loopDepth) 
 	{
-															#line 960 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 956 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		return a_body1cont7Catch1(connection_failed(), loopDepth);
-															#line 2748 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2743 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 
 		return loopDepth;
 	}
@@ -2846,18 +2841,18 @@ public:
 		fdb_probe_actor_exit("acceptHandshakeWrapper", reinterpret_cast<unsigned long>(this), 3);
 
 	}
-															#line 930 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	Reference<SSLConnection> self;
-															#line 931 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 927 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	std::pair<IPAddress, uint16_t> peerIP;
-															#line 950 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 946 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	FlowLock::Releaser releaser;
-															#line 2855 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2850 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 };
 // This generated class is to be used only via acceptHandshakeWrapper()
-															#line 930 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 class AcceptHandshakeWrapperActor final : public Actor<Void>, public ActorCallback< AcceptHandshakeWrapperActor, 0, Void >, public ActorCallback< AcceptHandshakeWrapperActor, 1, Void >, public ActorCallback< AcceptHandshakeWrapperActor, 2, Void >, public ActorCallback< AcceptHandshakeWrapperActor, 3, Void >, public FastAllocated<AcceptHandshakeWrapperActor>, public AcceptHandshakeWrapperActorState<AcceptHandshakeWrapperActor> {
-															#line 2860 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2855 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 public:
 	using FastAllocated<AcceptHandshakeWrapperActor>::operator new;
 	using FastAllocated<AcceptHandshakeWrapperActor>::operator delete;
@@ -2869,9 +2864,9 @@ friend struct ActorCallback< AcceptHandshakeWrapperActor, 0, Void >;
 friend struct ActorCallback< AcceptHandshakeWrapperActor, 1, Void >;
 friend struct ActorCallback< AcceptHandshakeWrapperActor, 2, Void >;
 friend struct ActorCallback< AcceptHandshakeWrapperActor, 3, Void >;
-															#line 930 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	AcceptHandshakeWrapperActor(Reference<SSLConnection> const& self) 
-															#line 2874 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2869 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		 : Actor<Void>(),
 		   AcceptHandshakeWrapperActorState<AcceptHandshakeWrapperActor>(self)
 	{
@@ -2896,35 +2891,35 @@ friend struct ActorCallback< AcceptHandshakeWrapperActor, 3, Void >;
 
 	}
 };
-															#line 930 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 [[nodiscard]] static Future<Void> acceptHandshakeWrapper( Reference<SSLConnection> const& self ) {
-															#line 930 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	return Future<Void>(new AcceptHandshakeWrapperActor(self));
-															#line 2903 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2898 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 }
 
-#line 978 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+#line 974 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 
 	Future<Void> acceptHandshake() override { return acceptHandshakeWrapper(Reference<SSLConnection>::addRef(this)); }
 
-																#line 2910 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+																#line 2905 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 // This generated class is to be used only via doConnectHandshake()
-															#line 981 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 977 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 template <class DoConnectHandshakeActor>
-															#line 981 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 977 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 class DoConnectHandshakeActorState {
-															#line 2916 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2911 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 public:
-															#line 981 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 977 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	DoConnectHandshakeActorState(Reference<SSLConnection> const& self,Promise<Void> const& connected) 
-															#line 981 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-															#line 981 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 977 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 977 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		 : self(self),
-															#line 981 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 977 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		   connected(connected),
-															#line 982 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 978 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		   holder()
-															#line 2927 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2922 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 	{
 		fdb_probe_actor_create("doConnectHandshake", reinterpret_cast<unsigned long>(this));
 
@@ -2938,11 +2933,13 @@ public:
 	{
 		try {
 			try {
-															#line 985 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 981 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 				Future<Void> onHandshook;
+															#line 982 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+				ConfigureSSLStream(N2::g_net2->activeTlsPolicy, self->ssl_sock, [conn = self.getPtr()](bool verifyOk) { conn->has_trusted_peer = verifyOk; });
 															#line 987 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 				if (N2::g_net2->sslPoolHandshakesInProgress < N2::g_net2->sslHandshakerThreadsStarted)
-															#line 2945 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2942 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 				{
 															#line 988 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 					holder = Hold(&N2::g_net2->sslPoolHandshakesInProgress);
@@ -2952,27 +2949,27 @@ public:
 					onHandshook = handshake->done.getFuture();
 															#line 992 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 					N2::g_net2->sslHandshakerPool->post(handshake);
-															#line 2955 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2952 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 				}
 				else
 				{
 															#line 995 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-					BindPromise p("N2_ConnectHandshakeError", self->id);
+					BindPromise p("N2_ConnectHandshakeError"_audit, self->id);
 															#line 996 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 					onHandshook = p.getFuture();
 															#line 997 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 					self->ssl_sock.async_handshake(boost::asio::ssl::stream_base::client, std::move(p));
-															#line 2965 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2962 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 				}
 															#line 999 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 				StrictFuture<Void> __when_expr_0 = onHandshook;
 															#line 999 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 				if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch2(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
-															#line 2971 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2968 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 				static_cast<DoConnectHandshakeActor*>(this)->actor_wait_state = 1;
 															#line 999 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 				__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< DoConnectHandshakeActor, 0, Void >*>(static_cast<DoConnectHandshakeActor*>(this)));
-															#line 2975 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 2972 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 				loopDepth = 0;
 			}
 			catch (Error& error) {
@@ -3009,7 +3006,7 @@ public:
 			self->closeSocket();
 															#line 1004 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			connected.sendError(connection_failed());
-															#line 3012 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 3009 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 			loopDepth = a_body1cont1(loopDepth);
 		}
 		catch (Error& error) {
@@ -3026,11 +3023,11 @@ public:
 		StrictFuture<Void> __when_expr_1 = delay(0, TaskPriority::Handshake);
 															#line 1000 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch2(__when_expr_1.getError(), loopDepth); else return a_body1cont2when1(__when_expr_1.get(), loopDepth); };
-															#line 3029 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 3026 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		static_cast<DoConnectHandshakeActor*>(this)->actor_wait_state = 2;
 															#line 1000 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< DoConnectHandshakeActor, 1, Void >*>(static_cast<DoConnectHandshakeActor*>(this)));
-															#line 3033 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 3030 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -3041,11 +3038,11 @@ public:
 		StrictFuture<Void> __when_expr_1 = delay(0, TaskPriority::Handshake);
 															#line 1000 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch2(__when_expr_1.getError(), loopDepth); else return a_body1cont2when1(__when_expr_1.get(), loopDepth); };
-															#line 3044 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 3041 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		static_cast<DoConnectHandshakeActor*>(this)->actor_wait_state = 2;
 															#line 1000 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< DoConnectHandshakeActor, 1, Void >*>(static_cast<DoConnectHandshakeActor*>(this)));
-															#line 3048 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 3045 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -3117,7 +3114,7 @@ public:
 	{
 															#line 1001 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		connected.send(Void());
-															#line 3120 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 3117 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		loopDepth = a_body1cont7(loopDepth);
 
 		return loopDepth;
@@ -3126,7 +3123,7 @@ public:
 	{
 															#line 1001 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		connected.send(Void());
-															#line 3129 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 3126 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		loopDepth = a_body1cont7(loopDepth);
 
 		return loopDepth;
@@ -3209,25 +3206,25 @@ public:
 	}
 	int a_body1cont8(int loopDepth) 
 	{
-															#line 981 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 977 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		delete static_cast<DoConnectHandshakeActor*>(this);
-															#line 3214 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 3211 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		return 0;
 
 		return loopDepth;
 	}
-															#line 981 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 977 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	Reference<SSLConnection> self;
-															#line 981 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 977 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	Promise<Void> connected;
-															#line 982 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 978 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	Hold<int> holder;
-															#line 3225 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 3222 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 };
 // This generated class is to be used only via doConnectHandshake()
-															#line 981 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 977 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 class DoConnectHandshakeActor final : public Actor<void>, public ActorCallback< DoConnectHandshakeActor, 0, Void >, public ActorCallback< DoConnectHandshakeActor, 1, Void >, public FastAllocated<DoConnectHandshakeActor>, public DoConnectHandshakeActorState<DoConnectHandshakeActor> {
-															#line 3230 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 3227 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 public:
 	using FastAllocated<DoConnectHandshakeActor>::operator new;
 	using FastAllocated<DoConnectHandshakeActor>::operator delete;
@@ -3237,9 +3234,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< DoConnectHandshakeActor, 0, Void >;
 friend struct ActorCallback< DoConnectHandshakeActor, 1, Void >;
-															#line 981 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 977 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	DoConnectHandshakeActor(Reference<SSLConnection> const& self,Promise<Void> const& connected) 
-															#line 3242 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 3239 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		 : Actor<void>(),
 		   DoConnectHandshakeActorState<DoConnectHandshakeActor>(self, connected)
 	{
@@ -3253,29 +3250,29 @@ friend struct ActorCallback< DoConnectHandshakeActor, 1, Void >;
 
 	}
 };
-															#line 981 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 977 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 static void doConnectHandshake( Reference<SSLConnection> const& self, Promise<Void> const& connected ) {
-															#line 981 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 977 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	new DoConnectHandshakeActor(self, connected);
-															#line 3260 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 3257 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 }
 
 #line 1007 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 
-																#line 3265 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+																#line 3262 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 // This generated class is to be used only via connectHandshakeWrapper()
 															#line 1008 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 template <class ConnectHandshakeWrapperActor>
 															#line 1008 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 class ConnectHandshakeWrapperActorState {
-															#line 3271 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 3268 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 public:
 															#line 1008 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	ConnectHandshakeWrapperActorState(Reference<SSLConnection> const& self) 
 															#line 1008 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 															#line 1008 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		 : self(self)
-															#line 3278 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 3275 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 	{
 		fdb_probe_actor_create("connectHandshakeWrapper", reinterpret_cast<unsigned long>(this));
 
@@ -3292,12 +3289,12 @@ public:
 			StrictFuture<Void> __when_expr_0 = g_network->networkInfo.handshakeLock->take();
 															#line 1009 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			if (static_cast<ConnectHandshakeWrapperActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 3295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 3292 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<ConnectHandshakeWrapperActor*>(this)->actor_wait_state = 1;
 															#line 1009 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ConnectHandshakeWrapperActor, 0, Void >*>(static_cast<ConnectHandshakeWrapperActor*>(this)));
-															#line 3300 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 3297 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -3324,24 +3321,24 @@ public:
 		Promise<Void> connected;
 															#line 1013 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		doConnectHandshake(self, connected);
-															#line 3327 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 3324 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		try {
 															#line 1016 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			StrictFuture<Void> __when_expr_1 = connected.getFuture();
 															#line 1015 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			if (static_cast<ConnectHandshakeWrapperActor*>(this)->actor_wait_state < 0) return a_body1cont1Catch1(actor_cancelled(), loopDepth);
-															#line 3333 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 3330 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1cont1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 															#line 1019 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			StrictFuture<Void> __when_expr_2 = delay(FLOW_KNOBS->CONNECTION_MONITOR_TIMEOUT);
-															#line 3337 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 3334 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 			if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1cont1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1cont1when2(__when_expr_2.get(), loopDepth); };
 			static_cast<ConnectHandshakeWrapperActor*>(this)->actor_wait_state = 2;
 															#line 1016 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< ConnectHandshakeWrapperActor, 1, Void >*>(static_cast<ConnectHandshakeWrapperActor*>(this)));
 															#line 1019 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< ConnectHandshakeWrapperActor, 2, Void >*>(static_cast<ConnectHandshakeWrapperActor*>(this)));
-															#line 3344 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 3341 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -3360,24 +3357,24 @@ public:
 		Promise<Void> connected;
 															#line 1013 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		doConnectHandshake(self, connected);
-															#line 3363 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 3360 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		try {
 															#line 1016 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			StrictFuture<Void> __when_expr_1 = connected.getFuture();
 															#line 1015 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			if (static_cast<ConnectHandshakeWrapperActor*>(this)->actor_wait_state < 0) return a_body1cont1Catch1(actor_cancelled(), loopDepth);
-															#line 3369 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 3366 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1cont1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 															#line 1019 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			StrictFuture<Void> __when_expr_2 = delay(FLOW_KNOBS->CONNECTION_MONITOR_TIMEOUT);
-															#line 3373 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 3370 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 			if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1cont1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1cont1when2(__when_expr_2.get(), loopDepth); };
 			static_cast<ConnectHandshakeWrapperActor*>(this)->actor_wait_state = 2;
 															#line 1016 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< ConnectHandshakeWrapperActor, 1, Void >*>(static_cast<ConnectHandshakeWrapperActor*>(this)));
 															#line 1019 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< ConnectHandshakeWrapperActor, 2, Void >*>(static_cast<ConnectHandshakeWrapperActor*>(this)));
-															#line 3380 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 3377 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -3456,7 +3453,7 @@ public:
 		try {
 															#line 1025 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			if (e.code() != error_code_actor_cancelled)
-															#line 3459 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 3456 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 			{
 															#line 1026 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 				std::pair<IPAddress, uint16_t> peerIP = std::make_pair(self->peer_address.ip, self->peer_address.port);
@@ -3464,24 +3461,24 @@ public:
 				auto iter(g_network->networkInfo.serverTLSConnectionThrottler.find(peerIP));
 															#line 1028 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 				if (iter != g_network->networkInfo.serverTLSConnectionThrottler.end())
-															#line 3467 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 3464 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 				{
 															#line 1029 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 					iter->second.first++;
-															#line 3471 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 3468 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 				}
 				else
 				{
 															#line 1031 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 					g_network->networkInfo.serverTLSConnectionThrottler[peerIP] = std::make_pair(0, now() + FLOW_KNOBS->TLS_CLIENT_CONNECTION_THROTTLE_TIMEOUT);
-															#line 3477 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 3474 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 				}
 			}
 															#line 1035 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			self->closeSocket();
 															#line 1036 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			return a_body1Catch1(e, loopDepth);
-															#line 3484 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 3481 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		}
 		catch (Error& error) {
 			loopDepth = a_body1Catch1(error, loopDepth);
@@ -3495,7 +3492,7 @@ public:
 	{
 															#line 1017 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		if (!static_cast<ConnectHandshakeWrapperActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~ConnectHandshakeWrapperActorState(); static_cast<ConnectHandshakeWrapperActor*>(this)->destroy(); return 0; }
-															#line 3498 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 3495 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		new (&static_cast<ConnectHandshakeWrapperActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~ConnectHandshakeWrapperActorState();
 		static_cast<ConnectHandshakeWrapperActor*>(this)->finishSendAndDelPromiseRef();
@@ -3507,7 +3504,7 @@ public:
 	{
 															#line 1017 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		if (!static_cast<ConnectHandshakeWrapperActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~ConnectHandshakeWrapperActorState(); static_cast<ConnectHandshakeWrapperActor*>(this)->destroy(); return 0; }
-															#line 3510 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 3507 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		new (&static_cast<ConnectHandshakeWrapperActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~ConnectHandshakeWrapperActorState();
 		static_cast<ConnectHandshakeWrapperActor*>(this)->finishSendAndDelPromiseRef();
@@ -3519,7 +3516,7 @@ public:
 	{
 															#line 1020 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		return a_body1cont1Catch1(connection_failed(), loopDepth);
-															#line 3522 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 3519 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 
 		return loopDepth;
 	}
@@ -3527,7 +3524,7 @@ public:
 	{
 															#line 1020 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		return a_body1cont1Catch1(connection_failed(), loopDepth);
-															#line 3530 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 3527 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 
 		return loopDepth;
 	}
@@ -3632,12 +3629,12 @@ public:
 	Reference<SSLConnection> self;
 															#line 1010 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	FlowLock::Releaser releaser;
-															#line 3635 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 3632 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 };
 // This generated class is to be used only via connectHandshakeWrapper()
 															#line 1008 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 class ConnectHandshakeWrapperActor final : public Actor<Void>, public ActorCallback< ConnectHandshakeWrapperActor, 0, Void >, public ActorCallback< ConnectHandshakeWrapperActor, 1, Void >, public ActorCallback< ConnectHandshakeWrapperActor, 2, Void >, public FastAllocated<ConnectHandshakeWrapperActor>, public ConnectHandshakeWrapperActorState<ConnectHandshakeWrapperActor> {
-															#line 3640 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 3637 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 public:
 	using FastAllocated<ConnectHandshakeWrapperActor>::operator new;
 	using FastAllocated<ConnectHandshakeWrapperActor>::operator delete;
@@ -3650,7 +3647,7 @@ friend struct ActorCallback< ConnectHandshakeWrapperActor, 1, Void >;
 friend struct ActorCallback< ConnectHandshakeWrapperActor, 2, Void >;
 															#line 1008 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	ConnectHandshakeWrapperActor(Reference<SSLConnection> const& self) 
-															#line 3653 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 3650 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		 : Actor<Void>(),
 		   ConnectHandshakeWrapperActorState<ConnectHandshakeWrapperActor>(self)
 	{
@@ -3678,7 +3675,7 @@ friend struct ActorCallback< ConnectHandshakeWrapperActor, 2, Void >;
 [[nodiscard]] static Future<Void> connectHandshakeWrapper( Reference<SSLConnection> const& self ) {
 															#line 1008 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	return Future<Void>(new ConnectHandshakeWrapperActor(self));
-															#line 3681 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 3678 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 }
 
 #line 1039 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
@@ -3766,6 +3763,8 @@ friend struct ActorCallback< ConnectHandshakeWrapperActor, 2, Void >;
 
 	NetworkAddress getPeerAddress() const override { return peer_address; }
 
+	bool hasTrustedPeer() const override { return has_trusted_peer; }
+
 	UID getDebugID() const override { return id; }
 
 	tcp::socket& getSocket() override { return socket; }
@@ -3778,6 +3777,7 @@ private:
 	ssl_socket ssl_sock;
 	NetworkAddress peer_address;
 	Reference<ReferencedObject<boost::asio::ssl::context>> sslContext;
+	bool has_trusted_peer;
 
 	void init() {
 		// Socket settings that have to be set after connect or accept succeeds
@@ -3798,6 +3798,7 @@ private:
 	void onReadError(const boost::system::error_code& error) {
 		TraceEvent(SevWarn, "N2_ReadError", id)
 		    .suppressFor(1.0)
+		    .detail("PeerAddr", peer_address)
 		    .detail("ErrorCode", error.value())
 		    .detail("Message", error.message());
 		closeSocket();
@@ -3805,6 +3806,7 @@ private:
 	void onWriteError(const boost::system::error_code& error) {
 		TraceEvent(SevWarn, "N2_WriteError", id)
 		    .suppressFor(1.0)
+		    .detail("PeerAddr", peer_address)
 		    .detail("ErrorCode", error.value())
 		    .detail("Message", error.message());
 		closeSocket();
@@ -3823,6 +3825,16 @@ public:
 	            NetworkAddress listenAddress)
 	  : io_service(io_service), listenAddress(listenAddress), acceptor(io_service, tcpEndpoint(listenAddress)),
 	    contextVar(contextVar) {
+		// when port 0 is passed in, a random port will be opened
+		// set listenAddress as the address with the actual port opened instead of port 0
+		if (listenAddress.port == 0) {
+			this->listenAddress = NetworkAddress::parse(acceptor.local_endpoint()
+			                                                .address()
+			                                                .to_string()
+			                                                .append(":")
+			                                                .append(std::to_string(acceptor.local_endpoint().port()))
+			                                                .append(listenAddress.isTLS() ? ":tls" : ""));
+		}
 		platform::setCloseOnExec(acceptor.native_handle());
 	}
 
@@ -3835,24 +3847,24 @@ public:
 	NetworkAddress getListenAddress() const override { return listenAddress; }
 
 private:
-																#line 3838 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+																#line 3850 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 // This generated class is to be used only via doAccept()
-															#line 1192 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 template <class DoAcceptActor1>
-															#line 1192 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 class DoAcceptActor1State {
-															#line 3844 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 3856 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 public:
-															#line 1192 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	DoAcceptActor1State(SSLListener* const& self) 
-															#line 1192 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-															#line 1192 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		 : self(self),
-															#line 1193 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1208 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		   conn(new SSLConnection(self->io_service, self->contextVar->get())),
-															#line 1194 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1209 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		   peer_endpoint()
-															#line 3855 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 3867 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 	{
 		fdb_probe_actor_create("doAccept", reinterpret_cast<unsigned long>(this));
 
@@ -3866,22 +3878,22 @@ public:
 	{
 		try {
 			try {
-															#line 1196 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1211 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 				BindPromise p("N2_AcceptError", UID());
-															#line 1197 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1212 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 				auto f = p.getFuture();
-															#line 1198 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1213 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 				self->acceptor.async_accept(conn->getSocket(), peer_endpoint, std::move(p));
-															#line 1199 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1214 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 				StrictFuture<Void> __when_expr_0 = f;
-															#line 1199 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1214 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 				if (static_cast<DoAcceptActor1*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), loopDepth);
-															#line 3879 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 3891 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 				if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch2(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 				static_cast<DoAcceptActor1*>(this)->actor_wait_state = 1;
-															#line 1199 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1214 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 				__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< DoAcceptActor1, 0, Void >*>(static_cast<DoAcceptActor1*>(this)));
-															#line 3884 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 3896 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 				loopDepth = 0;
 			}
 			catch (Error& error) {
@@ -3909,11 +3921,11 @@ public:
 	int a_body1Catch2(const Error& __current_error,int loopDepth=0) 
 	{
 		try {
-															#line 1207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1222 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			conn->close();
-															#line 1208 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1223 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			return a_body1Catch1(__current_error, loopDepth);
-															#line 3916 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 3928 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		}
 		catch (Error& error) {
 			loopDepth = a_body1Catch1(error, loopDepth);
@@ -3925,13 +3937,13 @@ public:
 	}
 	int a_body1cont2(Void const& _,int loopDepth) 
 	{
-															#line 1200 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1215 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		auto peer_address = peer_endpoint.address().is_v6() ? IPAddress(peer_endpoint.address().to_v6().to_bytes()) : IPAddress(peer_endpoint.address().to_v4().to_ulong());
-															#line 1203 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1218 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		conn->accept(NetworkAddress(peer_address, peer_endpoint.port(), false, true));
-															#line 1205 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1220 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		if (!static_cast<DoAcceptActor1*>(this)->SAV<Reference<IConnection>>::futures) { (void)(conn); this->~DoAcceptActor1State(); static_cast<DoAcceptActor1*>(this)->destroy(); return 0; }
-															#line 3934 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 3946 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		new (&static_cast<DoAcceptActor1*>(this)->SAV< Reference<IConnection> >::value()) Reference<IConnection>(std::move(conn)); // state_var_RVO
 		this->~DoAcceptActor1State();
 		static_cast<DoAcceptActor1*>(this)->finishSendAndDelPromiseRef();
@@ -3941,13 +3953,13 @@ public:
 	}
 	int a_body1cont2(Void && _,int loopDepth) 
 	{
-															#line 1200 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1215 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		auto peer_address = peer_endpoint.address().is_v6() ? IPAddress(peer_endpoint.address().to_v6().to_bytes()) : IPAddress(peer_endpoint.address().to_v4().to_ulong());
-															#line 1203 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1218 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		conn->accept(NetworkAddress(peer_address, peer_endpoint.port(), false, true));
-															#line 1205 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1220 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		if (!static_cast<DoAcceptActor1*>(this)->SAV<Reference<IConnection>>::futures) { (void)(conn); this->~DoAcceptActor1State(); static_cast<DoAcceptActor1*>(this)->destroy(); return 0; }
-															#line 3950 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 3962 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		new (&static_cast<DoAcceptActor1*>(this)->SAV< Reference<IConnection> >::value()) Reference<IConnection>(std::move(conn)); // state_var_RVO
 		this->~DoAcceptActor1State();
 		static_cast<DoAcceptActor1*>(this)->finishSendAndDelPromiseRef();
@@ -4018,18 +4030,18 @@ public:
 		fdb_probe_actor_exit("doAccept", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 1192 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	SSLListener* self;
-															#line 1193 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1208 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	Reference<SSLConnection> conn;
-															#line 1194 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1209 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	tcp::acceptor::endpoint_type peer_endpoint;
-															#line 4027 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 4039 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 };
 // This generated class is to be used only via doAccept()
-															#line 1192 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 class DoAcceptActor1 final : public Actor<Reference<IConnection>>, public ActorCallback< DoAcceptActor1, 0, Void >, public FastAllocated<DoAcceptActor1>, public DoAcceptActor1State<DoAcceptActor1> {
-															#line 4032 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 4044 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 public:
 	using FastAllocated<DoAcceptActor1>::operator new;
 	using FastAllocated<DoAcceptActor1>::operator delete;
@@ -4038,9 +4050,9 @@ public:
 	void destroy() override { ((Actor<Reference<IConnection>>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< DoAcceptActor1, 0, Void >;
-															#line 1192 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	DoAcceptActor1(SSLListener* const& self) 
-															#line 4043 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 4055 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		 : Actor<Reference<IConnection>>(),
 		   DoAcceptActor1State<DoAcceptActor1>(self)
 	{
@@ -4063,40 +4075,26 @@ friend struct ActorCallback< DoAcceptActor1, 0, Void >;
 
 	}
 };
-															#line 1192 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 [[nodiscard]] static Future<Reference<IConnection>> doAccept( SSLListener* const& self ) {
-															#line 1192 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	return Future<Reference<IConnection>>(new DoAcceptActor1(self));
-															#line 4070 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 4082 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 }
 
-#line 1211 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-};
-#endif
-
-struct PromiseTask final : public Task, public FastAllocated<PromiseTask> {
-	Promise<Void> promise;
-	PromiseTask() {}
-	explicit PromiseTask(Promise<Void>&& promise) noexcept : promise(std::move(promise)) {}
-
-	void operator()() override {
-		promise.send(Void());
-		delete this;
-	}
+#line 1226 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 };
 
 // 5MB for loading files into memory
 
 Net2::Net2(const TLSConfig& tlsConfig, bool useThreadPool, bool useMetrics)
   : globals(enumGlobal::COUNT), useThreadPool(useThreadPool), reactor(this),
-#ifndef TLS_DISABLED
     sslContextVar({ ReferencedObject<boost::asio::ssl::context>::from(
         boost::asio::ssl::context(boost::asio::ssl::context::tls)) }),
-    sslHandshakerThreadsStarted(0), sslPoolHandshakesInProgress(0),
-#endif
-    tlsConfig(tlsConfig), tlsInitializedState(ETLSInitState::NONE), network(this), tscBegin(0), tscEnd(0), taskBegin(0),
-    currentTaskID(TaskPriority::DefaultYield), tasksIssued(0), stopped(false), started(false), numYields(0),
-    lastPriorityStats(nullptr), ready(FLOW_KNOBS->READY_QUEUE_RESERVED_SIZE) {
+    sslHandshakerThreadsStarted(0), sslPoolHandshakesInProgress(0), tlsConfig(tlsConfig),
+    tlsInitializedState(ETLSInitState::NONE), network(this), tscBegin(0), tscEnd(0), taskBegin(0),
+    currentTaskID(TaskPriority::DefaultYield), stopped(false), started(false), numYields(0),
+    lastPriorityStats(nullptr) {
 	// Until run() is called, yield() will always yield
 	TraceEvent("Net2Starting").log();
 
@@ -4107,6 +4105,7 @@ Net2::Net2(const TLSConfig& tlsConfig, bool useThreadPool, bool useMetrics)
 	if (FLOW_KNOBS->ENABLE_CHAOS_FEATURES) {
 		setGlobal(INetwork::enChaosMetrics, (flowGlobalType)&chaosMetrics);
 	}
+	setGlobal(INetwork::enMetrics, (flowGlobalType)&metrics);
 	setGlobal(INetwork::enNetworkConnections, (flowGlobalType)network);
 	setGlobal(INetwork::enASIOService, (flowGlobalType)&reactor.ios);
 	setGlobal(INetwork::enBlobCredentialFiles, &blobCredentialFiles);
@@ -4118,432 +4117,26 @@ Net2::Net2(const TLSConfig& tlsConfig, bool useThreadPool, bool useMetrics)
 	updateNow();
 }
 
-#ifndef TLS_DISABLED
-															#line 4122 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
-// This generated class is to be used only via watchFileForChanges()
-															#line 1259 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-template <class WatchFileForChangesActor>
-															#line 1259 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-class WatchFileForChangesActorState {
-															#line 4128 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
-public:
-															#line 1259 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-	WatchFileForChangesActorState(std::string const& filename,AsyncTrigger* const& fileChanged) 
-															#line 1259 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-															#line 1259 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-		 : filename(filename),
-															#line 1259 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-		   fileChanged(fileChanged)
-															#line 4137 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
-	{
-		fdb_probe_actor_create("watchFileForChanges", reinterpret_cast<unsigned long>(this));
-
-	}
-	~WatchFileForChangesActorState() 
-	{
-		fdb_probe_actor_destroy("watchFileForChanges", reinterpret_cast<unsigned long>(this));
-
-	}
-	int a_body1(int loopDepth=0) 
-	{
-		try {
-															#line 1260 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-			if (filename == "")
-															#line 4152 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
-			{
-															#line 1261 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-				this->~WatchFileForChangesActorState();
-															#line 4156 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
-				static_cast<WatchFileForChangesActor*>(this)->sendAndDelPromiseRef(Never());
-				return 0;
-			}
-															#line 1263 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-			firstRun = true;
-															#line 1264 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-			statError = false;
-															#line 1265 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-			lastModTime = 0;
-															#line 1266 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-			;
-															#line 4168 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
-			loopDepth = a_body1loopHead1(loopDepth);
-		}
-		catch (Error& error) {
-			loopDepth = a_body1Catch1(error, loopDepth);
-		} catch (...) {
-			loopDepth = a_body1Catch1(unknown_error(), loopDepth);
-		}
-
-		return loopDepth;
-	}
-	int a_body1Catch1(Error error,int loopDepth=0) 
-	{
-		this->~WatchFileForChangesActorState();
-		static_cast<WatchFileForChangesActor*>(this)->sendErrorAndDelPromiseRef(error);
-		loopDepth = 0;
-
-		return loopDepth;
-	}
-	int a_body1loopHead1(int loopDepth) 
-	{
-		int oldLoopDepth = ++loopDepth;
-		while (loopDepth == oldLoopDepth) loopDepth = a_body1loopBody1(loopDepth);
-
-		return loopDepth;
-	}
-	int a_body1loopBody1(int loopDepth) 
-	{
-		try {
-															#line 1268 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-			StrictFuture<std::time_t> __when_expr_0 = IAsyncFileSystem::filesystem()->lastWriteTime(filename);
-															#line 1268 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-			if (static_cast<WatchFileForChangesActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 4201 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
-			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1loopBody1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
-			static_cast<WatchFileForChangesActor*>(this)->actor_wait_state = 1;
-															#line 1268 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< WatchFileForChangesActor, 0, std::time_t >*>(static_cast<WatchFileForChangesActor*>(this)));
-															#line 4206 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
-			loopDepth = 0;
-		}
-		catch (Error& error) {
-			loopDepth = a_body1loopBody1Catch1(error, loopDepth);
-		} catch (...) {
-			loopDepth = a_body1loopBody1Catch1(unknown_error(), loopDepth);
-		}
-
-		return loopDepth;
-	}
-	int a_body1loopBody1cont1(int loopDepth) 
-	{
-															#line 1290 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-		StrictFuture<Void> __when_expr_1 = delay(FLOW_KNOBS->TLS_CERT_REFRESH_DELAY_SECONDS);
-															#line 1290 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-		if (static_cast<WatchFileForChangesActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 4223 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
-		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1cont1when1(__when_expr_1.get(), loopDepth); };
-		static_cast<WatchFileForChangesActor*>(this)->actor_wait_state = 2;
-															#line 1290 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< WatchFileForChangesActor, 1, Void >*>(static_cast<WatchFileForChangesActor*>(this)));
-															#line 4228 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
-		loopDepth = 0;
-
-		return loopDepth;
-	}
-	int a_body1loopBody1Catch1(const Error& e,int loopDepth=0) 
-	{
-		try {
-															#line 1279 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-			if (e.code() == error_code_io_error)
-															#line 4238 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
-			{
-															#line 1284 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-				TraceEvent(SevWarnAlways, "TLSCertificateRefreshStatError").detail("File", filename);
-															#line 1285 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-				statError = true;
-															#line 4244 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
-			}
-			else
-			{
-															#line 1287 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-				return a_body1Catch1(e, std::max(0, loopDepth - 1));
-															#line 4250 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
-			}
-			loopDepth = a_body1loopBody1cont1(loopDepth);
-		}
-		catch (Error& error) {
-			loopDepth = a_body1Catch1(error, std::max(0, loopDepth - 1));
-		} catch (...) {
-			loopDepth = a_body1Catch1(unknown_error(), std::max(0, loopDepth - 1));
-		}
-
-		return loopDepth;
-	}
-	int a_body1loopBody1cont2(std::time_t const& modtime,int loopDepth) 
-	{
-															#line 1269 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-		if (firstRun)
-															#line 4266 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
-		{
-															#line 1270 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-			lastModTime = modtime;
-															#line 1271 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-			firstRun = false;
-															#line 4272 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
-		}
-															#line 1273 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-		if (lastModTime != modtime || statError)
-															#line 4276 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
-		{
-															#line 1274 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-			lastModTime = modtime;
-															#line 1275 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-			statError = false;
-															#line 1276 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-			fileChanged->trigger();
-															#line 4284 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
-		}
-		loopDepth = a_body1loopBody1cont6(loopDepth);
-
-		return loopDepth;
-	}
-	int a_body1loopBody1cont2(std::time_t && modtime,int loopDepth) 
-	{
-															#line 1269 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-		if (firstRun)
-															#line 4294 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
-		{
-															#line 1270 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-			lastModTime = modtime;
-															#line 1271 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-			firstRun = false;
-															#line 4300 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
-		}
-															#line 1273 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-		if (lastModTime != modtime || statError)
-															#line 4304 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
-		{
-															#line 1274 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-			lastModTime = modtime;
-															#line 1275 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-			statError = false;
-															#line 1276 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-			fileChanged->trigger();
-															#line 4312 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
-		}
-		loopDepth = a_body1loopBody1cont6(loopDepth);
-
-		return loopDepth;
-	}
-	int a_body1loopBody1when1(std::time_t const& modtime,int loopDepth) 
-	{
-		loopDepth = a_body1loopBody1cont2(modtime, loopDepth);
-
-		return loopDepth;
-	}
-	int a_body1loopBody1when1(std::time_t && modtime,int loopDepth) 
-	{
-		loopDepth = a_body1loopBody1cont2(std::move(modtime), loopDepth);
-
-		return loopDepth;
-	}
-	void a_exitChoose1() 
-	{
-		if (static_cast<WatchFileForChangesActor*>(this)->actor_wait_state > 0) static_cast<WatchFileForChangesActor*>(this)->actor_wait_state = 0;
-		static_cast<WatchFileForChangesActor*>(this)->ActorCallback< WatchFileForChangesActor, 0, std::time_t >::remove();
-
-	}
-	void a_callback_fire(ActorCallback< WatchFileForChangesActor, 0, std::time_t >*,std::time_t const& value) 
-	{
-		fdb_probe_actor_enter("watchFileForChanges", reinterpret_cast<unsigned long>(this), 0);
-		a_exitChoose1();
-		try {
-			a_body1loopBody1when1(value, 0);
-		}
-		catch (Error& error) {
-			a_body1loopBody1Catch1(error, 0);
-		} catch (...) {
-			a_body1loopBody1Catch1(unknown_error(), 0);
-		}
-		fdb_probe_actor_exit("watchFileForChanges", reinterpret_cast<unsigned long>(this), 0);
-
-	}
-	void a_callback_fire(ActorCallback< WatchFileForChangesActor, 0, std::time_t >*,std::time_t && value) 
-	{
-		fdb_probe_actor_enter("watchFileForChanges", reinterpret_cast<unsigned long>(this), 0);
-		a_exitChoose1();
-		try {
-			a_body1loopBody1when1(std::move(value), 0);
-		}
-		catch (Error& error) {
-			a_body1loopBody1Catch1(error, 0);
-		} catch (...) {
-			a_body1loopBody1Catch1(unknown_error(), 0);
-		}
-		fdb_probe_actor_exit("watchFileForChanges", reinterpret_cast<unsigned long>(this), 0);
-
-	}
-	void a_callback_error(ActorCallback< WatchFileForChangesActor, 0, std::time_t >*,Error err) 
-	{
-		fdb_probe_actor_enter("watchFileForChanges", reinterpret_cast<unsigned long>(this), 0);
-		a_exitChoose1();
-		try {
-			a_body1loopBody1Catch1(err, 0);
-		}
-		catch (Error& error) {
-			a_body1loopBody1Catch1(error, 0);
-		} catch (...) {
-			a_body1loopBody1Catch1(unknown_error(), 0);
-		}
-		fdb_probe_actor_exit("watchFileForChanges", reinterpret_cast<unsigned long>(this), 0);
-
-	}
-	int a_body1loopBody1cont6(int loopDepth) 
-	{
-		try {
-			loopDepth = a_body1loopBody1cont1(loopDepth);
-		}
-		catch (Error& error) {
-			loopDepth = a_body1Catch1(error, std::max(0, loopDepth - 1));
-		} catch (...) {
-			loopDepth = a_body1Catch1(unknown_error(), std::max(0, loopDepth - 1));
-		}
-
-		return loopDepth;
-	}
-	int a_body1loopBody1cont7(Void const& _,int loopDepth) 
-	{
-		if (loopDepth == 0) return a_body1loopHead1(0);
-
-		return loopDepth;
-	}
-	int a_body1loopBody1cont7(Void && _,int loopDepth) 
-	{
-		if (loopDepth == 0) return a_body1loopHead1(0);
-
-		return loopDepth;
-	}
-	int a_body1loopBody1cont1when1(Void const& _,int loopDepth) 
-	{
-		loopDepth = a_body1loopBody1cont7(_, loopDepth);
-
-		return loopDepth;
-	}
-	int a_body1loopBody1cont1when1(Void && _,int loopDepth) 
-	{
-		loopDepth = a_body1loopBody1cont7(std::move(_), loopDepth);
-
-		return loopDepth;
-	}
-	void a_exitChoose2() 
-	{
-		if (static_cast<WatchFileForChangesActor*>(this)->actor_wait_state > 0) static_cast<WatchFileForChangesActor*>(this)->actor_wait_state = 0;
-		static_cast<WatchFileForChangesActor*>(this)->ActorCallback< WatchFileForChangesActor, 1, Void >::remove();
-
-	}
-	void a_callback_fire(ActorCallback< WatchFileForChangesActor, 1, Void >*,Void const& value) 
-	{
-		fdb_probe_actor_enter("watchFileForChanges", reinterpret_cast<unsigned long>(this), 1);
-		a_exitChoose2();
-		try {
-			a_body1loopBody1cont1when1(value, 0);
-		}
-		catch (Error& error) {
-			a_body1Catch1(error, 0);
-		} catch (...) {
-			a_body1Catch1(unknown_error(), 0);
-		}
-		fdb_probe_actor_exit("watchFileForChanges", reinterpret_cast<unsigned long>(this), 1);
-
-	}
-	void a_callback_fire(ActorCallback< WatchFileForChangesActor, 1, Void >*,Void && value) 
-	{
-		fdb_probe_actor_enter("watchFileForChanges", reinterpret_cast<unsigned long>(this), 1);
-		a_exitChoose2();
-		try {
-			a_body1loopBody1cont1when1(std::move(value), 0);
-		}
-		catch (Error& error) {
-			a_body1Catch1(error, 0);
-		} catch (...) {
-			a_body1Catch1(unknown_error(), 0);
-		}
-		fdb_probe_actor_exit("watchFileForChanges", reinterpret_cast<unsigned long>(this), 1);
-
-	}
-	void a_callback_error(ActorCallback< WatchFileForChangesActor, 1, Void >*,Error err) 
-	{
-		fdb_probe_actor_enter("watchFileForChanges", reinterpret_cast<unsigned long>(this), 1);
-		a_exitChoose2();
-		try {
-			a_body1Catch1(err, 0);
-		}
-		catch (Error& error) {
-			a_body1Catch1(error, 0);
-		} catch (...) {
-			a_body1Catch1(unknown_error(), 0);
-		}
-		fdb_probe_actor_exit("watchFileForChanges", reinterpret_cast<unsigned long>(this), 1);
-
-	}
-															#line 1259 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-	std::string filename;
-															#line 1259 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-	AsyncTrigger* fileChanged;
-															#line 1263 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-	bool firstRun;
-															#line 1264 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-	bool statError;
-															#line 1265 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-	std::time_t lastModTime;
-															#line 4479 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
-};
-// This generated class is to be used only via watchFileForChanges()
-															#line 1259 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-class WatchFileForChangesActor final : public Actor<Void>, public ActorCallback< WatchFileForChangesActor, 0, std::time_t >, public ActorCallback< WatchFileForChangesActor, 1, Void >, public FastAllocated<WatchFileForChangesActor>, public WatchFileForChangesActorState<WatchFileForChangesActor> {
-															#line 4484 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
-public:
-	using FastAllocated<WatchFileForChangesActor>::operator new;
-	using FastAllocated<WatchFileForChangesActor>::operator delete;
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdelete-non-virtual-dtor"
-	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
-#pragma clang diagnostic pop
-friend struct ActorCallback< WatchFileForChangesActor, 0, std::time_t >;
-friend struct ActorCallback< WatchFileForChangesActor, 1, Void >;
-															#line 1259 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-	WatchFileForChangesActor(std::string const& filename,AsyncTrigger* const& fileChanged) 
-															#line 4496 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
-		 : Actor<Void>(),
-		   WatchFileForChangesActorState<WatchFileForChangesActor>(filename, fileChanged)
-	{
-		fdb_probe_actor_enter("watchFileForChanges", reinterpret_cast<unsigned long>(this), -1);
-		#ifdef ENABLE_SAMPLING
-		this->lineage.setActorName("watchFileForChanges");
-		LineageScope _(&this->lineage);
-		#endif
-		this->a_body1();
-		fdb_probe_actor_exit("watchFileForChanges", reinterpret_cast<unsigned long>(this), -1);
-
-	}
-	void cancel() override
-	{
-		auto wait_state = this->actor_wait_state;
-		this->actor_wait_state = -1;
-		switch (wait_state) {
-		case 1: this->a_callback_error((ActorCallback< WatchFileForChangesActor, 0, std::time_t >*)0, actor_cancelled()); break;
-		case 2: this->a_callback_error((ActorCallback< WatchFileForChangesActor, 1, Void >*)0, actor_cancelled()); break;
-		}
-
-	}
-};
-															#line 1259 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-[[nodiscard]] static Future<Void> watchFileForChanges( std::string const& filename, AsyncTrigger* const& fileChanged ) {
-															#line 1259 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-	return Future<Void>(new WatchFileForChangesActor(filename, fileChanged));
-															#line 4524 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
-}
-
-#line 1293 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-
-															#line 4529 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 4120 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 // This generated class is to be used only via reloadCertificatesOnChange()
-															#line 1294 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1260 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 template <class ReloadCertificatesOnChangeActor>
-															#line 1294 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1260 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 class ReloadCertificatesOnChangeActorState {
-															#line 4535 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 4126 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 public:
-															#line 1294 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-	ReloadCertificatesOnChangeActorState(TLSConfig const& config,std::function<void()> const& onPolicyFailure,AsyncVar<Reference<ReferencedObject<boost::asio::ssl::context>>>* const& contextVar) 
-															#line 1294 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-															#line 1294 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1260 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+	ReloadCertificatesOnChangeActorState(TLSConfig const& config,std::function<void()> const& onPolicyFailure,AsyncVar<Reference<ReferencedObject<boost::asio::ssl::context>>>* const& contextVar,Reference<TLSPolicy>* const& policy) 
+															#line 1260 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1260 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		 : config(config),
-															#line 1294 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1260 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		   onPolicyFailure(onPolicyFailure),
-															#line 1294 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-		   contextVar(contextVar)
-															#line 4546 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 1260 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+		   contextVar(contextVar),
+															#line 1260 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+		   policy(policy)
+															#line 4139 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 	{
 		fdb_probe_actor_create("reloadCertificatesOnChange", reinterpret_cast<unsigned long>(this));
 
@@ -4556,21 +4149,21 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 1298 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1265 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			if (FLOW_KNOBS->TLS_CERT_REFRESH_DELAY_SECONDS <= 0)
-															#line 4561 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 4154 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 			{
-															#line 1299 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1266 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 				if (!static_cast<ReloadCertificatesOnChangeActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~ReloadCertificatesOnChangeActorState(); static_cast<ReloadCertificatesOnChangeActor*>(this)->destroy(); return 0; }
-															#line 4565 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 4158 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 				new (&static_cast<ReloadCertificatesOnChangeActor*>(this)->SAV< Void >::value()) Void(Void());
 				this->~ReloadCertificatesOnChangeActorState();
 				static_cast<ReloadCertificatesOnChangeActor*>(this)->finishSendAndDelPromiseRef();
 				return 0;
 			}
-															#line 1301 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1268 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			;
-															#line 4573 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 4166 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -4591,21 +4184,23 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 1308 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1275 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		mismatches = 0;
-															#line 1309 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1276 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		fileChanged = AsyncTrigger();
-															#line 1310 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1277 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		lifetimes = std::vector<Future<Void>>();
-															#line 1311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-		lifetimes.push_back(watchFileForChanges(config.getCertificatePathSync(), &fileChanged));
-															#line 1312 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-		lifetimes.push_back(watchFileForChanges(config.getKeyPathSync(), &fileChanged));
-															#line 1313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-		lifetimes.push_back(watchFileForChanges(config.getCAPathSync(), &fileChanged));
-															#line 1314 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1278 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+		const int& intervalSeconds = FLOW_KNOBS->TLS_CERT_REFRESH_DELAY_SECONDS;
+															#line 1279 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+		lifetimes.push_back(watchFileForChanges( config.getCertificatePathSync(), &fileChanged, &intervalSeconds, "TLSCertificateRefreshStatError"));
+															#line 1281 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+		lifetimes.push_back( watchFileForChanges(config.getKeyPathSync(), &fileChanged, &intervalSeconds, "TLSKeyRefreshStatError"));
+															#line 1283 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+		lifetimes.push_back( watchFileForChanges(config.getCAPathSync(), &fileChanged, &intervalSeconds, "TLSCARefreshStatError"));
+															#line 1285 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		;
-															#line 4608 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 4203 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		loopDepth = a_body1cont1loopHead1(loopDepth);
 
 		return loopDepth;
@@ -4619,22 +4214,22 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 1303 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1270 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		if (IAsyncFileSystem::filesystem() != nullptr)
-															#line 4624 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 4219 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		{
 			return a_body1break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 1306 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1273 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		StrictFuture<Void> __when_expr_0 = delay(1.0);
-															#line 1306 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1273 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		if (static_cast<ReloadCertificatesOnChangeActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 4632 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 4227 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 		static_cast<ReloadCertificatesOnChangeActor*>(this)->actor_wait_state = 1;
-															#line 1306 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1273 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ReloadCertificatesOnChangeActor, 0, Void >*>(static_cast<ReloadCertificatesOnChangeActor*>(this)));
-															#line 4637 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 4232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -4736,36 +4331,36 @@ public:
 	}
 	int a_body1cont1loopBody1(int loopDepth) 
 	{
-															#line 1315 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1286 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = fileChanged.onTrigger();
-															#line 1315 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1286 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		if (static_cast<ReloadCertificatesOnChangeActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 4743 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 4338 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), std::max(0, loopDepth - 1)); else return a_body1cont1loopBody1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<ReloadCertificatesOnChangeActor*>(this)->actor_wait_state = 2;
-															#line 1315 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1286 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< ReloadCertificatesOnChangeActor, 1, Void >*>(static_cast<ReloadCertificatesOnChangeActor*>(this)));
-															#line 4748 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 4343 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont1loopBody1cont1(Void const& _,int loopDepth) 
 	{
-															#line 1316 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1287 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		TraceEvent("TLSCertificateRefreshBegin").log();
-															#line 4757 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 4352 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		try {
-															#line 1319 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1290 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			StrictFuture<LoadedTLSConfig> __when_expr_2 = config.loadAsync();
-															#line 1319 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1290 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			if (static_cast<ReloadCertificatesOnChangeActor*>(this)->actor_wait_state < 0) return a_body1cont1loopBody1cont1Catch1(actor_cancelled(), loopDepth);
-															#line 4763 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 4358 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 			if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1cont1loopBody1cont1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1cont1loopBody1cont1when1(__when_expr_2.get(), loopDepth); };
 			static_cast<ReloadCertificatesOnChangeActor*>(this)->actor_wait_state = 3;
-															#line 1319 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1290 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< ReloadCertificatesOnChangeActor, 2, LoadedTLSConfig >*>(static_cast<ReloadCertificatesOnChangeActor*>(this)));
-															#line 4768 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 4363 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -4778,20 +4373,20 @@ public:
 	}
 	int a_body1cont1loopBody1cont1(Void && _,int loopDepth) 
 	{
-															#line 1316 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1287 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		TraceEvent("TLSCertificateRefreshBegin").log();
-															#line 4783 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 4378 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		try {
-															#line 1319 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1290 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			StrictFuture<LoadedTLSConfig> __when_expr_2 = config.loadAsync();
-															#line 1319 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1290 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			if (static_cast<ReloadCertificatesOnChangeActor*>(this)->actor_wait_state < 0) return a_body1cont1loopBody1cont1Catch1(actor_cancelled(), loopDepth);
-															#line 4789 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 4384 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 			if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1cont1loopBody1cont1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1cont1loopBody1cont1when1(__when_expr_2.get(), loopDepth); };
 			static_cast<ReloadCertificatesOnChangeActor*>(this)->actor_wait_state = 3;
-															#line 1319 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1290 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< ReloadCertificatesOnChangeActor, 2, LoadedTLSConfig >*>(static_cast<ReloadCertificatesOnChangeActor*>(this)));
-															#line 4794 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 4389 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -4874,19 +4469,19 @@ public:
 	int a_body1cont1loopBody1cont1Catch1(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 1326 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1298 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			if (e.code() == error_code_actor_cancelled)
-															#line 4879 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 4474 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 			{
-															#line 1327 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1299 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 				return a_body1Catch1(e, std::max(0, loopDepth - 1));
-															#line 4883 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 4478 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 			}
-															#line 1330 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1302 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			mismatches++;
-															#line 1331 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1303 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			TraceEvent(SevWarn, "TLSCertificateRefreshMismatch").error(e).detail("mismatches", mismatches);
-															#line 4889 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 4484 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 			loopDepth = a_body1cont1loopBody1cont2(loopDepth);
 		}
 		catch (Error& error) {
@@ -4899,34 +4494,38 @@ public:
 	}
 	int a_body1cont1loopBody1cont3(LoadedTLSConfig const& loaded,int loopDepth) 
 	{
-															#line 1320 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1291 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		boost::asio::ssl::context context(boost::asio::ssl::context::tls);
-															#line 1321 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-		ConfigureSSLContext(loaded, &context, onPolicyFailure);
-															#line 1322 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1292 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+		ConfigureSSLContext(loaded, context);
+															#line 1293 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+		*policy = makeReference<TLSPolicy>(loaded, onPolicyFailure);
+															#line 1294 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		TraceEvent(SevInfo, "TLSCertificateRefreshSucceeded").log();
-															#line 1323 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		mismatches = 0;
-															#line 1324 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1296 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		contextVar->set(ReferencedObject<boost::asio::ssl::context>::from(std::move(context)));
-															#line 4912 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 4509 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		loopDepth = a_body1cont1loopBody1cont5(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1cont1loopBody1cont3(LoadedTLSConfig && loaded,int loopDepth) 
 	{
-															#line 1320 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1291 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		boost::asio::ssl::context context(boost::asio::ssl::context::tls);
-															#line 1321 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-		ConfigureSSLContext(loaded, &context, onPolicyFailure);
-															#line 1322 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1292 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+		ConfigureSSLContext(loaded, context);
+															#line 1293 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+		*policy = makeReference<TLSPolicy>(loaded, onPolicyFailure);
+															#line 1294 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		TraceEvent(SevInfo, "TLSCertificateRefreshSucceeded").log();
-															#line 1323 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		mismatches = 0;
-															#line 1324 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1296 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		contextVar->set(ReferencedObject<boost::asio::ssl::context>::from(std::move(context)));
-															#line 4929 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 4528 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		loopDepth = a_body1cont1loopBody1cont5(loopDepth);
 
 		return loopDepth;
@@ -5007,24 +4606,26 @@ public:
 
 		return loopDepth;
 	}
-															#line 1294 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1260 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	TLSConfig config;
-															#line 1294 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1260 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	std::function<void()> onPolicyFailure;
-															#line 1294 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1260 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	AsyncVar<Reference<ReferencedObject<boost::asio::ssl::context>>>* contextVar;
-															#line 1308 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1260 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+	Reference<TLSPolicy>* policy;
+															#line 1275 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	int mismatches;
-															#line 1309 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1276 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	AsyncTrigger fileChanged;
-															#line 1310 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1277 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	std::vector<Future<Void>> lifetimes;
-															#line 5022 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 4623 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 };
 // This generated class is to be used only via reloadCertificatesOnChange()
-															#line 1294 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1260 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 class ReloadCertificatesOnChangeActor final : public Actor<Void>, public ActorCallback< ReloadCertificatesOnChangeActor, 0, Void >, public ActorCallback< ReloadCertificatesOnChangeActor, 1, Void >, public ActorCallback< ReloadCertificatesOnChangeActor, 2, LoadedTLSConfig >, public FastAllocated<ReloadCertificatesOnChangeActor>, public ReloadCertificatesOnChangeActorState<ReloadCertificatesOnChangeActor> {
-															#line 5027 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 4628 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 public:
 	using FastAllocated<ReloadCertificatesOnChangeActor>::operator new;
 	using FastAllocated<ReloadCertificatesOnChangeActor>::operator delete;
@@ -5035,11 +4636,11 @@ public:
 friend struct ActorCallback< ReloadCertificatesOnChangeActor, 0, Void >;
 friend struct ActorCallback< ReloadCertificatesOnChangeActor, 1, Void >;
 friend struct ActorCallback< ReloadCertificatesOnChangeActor, 2, LoadedTLSConfig >;
-															#line 1294 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-	ReloadCertificatesOnChangeActor(TLSConfig const& config,std::function<void()> const& onPolicyFailure,AsyncVar<Reference<ReferencedObject<boost::asio::ssl::context>>>* const& contextVar) 
-															#line 5040 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 1260 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+	ReloadCertificatesOnChangeActor(TLSConfig const& config,std::function<void()> const& onPolicyFailure,AsyncVar<Reference<ReferencedObject<boost::asio::ssl::context>>>* const& contextVar,Reference<TLSPolicy>* const& policy) 
+															#line 4641 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		 : Actor<Void>(),
-		   ReloadCertificatesOnChangeActorState<ReloadCertificatesOnChangeActor>(config, onPolicyFailure, contextVar)
+		   ReloadCertificatesOnChangeActorState<ReloadCertificatesOnChangeActor>(config, onPolicyFailure, contextVar, policy)
 	{
 		fdb_probe_actor_enter("reloadCertificatesOnChange", reinterpret_cast<unsigned long>(this), -1);
 		#ifdef ENABLE_SAMPLING
@@ -5062,21 +4663,19 @@ friend struct ActorCallback< ReloadCertificatesOnChangeActor, 2, LoadedTLSConfig
 
 	}
 };
-															#line 1294 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-[[nodiscard]] static Future<Void> reloadCertificatesOnChange( TLSConfig const& config, std::function<void()> const& onPolicyFailure, AsyncVar<Reference<ReferencedObject<boost::asio::ssl::context>>>* const& contextVar ) {
-															#line 1294 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-	return Future<Void>(new ReloadCertificatesOnChangeActor(config, onPolicyFailure, contextVar));
-															#line 5069 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 1260 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+[[nodiscard]] static Future<Void> reloadCertificatesOnChange( TLSConfig const& config, std::function<void()> const& onPolicyFailure, AsyncVar<Reference<ReferencedObject<boost::asio::ssl::context>>>* const& contextVar, Reference<TLSPolicy>* const& policy ) {
+															#line 1260 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+	return Future<Void>(new ReloadCertificatesOnChangeActor(config, onPolicyFailure, contextVar, policy));
+															#line 4670 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 }
 
-#line 1335 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-#endif
+#line 1307 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 
 void Net2::initTLS(ETLSInitState targetState) {
 	if (tlsInitializedState >= targetState) {
 		return;
 	}
-#ifndef TLS_DISABLED
 	// Any target state must be higher than NONE so if the current state is NONE
 	// then initialize the TLS config
 	if (tlsInitializedState == ETLSInitState::NONE) {
@@ -5090,12 +4689,15 @@ void Net2::initTLS(ETLSInitState targetState) {
 			    .detail("KeyPath", tlsConfig.getKeyPathSync())
 			    .detail("HasPassword", !loaded.getPassword().empty())
 			    .detail("VerifyPeers", boost::algorithm::join(loaded.getVerifyPeers(), "|"));
-			ConfigureSSLContext(tlsConfig.loadSync(), &newContext, onPolicyFailure);
+			auto loadedTlsConfig = tlsConfig.loadSync();
+			ConfigureSSLContext(loadedTlsConfig, newContext);
+			activeTlsPolicy = makeReference<TLSPolicy>(loadedTlsConfig, onPolicyFailure);
 			sslContextVar.set(ReferencedObject<boost::asio::ssl::context>::from(std::move(newContext)));
 		} catch (Error& e) {
 			TraceEvent("Net2TLSInitError").error(e);
 		}
-		backgroundCertRefresh = reloadCertificatesOnChange(tlsConfig, onPolicyFailure, &sslContextVar);
+		backgroundCertRefresh =
+		    reloadCertificatesOnChange(tlsConfig, onPolicyFailure, &sslContextVar, &activeTlsPolicy);
 	}
 
 	// If a TLS connection is actually going to be used then start background threads if configured
@@ -5130,24 +4732,23 @@ void Net2::initTLS(ETLSInitState targetState) {
 			}
 		}
 	}
-#endif
 
 	tlsInitializedState = targetState;
 }
 
-															#line 5138 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 4739 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 // This generated class is to be used only via logTimeOffset()
-															#line 1400 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1372 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 template <class Net2_LogTimeOffsetActor>
-															#line 1400 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1372 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 class Net2_LogTimeOffsetActorState {
-															#line 5144 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 4745 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 public:
-															#line 1400 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1372 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	Net2_LogTimeOffsetActorState() 
-															#line 1400 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1372 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	{
-															#line 5150 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 4751 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		fdb_probe_actor_create("logTimeOffset", reinterpret_cast<unsigned long>(this));
 
 	}
@@ -5159,9 +4760,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 1401 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1373 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			;
-															#line 5164 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 4765 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -5189,22 +4790,22 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 1402 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1374 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		double processTime = timer_monotonic();
-															#line 1403 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1375 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		double systemTime = timer();
-															#line 1404 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1376 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		TraceEvent("ProcessTimeOffset") .detailf("ProcessTime", "%lf", processTime) .detailf("SystemTime", "%lf", systemTime) .detailf("OffsetFromSystemTime", "%lf", processTime - systemTime);
-															#line 1408 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1380 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		StrictFuture<Void> __when_expr_0 = ::delay(FLOW_KNOBS->TIME_OFFSET_LOGGING_INTERVAL);
-															#line 1408 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1380 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		if (static_cast<Net2_LogTimeOffsetActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 5202 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 4803 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 		static_cast<Net2_LogTimeOffsetActor*>(this)->actor_wait_state = 1;
-															#line 1408 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1380 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< Net2_LogTimeOffsetActor, 0, Void >*>(static_cast<Net2_LogTimeOffsetActor*>(this)));
-															#line 5207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 4808 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -5286,9 +4887,9 @@ public:
 	}
 };
 // This generated class is to be used only via logTimeOffset()
-															#line 1400 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1372 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 class Net2_LogTimeOffsetActor final : public Actor<Void>, public ActorCallback< Net2_LogTimeOffsetActor, 0, Void >, public FastAllocated<Net2_LogTimeOffsetActor>, public Net2_LogTimeOffsetActorState<Net2_LogTimeOffsetActor> {
-															#line 5291 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 4892 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 public:
 	using FastAllocated<Net2_LogTimeOffsetActor>::operator new;
 	using FastAllocated<Net2_LogTimeOffsetActor>::operator delete;
@@ -5297,9 +4898,9 @@ public:
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< Net2_LogTimeOffsetActor, 0, Void >;
-															#line 1400 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1372 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	Net2_LogTimeOffsetActor() 
-															#line 5302 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 4903 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		 : Actor<Void>(),
 		   Net2_LogTimeOffsetActorState<Net2_LogTimeOffsetActor>()
 	{
@@ -5322,39 +4923,37 @@ friend struct ActorCallback< Net2_LogTimeOffsetActor, 0, Void >;
 
 	}
 };
-															#line 1400 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1372 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 [[nodiscard]] Future<Void> Net2::logTimeOffset(  ) {
-															#line 1400 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1372 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	return Future<Void>(new Net2_LogTimeOffsetActor());
-															#line 5329 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 4930 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 }
 
-#line 1411 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+#line 1383 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 
 void Net2::initMetrics() {
-	bytesReceived.init(LiteralStringRef("Net2.BytesReceived"));
-	countWriteProbes.init(LiteralStringRef("Net2.CountWriteProbes"));
-	countReadProbes.init(LiteralStringRef("Net2.CountReadProbes"));
-	countReads.init(LiteralStringRef("Net2.CountReads"));
-	countWouldBlock.init(LiteralStringRef("Net2.CountWouldBlock"));
-	countWrites.init(LiteralStringRef("Net2.CountWrites"));
-	countRunLoop.init(LiteralStringRef("Net2.CountRunLoop"));
-	countCantSleep.init(LiteralStringRef("Net2.CountCantSleep"));
-	countWontSleep.init(LiteralStringRef("Net2.CountWontSleep"));
-	countTimers.init(LiteralStringRef("Net2.CountTimers"));
-	countTasks.init(LiteralStringRef("Net2.CountTasks"));
-	countYields.init(LiteralStringRef("Net2.CountYields"));
-	countYieldBigStack.init(LiteralStringRef("Net2.CountYieldBigStack"));
-	countYieldCalls.init(LiteralStringRef("Net2.CountYieldCalls"));
-	countASIOEvents.init(LiteralStringRef("Net2.CountASIOEvents"));
-	countYieldCallsTrue.init(LiteralStringRef("Net2.CountYieldCallsTrue"));
-	countRunLoopProfilingSignals.init(LiteralStringRef("Net2.CountRunLoopProfilingSignals"));
-	countTLSPolicyFailures.init(LiteralStringRef("Net2.CountTLSPolicyFailures"));
-	priorityMetric.init(LiteralStringRef("Net2.Priority"));
-	awakeMetric.init(LiteralStringRef("Net2.Awake"));
-	slowTaskMetric.init(LiteralStringRef("Net2.SlowTask"));
-	countLaunchTime.init(LiteralStringRef("Net2.CountLaunchTime"));
-	countReactTime.init(LiteralStringRef("Net2.CountReactTime"));
+	bytesReceived.init("Net2.BytesReceived"_sr);
+	countWriteProbes.init("Net2.CountWriteProbes"_sr);
+	countReadProbes.init("Net2.CountReadProbes"_sr);
+	countReads.init("Net2.CountReads"_sr);
+	countWouldBlock.init("Net2.CountWouldBlock"_sr);
+	countWrites.init("Net2.CountWrites"_sr);
+	countRunLoop.init("Net2.CountRunLoop"_sr);
+	countTasks.init("Net2.CountTasks"_sr);
+	countYields.init("Net2.CountYields"_sr);
+	countYieldBigStack.init("Net2.CountYieldBigStack"_sr);
+	countYieldCalls.init("Net2.CountYieldCalls"_sr);
+	countASIOEvents.init("Net2.CountASIOEvents"_sr);
+	countYieldCallsTrue.init("Net2.CountYieldCallsTrue"_sr);
+	countRunLoopProfilingSignals.init("Net2.CountRunLoopProfilingSignals"_sr);
+	countTLSPolicyFailures.init("Net2.CountTLSPolicyFailures"_sr);
+	priorityMetric.init("Net2.Priority"_sr);
+	awakeMetric.init("Net2.Awake"_sr);
+	slowTaskMetric.init("Net2.SlowTask"_sr);
+	countLaunchTime.init("Net2.CountLaunchTime"_sr);
+	countReactTime.init("Net2.CountReactTime"_sr);
+	taskQueue.initMetrics();
 }
 
 bool Net2::checkRunnable() {
@@ -5412,19 +5011,10 @@ void Net2::run() {
 		}
 
 		double sleepTime = 0;
-		bool b = ready.empty();
-		if (b) {
-			b = threadReady.canSleep();
-			if (!b)
-				++countCantSleep;
-		} else
-			++countWontSleep;
-		if (b) {
+		if (taskQueue.canSleep()) {
 			sleepTime = 1e99;
 			double sleepStart = timer_monotonic();
-			if (!timers.empty()) {
-				sleepTime = timers.top().at - sleepStart; // + 500e-6?
-			}
+			sleepTime = taskQueue.getSleepTime(sleepStart);
 			if (sleepTime > 0) {
 #if defined(__linux__)
 				// notify the run loop monitoring thread that we have gone idle
@@ -5456,33 +5046,24 @@ void Net2::run() {
 		    nondeterministicRandom()->random01() < (now - nnow) * FLOW_KNOBS->SLOW_LOOP_SAMPLING_RATE)
 			TraceEvent("SomewhatSlowRunLoopTop").detail("Elapsed", now - nnow);
 
-		int numTimers = 0;
-		while (!timers.empty() && timers.top().at < now) {
-			++numTimers;
-			++countTimers;
-			ready.push(timers.top());
-			timers.pop();
-		}
-		// FIXME: Is this double counting?
-		countTimers += numTimers;
-		FDB_TRACE_PROBE(run_loop_ready_timers, numTimers);
+		taskQueue.processReadyTimers(now);
 
-		processThreadReady();
+		taskQueue.processThreadReady();
 
 		tscBegin = timestampCounter();
 		tscEnd = tscBegin + FLOW_KNOBS->TSC_YIELD_TIME;
 		taskBegin = timer_monotonic();
 		numYields = 0;
 		TaskPriority minTaskID = TaskPriority::Max;
-		[[maybe_unused]] int queueSize = ready.size();
+		[[maybe_unused]] int queueSize = taskQueue.getNumReadyTasks();
 
 		FDB_TRACE_PROBE(run_loop_tasks_start, queueSize);
-		while (!ready.empty()) {
+		while (taskQueue.hasReadyTask()) {
 			++countTasks;
-			currentTaskID = ready.top().taskID;
+			currentTaskID = taskQueue.getReadyTaskID();
 			priorityMetric = static_cast<int64_t>(currentTaskID);
-			Task* task = ready.top().task;
-			ready.pop();
+			PromiseTask* task = taskQueue.getReadyTask();
+			taskQueue.popReadyTask();
 
 			try {
 				++tasksSinceReact;
@@ -5523,7 +5104,7 @@ void Net2::run() {
 
 		trackAtPriority(TaskPriority::RunLoop, taskBegin);
 
-		queueSize = ready.size();
+		queueSize = taskQueue.getNumReadyTasks();
 		FDB_TRACE_PROBE(run_loop_done, queueSize);
 
 #if defined(__linux__)
@@ -5638,20 +5219,6 @@ void Net2::trackAtPriority(TaskPriority priority, double now) {
 	}
 }
 
-void Net2::processThreadReady() {
-	[[maybe_unused]] int numReady = 0;
-	while (true) {
-		Optional<OrderedTask> t = threadReady.pop();
-		if (!t.present())
-			break;
-		t.get().priority -= ++tasksIssued;
-		ASSERT(t.get().task != 0);
-		ready.push(t.get());
-		++numReady;
-	}
-	FDB_TRACE_PROBE(run_loop_thread_ready, numReady);
-}
-
 void Net2::checkForSlowTask(int64_t tscBegin, int64_t tscEnd, double duration, TaskPriority priority) {
 	int64_t elapsed = tscEnd - tscBegin;
 	if (elapsed > FLOW_KNOBS->TSC_YIELD_TIME && tscBegin > 0) {
@@ -5691,11 +5258,11 @@ bool Net2::check_yield(TaskPriority taskID, int64_t tscNow) {
 		return true;
 	}
 
-	processThreadReady();
+	taskQueue.processThreadReady();
 
 	if (taskID == TaskPriority::DefaultYield)
 		taskID = currentTaskID;
-	if (!ready.empty() && ready.top().priority > int64_t(taskID) << 32) {
+	if (taskQueue.hasReadyTask() && taskQueue.getReadyTaskPriority() > int64_t(taskID) << 32) {
 		return true;
 	}
 
@@ -5733,18 +5300,17 @@ Future<class Void> Net2::yield(TaskPriority taskID) {
 }
 
 Future<Void> Net2::delay(double seconds, TaskPriority taskId) {
-	if (seconds <= 0.) {
-		PromiseTask* t = new PromiseTask;
-		this->ready.push(OrderedTask((int64_t(taskId) << 32) - (++tasksIssued), taskId, t));
-		return t->promise.getFuture();
-	}
-	if (seconds >=
-	    4e12) // Intervals that overflow an int64_t in microseconds (more than 100,000 years) are treated as infinite
+	if (seconds >= 4e12) // Intervals that overflow an int64_t in microseconds (more than 100,000 years) are treated
+	                     // as infinite
 		return Never();
 
-	double at = now() + seconds;
 	PromiseTask* t = new PromiseTask;
-	this->timers.push(DelayedTask(at, (int64_t(taskId) << 32) - (++tasksIssued), taskId, t));
+	if (seconds <= 0.) {
+		taskQueue.addReady(taskId, t);
+	} else {
+		double at = now() + seconds;
+		taskQueue.addTimer(at, taskId, t);
+	}
 	return t->promise.getFuture();
 }
 
@@ -5757,14 +5323,8 @@ void Net2::onMainThread(Promise<Void>&& signal, TaskPriority taskID) {
 	if (stopped)
 		return;
 	PromiseTask* p = new PromiseTask(std::move(signal));
-	int64_t priority = int64_t(taskID) << 32;
-
-	if (thread_network == this) {
-		processThreadReady();
-		this->ready.push(OrderedTask(priority - (++tasksIssued), taskID, p));
-	} else {
-		if (threadReady.push(OrderedTask(priority, taskID, p)))
-			reactor.wake();
+	if (taskQueue.addReadyThreadSafe(isOnMainThread(), taskID, p)) {
+		reactor.wake();
 	}
 }
 
@@ -5773,12 +5333,10 @@ THREAD_HANDLE Net2::startThread(THREAD_FUNC_RETURN (*func)(void*), void* arg, in
 }
 
 Future<Reference<IConnection>> Net2::connect(NetworkAddress toAddr, tcp::socket* existingSocket) {
-#ifndef TLS_DISABLED
 	if (toAddr.isTLS()) {
 		initTLS(ETLSInitState::CONNECT);
 		return SSLConnection::connect(&this->reactor.ios, this->sslContextVar.get(), toAddr, existingSocket);
 	}
-#endif
 
 	return Connection::connect(&this->reactor.ios, toAddr);
 }
@@ -5795,26 +5353,26 @@ Future<Reference<IUDPSocket>> Net2::createUDPSocket(bool isV6) {
 	return UDPSocket::connect(&reactor.ios, Optional<NetworkAddress>(), isV6);
 }
 
-															#line 5798 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 5356 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 // This generated class is to be used only via resolveTCPEndpoint_impl()
-															#line 1876 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1805 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 template <class ResolveTCPEndpoint_implActor>
-															#line 1876 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1805 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 class ResolveTCPEndpoint_implActorState {
-															#line 5804 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 5362 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 public:
-															#line 1876 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1805 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	ResolveTCPEndpoint_implActorState(Net2* const& self,std::string const& host,std::string const& service) 
-															#line 1876 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-															#line 1876 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1805 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1805 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		 : self(self),
-															#line 1876 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1805 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		   host(host),
-															#line 1876 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1805 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		   service(service),
-															#line 1879 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1808 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		   tcpResolver(self->reactor.ios)
-															#line 5817 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 5375 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 	{
 		fdb_probe_actor_create("resolveTCPEndpoint_impl", reinterpret_cast<unsigned long>(this));
 
@@ -5827,24 +5385,24 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 1880 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1809 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			Promise<std::vector<NetworkAddress>> promise;
-															#line 1881 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1810 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			result = promise.getFuture();
-															#line 1883 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
-			tcpResolver.async_resolve( host, service, [promise](const boost::system::error_code& ec, tcp::resolver::iterator iter) { if (ec) { promise.sendError(lookup_failed()); return; } std::vector<NetworkAddress> addrs; tcp::resolver::iterator end; while (iter != end) { auto endpoint = iter->endpoint(); auto addr = endpoint.address(); if (addr.is_v6()) { addrs.emplace_back(IPAddress(addr.to_v6().to_bytes()), endpoint.port()); } else { addrs.emplace_back(addr.to_v4().to_ulong(), endpoint.port()); } ++iter; } if (addrs.empty()) { promise.sendError(lookup_failed()); } else { promise.send(addrs); } });
-															#line 5836 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 1812 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+			tcpResolver.async_resolve( host, service, [promise](const boost::system::error_code& ec, tcp::resolver::iterator iter) { if (ec) { promise.sendError(lookup_failed()); return; } std::vector<NetworkAddress> addrs; tcp::resolver::iterator end; while (iter != end) { auto endpoint = iter->endpoint(); auto addr = endpoint.address(); if (addr.is_v6()) { if (!addr.is_loopback()) { addrs.emplace_back(IPAddress(addr.to_v6().to_bytes()), endpoint.port()); } } else { addrs.emplace_back(addr.to_v4().to_ulong(), endpoint.port()); } ++iter; } if (addrs.empty()) { promise.sendError(lookup_failed()); } else { promise.send(addrs); } });
+															#line 5394 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 			try {
-															#line 1912 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1844 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 				StrictFuture<Void> __when_expr_0 = ready(result);
-															#line 1912 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1844 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 				if (static_cast<ResolveTCPEndpoint_implActor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), loopDepth);
-															#line 5842 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 5400 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 				if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch2(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 				static_cast<ResolveTCPEndpoint_implActor*>(this)->actor_wait_state = 1;
-															#line 1912 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1844 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 				__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ResolveTCPEndpoint_implActor, 0, Void >*>(static_cast<ResolveTCPEndpoint_implActor*>(this)));
-															#line 5847 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 5405 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 				loopDepth = 0;
 			}
 			catch (Error& error) {
@@ -5871,15 +5429,15 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 1919 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1851 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		tcpResolver.cancel();
-															#line 1920 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1852 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		std::vector<NetworkAddress> ret = result.get();
-															#line 1921 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1853 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		self->dnsCache.add(host, service, ret);
-															#line 1923 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1855 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 		if (!static_cast<ResolveTCPEndpoint_implActor*>(this)->SAV<std::vector<NetworkAddress>>::futures) { (void)(ret); this->~ResolveTCPEndpoint_implActorState(); static_cast<ResolveTCPEndpoint_implActor*>(this)->destroy(); return 0; }
-															#line 5882 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 5440 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		new (&static_cast<ResolveTCPEndpoint_implActor*>(this)->SAV< std::vector<NetworkAddress> >::value()) std::vector<NetworkAddress>(ret);
 		this->~ResolveTCPEndpoint_implActorState();
 		static_cast<ResolveTCPEndpoint_implActor*>(this)->finishSendAndDelPromiseRef();
@@ -5890,17 +5448,17 @@ public:
 	int a_body1Catch2(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 1914 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1846 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			if (e.code() == error_code_lookup_failed)
-															#line 5895 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 5453 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 			{
-															#line 1915 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1847 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 				self->dnsCache.remove(host, service);
-															#line 5899 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 5457 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 			}
-															#line 1917 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1849 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 			return a_body1Catch1(e, loopDepth);
-															#line 5903 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 5461 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		}
 		catch (Error& error) {
 			loopDepth = a_body1Catch1(error, loopDepth);
@@ -5998,22 +5556,22 @@ public:
 
 		return loopDepth;
 	}
-															#line 1876 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1805 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	Net2* self;
-															#line 1876 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1805 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	std::string host;
-															#line 1876 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1805 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	std::string service;
-															#line 1879 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1808 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	tcp::resolver tcpResolver;
-															#line 1881 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1810 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	Future<std::vector<NetworkAddress>> result;
-															#line 6011 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 5569 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 };
 // This generated class is to be used only via resolveTCPEndpoint_impl()
-															#line 1876 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1805 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 class ResolveTCPEndpoint_implActor final : public Actor<std::vector<NetworkAddress>>, public ActorCallback< ResolveTCPEndpoint_implActor, 0, Void >, public FastAllocated<ResolveTCPEndpoint_implActor>, public ResolveTCPEndpoint_implActorState<ResolveTCPEndpoint_implActor> {
-															#line 6016 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 5574 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 public:
 	using FastAllocated<ResolveTCPEndpoint_implActor>::operator new;
 	using FastAllocated<ResolveTCPEndpoint_implActor>::operator delete;
@@ -6022,9 +5580,9 @@ public:
 	void destroy() override { ((Actor<std::vector<NetworkAddress>>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< ResolveTCPEndpoint_implActor, 0, Void >;
-															#line 1876 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1805 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	ResolveTCPEndpoint_implActor(Net2* const& self,std::string const& host,std::string const& service) 
-															#line 6027 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 5585 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 		 : Actor<std::vector<NetworkAddress>>(),
 		   ResolveTCPEndpoint_implActorState<ResolveTCPEndpoint_implActor>(self, host, service)
 	{
@@ -6047,14 +5605,14 @@ friend struct ActorCallback< ResolveTCPEndpoint_implActor, 0, Void >;
 
 	}
 };
-															#line 1876 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1805 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 [[nodiscard]] static Future<std::vector<NetworkAddress>> resolveTCPEndpoint_impl( Net2* const& self, std::string const& host, std::string const& service ) {
-															#line 1876 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 1805 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 	return Future<std::vector<NetworkAddress>>(new ResolveTCPEndpoint_implActor(self, host, service));
-															#line 6054 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+															#line 5612 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 }
 
-#line 1925 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+#line 1857 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
 
 Future<std::vector<NetworkAddress>> Net2::resolveTCPEndpoint(const std::string& host, const std::string& service) {
 	return resolveTCPEndpoint_impl(this, host, service);
@@ -6138,12 +5696,10 @@ bool Net2::isAddressOnThisHost(NetworkAddress const& addr) const {
 
 Reference<IListener> Net2::listen(NetworkAddress localAddr) {
 	try {
-#ifndef TLS_DISABLED
 		if (localAddr.isTLS()) {
 			initTLS(ETLSInitState::LISTEN);
 			return Reference<IListener>(new SSLListener(reactor.ios, &this->sslContextVar, localAddr));
 		}
-#endif
 		return Reference<IListener>(new Listener(reactor.ios, localAddr));
 	} catch (boost::system::system_error const& e) {
 		Error x;
@@ -6284,7 +5840,7 @@ struct TestGVR {
 };
 
 template <class F>
-void startThreadF(F&& func) {
+THREAD_HANDLE startThreadF(F&& func) {
 	struct Thing {
 		F f;
 		Thing(F&& f) : f(std::move(f)) {}
@@ -6296,71 +5852,885 @@ void startThreadF(F&& func) {
 		}
 	};
 	Thing* t = new Thing(std::move(func));
-	startThread(Thing::start, t);
+	return g_network->startThread(Thing::start, t);
 }
 
-void net2_test(){
-	/*printf("ThreadSafeQueue test\n");
-	printf("  Interface: ");
-	ThreadSafeQueue<int> tq;
-	ASSERT( tq.canSleep() == true );
-
-	ASSERT( tq.push( 1 ) == true ) ;
-	ASSERT( tq.push( 2 ) == false );
-	ASSERT( tq.push( 3 ) == false );
-
-	ASSERT( tq.pop().get() == 1 );
-	ASSERT( tq.pop().get() == 2 );
-	ASSERT( tq.push( 4 ) == false );
-	ASSERT( tq.pop().get() == 3 );
-	ASSERT( tq.pop().get() == 4 );
-	ASSERT( !tq.pop().present() );
-	printf("OK\n");
-
-	printf("Threaded: ");
-	Event finished, finished2;
-	int thread1Iterations = 1000000, thread2Iterations = 100000;
-
-	if (thread1Iterations)
-	    startThreadF([&](){
-	        printf("Thread1\n");
-	        for(int i=0; i<thread1Iterations; i++)
-	            tq.push(i);
-	        printf("T1Done\n");
-	        finished.set();
-	    });
-	if (thread2Iterations)
-	    startThreadF([&](){
-	        printf("Thread2\n");
-	        for(int i=0; i<thread2Iterations; i++)
-	            tq.push(i + (1<<20));
-	        printf("T2Done\n");
-	        finished2.set();
-	    });
-	int c = 0, mx[2]={0, 1<<20}, p = 0;
-	while (c < thread1Iterations + thread2Iterations)
+															#line 5858 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+namespace {
+// This generated class is to be used only via flowTestCase2099()
+															#line 2099 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+template <class FlowTestCase2099Actor>
+															#line 2099 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+class FlowTestCase2099ActorState {
+															#line 5865 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+public:
+															#line 2099 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+	FlowTestCase2099ActorState(UnitTestParameters const& params) 
+															#line 2099 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 2099 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+		 : params(params)
+															#line 5872 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
 	{
-	    Optional<int> i = tq.pop();
-	    if (i.present()) {
-	        int v = i.get();
-	        ++c;
-	        if (mx[v>>20] != v)
-	            printf("Wrong value dequeued!\n");
-	        ASSERT( mx[v>>20] == v );
-	        mx[v>>20] = v + 1;
-	    } else {
-	        ++p;
-	        _mm_pause();
-	    }
-	    if ((c&3)==0) tq.canSleep();
+		fdb_probe_actor_create("flowTestCase2099", reinterpret_cast<unsigned long>(this));
+
 	}
-	printf("%d %d %x %x %s\n", c, p, mx[0], mx[1], mx[0]==thread1Iterations && mx[1]==(1<<20)+thread2Iterations ? "OK" :
-	"FAIL");
+	~FlowTestCase2099ActorState() 
+	{
+		fdb_probe_actor_destroy("flowTestCase2099", reinterpret_cast<unsigned long>(this));
 
-	finished.block();
-	finished2.block();
+	}
+	int a_body1(int loopDepth=0) 
+	{
+		try {
+															#line 2100 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+			ThreadSafeQueue<int> tq;
+															#line 2101 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+			ASSERT(!tq.pop().present());
+															#line 2102 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+			ASSERT(tq.canSleep());
+															#line 2104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+			ASSERT(tq.push(1) == true);
+															#line 2105 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+			ASSERT(!tq.canSleep());
+															#line 2106 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+			ASSERT(!tq.canSleep());
+															#line 2107 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+			ASSERT(tq.push(2) == false);
+															#line 2108 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+			ASSERT(tq.push(3) == false);
+															#line 2110 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+			ASSERT(tq.pop().get() == 1);
+															#line 2111 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+			ASSERT(tq.pop().get() == 2);
+															#line 2112 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+			ASSERT(tq.push(4) == false);
+															#line 2113 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+			ASSERT(tq.pop().get() == 3);
+															#line 2114 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+			ASSERT(tq.pop().get() == 4);
+															#line 2115 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+			ASSERT(!tq.pop().present());
+															#line 2116 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+			ASSERT(tq.canSleep());
+															#line 2117 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+			if (!static_cast<FlowTestCase2099Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~FlowTestCase2099ActorState(); static_cast<FlowTestCase2099Actor*>(this)->destroy(); return 0; }
+															#line 5917 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+			new (&static_cast<FlowTestCase2099Actor*>(this)->SAV< Void >::value()) Void(Void());
+			this->~FlowTestCase2099ActorState();
+			static_cast<FlowTestCase2099Actor*>(this)->finishSendAndDelPromiseRef();
+			return 0;
+		}
+		catch (Error& error) {
+			loopDepth = a_body1Catch1(error, loopDepth);
+		} catch (...) {
+			loopDepth = a_body1Catch1(unknown_error(), loopDepth);
+		}
 
+		return loopDepth;
+	}
+	int a_body1Catch1(Error error,int loopDepth=0) 
+	{
+		this->~FlowTestCase2099ActorState();
+		static_cast<FlowTestCase2099Actor*>(this)->sendErrorAndDelPromiseRef(error);
+		loopDepth = 0;
 
+		return loopDepth;
+	}
+															#line 2099 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+	UnitTestParameters params;
+															#line 5941 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+};
+// This generated class is to be used only via flowTestCase2099()
+															#line 2099 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+class FlowTestCase2099Actor final : public Actor<Void>, public FastAllocated<FlowTestCase2099Actor>, public FlowTestCase2099ActorState<FlowTestCase2099Actor> {
+															#line 5946 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+public:
+	using FastAllocated<FlowTestCase2099Actor>::operator new;
+	using FastAllocated<FlowTestCase2099Actor>::operator delete;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdelete-non-virtual-dtor"
+	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
+#pragma clang diagnostic pop
+															#line 2099 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+	FlowTestCase2099Actor(UnitTestParameters const& params) 
+															#line 5956 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+		 : Actor<Void>(),
+		   FlowTestCase2099ActorState<FlowTestCase2099Actor>(params)
+	{
+		fdb_probe_actor_enter("flowTestCase2099", reinterpret_cast<unsigned long>(this), -1);
+		#ifdef ENABLE_SAMPLING
+		this->lineage.setActorName("flowTestCase2099");
+		LineageScope _(&this->lineage);
+		#endif
+		this->a_body1();
+		fdb_probe_actor_exit("flowTestCase2099", reinterpret_cast<unsigned long>(this), -1);
+
+	}
+	void cancel() override
+	{
+		auto wait_state = this->actor_wait_state;
+		this->actor_wait_state = -1;
+		switch (wait_state) {
+		}
+
+	}
+};
+}
+															#line 2099 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+static Future<Void> flowTestCase2099( UnitTestParameters const& params ) {
+															#line 2099 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+	return Future<Void>(new FlowTestCase2099Actor(params));
+															#line 5983 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+}
+ACTOR_TEST_CASE(flowTestCase2099, "flow/Net2/ThreadSafeQueue/Interface")
+
+#line 2119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+
+// A helper struct used by queueing tests which use multiple threads.
+struct QueueTestThreadState {
+	QueueTestThreadState(int threadId, int toProduce) : threadId(threadId), toProduce(toProduce) {}
+	int threadId;
+	THREAD_HANDLE handle;
+	int toProduce;
+	int produced = 0;
+	Promise<Void> doneProducing;
+	int consumed = 0;
+
+	static int valueToThreadId(int value) { return value >> 20; }
+	int elementValue(int index) { return index + (threadId << 20); }
+	int nextProduced() { return elementValue(produced++); }
+	int nextConsumed() { return elementValue(consumed++); }
+	void checkDone() {
+		ASSERT_EQ(produced, toProduce);
+		ASSERT_EQ(consumed, produced);
+	}
+};
+
+															#line 6009 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+namespace {
+// This generated class is to be used only via flowTestCase2140()
+															#line 2140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+template <class FlowTestCase2140Actor>
+															#line 2140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+class FlowTestCase2140ActorState {
+															#line 6016 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+public:
+															#line 2140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+	FlowTestCase2140ActorState(UnitTestParameters const& params) 
+															#line 2140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 2140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+		 : params(params)
+															#line 6023 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+	{
+		fdb_probe_actor_create("flowTestCase2140", reinterpret_cast<unsigned long>(this));
+
+	}
+	~FlowTestCase2140ActorState() 
+	{
+		fdb_probe_actor_destroy("flowTestCase2140", reinterpret_cast<unsigned long>(this));
+
+	}
+	int a_body1(int loopDepth=0) 
+	{
+		try {
+															#line 2143 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+			noUnseed = true;
+															#line 2145 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+			ThreadSafeQueue<int> queue;
+															#line 2146 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+			perThread = { QueueTestThreadState(0, 1000000), QueueTestThreadState(1, 100000), QueueTestThreadState(2, 1000000) };
+															#line 2149 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+			doneProducing = std::vector<Future<Void>>();
+															#line 2151 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+			int total = 0;
+															#line 2152 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+			for(int t = 0;t < perThread.size();++t) {
+															#line 2153 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+				auto& s = perThread[t];
+															#line 2154 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+				doneProducing.push_back(s.doneProducing.getFuture());
+															#line 2155 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+				total += s.toProduce;
+															#line 2156 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+				s.handle = startThreadF([&queue, &s]() { printf("Thread%d\n", s.threadId); int nextYield = 0; while (s.produced < s.toProduce) { queue.push(s.nextProduced()); if (nextYield-- == 0) { std::this_thread::yield(); nextYield = nondeterministicRandom()->randomInt(0, 100); } } printf("T%dDone\n", s.threadId); s.doneProducing.send(Void()); });
+															#line 6056 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+			}
+															#line 2170 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+			int consumed = 0;
+															#line 2171 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+			for(;consumed < total;) {
+															#line 2172 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+				Optional<int> element = queue.pop();
+															#line 2173 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+				if (element.present())
+															#line 6066 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+				{
+															#line 2174 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+					int v = element.get();
+															#line 2175 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+					auto& s = perThread[QueueTestThreadState::valueToThreadId(v)];
+															#line 2176 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+					++consumed;
+															#line 2177 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+					ASSERT(v == s.nextConsumed());
+															#line 6076 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+				}
+				else
+				{
+															#line 2179 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+					std::this_thread::yield();
+															#line 6082 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+				}
+															#line 2181 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+				if ((consumed & 3) == 0)
+															#line 6086 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+				{
+															#line 2182 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+					queue.canSleep();
+															#line 6090 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+				}
+			}
+															#line 2185 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+			StrictFuture<Void> __when_expr_0 = waitForAll(doneProducing);
+															#line 2185 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+			if (static_cast<FlowTestCase2140Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
+															#line 6097 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
+			static_cast<FlowTestCase2140Actor*>(this)->actor_wait_state = 1;
+															#line 2185 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase2140Actor, 0, Void >*>(static_cast<FlowTestCase2140Actor*>(this)));
+															#line 6102 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+			loopDepth = 0;
+		}
+		catch (Error& error) {
+			loopDepth = a_body1Catch1(error, loopDepth);
+		} catch (...) {
+			loopDepth = a_body1Catch1(unknown_error(), loopDepth);
+		}
+
+		return loopDepth;
+	}
+	int a_body1Catch1(Error error,int loopDepth=0) 
+	{
+		this->~FlowTestCase2140ActorState();
+		static_cast<FlowTestCase2140Actor*>(this)->sendErrorAndDelPromiseRef(error);
+		loopDepth = 0;
+
+		return loopDepth;
+	}
+	int a_body1cont1(Void const& _,int loopDepth) 
+	{
+															#line 2188 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+		Promise<Void> signal;
+															#line 2189 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+		doneConsuming = signal.getFuture();
+															#line 2190 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+		g_network->onMainThread(std::move(signal), TaskPriority::DefaultOnMainThread);
+															#line 2191 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+		StrictFuture<Void> __when_expr_1 = doneConsuming;
+															#line 2191 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+		if (static_cast<FlowTestCase2140Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
+															#line 6133 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
+		static_cast<FlowTestCase2140Actor*>(this)->actor_wait_state = 2;
+															#line 2191 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase2140Actor, 1, Void >*>(static_cast<FlowTestCase2140Actor*>(this)));
+															#line 6138 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+		loopDepth = 0;
+
+		return loopDepth;
+	}
+	int a_body1cont1(Void && _,int loopDepth) 
+	{
+															#line 2188 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+		Promise<Void> signal;
+															#line 2189 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+		doneConsuming = signal.getFuture();
+															#line 2190 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+		g_network->onMainThread(std::move(signal), TaskPriority::DefaultOnMainThread);
+															#line 2191 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+		StrictFuture<Void> __when_expr_1 = doneConsuming;
+															#line 2191 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+		if (static_cast<FlowTestCase2140Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
+															#line 6155 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
+		static_cast<FlowTestCase2140Actor*>(this)->actor_wait_state = 2;
+															#line 2191 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase2140Actor, 1, Void >*>(static_cast<FlowTestCase2140Actor*>(this)));
+															#line 6160 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+		loopDepth = 0;
+
+		return loopDepth;
+	}
+	int a_body1when1(Void const& _,int loopDepth) 
+	{
+		loopDepth = a_body1cont1(_, loopDepth);
+
+		return loopDepth;
+	}
+	int a_body1when1(Void && _,int loopDepth) 
+	{
+		loopDepth = a_body1cont1(std::move(_), loopDepth);
+
+		return loopDepth;
+	}
+	void a_exitChoose1() 
+	{
+		if (static_cast<FlowTestCase2140Actor*>(this)->actor_wait_state > 0) static_cast<FlowTestCase2140Actor*>(this)->actor_wait_state = 0;
+		static_cast<FlowTestCase2140Actor*>(this)->ActorCallback< FlowTestCase2140Actor, 0, Void >::remove();
+
+	}
+	void a_callback_fire(ActorCallback< FlowTestCase2140Actor, 0, Void >*,Void const& value) 
+	{
+		fdb_probe_actor_enter("flowTestCase2140", reinterpret_cast<unsigned long>(this), 0);
+		a_exitChoose1();
+		try {
+			a_body1when1(value, 0);
+		}
+		catch (Error& error) {
+			a_body1Catch1(error, 0);
+		} catch (...) {
+			a_body1Catch1(unknown_error(), 0);
+		}
+		fdb_probe_actor_exit("flowTestCase2140", reinterpret_cast<unsigned long>(this), 0);
+
+	}
+	void a_callback_fire(ActorCallback< FlowTestCase2140Actor, 0, Void >*,Void && value) 
+	{
+		fdb_probe_actor_enter("flowTestCase2140", reinterpret_cast<unsigned long>(this), 0);
+		a_exitChoose1();
+		try {
+			a_body1when1(std::move(value), 0);
+		}
+		catch (Error& error) {
+			a_body1Catch1(error, 0);
+		} catch (...) {
+			a_body1Catch1(unknown_error(), 0);
+		}
+		fdb_probe_actor_exit("flowTestCase2140", reinterpret_cast<unsigned long>(this), 0);
+
+	}
+	void a_callback_error(ActorCallback< FlowTestCase2140Actor, 0, Void >*,Error err) 
+	{
+		fdb_probe_actor_enter("flowTestCase2140", reinterpret_cast<unsigned long>(this), 0);
+		a_exitChoose1();
+		try {
+			a_body1Catch1(err, 0);
+		}
+		catch (Error& error) {
+			a_body1Catch1(error, 0);
+		} catch (...) {
+			a_body1Catch1(unknown_error(), 0);
+		}
+		fdb_probe_actor_exit("flowTestCase2140", reinterpret_cast<unsigned long>(this), 0);
+
+	}
+	int a_body1cont7(Void const& _,int loopDepth) 
+	{
+															#line 2193 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+		for(int t = 0;t < perThread.size();++t) {
+															#line 2194 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+			waitThread(perThread[t].handle);
+															#line 2195 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+			perThread[t].checkDone();
+															#line 6236 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+		}
+															#line 2197 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+		if (!static_cast<FlowTestCase2140Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~FlowTestCase2140ActorState(); static_cast<FlowTestCase2140Actor*>(this)->destroy(); return 0; }
+															#line 6240 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+		new (&static_cast<FlowTestCase2140Actor*>(this)->SAV< Void >::value()) Void(Void());
+		this->~FlowTestCase2140ActorState();
+		static_cast<FlowTestCase2140Actor*>(this)->finishSendAndDelPromiseRef();
+		return 0;
+
+		return loopDepth;
+	}
+	int a_body1cont7(Void && _,int loopDepth) 
+	{
+															#line 2193 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+		for(int t = 0;t < perThread.size();++t) {
+															#line 2194 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+			waitThread(perThread[t].handle);
+															#line 2195 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+			perThread[t].checkDone();
+															#line 6256 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+		}
+															#line 2197 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+		if (!static_cast<FlowTestCase2140Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~FlowTestCase2140ActorState(); static_cast<FlowTestCase2140Actor*>(this)->destroy(); return 0; }
+															#line 6260 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+		new (&static_cast<FlowTestCase2140Actor*>(this)->SAV< Void >::value()) Void(Void());
+		this->~FlowTestCase2140ActorState();
+		static_cast<FlowTestCase2140Actor*>(this)->finishSendAndDelPromiseRef();
+		return 0;
+
+		return loopDepth;
+	}
+	int a_body1cont1when1(Void const& _,int loopDepth) 
+	{
+		loopDepth = a_body1cont7(_, loopDepth);
+
+		return loopDepth;
+	}
+	int a_body1cont1when1(Void && _,int loopDepth) 
+	{
+		loopDepth = a_body1cont7(std::move(_), loopDepth);
+
+		return loopDepth;
+	}
+	void a_exitChoose2() 
+	{
+		if (static_cast<FlowTestCase2140Actor*>(this)->actor_wait_state > 0) static_cast<FlowTestCase2140Actor*>(this)->actor_wait_state = 0;
+		static_cast<FlowTestCase2140Actor*>(this)->ActorCallback< FlowTestCase2140Actor, 1, Void >::remove();
+
+	}
+	void a_callback_fire(ActorCallback< FlowTestCase2140Actor, 1, Void >*,Void const& value) 
+	{
+		fdb_probe_actor_enter("flowTestCase2140", reinterpret_cast<unsigned long>(this), 1);
+		a_exitChoose2();
+		try {
+			a_body1cont1when1(value, 0);
+		}
+		catch (Error& error) {
+			a_body1Catch1(error, 0);
+		} catch (...) {
+			a_body1Catch1(unknown_error(), 0);
+		}
+		fdb_probe_actor_exit("flowTestCase2140", reinterpret_cast<unsigned long>(this), 1);
+
+	}
+	void a_callback_fire(ActorCallback< FlowTestCase2140Actor, 1, Void >*,Void && value) 
+	{
+		fdb_probe_actor_enter("flowTestCase2140", reinterpret_cast<unsigned long>(this), 1);
+		a_exitChoose2();
+		try {
+			a_body1cont1when1(std::move(value), 0);
+		}
+		catch (Error& error) {
+			a_body1Catch1(error, 0);
+		} catch (...) {
+			a_body1Catch1(unknown_error(), 0);
+		}
+		fdb_probe_actor_exit("flowTestCase2140", reinterpret_cast<unsigned long>(this), 1);
+
+	}
+	void a_callback_error(ActorCallback< FlowTestCase2140Actor, 1, Void >*,Error err) 
+	{
+		fdb_probe_actor_enter("flowTestCase2140", reinterpret_cast<unsigned long>(this), 1);
+		a_exitChoose2();
+		try {
+			a_body1Catch1(err, 0);
+		}
+		catch (Error& error) {
+			a_body1Catch1(error, 0);
+		} catch (...) {
+			a_body1Catch1(unknown_error(), 0);
+		}
+		fdb_probe_actor_exit("flowTestCase2140", reinterpret_cast<unsigned long>(this), 1);
+
+	}
+															#line 2140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+	UnitTestParameters params;
+															#line 2146 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+	std::vector<QueueTestThreadState> perThread;
+															#line 2149 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+	std::vector<Future<Void>> doneProducing;
+															#line 2189 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+	Future<Void> doneConsuming;
+															#line 6339 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+};
+// This generated class is to be used only via flowTestCase2140()
+															#line 2140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+class FlowTestCase2140Actor final : public Actor<Void>, public ActorCallback< FlowTestCase2140Actor, 0, Void >, public ActorCallback< FlowTestCase2140Actor, 1, Void >, public FastAllocated<FlowTestCase2140Actor>, public FlowTestCase2140ActorState<FlowTestCase2140Actor> {
+															#line 6344 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+public:
+	using FastAllocated<FlowTestCase2140Actor>::operator new;
+	using FastAllocated<FlowTestCase2140Actor>::operator delete;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdelete-non-virtual-dtor"
+	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
+#pragma clang diagnostic pop
+friend struct ActorCallback< FlowTestCase2140Actor, 0, Void >;
+friend struct ActorCallback< FlowTestCase2140Actor, 1, Void >;
+															#line 2140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+	FlowTestCase2140Actor(UnitTestParameters const& params) 
+															#line 6356 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+		 : Actor<Void>(),
+		   FlowTestCase2140ActorState<FlowTestCase2140Actor>(params)
+	{
+		fdb_probe_actor_enter("flowTestCase2140", reinterpret_cast<unsigned long>(this), -1);
+		#ifdef ENABLE_SAMPLING
+		this->lineage.setActorName("flowTestCase2140");
+		LineageScope _(&this->lineage);
+		#endif
+		this->a_body1();
+		fdb_probe_actor_exit("flowTestCase2140", reinterpret_cast<unsigned long>(this), -1);
+
+	}
+	void cancel() override
+	{
+		auto wait_state = this->actor_wait_state;
+		this->actor_wait_state = -1;
+		switch (wait_state) {
+		case 1: this->a_callback_error((ActorCallback< FlowTestCase2140Actor, 0, Void >*)0, actor_cancelled()); break;
+		case 2: this->a_callback_error((ActorCallback< FlowTestCase2140Actor, 1, Void >*)0, actor_cancelled()); break;
+		}
+
+	}
+};
+}
+															#line 2140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+static Future<Void> flowTestCase2140( UnitTestParameters const& params ) {
+															#line 2140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+	return Future<Void>(new FlowTestCase2140Actor(params));
+															#line 6385 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+}
+ACTOR_TEST_CASE(flowTestCase2140, "flow/Net2/ThreadSafeQueue/Threaded")
+
+#line 2199 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+
+															#line 6391 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+namespace {
+// This generated class is to be used only via flowTestCase2200()
+															#line 2200 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+template <class FlowTestCase2200Actor>
+															#line 2200 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+class FlowTestCase2200ActorState {
+															#line 6398 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+public:
+															#line 2200 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+	FlowTestCase2200ActorState(UnitTestParameters const& params) 
+															#line 2200 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+															#line 2200 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+		 : params(params)
+															#line 6405 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+	{
+		fdb_probe_actor_create("flowTestCase2200", reinterpret_cast<unsigned long>(this));
+
+	}
+	~FlowTestCase2200ActorState() 
+	{
+		fdb_probe_actor_destroy("flowTestCase2200", reinterpret_cast<unsigned long>(this));
+
+	}
+	int a_body1(int loopDepth=0) 
+	{
+		try {
+															#line 2202 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+			noUnseed = true;
+															#line 2204 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+			perThread = { QueueTestThreadState(0, 1000000), QueueTestThreadState(1, 100000), QueueTestThreadState(2, 1000000) };
+															#line 2207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+			doneProducing = std::vector<Future<Void>>();
+															#line 2208 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+			for(int t = 0;t < perThread.size();++t) {
+															#line 2209 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+				auto& s = perThread[t];
+															#line 2210 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+				doneProducing.push_back(s.doneProducing.getFuture());
+															#line 2211 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+				s.handle = startThreadF([&s]() { int nextYield = 0; while (s.produced < s.toProduce) { if (nextYield-- == 0) { std::this_thread::yield(); nextYield = nondeterministicRandom()->randomInt(0, 100); } int v = s.nextProduced(); onMainThreadVoid([&s, v]() { ASSERT_EQ(v, s.nextConsumed()); }); } s.doneProducing.send(Void()); });
+															#line 6432 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+			}
+															#line 2224 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+			StrictFuture<Void> __when_expr_0 = waitForAll(doneProducing);
+															#line 2224 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+			if (static_cast<FlowTestCase2200Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
+															#line 6438 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
+			static_cast<FlowTestCase2200Actor*>(this)->actor_wait_state = 1;
+															#line 2224 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase2200Actor, 0, Void >*>(static_cast<FlowTestCase2200Actor*>(this)));
+															#line 6443 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+			loopDepth = 0;
+		}
+		catch (Error& error) {
+			loopDepth = a_body1Catch1(error, loopDepth);
+		} catch (...) {
+			loopDepth = a_body1Catch1(unknown_error(), loopDepth);
+		}
+
+		return loopDepth;
+	}
+	int a_body1Catch1(Error error,int loopDepth=0) 
+	{
+		this->~FlowTestCase2200ActorState();
+		static_cast<FlowTestCase2200Actor*>(this)->sendErrorAndDelPromiseRef(error);
+		loopDepth = 0;
+
+		return loopDepth;
+	}
+	int a_body1cont1(Void const& _,int loopDepth) 
+	{
+															#line 2227 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+		Promise<Void> signal;
+															#line 2228 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+		doneConsuming = signal.getFuture();
+															#line 2229 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+		g_network->onMainThread(std::move(signal), TaskPriority::DefaultOnMainThread);
+															#line 2230 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+		StrictFuture<Void> __when_expr_1 = doneConsuming;
+															#line 2230 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+		if (static_cast<FlowTestCase2200Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
+															#line 6474 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
+		static_cast<FlowTestCase2200Actor*>(this)->actor_wait_state = 2;
+															#line 2230 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase2200Actor, 1, Void >*>(static_cast<FlowTestCase2200Actor*>(this)));
+															#line 6479 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+		loopDepth = 0;
+
+		return loopDepth;
+	}
+	int a_body1cont1(Void && _,int loopDepth) 
+	{
+															#line 2227 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+		Promise<Void> signal;
+															#line 2228 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+		doneConsuming = signal.getFuture();
+															#line 2229 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+		g_network->onMainThread(std::move(signal), TaskPriority::DefaultOnMainThread);
+															#line 2230 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+		StrictFuture<Void> __when_expr_1 = doneConsuming;
+															#line 2230 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+		if (static_cast<FlowTestCase2200Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
+															#line 6496 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
+		static_cast<FlowTestCase2200Actor*>(this)->actor_wait_state = 2;
+															#line 2230 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase2200Actor, 1, Void >*>(static_cast<FlowTestCase2200Actor*>(this)));
+															#line 6501 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+		loopDepth = 0;
+
+		return loopDepth;
+	}
+	int a_body1when1(Void const& _,int loopDepth) 
+	{
+		loopDepth = a_body1cont1(_, loopDepth);
+
+		return loopDepth;
+	}
+	int a_body1when1(Void && _,int loopDepth) 
+	{
+		loopDepth = a_body1cont1(std::move(_), loopDepth);
+
+		return loopDepth;
+	}
+	void a_exitChoose1() 
+	{
+		if (static_cast<FlowTestCase2200Actor*>(this)->actor_wait_state > 0) static_cast<FlowTestCase2200Actor*>(this)->actor_wait_state = 0;
+		static_cast<FlowTestCase2200Actor*>(this)->ActorCallback< FlowTestCase2200Actor, 0, Void >::remove();
+
+	}
+	void a_callback_fire(ActorCallback< FlowTestCase2200Actor, 0, Void >*,Void const& value) 
+	{
+		fdb_probe_actor_enter("flowTestCase2200", reinterpret_cast<unsigned long>(this), 0);
+		a_exitChoose1();
+		try {
+			a_body1when1(value, 0);
+		}
+		catch (Error& error) {
+			a_body1Catch1(error, 0);
+		} catch (...) {
+			a_body1Catch1(unknown_error(), 0);
+		}
+		fdb_probe_actor_exit("flowTestCase2200", reinterpret_cast<unsigned long>(this), 0);
+
+	}
+	void a_callback_fire(ActorCallback< FlowTestCase2200Actor, 0, Void >*,Void && value) 
+	{
+		fdb_probe_actor_enter("flowTestCase2200", reinterpret_cast<unsigned long>(this), 0);
+		a_exitChoose1();
+		try {
+			a_body1when1(std::move(value), 0);
+		}
+		catch (Error& error) {
+			a_body1Catch1(error, 0);
+		} catch (...) {
+			a_body1Catch1(unknown_error(), 0);
+		}
+		fdb_probe_actor_exit("flowTestCase2200", reinterpret_cast<unsigned long>(this), 0);
+
+	}
+	void a_callback_error(ActorCallback< FlowTestCase2200Actor, 0, Void >*,Error err) 
+	{
+		fdb_probe_actor_enter("flowTestCase2200", reinterpret_cast<unsigned long>(this), 0);
+		a_exitChoose1();
+		try {
+			a_body1Catch1(err, 0);
+		}
+		catch (Error& error) {
+			a_body1Catch1(error, 0);
+		} catch (...) {
+			a_body1Catch1(unknown_error(), 0);
+		}
+		fdb_probe_actor_exit("flowTestCase2200", reinterpret_cast<unsigned long>(this), 0);
+
+	}
+	int a_body1cont3(Void const& _,int loopDepth) 
+	{
+															#line 2232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+		for(int t = 0;t < perThread.size();++t) {
+															#line 2233 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+			waitThread(perThread[t].handle);
+															#line 2234 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+			perThread[t].checkDone();
+															#line 6577 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+		}
+															#line 2236 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+		if (!static_cast<FlowTestCase2200Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~FlowTestCase2200ActorState(); static_cast<FlowTestCase2200Actor*>(this)->destroy(); return 0; }
+															#line 6581 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+		new (&static_cast<FlowTestCase2200Actor*>(this)->SAV< Void >::value()) Void(Void());
+		this->~FlowTestCase2200ActorState();
+		static_cast<FlowTestCase2200Actor*>(this)->finishSendAndDelPromiseRef();
+		return 0;
+
+		return loopDepth;
+	}
+	int a_body1cont3(Void && _,int loopDepth) 
+	{
+															#line 2232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+		for(int t = 0;t < perThread.size();++t) {
+															#line 2233 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+			waitThread(perThread[t].handle);
+															#line 2234 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+			perThread[t].checkDone();
+															#line 6597 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+		}
+															#line 2236 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+		if (!static_cast<FlowTestCase2200Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~FlowTestCase2200ActorState(); static_cast<FlowTestCase2200Actor*>(this)->destroy(); return 0; }
+															#line 6601 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+		new (&static_cast<FlowTestCase2200Actor*>(this)->SAV< Void >::value()) Void(Void());
+		this->~FlowTestCase2200ActorState();
+		static_cast<FlowTestCase2200Actor*>(this)->finishSendAndDelPromiseRef();
+		return 0;
+
+		return loopDepth;
+	}
+	int a_body1cont1when1(Void const& _,int loopDepth) 
+	{
+		loopDepth = a_body1cont3(_, loopDepth);
+
+		return loopDepth;
+	}
+	int a_body1cont1when1(Void && _,int loopDepth) 
+	{
+		loopDepth = a_body1cont3(std::move(_), loopDepth);
+
+		return loopDepth;
+	}
+	void a_exitChoose2() 
+	{
+		if (static_cast<FlowTestCase2200Actor*>(this)->actor_wait_state > 0) static_cast<FlowTestCase2200Actor*>(this)->actor_wait_state = 0;
+		static_cast<FlowTestCase2200Actor*>(this)->ActorCallback< FlowTestCase2200Actor, 1, Void >::remove();
+
+	}
+	void a_callback_fire(ActorCallback< FlowTestCase2200Actor, 1, Void >*,Void const& value) 
+	{
+		fdb_probe_actor_enter("flowTestCase2200", reinterpret_cast<unsigned long>(this), 1);
+		a_exitChoose2();
+		try {
+			a_body1cont1when1(value, 0);
+		}
+		catch (Error& error) {
+			a_body1Catch1(error, 0);
+		} catch (...) {
+			a_body1Catch1(unknown_error(), 0);
+		}
+		fdb_probe_actor_exit("flowTestCase2200", reinterpret_cast<unsigned long>(this), 1);
+
+	}
+	void a_callback_fire(ActorCallback< FlowTestCase2200Actor, 1, Void >*,Void && value) 
+	{
+		fdb_probe_actor_enter("flowTestCase2200", reinterpret_cast<unsigned long>(this), 1);
+		a_exitChoose2();
+		try {
+			a_body1cont1when1(std::move(value), 0);
+		}
+		catch (Error& error) {
+			a_body1Catch1(error, 0);
+		} catch (...) {
+			a_body1Catch1(unknown_error(), 0);
+		}
+		fdb_probe_actor_exit("flowTestCase2200", reinterpret_cast<unsigned long>(this), 1);
+
+	}
+	void a_callback_error(ActorCallback< FlowTestCase2200Actor, 1, Void >*,Error err) 
+	{
+		fdb_probe_actor_enter("flowTestCase2200", reinterpret_cast<unsigned long>(this), 1);
+		a_exitChoose2();
+		try {
+			a_body1Catch1(err, 0);
+		}
+		catch (Error& error) {
+			a_body1Catch1(error, 0);
+		} catch (...) {
+			a_body1Catch1(unknown_error(), 0);
+		}
+		fdb_probe_actor_exit("flowTestCase2200", reinterpret_cast<unsigned long>(this), 1);
+
+	}
+															#line 2200 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+	UnitTestParameters params;
+															#line 2204 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+	std::vector<QueueTestThreadState> perThread;
+															#line 2207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+	std::vector<Future<Void>> doneProducing;
+															#line 2228 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+	Future<Void> doneConsuming;
+															#line 6680 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+};
+// This generated class is to be used only via flowTestCase2200()
+															#line 2200 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+class FlowTestCase2200Actor final : public Actor<Void>, public ActorCallback< FlowTestCase2200Actor, 0, Void >, public ActorCallback< FlowTestCase2200Actor, 1, Void >, public FastAllocated<FlowTestCase2200Actor>, public FlowTestCase2200ActorState<FlowTestCase2200Actor> {
+															#line 6685 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+public:
+	using FastAllocated<FlowTestCase2200Actor>::operator new;
+	using FastAllocated<FlowTestCase2200Actor>::operator delete;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdelete-non-virtual-dtor"
+	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
+#pragma clang diagnostic pop
+friend struct ActorCallback< FlowTestCase2200Actor, 0, Void >;
+friend struct ActorCallback< FlowTestCase2200Actor, 1, Void >;
+															#line 2200 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+	FlowTestCase2200Actor(UnitTestParameters const& params) 
+															#line 6697 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+		 : Actor<Void>(),
+		   FlowTestCase2200ActorState<FlowTestCase2200Actor>(params)
+	{
+		fdb_probe_actor_enter("flowTestCase2200", reinterpret_cast<unsigned long>(this), -1);
+		#ifdef ENABLE_SAMPLING
+		this->lineage.setActorName("flowTestCase2200");
+		LineageScope _(&this->lineage);
+		#endif
+		this->a_body1();
+		fdb_probe_actor_exit("flowTestCase2200", reinterpret_cast<unsigned long>(this), -1);
+
+	}
+	void cancel() override
+	{
+		auto wait_state = this->actor_wait_state;
+		this->actor_wait_state = -1;
+		switch (wait_state) {
+		case 1: this->a_callback_error((ActorCallback< FlowTestCase2200Actor, 0, Void >*)0, actor_cancelled()); break;
+		case 2: this->a_callback_error((ActorCallback< FlowTestCase2200Actor, 1, Void >*)0, actor_cancelled()); break;
+		}
+
+	}
+};
+}
+															#line 2200 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+static Future<Void> flowTestCase2200( UnitTestParameters const& params ) {
+															#line 2200 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+	return Future<Void>(new FlowTestCase2200Actor(params));
+															#line 6726 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.g.cpp"
+}
+ACTOR_TEST_CASE(flowTestCase2200, "noSim/flow/Net2/onMainThreadFIFO")
+
+#line 2238 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Net2.actor.cpp"
+
+void net2_test(){
+	/*
 	g_network = newNet2();  // for promise serialization below
 
 	Endpoint destination;
@@ -6382,7 +6752,7 @@ void net2_test(){
 	    reqs.resize(10000);
 	    for(int i=0; i<10000; i++) {
 	        TestGVR &req = reqs[i];
-	        req.key = LiteralStringRef("Foobar");
+	        req.key = "Foobar"_sr;
 
 	        SerializeSource<TestGVR> what(req);
 

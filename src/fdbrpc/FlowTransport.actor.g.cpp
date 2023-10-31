@@ -21,6 +21,7 @@
  */
 
 #include "fdbrpc/FlowTransport.h"
+#include "flow/Arena.h"
 #include "flow/network.h"
 
 #include <cstdint>
@@ -29,10 +30,16 @@
 #include <memcheck.h>
 #endif
 
+#include <boost/unordered_map.hpp>
+
+#include "fdbrpc/TokenSign.h"
 #include "fdbrpc/fdbrpc.h"
 #include "fdbrpc/FailureMonitor.h"
 #include "fdbrpc/HealthMonitor.h"
+#include "fdbrpc/JsonWebKeySet.h"
 #include "fdbrpc/genericactors.actor.h"
+#include "fdbrpc/IPAllowList.h"
+#include "fdbrpc/TokenCache.h"
 #include "fdbrpc/simulator.h"
 #include "flow/ActorCollection.h"
 #include "flow/Error.h"
@@ -40,17 +47,32 @@
 #include "flow/Net2Packet.h"
 #include "flow/TDMetric.actor.h"
 #include "flow/ObjectSerializer.h"
+#include "flow/Platform.h"
 #include "flow/ProtocolVersion.h"
 #include "flow/UnitTest.h"
+#include "flow/WatchFile.actor.h"
+#include "flow/IConnection.h"
 #define XXH_INLINE_ALL
 #include "flow/xxhash.h"
 #include "flow/actorcompiler.h" // This must be the last #include.
 
-static NetworkAddressList g_currentDeliveryPeerAddress = NetworkAddressList();
-static Future<Void> g_currentDeliveryPeerDisconnect;
+void removeCachedDNS(const std::string& host, const std::string& service) {
+	INetworkConnections::net()->removeCachedDNS(host, service);
+}
+
+namespace {
+
+NetworkAddressList g_currentDeliveryPeerAddress = NetworkAddressList();
+bool g_currentDeliverPeerAddressTrusted = false;
+Future<Void> g_currentDeliveryPeerDisconnect;
+
+} // namespace
 
 constexpr int PACKET_LEN_WIDTH = sizeof(uint32_t);
 const uint64_t TOKEN_STREAM_FLAG = 1;
+
+FDB_BOOLEAN_PARAM(InReadSocket);
+FDB_BOOLEAN_PARAM(IsStableConnection);
 
 class EndpointMap : NonCopyable {
 public:
@@ -207,6 +229,7 @@ struct EndpointNotFoundReceiver final : NetworkMessageReceiver {
 		Endpoint e = FlowTransport::transport().loadedEndpoint(token);
 		IFailureMonitor::failureMonitor().endpointNotFound(e);
 	}
+	bool isPublic() const override { return true; }
 };
 
 struct PingRequest {
@@ -231,21 +254,64 @@ struct PingReceiver final : NetworkMessageReceiver {
 	PeerCompatibilityPolicy peerCompatibilityPolicy() const override {
 		return PeerCompatibilityPolicy{ RequirePeer::AtLeast, ProtocolVersion::withStableInterfaces() };
 	}
+	bool isPublic() const override { return true; }
+};
+
+struct UnauthorizedEndpointReceiver final : NetworkMessageReceiver {
+	UnauthorizedEndpointReceiver(EndpointMap& endpoints) {
+		endpoints.insertWellKnown(
+		    this, Endpoint::wellKnownToken(WLTOKEN_UNAUTHORIZED_ENDPOINT), TaskPriority::ReadSocket);
+	}
+
+	void receive(ArenaObjectReader& reader) override {
+		UID token;
+		reader.deserialize(token);
+		Endpoint e = FlowTransport::transport().loadedEndpoint(token);
+		IFailureMonitor::failureMonitor().unauthorizedEndpoint(e);
+	}
+	bool isPublic() const override { return true; }
+};
+
+// NetworkAddressCachedString retains a cached Standalone<StringRef> of
+// a NetworkAddressList.address.toString() value. This cached value is useful
+// for features in the hot path (i.e. Tracing), which need the String formatted value
+// frequently and do not wish to pay the formatting cost. If the underlying NetworkAddressList
+// needs to change, do not attempt to update it directly, use the setNetworkAddress API as it
+// will ensure the new toString() cached value is updated.
+class NetworkAddressCachedString {
+public:
+	NetworkAddressCachedString() { setAddressList(NetworkAddressList()); }
+	NetworkAddressCachedString(NetworkAddressList const& list) { setAddressList(list); }
+	NetworkAddressList const& getAddressList() const { return addressList; }
+	void setAddressList(NetworkAddressList const& list) {
+		cachedStr = Standalone<StringRef>(StringRef(list.address.toString()));
+		addressList = list;
+	}
+	void setNetworkAddress(NetworkAddress const& addr) {
+		addressList.address = addr;
+		setAddressList(addressList); // force the recaching of the string.
+	}
+	Standalone<StringRef> getLocalAddressAsString() const { return cachedStr; }
+	operator NetworkAddressList const&() { return addressList; }
+
+private:
+	NetworkAddressList addressList;
+	Standalone<StringRef> cachedStr;
 };
 
 class TransportData {
 public:
-	TransportData(uint64_t transportId, int maxWellKnownEndpoints);
+	TransportData(uint64_t transportId, int maxWellKnownEndpoints, IPAllowList const* allowList);
 
 	~TransportData();
 
 	void initMetrics() {
-		bytesSent.init(LiteralStringRef("Net2.BytesSent"));
-		countPacketsReceived.init(LiteralStringRef("Net2.CountPacketsReceived"));
-		countPacketsGenerated.init(LiteralStringRef("Net2.CountPacketsGenerated"));
-		countConnEstablished.init(LiteralStringRef("Net2.CountConnEstablished"));
-		countConnClosedWithError.init(LiteralStringRef("Net2.CountConnClosedWithError"));
-		countConnClosedWithoutError.init(LiteralStringRef("Net2.CountConnClosedWithoutError"));
+		bytesSent.init("Net2.BytesSent"_sr);
+		countPacketsReceived.init("Net2.CountPacketsReceived"_sr);
+		countPacketsGenerated.init("Net2.CountPacketsGenerated"_sr);
+		countConnEstablished.init("Net2.CountConnEstablished"_sr);
+		countConnClosedWithError.init("Net2.CountConnClosedWithError"_sr);
+		countConnClosedWithoutError.init("Net2.CountConnClosedWithoutError"_sr);
 	}
 
 	Reference<struct Peer> getPeer(NetworkAddress const& address);
@@ -253,19 +319,20 @@ public:
 
 	// Returns true if given network address 'address' is one of the address we are listening on.
 	bool isLocalAddress(const NetworkAddress& address) const;
+	void applyPublicKeySet(StringRef jwkSetString);
 
-	NetworkAddressList localAddresses;
+	NetworkAddressCachedString localAddresses;
 	std::vector<Future<Void>> listeners;
 	std::unordered_map<NetworkAddress, Reference<struct Peer>> peers;
 	std::unordered_map<NetworkAddress, std::pair<double, double>> closedPeers;
 	HealthMonitor healthMonitor;
 	std::set<NetworkAddress> orderedAddresses;
 	Reference<AsyncVar<bool>> degraded;
-	bool warnAlwaysForLargePacket;
 
 	EndpointMap endpoints;
 	EndpointNotFoundReceiver endpointNotFoundReceiver{ endpoints };
 	PingReceiver pingReceiver{ endpoints };
+	UnauthorizedEndpointReceiver unauthorizedEndpointReceiver{ endpoints };
 
 	Int64MetricHandle bytesSent;
 	Int64MetricHandle countPacketsReceived;
@@ -280,28 +347,32 @@ public:
 	std::map<uint64_t, double> multiVersionConnections;
 	double lastIncompatibleMessage;
 	uint64_t transportId;
+	IPAllowList allowList;
 
 	Future<Void> multiVersionCleanup;
 	Future<Void> pingLogger;
+	Future<Void> publicKeyFileWatch;
+
+	std::unordered_map<Standalone<StringRef>, PublicKey> publicKeys;
 };
 
-															#line 288 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 359 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 namespace {
 // This generated class is to be used only via pingLatencyLogger()
-															#line 286 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 357 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 template <class PingLatencyLoggerActor>
-															#line 286 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 357 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 class PingLatencyLoggerActorState {
-															#line 295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 366 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 public:
-															#line 286 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 357 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	PingLatencyLoggerActorState(TransportData* const& self) 
-															#line 286 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-															#line 286 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 357 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 357 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		 : self(self),
-															#line 287 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 358 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		   lastAddress(NetworkAddress())
-															#line 304 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 375 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 	{
 		fdb_probe_actor_create("pingLatencyLogger", reinterpret_cast<unsigned long>(this));
 
@@ -314,9 +385,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 288 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 359 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			;
-															#line 319 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 390 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -344,92 +415,92 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 289 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 360 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (self->orderedAddresses.size())
-															#line 349 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 420 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		{
-															#line 290 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 361 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			auto it = self->orderedAddresses.upper_bound(lastAddress);
-															#line 291 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 362 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			if (it == self->orderedAddresses.end())
-															#line 355 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 426 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			{
-															#line 292 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 363 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				it = self->orderedAddresses.begin();
-															#line 359 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 430 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			}
-															#line 294 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 365 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			lastAddress = *it;
-															#line 295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 366 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			auto peer = self->getPeer(lastAddress);
-															#line 296 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 367 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			if (!peer)
-															#line 367 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 438 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			{
-															#line 297 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 368 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				TraceEvent(SevWarnAlways, "MissingNetworkAddress").suppressFor(10.0).detail("PeerAddr", lastAddress);
-															#line 371 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 442 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			}
-															#line 299 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 370 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			if (peer->lastLoggedTime <= 0.0)
-															#line 375 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 446 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			{
-															#line 300 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 371 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				peer->lastLoggedTime = peer->lastConnectTime;
-															#line 379 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 450 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			}
-															#line 303 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 374 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			if (peer && (peer->pingLatencies.getPopulationSize() >= 10 || peer->connectFailedCount > 0 || peer->timeoutCount > 0))
-															#line 383 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 454 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			{
-															#line 305 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 376 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				TraceEvent("PingLatency") .detail("Elapsed", now() - peer->lastLoggedTime) .detail("PeerAddr", lastAddress) .detail("MinLatency", peer->pingLatencies.min()) .detail("MaxLatency", peer->pingLatencies.max()) .detail("MeanLatency", peer->pingLatencies.mean()) .detail("MedianLatency", peer->pingLatencies.median()) .detail("P90Latency", peer->pingLatencies.percentile(0.90)) .detail("Count", peer->pingLatencies.getPopulationSize()) .detail("BytesReceived", peer->bytesReceived - peer->lastLoggedBytesReceived) .detail("BytesSent", peer->bytesSent - peer->lastLoggedBytesSent) .detail("TimeoutCount", peer->timeoutCount) .detail("ConnectOutgoingCount", peer->connectOutgoingCount) .detail("ConnectIncomingCount", peer->connectIncomingCount) .detail("ConnectFailedCount", peer->connectFailedCount) .detail("ConnectMinLatency", peer->connectLatencies.min()) .detail("ConnectMaxLatency", peer->connectLatencies.max()) .detail("ConnectMeanLatency", peer->connectLatencies.mean()) .detail("ConnectMedianLatency", peer->connectLatencies.median()) .detail("ConnectP90Latency", peer->connectLatencies.percentile(0.90));
-															#line 325 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 396 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				peer->lastLoggedTime = now();
-															#line 326 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 397 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				peer->connectOutgoingCount = 0;
-															#line 327 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 398 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				peer->connectIncomingCount = 0;
-															#line 328 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 399 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				peer->connectFailedCount = 0;
-															#line 329 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 400 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				peer->pingLatencies.clear();
-															#line 330 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 401 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				peer->connectLatencies.clear();
-															#line 331 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 402 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				peer->lastLoggedBytesReceived = peer->bytesReceived;
-															#line 332 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 403 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				peer->lastLoggedBytesSent = peer->bytesSent;
-															#line 333 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 404 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				peer->timeoutCount = 0;
-															#line 334 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 405 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				StrictFuture<Void> __when_expr_0 = delay(FLOW_KNOBS->PING_LOGGING_INTERVAL);
-															#line 334 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 405 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				if (static_cast<PingLatencyLoggerActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 409 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 480 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 				if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 				static_cast<PingLatencyLoggerActor*>(this)->actor_wait_state = 1;
-															#line 334 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 405 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< PingLatencyLoggerActor, 0, Void >*>(static_cast<PingLatencyLoggerActor*>(this)));
-															#line 414 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 485 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 				loopDepth = 0;
 			}
 			else
 			{
-															#line 335 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 406 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				if (it == self->orderedAddresses.begin())
-															#line 421 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 492 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 				{
-															#line 336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 407 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 					StrictFuture<Void> __when_expr_1 = delay(FLOW_KNOBS->PING_LOGGING_INTERVAL);
-															#line 336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 407 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 					if (static_cast<PingLatencyLoggerActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 427 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 498 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 					if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when2(__when_expr_1.get(), loopDepth); };
 					static_cast<PingLatencyLoggerActor*>(this)->actor_wait_state = 2;
-															#line 336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 407 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 					__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< PingLatencyLoggerActor, 1, Void >*>(static_cast<PingLatencyLoggerActor*>(this)));
-															#line 432 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 503 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 					loopDepth = 0;
 				}
 				else
@@ -440,16 +511,16 @@ public:
 		}
 		else
 		{
-															#line 339 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 410 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			StrictFuture<Void> __when_expr_2 = delay(FLOW_KNOBS->PING_LOGGING_INTERVAL);
-															#line 339 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 410 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			if (static_cast<PingLatencyLoggerActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 447 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 518 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when3(__when_expr_2.get(), loopDepth); };
 			static_cast<PingLatencyLoggerActor*>(this)->actor_wait_state = 3;
-															#line 339 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 410 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< PingLatencyLoggerActor, 2, Void >*>(static_cast<PingLatencyLoggerActor*>(this)));
-															#line 452 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 523 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			loopDepth = 0;
 		}
 
@@ -698,16 +769,16 @@ public:
 		fdb_probe_actor_exit("pingLatencyLogger", reinterpret_cast<unsigned long>(this), 2);
 
 	}
-															#line 286 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 357 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	TransportData* self;
-															#line 287 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 358 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	NetworkAddress lastAddress;
-															#line 705 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 776 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 };
 // This generated class is to be used only via pingLatencyLogger()
-															#line 286 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 357 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 class PingLatencyLoggerActor final : public Actor<Void>, public ActorCallback< PingLatencyLoggerActor, 0, Void >, public ActorCallback< PingLatencyLoggerActor, 1, Void >, public ActorCallback< PingLatencyLoggerActor, 2, Void >, public FastAllocated<PingLatencyLoggerActor>, public PingLatencyLoggerActorState<PingLatencyLoggerActor> {
-															#line 710 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 781 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 public:
 	using FastAllocated<PingLatencyLoggerActor>::operator new;
 	using FastAllocated<PingLatencyLoggerActor>::operator delete;
@@ -718,9 +789,9 @@ public:
 friend struct ActorCallback< PingLatencyLoggerActor, 0, Void >;
 friend struct ActorCallback< PingLatencyLoggerActor, 1, Void >;
 friend struct ActorCallback< PingLatencyLoggerActor, 2, Void >;
-															#line 286 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 357 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	PingLatencyLoggerActor(TransportData* const& self) 
-															#line 723 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 794 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		 : Actor<Void>(),
 		   PingLatencyLoggerActorState<PingLatencyLoggerActor>(self)
 	{
@@ -746,18 +817,19 @@ friend struct ActorCallback< PingLatencyLoggerActor, 2, Void >;
 	}
 };
 }
-															#line 286 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 357 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 [[nodiscard]] Future<Void> pingLatencyLogger( TransportData* const& self ) {
-															#line 286 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 357 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	return Future<Void>(new PingLatencyLoggerActor(self));
-															#line 753 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 824 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 }
 
-#line 343 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+#line 414 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 
-TransportData::TransportData(uint64_t transportId, int maxWellKnownEndpoints)
-  : warnAlwaysForLargePacket(true), endpoints(maxWellKnownEndpoints), endpointNotFoundReceiver(endpoints),
-    pingReceiver(endpoints), numIncompatibleConnections(0), lastIncompatibleMessage(0), transportId(transportId) {
+TransportData::TransportData(uint64_t transportId, int maxWellKnownEndpoints, IPAllowList const* allowList)
+  : endpoints(maxWellKnownEndpoints), endpointNotFoundReceiver(endpoints), pingReceiver(endpoints),
+    numIncompatibleConnections(0), lastIncompatibleMessage(0), transportId(transportId),
+    allowList(allowList == nullptr ? IPAllowList() : *allowList) {
 	degraded = makeReference<AsyncVar<bool>>(false);
 	pingLogger = pingLatencyLogger(this);
 }
@@ -769,21 +841,21 @@ TransportData::TransportData(uint64_t transportId, int maxWellKnownEndpoints)
 struct ConnectPacket {
 	// The value does not include the size of `connectPacketLength` itself,
 	// but only the other fields of this structure.
-	uint32_t connectPacketLength;
+	uint32_t connectPacketLength = 0;
 	ProtocolVersion protocolVersion; // Expect currentProtocolVersion
 
-	uint16_t canonicalRemotePort; // Port number to reconnect to the originating process
-	uint64_t connectionId; // Multi-version clients will use the same Id for both connections, other connections will
-	                       // set this to zero. Added at protocol Version 0x0FDB00A444020001.
+	uint16_t canonicalRemotePort = 0; // Port number to reconnect to the originating process
+	uint64_t connectionId = 0; // Multi-version clients will use the same Id for both connections, other connections
+	                           // will set this to zero. Added at protocol Version 0x0FDB00A444020001.
 
 	// IP Address to reconnect to the originating process. Only one of these must be populated.
-	uint32_t canonicalRemoteIp4;
+	uint32_t canonicalRemoteIp4 = 0;
 
 	enum ConnectPacketFlags { FLAG_IPV6 = 1 };
-	uint16_t flags;
-	uint8_t canonicalRemoteIp6[16];
+	uint16_t flags = 0;
+	uint8_t canonicalRemoteIp6[16] = { 0 };
 
-	ConnectPacket() { memset((void*)this, 0, sizeof(*this)); }
+	ConnectPacket() = default;
 
 	IPAddress canonicalRemoteIp() const {
 		if (isIPv6()) {
@@ -814,7 +886,7 @@ struct ConnectPacket {
 		serializer(ar, connectPacketLength);
 		if (connectPacketLength > sizeof(ConnectPacket) - sizeof(connectPacketLength)) {
 			ASSERT(!g_network->isSimulated());
-			TraceEvent("SerializationFailed").detail("PacketLength", connectPacketLength).backtrace();
+			TraceEvent("SerializationFailed").backtrace();
 			throw serialization_failed();
 		}
 
@@ -832,10 +904,10 @@ struct ConnectPacket {
 
 #pragma pack(pop)
 
-															#line 835 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 907 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 [[nodiscard]] static Future<Void> connectionReader( TransportData* const& transport, Reference<IConnection> const& conn, Reference<struct Peer> const& peer, Promise<Reference<struct Peer>> const& onConnected );
 
-#line 425 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+#line 497 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 
 static void sendLocal(TransportData* self, ISerializeSource const& what, const Endpoint& destination);
 static ReliablePacket* sendPacket(TransportData* self,
@@ -844,23 +916,23 @@ static ReliablePacket* sendPacket(TransportData* self,
                                   const Endpoint& destination,
                                   bool reliable);
 
-															#line 847 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 919 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 namespace {
 // This generated class is to be used only via connectionMonitor()
-															#line 433 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 505 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 template <class ConnectionMonitorActor>
-															#line 433 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 505 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 class ConnectionMonitorActorState {
-															#line 854 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 public:
-															#line 433 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 505 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	ConnectionMonitorActorState(Reference<Peer> const& peer) 
-															#line 433 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-															#line 433 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 505 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 505 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		 : peer(peer),
-															#line 434 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 506 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		   remotePingEndpoint({ peer->destination }, Endpoint::wellKnownToken(WLTOKEN_PING_PACKET))
-															#line 863 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 935 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 	{
 		fdb_probe_actor_create("connectionMonitor", reinterpret_cast<unsigned long>(this));
 
@@ -873,9 +945,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 435 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 507 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			;
-															#line 878 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 950 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -903,17 +975,17 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 436 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 508 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (!FlowTransport::isClient() && !peer->destination.isPublic() && peer->compatible)
-															#line 908 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 980 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		{
-															#line 440 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 512 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			lastRefreshed = now();
-															#line 441 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 513 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			lastBytesReceived = peer->bytesReceived;
-															#line 442 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 514 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			;
-															#line 916 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 988 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			loopDepth = a_body1loopBody1loopHead1(loopDepth);
 		}
 		else
@@ -925,16 +997,16 @@ public:
 	}
 	int a_body1loopBody1cont1(int loopDepth) 
 	{
-															#line 459 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 531 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = delay(0, TaskPriority::ReadSocket);
-															#line 459 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 531 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (static_cast<ConnectionMonitorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 932 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1004 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1cont1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<ConnectionMonitorActor*>(this)->actor_wait_state = 2;
-															#line 459 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 531 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< ConnectionMonitorActor, 1, Void >*>(static_cast<ConnectionMonitorActor*>(this)));
-															#line 937 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1009 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -954,16 +1026,16 @@ public:
 	}
 	int a_body1loopBody1loopBody1(int loopDepth) 
 	{
-															#line 443 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 515 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		StrictFuture<Void> __when_expr_0 = delay(FLOW_KNOBS->CONNECTION_MONITOR_LOOP_TIME, TaskPriority::ReadSocket);
-															#line 443 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 515 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (static_cast<ConnectionMonitorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 2));
-															#line 961 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1033 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 2)); else return a_body1loopBody1loopBody1when1(__when_expr_0.get(), loopDepth); };
 		static_cast<ConnectionMonitorActor*>(this)->actor_wait_state = 1;
-															#line 443 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 515 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ConnectionMonitorActor, 0, Void >*>(static_cast<ConnectionMonitorActor*>(this)));
-															#line 966 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1038 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -983,21 +1055,21 @@ public:
 	}
 	int a_body1loopBody1loopBody1cont1(Void const& _,int loopDepth) 
 	{
-															#line 444 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 516 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (lastBytesReceived < peer->bytesReceived)
-															#line 988 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1060 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		{
-															#line 445 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 517 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			lastRefreshed = now();
-															#line 446 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 518 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			lastBytesReceived = peer->bytesReceived;
-															#line 994 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1066 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		}
 		else
 		{
-															#line 447 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 519 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			if (lastRefreshed < now() - FLOW_KNOBS->CONNECTION_MONITOR_IDLE_TIMEOUT * FLOW_KNOBS->CONNECTION_MONITOR_INCOMING_IDLE_MULTIPLIER)
-															#line 1000 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1072 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			{
 				return a_body1loopBody1break1(loopDepth==0?0:loopDepth-1); // break
 			}
@@ -1008,21 +1080,21 @@ public:
 	}
 	int a_body1loopBody1loopBody1cont1(Void && _,int loopDepth) 
 	{
-															#line 444 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 516 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (lastBytesReceived < peer->bytesReceived)
-															#line 1013 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1085 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		{
-															#line 445 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 517 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			lastRefreshed = now();
-															#line 446 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 518 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			lastBytesReceived = peer->bytesReceived;
-															#line 1019 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1091 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		}
 		else
 		{
-															#line 447 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 519 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			if (lastRefreshed < now() - FLOW_KNOBS->CONNECTION_MONITOR_IDLE_TIMEOUT * FLOW_KNOBS->CONNECTION_MONITOR_INCOMING_IDLE_MULTIPLIER)
-															#line 1025 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1097 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			{
 				return a_body1loopBody1break1(loopDepth==0?0:loopDepth-1); // break
 			}
@@ -1096,80 +1168,80 @@ public:
 	}
 	int a_body1loopBody1cont3(Void const& _,int loopDepth) 
 	{
-															#line 461 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 533 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (peer->reliable.empty() && peer->unsent.empty() && peer->outstandingReplies == 0)
-															#line 1101 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1173 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		{
-															#line 462 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 534 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			if (peer->peerReferences == 0 && (peer->lastDataPacketSentTime < now() - FLOW_KNOBS->CONNECTION_MONITOR_UNREFERENCED_CLOSE_DELAY))
-															#line 1105 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1177 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			{
-															#line 465 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 537 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				return a_body1Catch1(connection_unreferenced(), std::max(0, loopDepth - 1));
-															#line 1109 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1181 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			}
 			else
 			{
-															#line 466 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 538 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				if (FlowTransport::isClient() && peer->compatible && peer->destination.isPublic() && (peer->lastConnectTime < now() - FLOW_KNOBS->CONNECTION_MONITOR_IDLE_TIMEOUT) && (peer->lastDataPacketSentTime < now() - FLOW_KNOBS->CONNECTION_MONITOR_IDLE_TIMEOUT))
-															#line 1115 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1187 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 				{
-															#line 470 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 542 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 					return a_body1Catch1(connection_idle(), std::max(0, loopDepth - 1));
-															#line 1119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1191 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 				}
 			}
 		}
-															#line 474 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 546 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		StrictFuture<Void> __when_expr_2 = delayJittered(FLOW_KNOBS->CONNECTION_MONITOR_LOOP_TIME, TaskPriority::ReadSocket);
-															#line 474 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 546 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (static_cast<ConnectionMonitorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 1127 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1199 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1cont3when1(__when_expr_2.get(), loopDepth); };
 		static_cast<ConnectionMonitorActor*>(this)->actor_wait_state = 3;
-															#line 474 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 546 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< ConnectionMonitorActor, 2, Void >*>(static_cast<ConnectionMonitorActor*>(this)));
-															#line 1132 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1204 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont3(Void && _,int loopDepth) 
 	{
-															#line 461 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 533 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (peer->reliable.empty() && peer->unsent.empty() && peer->outstandingReplies == 0)
-															#line 1141 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1213 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		{
-															#line 462 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 534 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			if (peer->peerReferences == 0 && (peer->lastDataPacketSentTime < now() - FLOW_KNOBS->CONNECTION_MONITOR_UNREFERENCED_CLOSE_DELAY))
-															#line 1145 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1217 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			{
-															#line 465 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 537 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				return a_body1Catch1(connection_unreferenced(), std::max(0, loopDepth - 1));
-															#line 1149 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1221 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			}
 			else
 			{
-															#line 466 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 538 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				if (FlowTransport::isClient() && peer->compatible && peer->destination.isPublic() && (peer->lastConnectTime < now() - FLOW_KNOBS->CONNECTION_MONITOR_IDLE_TIMEOUT) && (peer->lastDataPacketSentTime < now() - FLOW_KNOBS->CONNECTION_MONITOR_IDLE_TIMEOUT))
-															#line 1155 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1227 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 				{
-															#line 470 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 542 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 					return a_body1Catch1(connection_idle(), std::max(0, loopDepth - 1));
-															#line 1159 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1231 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 				}
 			}
 		}
-															#line 474 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 546 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		StrictFuture<Void> __when_expr_2 = delayJittered(FLOW_KNOBS->CONNECTION_MONITOR_LOOP_TIME, TaskPriority::ReadSocket);
-															#line 474 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 546 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (static_cast<ConnectionMonitorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 1167 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1239 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1cont3when1(__when_expr_2.get(), loopDepth); };
 		static_cast<ConnectionMonitorActor*>(this)->actor_wait_state = 3;
-															#line 474 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 546 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< ConnectionMonitorActor, 2, Void >*>(static_cast<ConnectionMonitorActor*>(this)));
-															#line 1172 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1244 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -1239,38 +1311,38 @@ public:
 	}
 	int a_body1loopBody1cont4(Void const& _,int loopDepth) 
 	{
-															#line 477 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 549 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		pingRequest = PingRequest();
-															#line 478 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 550 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		FlowTransport::transport().sendUnreliable(SerializeSource<PingRequest>(pingRequest), remotePingEndpoint, true);
-															#line 479 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 551 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		startingBytes = peer->bytesReceived;
-															#line 480 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 552 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		timeouts = 0;
-															#line 481 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 553 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		startTime = now();
-															#line 482 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 554 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		;
-															#line 1254 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1326 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont4loopHead1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont4(Void && _,int loopDepth) 
 	{
-															#line 477 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 549 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		pingRequest = PingRequest();
-															#line 478 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 550 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		FlowTransport::transport().sendUnreliable(SerializeSource<PingRequest>(pingRequest), remotePingEndpoint, true);
-															#line 479 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 551 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		startingBytes = peer->bytesReceived;
-															#line 480 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 552 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		timeouts = 0;
-															#line 481 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 553 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		startTime = now();
-															#line 482 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 554 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		;
-															#line 1273 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1345 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont4loopHead1(loopDepth);
 
 		return loopDepth;
@@ -1353,28 +1425,28 @@ public:
 	}
 	int a_body1loopBody1cont4loopBody1(int loopDepth) 
 	{
-															#line 484 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 556 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		StrictFuture<Void> __when_expr_3 = delay(FLOW_KNOBS->CONNECTION_MONITOR_TIMEOUT);
-															#line 483 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 555 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (static_cast<ConnectionMonitorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 2));
-															#line 1360 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1432 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		if (__when_expr_3.isReady()) { if (__when_expr_3.isError()) return a_body1Catch1(__when_expr_3.getError(), std::max(0, loopDepth - 2)); else return a_body1loopBody1cont4loopBody1when1(__when_expr_3.get(), loopDepth); };
-															#line 502 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 574 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		StrictFuture<Void> __when_expr_4 = pingRequest.reply.getFuture();
-															#line 1364 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1436 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		if (__when_expr_4.isReady()) { if (__when_expr_4.isError()) return a_body1Catch1(__when_expr_4.getError(), std::max(0, loopDepth - 2)); else return a_body1loopBody1cont4loopBody1when2(__when_expr_4.get(), loopDepth); };
-															#line 508 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 580 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		StrictFuture<Void> __when_expr_5 = peer->resetPing.onTrigger();
-															#line 1368 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1440 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		if (__when_expr_5.isReady()) { if (__when_expr_5.isError()) return a_body1Catch1(__when_expr_5.getError(), std::max(0, loopDepth - 2)); else return a_body1loopBody1cont4loopBody1when3(__when_expr_5.get(), loopDepth); };
 		static_cast<ConnectionMonitorActor*>(this)->actor_wait_state = 4;
-															#line 484 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 556 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		__when_expr_3.addCallbackAndClear(static_cast<ActorCallback< ConnectionMonitorActor, 3, Void >*>(static_cast<ConnectionMonitorActor*>(this)));
-															#line 502 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 574 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		__when_expr_4.addCallbackAndClear(static_cast<ActorCallback< ConnectionMonitorActor, 4, Void >*>(static_cast<ConnectionMonitorActor*>(this)));
-															#line 508 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 580 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		__when_expr_5.addCallbackAndClear(static_cast<ActorCallback< ConnectionMonitorActor, 5, Void >*>(static_cast<ConnectionMonitorActor*>(this)));
-															#line 1377 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1449 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -1400,91 +1472,91 @@ public:
 	}
 	int a_body1loopBody1cont4loopBody1when1(Void const& _,int loopDepth) 
 	{
-															#line 485 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 557 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		peer->timeoutCount++;
-															#line 486 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 558 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (startingBytes == peer->bytesReceived)
-															#line 1407 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1479 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		{
-															#line 487 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 559 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			if (peer->destination.isPublic())
-															#line 1411 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1483 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			{
-															#line 488 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 560 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				peer->pingLatencies.addSample(now() - startTime);
-															#line 1415 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1487 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			}
-															#line 490 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 562 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			TraceEvent("ConnectionTimeout").suppressFor(1.0).detail("WithAddr", peer->destination);
-															#line 491 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 563 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			return a_body1Catch1(connection_failed(), std::max(0, loopDepth - 2));
-															#line 1421 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1493 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		}
-															#line 493 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 565 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (timeouts > 1)
-															#line 1425 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1497 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		{
-															#line 494 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 566 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			TraceEvent(SevWarnAlways, "ConnectionSlowPing") .suppressFor(1.0) .detail("WithAddr", peer->destination) .detail("Timeouts", timeouts);
-															#line 1429 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1501 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		}
-															#line 499 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 571 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		startingBytes = peer->bytesReceived;
-															#line 500 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 572 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		timeouts++;
-															#line 1435 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1507 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont4loopBody1cont1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont4loopBody1when1(Void && _,int loopDepth) 
 	{
-															#line 485 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 557 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		peer->timeoutCount++;
-															#line 486 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 558 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (startingBytes == peer->bytesReceived)
-															#line 1446 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1518 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		{
-															#line 487 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 559 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			if (peer->destination.isPublic())
-															#line 1450 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1522 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			{
-															#line 488 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 560 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				peer->pingLatencies.addSample(now() - startTime);
-															#line 1454 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1526 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			}
-															#line 490 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 562 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			TraceEvent("ConnectionTimeout").suppressFor(1.0).detail("WithAddr", peer->destination);
-															#line 491 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 563 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			return a_body1Catch1(connection_failed(), std::max(0, loopDepth - 2));
-															#line 1460 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1532 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		}
-															#line 493 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 565 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (timeouts > 1)
-															#line 1464 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1536 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		{
-															#line 494 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 566 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			TraceEvent(SevWarnAlways, "ConnectionSlowPing") .suppressFor(1.0) .detail("WithAddr", peer->destination) .detail("Timeouts", timeouts);
-															#line 1468 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1540 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		}
-															#line 499 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 571 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		startingBytes = peer->bytesReceived;
-															#line 500 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 572 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		timeouts++;
-															#line 1474 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1546 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont4loopBody1cont1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont4loopBody1when2(Void const& _,int loopDepth) 
 	{
-															#line 503 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 575 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (peer->destination.isPublic())
-															#line 1483 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1555 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		{
-															#line 504 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 576 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			peer->pingLatencies.addSample(now() - startTime);
-															#line 1487 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1559 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		}
 		return a_body1loopBody1cont4break1(loopDepth==0?0:loopDepth-1); // break
 
@@ -1492,13 +1564,13 @@ public:
 	}
 	int a_body1loopBody1cont4loopBody1when2(Void && _,int loopDepth) 
 	{
-															#line 503 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 575 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (peer->destination.isPublic())
-															#line 1497 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1569 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		{
-															#line 504 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 576 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			peer->pingLatencies.addSample(now() - startTime);
-															#line 1501 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1573 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		}
 		return a_body1loopBody1cont4break1(loopDepth==0?0:loopDepth-1); // break
 
@@ -1659,28 +1731,28 @@ public:
 		fdb_probe_actor_exit("connectionMonitor", reinterpret_cast<unsigned long>(this), 5);
 
 	}
-															#line 433 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 505 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	Reference<Peer> peer;
-															#line 434 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 506 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	Endpoint remotePingEndpoint;
-															#line 440 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 512 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	double lastRefreshed;
-															#line 441 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 513 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	int64_t lastBytesReceived;
-															#line 477 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 549 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	PingRequest pingRequest;
-															#line 479 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 551 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	int64_t startingBytes;
-															#line 480 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 552 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	int timeouts;
-															#line 481 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 553 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	double startTime;
-															#line 1678 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1750 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 };
 // This generated class is to be used only via connectionMonitor()
-															#line 433 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 505 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 class ConnectionMonitorActor final : public Actor<Void>, public ActorCallback< ConnectionMonitorActor, 0, Void >, public ActorCallback< ConnectionMonitorActor, 1, Void >, public ActorCallback< ConnectionMonitorActor, 2, Void >, public ActorCallback< ConnectionMonitorActor, 3, Void >, public ActorCallback< ConnectionMonitorActor, 4, Void >, public ActorCallback< ConnectionMonitorActor, 5, Void >, public FastAllocated<ConnectionMonitorActor>, public ConnectionMonitorActorState<ConnectionMonitorActor> {
-															#line 1683 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1755 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 public:
 	using FastAllocated<ConnectionMonitorActor>::operator new;
 	using FastAllocated<ConnectionMonitorActor>::operator delete;
@@ -1694,9 +1766,9 @@ friend struct ActorCallback< ConnectionMonitorActor, 2, Void >;
 friend struct ActorCallback< ConnectionMonitorActor, 3, Void >;
 friend struct ActorCallback< ConnectionMonitorActor, 4, Void >;
 friend struct ActorCallback< ConnectionMonitorActor, 5, Void >;
-															#line 433 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 505 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	ConnectionMonitorActor(Reference<Peer> const& peer) 
-															#line 1699 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1771 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		 : Actor<Void>(),
 		   ConnectionMonitorActorState<ConnectionMonitorActor>(peer)
 	{
@@ -1723,34 +1795,34 @@ friend struct ActorCallback< ConnectionMonitorActor, 5, Void >;
 	}
 };
 }
-															#line 433 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 505 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 [[nodiscard]] Future<Void> connectionMonitor( Reference<Peer> const& peer ) {
-															#line 433 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 505 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	return Future<Void>(new ConnectionMonitorActor(peer));
-															#line 1730 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1802 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 }
 
-#line 515 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+#line 587 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 
-															#line 1735 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1807 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 namespace {
 // This generated class is to be used only via connectionWriter()
-															#line 516 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 588 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 template <class ConnectionWriterActor>
-															#line 516 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 588 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 class ConnectionWriterActorState {
-															#line 1742 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1814 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 public:
-															#line 516 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 588 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	ConnectionWriterActorState(Reference<Peer> const& self,Reference<IConnection> const& conn) 
-															#line 516 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-															#line 516 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 588 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 588 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		 : self(self),
-															#line 516 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 588 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		   conn(conn),
-															#line 517 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 589 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		   lastWriteTime(now())
-															#line 1753 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1825 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 	{
 		fdb_probe_actor_create("connectionWriter", reinterpret_cast<unsigned long>(this));
 
@@ -1763,9 +1835,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 518 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 590 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			;
-															#line 1768 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1840 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -1793,34 +1865,34 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 520 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 592 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		StrictFuture<Void> __when_expr_0 = delayJittered( std::max<double>(FLOW_KNOBS->MIN_COALESCE_DELAY, FLOW_KNOBS->MAX_COALESCE_DELAY - (now() - lastWriteTime)), TaskPriority::WriteSocket);
-															#line 520 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 592 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (static_cast<ConnectionWriterActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 1800 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1872 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 		static_cast<ConnectionWriterActor*>(this)->actor_wait_state = 1;
-															#line 520 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 592 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ConnectionWriterActor, 0, Void >*>(static_cast<ConnectionWriterActor*>(this)));
-															#line 1805 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1877 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont1(Void const& _,int loopDepth) 
 	{
-															#line 527 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 599 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		;
-															#line 1814 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1886 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont1loopHead1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont1(Void && _,int loopDepth) 
 	{
-															#line 527 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 599 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		;
-															#line 1823 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1895 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont1loopHead1(loopDepth);
 
 		return loopDepth;
@@ -1890,9 +1962,9 @@ public:
 	}
 	int a_body1loopBody1cont2(int loopDepth) 
 	{
-															#line 548 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 620 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		;
-															#line 1895 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1967 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont2loopHead1(loopDepth);
 
 		return loopDepth;
@@ -1906,40 +1978,40 @@ public:
 	}
 	int a_body1loopBody1cont1loopBody1(int loopDepth) 
 	{
-															#line 528 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 600 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		lastWriteTime = now();
-															#line 530 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 602 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		int sent = conn->write(self->unsent.getUnsent(), FLOW_KNOBS->MAX_PACKET_SEND_BYTES);
-															#line 531 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 603 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (sent)
-															#line 1915 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1987 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		{
-															#line 532 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 604 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			self->bytesSent += sent;
-															#line 533 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 605 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			self->transport->bytesSent += sent;
-															#line 534 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 606 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			self->unsent.sent(sent);
-															#line 1923 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1995 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		}
-															#line 537 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 609 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (self->unsent.empty())
-															#line 1927 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1999 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		{
 			return a_body1loopBody1cont1break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 541 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-		TEST(true);
-															#line 543 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 613 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+		CODE_PROBE( true, "We didn't write everything, so apparently the write buffer is full.  Wait for it to be nonfull");
+															#line 615 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = conn->onWritable();
-															#line 543 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 615 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (static_cast<ConnectionWriterActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 2));
-															#line 1937 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 2009 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), std::max(0, loopDepth - 2)); else return a_body1loopBody1cont1loopBody1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<ConnectionWriterActor*>(this)->actor_wait_state = 2;
-															#line 543 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 615 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< ConnectionWriterActor, 1, Void >*>(static_cast<ConnectionWriterActor*>(this)));
-															#line 1942 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 2014 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -1959,32 +2031,32 @@ public:
 	}
 	int a_body1loopBody1cont1loopBody1cont1(Void const& _,int loopDepth) 
 	{
-															#line 544 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 616 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		StrictFuture<Void> __when_expr_2 = yield(TaskPriority::WriteSocket);
-															#line 544 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 616 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (static_cast<ConnectionWriterActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 2));
-															#line 1966 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 2038 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), std::max(0, loopDepth - 2)); else return a_body1loopBody1cont1loopBody1cont1when1(__when_expr_2.get(), loopDepth); };
 		static_cast<ConnectionWriterActor*>(this)->actor_wait_state = 3;
-															#line 544 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 616 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< ConnectionWriterActor, 2, Void >*>(static_cast<ConnectionWriterActor*>(this)));
-															#line 1971 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 2043 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont1loopBody1cont1(Void && _,int loopDepth) 
 	{
-															#line 544 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 616 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		StrictFuture<Void> __when_expr_2 = yield(TaskPriority::WriteSocket);
-															#line 544 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 616 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (static_cast<ConnectionWriterActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 2));
-															#line 1982 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 2054 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), std::max(0, loopDepth - 2)); else return a_body1loopBody1cont1loopBody1cont1when1(__when_expr_2.get(), loopDepth); };
 		static_cast<ConnectionWriterActor*>(this)->actor_wait_state = 3;
-															#line 544 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 616 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< ConnectionWriterActor, 2, Void >*>(static_cast<ConnectionWriterActor*>(this)));
-															#line 1987 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 2059 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -2142,22 +2214,22 @@ public:
 	}
 	int a_body1loopBody1cont2loopBody1(int loopDepth) 
 	{
-															#line 548 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 620 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (!(self->unsent.empty()))
-															#line 2147 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 2219 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		{
 			return a_body1loopBody1cont2break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 549 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 621 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		StrictFuture<Void> __when_expr_3 = self->dataToSend.onTrigger();
-															#line 549 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 621 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (static_cast<ConnectionWriterActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 2));
-															#line 2155 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 2227 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		if (__when_expr_3.isReady()) { if (__when_expr_3.isError()) return a_body1Catch1(__when_expr_3.getError(), std::max(0, loopDepth - 2)); else return a_body1loopBody1cont2loopBody1when1(__when_expr_3.get(), loopDepth); };
 		static_cast<ConnectionWriterActor*>(this)->actor_wait_state = 4;
-															#line 549 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 621 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		__when_expr_3.addCallbackAndClear(static_cast<ActorCallback< ConnectionWriterActor, 3, Void >*>(static_cast<ConnectionWriterActor*>(this)));
-															#line 2160 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 2232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -2250,18 +2322,18 @@ public:
 		fdb_probe_actor_exit("connectionWriter", reinterpret_cast<unsigned long>(this), 3);
 
 	}
-															#line 516 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 588 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	Reference<Peer> self;
-															#line 516 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 588 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	Reference<IConnection> conn;
-															#line 517 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 589 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	double lastWriteTime;
-															#line 2259 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 2331 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 };
 // This generated class is to be used only via connectionWriter()
-															#line 516 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 588 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 class ConnectionWriterActor final : public Actor<Void>, public ActorCallback< ConnectionWriterActor, 0, Void >, public ActorCallback< ConnectionWriterActor, 1, Void >, public ActorCallback< ConnectionWriterActor, 2, Void >, public ActorCallback< ConnectionWriterActor, 3, Void >, public FastAllocated<ConnectionWriterActor>, public ConnectionWriterActorState<ConnectionWriterActor> {
-															#line 2264 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 2336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 public:
 	using FastAllocated<ConnectionWriterActor>::operator new;
 	using FastAllocated<ConnectionWriterActor>::operator delete;
@@ -2273,9 +2345,9 @@ friend struct ActorCallback< ConnectionWriterActor, 0, Void >;
 friend struct ActorCallback< ConnectionWriterActor, 1, Void >;
 friend struct ActorCallback< ConnectionWriterActor, 2, Void >;
 friend struct ActorCallback< ConnectionWriterActor, 3, Void >;
-															#line 516 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 588 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	ConnectionWriterActor(Reference<Peer> const& self,Reference<IConnection> const& conn) 
-															#line 2278 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 2350 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		 : Actor<Void>(),
 		   ConnectionWriterActorState<ConnectionWriterActor>(self, conn)
 	{
@@ -2302,34 +2374,34 @@ friend struct ActorCallback< ConnectionWriterActor, 3, Void >;
 	}
 };
 }
-															#line 516 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 588 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 [[nodiscard]] Future<Void> connectionWriter( Reference<Peer> const& self, Reference<IConnection> const& conn ) {
-															#line 516 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 588 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	return Future<Void>(new ConnectionWriterActor(self, conn));
-															#line 2309 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 2381 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 }
 
-#line 552 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+#line 624 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 
-															#line 2314 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 2386 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 namespace {
 // This generated class is to be used only via delayedHealthUpdate()
-															#line 553 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 625 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 template <class DelayedHealthUpdateActor>
-															#line 553 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 625 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 class DelayedHealthUpdateActorState {
-															#line 2321 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 2393 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 public:
-															#line 553 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 625 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	DelayedHealthUpdateActorState(NetworkAddress const& address,bool* const& tooManyConnectionsClosed) 
-															#line 553 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-															#line 553 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 625 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 625 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		 : address(address),
-															#line 553 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 625 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		   tooManyConnectionsClosed(tooManyConnectionsClosed),
-															#line 554 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 626 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		   start(now())
-															#line 2332 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 2404 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 	{
 		fdb_probe_actor_create("delayedHealthUpdate", reinterpret_cast<unsigned long>(this));
 
@@ -2342,9 +2414,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 555 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 627 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			;
-															#line 2347 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 2419 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -2365,9 +2437,9 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 572 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 644 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (!static_cast<DelayedHealthUpdateActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~DelayedHealthUpdateActorState(); static_cast<DelayedHealthUpdateActor*>(this)->destroy(); return 0; }
-															#line 2370 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 2442 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		new (&static_cast<DelayedHealthUpdateActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~DelayedHealthUpdateActorState();
 		static_cast<DelayedHealthUpdateActor*>(this)->finishSendAndDelPromiseRef();
@@ -2384,37 +2456,37 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 556 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 628 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (FLOW_KNOBS->HEALTH_MONITOR_MARK_FAILED_UNSTABLE_CONNECTIONS && FlowTransport::transport().healthMonitor()->tooManyConnectionsClosed(address) && address.isPublic())
-															#line 2389 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 2461 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		{
-															#line 558 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 630 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			StrictFuture<Void> __when_expr_0 = delayJittered(FLOW_KNOBS->MAX_RECONNECTION_TIME * 2.0);
-															#line 558 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 630 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			if (static_cast<DelayedHealthUpdateActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 2395 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 2467 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<DelayedHealthUpdateActor*>(this)->actor_wait_state = 1;
-															#line 558 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 630 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< DelayedHealthUpdateActor, 0, Void >*>(static_cast<DelayedHealthUpdateActor*>(this)));
-															#line 2400 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 2472 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			loopDepth = 0;
 		}
 		else
 		{
-															#line 560 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 632 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			if (*tooManyConnectionsClosed)
-															#line 2407 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 2479 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			{
-															#line 561 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 633 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				TraceEvent("TooManyConnectionsClosedMarkAvailable") .detail("Dest", address) .detail("StartTime", start) .detail("TimeElapsed", now() - start) .detail("ClosedCount", FlowTransport::transport().healthMonitor()->closedConnectionsCount(address));
-															#line 566 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 638 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				*tooManyConnectionsClosed = false;
-															#line 2413 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 2485 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			}
-															#line 568 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 640 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			IFailureMonitor::failureMonitor().setStatus(address, FailureStatus(false));
-															#line 2417 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 2489 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			return a_body1break1(loopDepth==0?0:loopDepth-1); // break
 		}
 
@@ -2514,18 +2586,18 @@ public:
 		fdb_probe_actor_exit("delayedHealthUpdate", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 553 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 625 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	NetworkAddress address;
-															#line 553 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 625 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	bool* tooManyConnectionsClosed;
-															#line 554 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 626 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	double start;
-															#line 2523 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 2595 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 };
 // This generated class is to be used only via delayedHealthUpdate()
-															#line 553 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 625 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 class DelayedHealthUpdateActor final : public Actor<Void>, public ActorCallback< DelayedHealthUpdateActor, 0, Void >, public FastAllocated<DelayedHealthUpdateActor>, public DelayedHealthUpdateActorState<DelayedHealthUpdateActor> {
-															#line 2528 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 2600 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 public:
 	using FastAllocated<DelayedHealthUpdateActor>::operator new;
 	using FastAllocated<DelayedHealthUpdateActor>::operator delete;
@@ -2534,9 +2606,9 @@ public:
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< DelayedHealthUpdateActor, 0, Void >;
-															#line 553 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 625 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	DelayedHealthUpdateActor(NetworkAddress const& address,bool* const& tooManyConnectionsClosed) 
-															#line 2539 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 2611 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		 : Actor<Void>(),
 		   DelayedHealthUpdateActorState<DelayedHealthUpdateActor>(address, tooManyConnectionsClosed)
 	{
@@ -2560,34 +2632,34 @@ friend struct ActorCallback< DelayedHealthUpdateActor, 0, Void >;
 	}
 };
 }
-															#line 553 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 625 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 [[nodiscard]] Future<Void> delayedHealthUpdate( NetworkAddress const& address, bool* const& tooManyConnectionsClosed ) {
-															#line 553 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 625 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	return Future<Void>(new DelayedHealthUpdateActor(address, tooManyConnectionsClosed));
-															#line 2567 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 2639 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 }
 
-#line 574 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+#line 646 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 
-															#line 2572 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 2644 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 namespace {
 // This generated class is to be used only via connectionKeeper()
-															#line 575 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 647 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 template <class ConnectionKeeperActor>
-															#line 575 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 647 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 class ConnectionKeeperActorState {
-															#line 2579 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 2651 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 public:
-															#line 575 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 647 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	ConnectionKeeperActorState(Reference<Peer> const& self,Reference<IConnection> const& conn = Reference<IConnection>(),Future<Void> const& reader = Void()) 
-															#line 575 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-															#line 575 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 647 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 647 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		 : self(self),
-															#line 575 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 647 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		   conn(conn),
-															#line 575 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 647 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		   reader(reader)
-															#line 2590 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 2662 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 	{
 		fdb_probe_actor_create("connectionKeeper", reinterpret_cast<unsigned long>(this));
 
@@ -2600,21 +2672,21 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 578 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 650 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			TraceEvent(SevDebug, "ConnectionKeeper", conn ? conn->getDebugID() : UID()) .detail("PeerAddr", self->destination) .detail("ConnSet", (bool)conn);
-															#line 581 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 653 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			ASSERT_WE_THINK(FlowTransport::transport().getLocalAddress() != self->destination);
-															#line 583 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 655 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			delayedHealthUpdateF = Future<Void>();
-															#line 584 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 656 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			firstConnFailedTime = Optional<double>();
-															#line 585 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 657 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			retryConnect = false;
-															#line 586 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 658 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			tooManyConnectionsClosed = false;
-															#line 588 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 660 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			;
-															#line 2617 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 2689 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -2643,26 +2715,26 @@ public:
 	int a_body1loopBody1(int loopDepth) 
 	{
 		try {
-															#line 590 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 662 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			delayedHealthUpdateF = Future<Void>();
-															#line 592 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 664 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			if (!conn)
-															#line 2650 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 2722 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			{
-															#line 593 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 665 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				self->outgoingConnectionIdle = true;
-															#line 595 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 667 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				;
-															#line 2656 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 2728 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 				loopDepth = a_body1loopBody1loopHead1(loopDepth);
 			}
 			else
 			{
-															#line 673 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 745 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				self->outgoingConnectionIdle = false;
-															#line 674 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 746 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				self->lastConnectTime = now();
-															#line 2665 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 2737 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 				loopDepth = a_body1loopBody1cont2(loopDepth);
 			}
 		}
@@ -2683,189 +2755,191 @@ public:
 	int a_body1loopBody1Catch1(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 699 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-			delayedHealthUpdateF.cancel();
-															#line 700 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-			if (now() - self->lastConnectTime > FLOW_KNOBS->RECONNECTION_RESET_TIME)
-															#line 2690 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
-			{
-															#line 701 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-				self->reconnectionDelay = FLOW_KNOBS->INITIAL_RECONNECTION_TIME;
-															#line 2694 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
-			}
-			else
-			{
-															#line 703 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-				self->reconnectionDelay = std::min(FLOW_KNOBS->MAX_RECONNECTION_TIME, self->reconnectionDelay * FLOW_KNOBS->RECONNECTION_TIME_GROWTH_RATE);
-															#line 2700 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
-			}
-															#line 707 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-			if (firstConnFailedTime.present())
-															#line 2704 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
-			{
-															#line 708 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-				if (now() - firstConnFailedTime.get() > FLOW_KNOBS->PEER_UNAVAILABLE_FOR_LONG_TIME_TIMEOUT)
-															#line 2708 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
-				{
-															#line 709 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-					TraceEvent(SevWarnAlways, "PeerUnavailableForLongTime", conn ? conn->getDebugID() : UID()) .suppressFor(1.0) .detail("PeerAddr", self->destination);
-															#line 712 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-					firstConnFailedTime = now() - FLOW_KNOBS->PEER_UNAVAILABLE_FOR_LONG_TIME_TIMEOUT / 2.0;
-															#line 2714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
-				}
-			}
-			else
-			{
-															#line 715 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-				firstConnFailedTime = now();
-															#line 2721 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
-			}
-															#line 720 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-			retryConnect = true;
-															#line 721 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-			if (e.code() == error_code_connection_failed)
-															#line 2727 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
-			{
-															#line 722 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-				if (!self->destination.isPublic())
-															#line 2731 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
-				{
-															#line 724 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-					IFailureMonitor::failureMonitor().setStatus(self->destination, FailureStatus(true));
-															#line 2735 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
-				}
-				else
-				{
-															#line 725 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-					if (now() - firstConnFailedTime.get() > FLOW_KNOBS->FAILURE_DETECTION_DELAY)
-															#line 2741 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
-					{
-															#line 726 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-						IFailureMonitor::failureMonitor().setStatus(self->destination, FailureStatus(true));
-															#line 2745 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
-					}
-				}
-			}
-															#line 730 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-			self->discardUnreliablePackets();
-															#line 731 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-			reader = Future<Void>();
-															#line 732 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-			bool ok = e.code() == error_code_connection_failed || e.code() == error_code_actor_cancelled || e.code() == error_code_connection_unreferenced || e.code() == error_code_connection_idle || (g_network->isSimulated() && e.code() == error_code_checksum_failed);
-															#line 736 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-			if (self->compatible)
-															#line 2757 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
-			{
-															#line 737 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-				TraceEvent(ok ? SevInfo : SevWarnAlways, "ConnectionClosed", conn ? conn->getDebugID() : UID()) .errorUnsuppressed(e) .suppressFor(1.0) .detail("PeerAddr", self->destination);
-															#line 2761 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
-			}
-			else
-			{
-															#line 742 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-				TraceEvent( ok ? SevInfo : SevWarnAlways, "IncompatibleConnectionClosed", conn ? conn->getDebugID() : UID()) .errorUnsuppressed(e) .suppressFor(1.0) .detail("PeerAddr", self->destination);
-															#line 749 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-				self->incompatibleProtocolVersionNewer = false;
-															#line 2769 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
-			}
-															#line 752 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-			if (self->destination.isPublic() && IFailureMonitor::failureMonitor().getState(self->destination).isAvailable() && !FlowTransport::isClient())
-															#line 2773 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
-			{
-															#line 755 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-				auto& it = self->transport->closedPeers[self->destination];
-															#line 756 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-				if (now() - it.second > FLOW_KNOBS->TOO_MANY_CONNECTIONS_CLOSED_RESET_DELAY)
-															#line 2779 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
-				{
-															#line 757 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-					it.first = now();
-															#line 2783 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
-				}
-				else
-				{
-															#line 758 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-					if (now() - it.first > FLOW_KNOBS->TOO_MANY_CONNECTIONS_CLOSED_TIMEOUT)
-															#line 2789 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
-					{
-															#line 759 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-						TraceEvent(SevWarnAlways, "TooManyConnectionsClosed", conn ? conn->getDebugID() : UID()) .suppressFor(5.0) .detail("PeerAddr", self->destination);
-															#line 762 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-						self->transport->degraded->set(true);
-															#line 2795 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
-					}
-				}
-															#line 764 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-				it.second = now();
-															#line 2800 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
-			}
-															#line 767 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-			if (conn)
-															#line 2804 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
-			{
-															#line 768 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-				if (self->destination.isPublic() && e.code() == error_code_connection_failed)
-															#line 2808 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
-				{
-															#line 769 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-					FlowTransport::transport().healthMonitor()->reportPeerClosed(self->destination);
-															#line 770 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-					if (FLOW_KNOBS->HEALTH_MONITOR_MARK_FAILED_UNSTABLE_CONNECTIONS && FlowTransport::transport().healthMonitor()->tooManyConnectionsClosed(self->destination) && self->destination.isPublic())
-															#line 2814 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
-					{
+															#line 772 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+			self->connected = false;
 															#line 773 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-						TraceEvent("TooManyConnectionsClosedMarkFailed") .detail("Dest", self->destination) .detail( "ClosedCount", FlowTransport::transport().healthMonitor()->closedConnectionsCount(self->destination));
-															#line 778 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-						tooManyConnectionsClosed = true;
-															#line 779 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-						IFailureMonitor::failureMonitor().setStatus(self->destination, FailureStatus(true));
-															#line 2822 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
-					}
-				}
-															#line 783 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-				conn->close();
-															#line 784 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-				conn = Reference<IConnection>();
-															#line 789 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-				if (e.code() != error_code_incompatible_protocol_version)
-															#line 2831 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+			delayedHealthUpdateF.cancel();
+															#line 774 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+			if (now() - self->lastConnectTime > FLOW_KNOBS->RECONNECTION_RESET_TIME)
+															#line 2764 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+			{
+															#line 775 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+				self->reconnectionDelay = FLOW_KNOBS->INITIAL_RECONNECTION_TIME;
+															#line 2768 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+			}
+			else
+			{
+															#line 777 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+				self->reconnectionDelay = std::min(FLOW_KNOBS->MAX_RECONNECTION_TIME, self->reconnectionDelay * FLOW_KNOBS->RECONNECTION_TIME_GROWTH_RATE);
+															#line 2774 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+			}
+															#line 781 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+			if (firstConnFailedTime.present())
+															#line 2778 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+			{
+															#line 782 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+				if (now() - firstConnFailedTime.get() > FLOW_KNOBS->PEER_UNAVAILABLE_FOR_LONG_TIME_TIMEOUT)
+															#line 2782 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 				{
-															#line 790 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-					self->protocolVersion->set(Optional<ProtocolVersion>());
-															#line 2835 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 783 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+					TraceEvent(SevWarnAlways, "PeerUnavailableForLongTime", conn ? conn->getDebugID() : UID()) .suppressFor(1.0) .detail("PeerAddr", self->destination);
+															#line 786 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+					firstConnFailedTime = now() - FLOW_KNOBS->PEER_UNAVAILABLE_FOR_LONG_TIME_TIMEOUT / 2.0;
+															#line 2788 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 				}
 			}
-															#line 795 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-			IFailureMonitor::failureMonitor().notifyDisconnect(self->destination);
-															#line 796 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-			Promise<Void> disconnect = self->disconnect;
-															#line 797 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-			self->disconnect = Promise<Void>();
-															#line 798 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-			disconnect.send(Void());
-															#line 800 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-			if (e.code() == error_code_actor_cancelled)
-															#line 2848 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+			else
 			{
-															#line 801 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-				return a_body1Catch1(e, std::max(0, loopDepth - 1));
-															#line 2852 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 789 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+				firstConnFailedTime = now();
+															#line 2795 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+			}
+															#line 794 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+			retryConnect = true;
+															#line 795 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+			if (e.code() == error_code_connection_failed)
+															#line 2801 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+			{
+															#line 796 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+				if (!self->destination.isPublic())
+															#line 2805 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+				{
+															#line 798 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+					IFailureMonitor::failureMonitor().setStatus(self->destination, FailureStatus(true));
+															#line 2809 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+				}
+				else
+				{
+															#line 799 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+					if (now() - firstConnFailedTime.get() > FLOW_KNOBS->FAILURE_DETECTION_DELAY)
+															#line 2815 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+					{
+															#line 800 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+						IFailureMonitor::failureMonitor().setStatus(self->destination, FailureStatus(true));
+															#line 2819 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+					}
+				}
 			}
 															#line 804 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-			if (self->peerReferences <= 0 && self->reliable.empty() && self->unsent.empty() && self->outstandingReplies == 0)
-															#line 2856 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
-			{
+			self->discardUnreliablePackets();
+															#line 805 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+			reader = Future<Void>();
 															#line 806 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-				TraceEvent("PeerDestroy").errorUnsuppressed(e).suppressFor(1.0).detail("PeerAddr", self->destination);
-															#line 807 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-				self->connect.cancel();
-															#line 808 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-				self->transport->peers.erase(self->destination);
-															#line 809 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-				self->transport->orderedAddresses.erase(self->destination);
+			bool ok = e.code() == error_code_connection_failed || e.code() == error_code_actor_cancelled || e.code() == error_code_connection_unreferenced || e.code() == error_code_connection_idle || (g_network->isSimulated() && e.code() == error_code_checksum_failed);
 															#line 810 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+			if (self->compatible)
+															#line 2831 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+			{
+															#line 811 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+				TraceEvent(ok ? SevInfo : SevWarnAlways, "ConnectionClosed", conn ? conn->getDebugID() : UID()) .errorUnsuppressed(e) .suppressFor(1.0) .detail("PeerAddr", self->destination);
+															#line 2835 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+			}
+			else
+			{
+															#line 816 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+				TraceEvent( ok ? SevInfo : SevWarnAlways, "IncompatibleConnectionClosed", conn ? conn->getDebugID() : UID()) .errorUnsuppressed(e) .suppressFor(1.0) .detail("PeerAddr", self->destination);
+															#line 823 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+				self->compatible = true;
+															#line 2843 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+			}
+															#line 826 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+			if (self->destination.isPublic() && IFailureMonitor::failureMonitor().getState(self->destination).isAvailable() && !FlowTransport::isClient())
+															#line 2847 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+			{
+															#line 829 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+				auto& it = self->transport->closedPeers[self->destination];
+															#line 830 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+				if (now() - it.second > FLOW_KNOBS->TOO_MANY_CONNECTIONS_CLOSED_RESET_DELAY)
+															#line 2853 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+				{
+															#line 831 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+					it.first = now();
+															#line 2857 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+				}
+				else
+				{
+															#line 832 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+					if (now() - it.first > FLOW_KNOBS->TOO_MANY_CONNECTIONS_CLOSED_TIMEOUT)
+															#line 2863 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+					{
+															#line 833 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+						TraceEvent(SevWarnAlways, "TooManyConnectionsClosed", conn ? conn->getDebugID() : UID()) .suppressFor(5.0) .detail("PeerAddr", self->destination);
+															#line 836 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+						self->transport->degraded->set(true);
+															#line 2869 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+					}
+				}
+															#line 838 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+				it.second = now();
+															#line 2874 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+			}
+															#line 841 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+			if (conn)
+															#line 2878 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+			{
+															#line 842 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+				if (self->destination.isPublic() && e.code() == error_code_connection_failed)
+															#line 2882 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+				{
+															#line 843 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+					FlowTransport::transport().healthMonitor()->reportPeerClosed(self->destination);
+															#line 844 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+					if (FLOW_KNOBS->HEALTH_MONITOR_MARK_FAILED_UNSTABLE_CONNECTIONS && FlowTransport::transport().healthMonitor()->tooManyConnectionsClosed(self->destination) && self->destination.isPublic())
+															#line 2888 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+					{
+															#line 847 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+						TraceEvent("TooManyConnectionsClosedMarkFailed") .detail("Dest", self->destination) .detail( "ClosedCount", FlowTransport::transport().healthMonitor()->closedConnectionsCount(self->destination));
+															#line 852 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+						tooManyConnectionsClosed = true;
+															#line 853 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+						IFailureMonitor::failureMonitor().setStatus(self->destination, FailureStatus(true));
+															#line 2896 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+					}
+				}
+															#line 857 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+				conn->close();
+															#line 858 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+				conn = Reference<IConnection>();
+															#line 863 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+				if (e.code() != error_code_incompatible_protocol_version)
+															#line 2905 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+				{
+															#line 864 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+					self->protocolVersion->set(Optional<ProtocolVersion>());
+															#line 2909 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+				}
+			}
+															#line 869 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+			IFailureMonitor::failureMonitor().notifyDisconnect(self->destination);
+															#line 870 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+			Promise<Void> disconnect = self->disconnect;
+															#line 871 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+			self->disconnect = Promise<Void>();
+															#line 872 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+			disconnect.send(Void());
+															#line 874 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+			if (e.code() == error_code_actor_cancelled)
+															#line 2922 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+			{
+															#line 875 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+				return a_body1Catch1(e, std::max(0, loopDepth - 1));
+															#line 2926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+			}
+															#line 878 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+			if (self->peerReferences <= 0 && self->reliable.empty() && self->unsent.empty() && self->outstandingReplies == 0)
+															#line 2930 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+			{
+															#line 880 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+				TraceEvent("PeerDestroy").errorUnsuppressed(e).suppressFor(1.0).detail("PeerAddr", self->destination);
+															#line 881 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+				self->connect.cancel();
+															#line 882 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+				self->transport->peers.erase(self->destination);
+															#line 883 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+				self->transport->orderedAddresses.erase(self->destination);
+															#line 884 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				if (!static_cast<ConnectionKeeperActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~ConnectionKeeperActorState(); static_cast<ConnectionKeeperActor*>(this)->destroy(); return 0; }
-															#line 2868 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 2942 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 				new (&static_cast<ConnectionKeeperActor*>(this)->SAV< Void >::value()) Void(Void());
 				this->~ConnectionKeeperActorState();
 				static_cast<ConnectionKeeperActor*>(this)->finishSendAndDelPromiseRef();
@@ -2883,30 +2957,32 @@ public:
 	}
 	int a_body1loopBody1cont2(int loopDepth) 
 	{
-															#line 677 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 749 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		firstConnFailedTime.reset();
-															#line 2888 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 2962 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		try {
-															#line 679 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 751 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			self->transport->countConnEstablished++;
-															#line 680 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 752 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			if (!delayedHealthUpdateF.isValid())
-															#line 2894 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 2968 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			{
-															#line 681 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 753 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				delayedHealthUpdateF = delayedHealthUpdate(self->destination, &tooManyConnectionsClosed);
-															#line 2898 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 2972 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			}
-															#line 682 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 754 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+			self->connected = true;
+															#line 755 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			StrictFuture<Void> __when_expr_8 = connectionWriter(self, conn) || reader || connectionMonitor(self) || self->resetConnection.onTrigger();
-															#line 682 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 755 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			if (static_cast<ConnectionKeeperActor*>(this)->actor_wait_state < 0) return a_body1loopBody1cont2Catch1(actor_cancelled(), loopDepth);
-															#line 2904 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 2980 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			if (__when_expr_8.isReady()) { if (__when_expr_8.isError()) return a_body1loopBody1cont2Catch1(__when_expr_8.getError(), loopDepth); else return a_body1loopBody1cont2when1(__when_expr_8.get(), loopDepth); };
 			static_cast<ConnectionKeeperActor*>(this)->actor_wait_state = 6;
-															#line 682 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 755 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			__when_expr_8.addCallbackAndClear(static_cast<ActorCallback< ConnectionKeeperActor, 8, Void >*>(static_cast<ConnectionKeeperActor*>(this)));
-															#line 2909 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 2985 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -2919,20 +2995,20 @@ public:
 	}
 	int a_body1loopBody1cont3(int loopDepth) 
 	{
-															#line 612 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 684 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		ASSERT(self->destination.isPublic());
-															#line 613 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 685 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		self->outgoingConnectionIdle = false;
-															#line 614 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 686 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		StrictFuture<Void> __when_expr_2 = delayJittered(std::max(0.0, self->lastConnectTime + self->reconnectionDelay - now()));
-															#line 614 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 686 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (static_cast<ConnectionKeeperActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 2930 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 3006 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1loopBody1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1loopBody1cont3when1(__when_expr_2.get(), loopDepth); };
 		static_cast<ConnectionKeeperActor*>(this)->actor_wait_state = 2;
-															#line 614 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 686 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< ConnectionKeeperActor, 2, Void >*>(static_cast<ConnectionKeeperActor*>(this)));
-															#line 2935 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 3011 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -2946,38 +3022,38 @@ public:
 	}
 	int a_body1loopBody1loopBody1(int loopDepth) 
 	{
-															#line 595 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 667 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (!(self->unsent.empty()))
-															#line 2951 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 3027 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		{
 			return a_body1loopBody1break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 597 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 669 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		Future<Void> retryConnectF = Never();
-															#line 598 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 670 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (retryConnect)
-															#line 2959 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 3035 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		{
-															#line 599 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 671 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			retryConnectF = IFailureMonitor::failureMonitor().getState(self->destination).isAvailable() ? delay(FLOW_KNOBS->FAILURE_DETECTION_DELAY) : delay(FLOW_KNOBS->SERVER_REQUEST_INTERVAL);
-															#line 2963 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 3039 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		}
-															#line 605 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 677 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		StrictFuture<Void> __when_expr_0 = self->dataToSend.onTrigger();
-															#line 604 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 676 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (static_cast<ConnectionKeeperActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 2969 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 3045 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1loopBody1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1loopBody1when1(__when_expr_0.get(), loopDepth); };
-															#line 606 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 678 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = retryConnectF;
-															#line 2973 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 3049 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1loopBody1Catch1(__when_expr_1.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1loopBody1when2(__when_expr_1.get(), loopDepth); };
 		static_cast<ConnectionKeeperActor*>(this)->actor_wait_state = 1;
-															#line 605 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 677 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ConnectionKeeperActor, 0, Void >*>(static_cast<ConnectionKeeperActor*>(this)));
-															#line 606 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 678 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< ConnectionKeeperActor, 1, Void >*>(static_cast<ConnectionKeeperActor*>(this)));
-															#line 2980 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 3056 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -3124,30 +3200,30 @@ public:
 	}
 	int a_body1loopBody1cont4(Void const& _,int loopDepth) 
 	{
-															#line 617 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 689 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		self->lastConnectTime = now();
-															#line 619 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 691 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		TraceEvent("ConnectingTo", conn ? conn->getDebugID() : UID()) .suppressFor(1.0) .detail("PeerAddr", self->destination) .detail("PeerReferences", self->peerReferences) .detail("FailureStatus", IFailureMonitor::failureMonitor().getState(self->destination).isAvailable() ? "OK" : "FAILED");
-															#line 626 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 698 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		++self->connectOutgoingCount;
-															#line 3133 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 3209 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		try {
-															#line 629 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 701 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			StrictFuture<Reference<IConnection>> __when_expr_3 = INetworkConnections::net()->connect(self->destination);
-															#line 628 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 700 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			if (static_cast<ConnectionKeeperActor*>(this)->actor_wait_state < 0) return a_body1loopBody1cont4Catch1(actor_cancelled(), loopDepth);
-															#line 3139 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 3215 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			if (__when_expr_3.isReady()) { if (__when_expr_3.isError()) return a_body1loopBody1cont4Catch1(__when_expr_3.getError(), loopDepth); else return a_body1loopBody1cont4when1(__when_expr_3.get(), loopDepth); };
-															#line 657 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 729 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			StrictFuture<Void> __when_expr_4 = delay(FLOW_KNOBS->CONNECTION_MONITOR_TIMEOUT);
-															#line 3143 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 3219 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			if (__when_expr_4.isReady()) { if (__when_expr_4.isError()) return a_body1loopBody1cont4Catch1(__when_expr_4.getError(), loopDepth); else return a_body1loopBody1cont4when2(__when_expr_4.get(), loopDepth); };
 			static_cast<ConnectionKeeperActor*>(this)->actor_wait_state = 3;
-															#line 629 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 701 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			__when_expr_3.addCallbackAndClear(static_cast<ActorCallback< ConnectionKeeperActor, 3, Reference<IConnection> >*>(static_cast<ConnectionKeeperActor*>(this)));
-															#line 657 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 729 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			__when_expr_4.addCallbackAndClear(static_cast<ActorCallback< ConnectionKeeperActor, 4, Void >*>(static_cast<ConnectionKeeperActor*>(this)));
-															#line 3150 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 3226 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -3160,30 +3236,30 @@ public:
 	}
 	int a_body1loopBody1cont4(Void && _,int loopDepth) 
 	{
-															#line 617 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 689 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		self->lastConnectTime = now();
-															#line 619 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 691 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		TraceEvent("ConnectingTo", conn ? conn->getDebugID() : UID()) .suppressFor(1.0) .detail("PeerAddr", self->destination) .detail("PeerReferences", self->peerReferences) .detail("FailureStatus", IFailureMonitor::failureMonitor().getState(self->destination).isAvailable() ? "OK" : "FAILED");
-															#line 626 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 698 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		++self->connectOutgoingCount;
-															#line 3169 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 3245 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		try {
-															#line 629 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 701 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			StrictFuture<Reference<IConnection>> __when_expr_3 = INetworkConnections::net()->connect(self->destination);
-															#line 628 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 700 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			if (static_cast<ConnectionKeeperActor*>(this)->actor_wait_state < 0) return a_body1loopBody1cont4Catch1(actor_cancelled(), loopDepth);
-															#line 3175 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 3251 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			if (__when_expr_3.isReady()) { if (__when_expr_3.isError()) return a_body1loopBody1cont4Catch1(__when_expr_3.getError(), loopDepth); else return a_body1loopBody1cont4when1(__when_expr_3.get(), loopDepth); };
-															#line 657 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 729 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			StrictFuture<Void> __when_expr_4 = delay(FLOW_KNOBS->CONNECTION_MONITOR_TIMEOUT);
-															#line 3179 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 3255 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			if (__when_expr_4.isReady()) { if (__when_expr_4.isError()) return a_body1loopBody1cont4Catch1(__when_expr_4.getError(), loopDepth); else return a_body1loopBody1cont4when2(__when_expr_4.get(), loopDepth); };
 			static_cast<ConnectionKeeperActor*>(this)->actor_wait_state = 3;
-															#line 629 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 701 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			__when_expr_3.addCallbackAndClear(static_cast<ActorCallback< ConnectionKeeperActor, 3, Reference<IConnection> >*>(static_cast<ConnectionKeeperActor*>(this)));
-															#line 657 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 729 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			__when_expr_4.addCallbackAndClear(static_cast<ActorCallback< ConnectionKeeperActor, 4, Void >*>(static_cast<ConnectionKeeperActor*>(this)));
-															#line 3186 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 3262 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -3266,21 +3342,21 @@ public:
 	int a_body1loopBody1cont4Catch1(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 662 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 734 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			++self->connectFailedCount;
-															#line 663 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 735 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			if (e.code() != error_code_connection_failed)
-															#line 3273 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 3349 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			{
-															#line 664 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 736 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				return a_body1loopBody1Catch1(e, loopDepth);
-															#line 3277 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 3353 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			}
-															#line 666 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 738 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			TraceEvent("ConnectionTimedOut", conn ? conn->getDebugID() : UID()) .suppressFor(1.0) .detail("PeerAddr", self->destination);
-															#line 670 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 742 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			return a_body1loopBody1Catch1(e, loopDepth);
-															#line 3283 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 3359 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		}
 		catch (Error& error) {
 			loopDepth = a_body1loopBody1Catch1(error, loopDepth);
@@ -3298,53 +3374,53 @@ public:
 	}
 	int a_body1loopBody1cont4when1(Reference<IConnection> const& _conn,int loopDepth) 
 	{
-															#line 631 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 703 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		conn = _conn;
-															#line 632 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 704 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		StrictFuture<Void> __when_expr_5 = conn->connectHandshake();
-															#line 632 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 704 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (static_cast<ConnectionKeeperActor*>(this)->actor_wait_state < 0) return a_body1loopBody1cont4Catch1(actor_cancelled(), loopDepth);
-															#line 3307 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 3383 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		if (__when_expr_5.isReady()) { if (__when_expr_5.isError()) return a_body1loopBody1cont4Catch1(__when_expr_5.getError(), loopDepth); else return a_body1loopBody1cont4when1when1(__when_expr_5.get(), loopDepth); };
 		static_cast<ConnectionKeeperActor*>(this)->actor_wait_state = 4;
-															#line 632 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 704 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		__when_expr_5.addCallbackAndClear(static_cast<ActorCallback< ConnectionKeeperActor, 5, Void >*>(static_cast<ConnectionKeeperActor*>(this)));
-															#line 3312 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 3388 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont4when1(Reference<IConnection> && _conn,int loopDepth) 
 	{
-															#line 631 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 703 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		conn = _conn;
-															#line 632 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 704 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		StrictFuture<Void> __when_expr_5 = conn->connectHandshake();
-															#line 632 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 704 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (static_cast<ConnectionKeeperActor*>(this)->actor_wait_state < 0) return a_body1loopBody1cont4Catch1(actor_cancelled(), loopDepth);
-															#line 3325 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 3401 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		if (__when_expr_5.isReady()) { if (__when_expr_5.isError()) return a_body1loopBody1cont4Catch1(__when_expr_5.getError(), loopDepth); else return a_body1loopBody1cont4when1when1(__when_expr_5.get(), loopDepth); };
 		static_cast<ConnectionKeeperActor*>(this)->actor_wait_state = 4;
-															#line 632 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 704 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		__when_expr_5.addCallbackAndClear(static_cast<ActorCallback< ConnectionKeeperActor, 5, Void >*>(static_cast<ConnectionKeeperActor*>(this)));
-															#line 3330 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 3406 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont4when2(Void const& _,int loopDepth) 
 	{
-															#line 658 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 730 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		return a_body1loopBody1cont4Catch1(connection_failed(), loopDepth);
-															#line 3339 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 3415 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont4when2(Void && _,int loopDepth) 
 	{
-															#line 658 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 730 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		return a_body1loopBody1cont4Catch1(connection_failed(), loopDepth);
-															#line 3347 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 3423 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 
 		return loopDepth;
 	}
@@ -3357,38 +3433,38 @@ public:
 	}
 	int a_body1loopBody1cont4when1cont1(Void const& _,int loopDepth) 
 	{
-															#line 633 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 705 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		self->connectLatencies.addSample(now() - self->lastConnectTime);
-															#line 634 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 706 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (FlowTransport::isClient())
-															#line 3364 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 3440 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		{
-															#line 635 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 707 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			IFailureMonitor::failureMonitor().setStatus(self->destination, FailureStatus(false));
-															#line 3368 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 3444 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		}
-															#line 637 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 709 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (self->unsent.empty())
-															#line 3372 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 3448 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		{
-															#line 638 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 710 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			delayedHealthUpdateF = delayedHealthUpdate(self->destination, &tooManyConnectionsClosed);
-															#line 641 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 713 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			StrictFuture<Void> __when_expr_6 = delayedHealthUpdateF;
-															#line 640 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 712 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			if (static_cast<ConnectionKeeperActor*>(this)->actor_wait_state < 0) return a_body1loopBody1cont4Catch1(actor_cancelled(), loopDepth);
-															#line 3380 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 3456 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			if (__when_expr_6.isReady()) { if (__when_expr_6.isError()) return a_body1loopBody1cont4Catch1(__when_expr_6.getError(), loopDepth); else return a_body1loopBody1cont4when1cont1when1(__when_expr_6.get(), loopDepth); };
-															#line 647 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 719 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			StrictFuture<Void> __when_expr_7 = self->dataToSend.onTrigger();
-															#line 3384 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 3460 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			if (__when_expr_7.isReady()) { if (__when_expr_7.isError()) return a_body1loopBody1cont4Catch1(__when_expr_7.getError(), loopDepth); else return a_body1loopBody1cont4when1cont1when2(__when_expr_7.get(), loopDepth); };
 			static_cast<ConnectionKeeperActor*>(this)->actor_wait_state = 5;
-															#line 641 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 713 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			__when_expr_6.addCallbackAndClear(static_cast<ActorCallback< ConnectionKeeperActor, 6, Void >*>(static_cast<ConnectionKeeperActor*>(this)));
-															#line 647 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 719 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			__when_expr_7.addCallbackAndClear(static_cast<ActorCallback< ConnectionKeeperActor, 7, Void >*>(static_cast<ConnectionKeeperActor*>(this)));
-															#line 3391 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 3467 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			loopDepth = 0;
 		}
 		else
@@ -3400,38 +3476,38 @@ public:
 	}
 	int a_body1loopBody1cont4when1cont1(Void && _,int loopDepth) 
 	{
-															#line 633 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 705 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		self->connectLatencies.addSample(now() - self->lastConnectTime);
-															#line 634 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 706 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (FlowTransport::isClient())
-															#line 3407 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 3483 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		{
-															#line 635 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 707 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			IFailureMonitor::failureMonitor().setStatus(self->destination, FailureStatus(false));
-															#line 3411 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 3487 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		}
-															#line 637 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 709 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (self->unsent.empty())
-															#line 3415 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 3491 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		{
-															#line 638 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 710 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			delayedHealthUpdateF = delayedHealthUpdate(self->destination, &tooManyConnectionsClosed);
-															#line 641 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 713 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			StrictFuture<Void> __when_expr_6 = delayedHealthUpdateF;
-															#line 640 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 712 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			if (static_cast<ConnectionKeeperActor*>(this)->actor_wait_state < 0) return a_body1loopBody1cont4Catch1(actor_cancelled(), loopDepth);
-															#line 3423 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 3499 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			if (__when_expr_6.isReady()) { if (__when_expr_6.isError()) return a_body1loopBody1cont4Catch1(__when_expr_6.getError(), loopDepth); else return a_body1loopBody1cont4when1cont1when1(__when_expr_6.get(), loopDepth); };
-															#line 647 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 719 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			StrictFuture<Void> __when_expr_7 = self->dataToSend.onTrigger();
-															#line 3427 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 3503 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			if (__when_expr_7.isReady()) { if (__when_expr_7.isError()) return a_body1loopBody1cont4Catch1(__when_expr_7.getError(), loopDepth); else return a_body1loopBody1cont4when1cont1when2(__when_expr_7.get(), loopDepth); };
 			static_cast<ConnectionKeeperActor*>(this)->actor_wait_state = 5;
-															#line 641 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 713 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			__when_expr_6.addCallbackAndClear(static_cast<ActorCallback< ConnectionKeeperActor, 6, Void >*>(static_cast<ConnectionKeeperActor*>(this)));
-															#line 647 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 719 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			__when_expr_7.addCallbackAndClear(static_cast<ActorCallback< ConnectionKeeperActor, 7, Void >*>(static_cast<ConnectionKeeperActor*>(this)));
-															#line 3434 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 3510 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			loopDepth = 0;
 		}
 		else
@@ -3506,13 +3582,13 @@ public:
 	}
 	int a_body1loopBody1cont4when1cont2(int loopDepth) 
 	{
-															#line 651 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 723 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		TraceEvent("ConnectionExchangingConnectPacket", conn->getDebugID()) .suppressFor(1.0) .detail("PeerAddr", self->destination);
-															#line 654 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 726 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		self->prependConnectPacket();
-															#line 655 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 727 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		reader = connectionReader(self->transport, conn, self, Promise<Reference<Peer>>());
-															#line 3515 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 3591 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont6(loopDepth);
 
 		return loopDepth;
@@ -3525,26 +3601,26 @@ public:
 	}
 	int a_body1loopBody1cont4when1cont1when1(Void const& _,int loopDepth) 
 	{
-															#line 642 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		conn->close();
-															#line 643 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 715 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		conn = Reference<IConnection>();
-															#line 644 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 716 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		retryConnect = false;
-															#line 3534 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 3610 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		return a_body1loopHead1(loopDepth); // continue
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont4when1cont1when1(Void && _,int loopDepth) 
 	{
-															#line 642 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		conn->close();
-															#line 643 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 715 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		conn = Reference<IConnection>();
-															#line 644 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 716 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		retryConnect = false;
-															#line 3547 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 3623 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		return a_body1loopHead1(loopDepth); // continue
 
 		return loopDepth;
@@ -3764,23 +3840,23 @@ public:
 	int a_body1loopBody1cont2Catch1(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 689 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 762 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			if (e.code() == error_code_connection_failed || e.code() == error_code_actor_cancelled || e.code() == error_code_connection_unreferenced || (g_network->isSimulated() && e.code() == error_code_checksum_failed))
-															#line 3769 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 3845 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			{
-															#line 692 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 765 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				self->transport->countConnClosedWithoutError++;
-															#line 3773 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 3849 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			}
 			else
 			{
-															#line 694 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 767 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				self->transport->countConnClosedWithError++;
-															#line 3779 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 3855 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			}
-															#line 696 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 769 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			return a_body1loopBody1Catch1(e, loopDepth);
-															#line 3783 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 3859 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		}
 		catch (Error& error) {
 			loopDepth = a_body1loopBody1Catch1(error, loopDepth);
@@ -3792,21 +3868,21 @@ public:
 	}
 	int a_body1loopBody1cont10(Void const& _,int loopDepth) 
 	{
-															#line 684 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 757 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		TraceEvent("ConnectionReset", conn ? conn->getDebugID() : UID()) .suppressFor(1.0) .detail("PeerAddr", self->destination);
-															#line 687 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 760 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		return a_body1loopBody1cont2Catch1(connection_failed(), loopDepth);
-															#line 3799 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 3875 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont10(Void && _,int loopDepth) 
 	{
-															#line 684 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 757 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		TraceEvent("ConnectionReset", conn ? conn->getDebugID() : UID()) .suppressFor(1.0) .detail("PeerAddr", self->destination);
-															#line 687 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 760 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		return a_body1loopBody1cont2Catch1(connection_failed(), loopDepth);
-															#line 3809 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 3885 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 
 		return loopDepth;
 	}
@@ -3873,26 +3949,26 @@ public:
 		fdb_probe_actor_exit("connectionKeeper", reinterpret_cast<unsigned long>(this), 8);
 
 	}
-															#line 575 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 647 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	Reference<Peer> self;
-															#line 575 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 647 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	Reference<IConnection> conn;
-															#line 575 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 647 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	Future<Void> reader;
-															#line 583 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 655 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	Future<Void> delayedHealthUpdateF;
-															#line 584 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 656 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	Optional<double> firstConnFailedTime;
-															#line 585 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 657 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	int retryConnect;
-															#line 586 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 658 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	bool tooManyConnectionsClosed;
-															#line 3890 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 3966 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 };
 // This generated class is to be used only via connectionKeeper()
-															#line 575 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 647 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 class ConnectionKeeperActor final : public Actor<Void>, public ActorCallback< ConnectionKeeperActor, 0, Void >, public ActorCallback< ConnectionKeeperActor, 1, Void >, public ActorCallback< ConnectionKeeperActor, 2, Void >, public ActorCallback< ConnectionKeeperActor, 3, Reference<IConnection> >, public ActorCallback< ConnectionKeeperActor, 5, Void >, public ActorCallback< ConnectionKeeperActor, 6, Void >, public ActorCallback< ConnectionKeeperActor, 7, Void >, public ActorCallback< ConnectionKeeperActor, 4, Void >, public ActorCallback< ConnectionKeeperActor, 8, Void >, public FastAllocated<ConnectionKeeperActor>, public ConnectionKeeperActorState<ConnectionKeeperActor> {
-															#line 3895 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 3971 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 public:
 	using FastAllocated<ConnectionKeeperActor>::operator new;
 	using FastAllocated<ConnectionKeeperActor>::operator delete;
@@ -3909,9 +3985,9 @@ friend struct ActorCallback< ConnectionKeeperActor, 6, Void >;
 friend struct ActorCallback< ConnectionKeeperActor, 7, Void >;
 friend struct ActorCallback< ConnectionKeeperActor, 4, Void >;
 friend struct ActorCallback< ConnectionKeeperActor, 8, Void >;
-															#line 575 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 647 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	ConnectionKeeperActor(Reference<Peer> const& self,Reference<IConnection> const& conn = Reference<IConnection>(),Future<Void> const& reader = Void()) 
-															#line 3914 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 3990 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		 : Actor<Void>(),
 		   ConnectionKeeperActorState<ConnectionKeeperActor>(self, conn, reader)
 	{
@@ -3940,24 +4016,24 @@ friend struct ActorCallback< ConnectionKeeperActor, 8, Void >;
 	}
 };
 }
-															#line 575 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 647 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 [[nodiscard]] Future<Void> connectionKeeper( Reference<Peer> const& self, Reference<IConnection> const& conn = Reference<IConnection>(), Future<Void> const& reader = Void() ) {
-															#line 575 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 647 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	return Future<Void>(new ConnectionKeeperActor(self, conn, reader));
-															#line 3947 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 4023 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 }
 
-#line 815 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+#line 889 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 
 Peer::Peer(TransportData* transport, NetworkAddress const& destination)
-  : transport(transport), destination(destination), compatible(true), outgoingConnectionIdle(true),
+  : transport(transport), destination(destination), compatible(true), connected(false), outgoingConnectionIdle(true),
     lastConnectTime(0.0), reconnectionDelay(FLOW_KNOBS->INITIAL_RECONNECTION_TIME), peerReferences(-1),
-    incompatibleProtocolVersionNewer(false), bytesReceived(0), bytesSent(0), lastDataPacketSentTime(now()),
-    outstandingReplies(0), pingLatencies(destination.isPublic() ? FLOW_KNOBS->PING_SAMPLE_AMOUNT : 1),
-    lastLoggedTime(0.0), lastLoggedBytesReceived(0), lastLoggedBytesSent(0), timeoutCount(0),
+    bytesReceived(0), bytesSent(0), lastDataPacketSentTime(now()), outstandingReplies(0),
+    pingLatencies(destination.isPublic() ? FLOW_KNOBS->PING_SKETCH_ACCURACY : 0.1), lastLoggedTime(0.0),
+    lastLoggedBytesReceived(0), lastLoggedBytesSent(0), timeoutCount(0),
     protocolVersion(Reference<AsyncVar<Optional<ProtocolVersion>>>(new AsyncVar<Optional<ProtocolVersion>>())),
     connectOutgoingCount(0), connectIncomingCount(0), connectFailedCount(0),
-    connectLatencies(destination.isPublic() ? FLOW_KNOBS->NETWORK_CONNECT_SAMPLE_AMOUNT : 1) {
+    connectLatencies(destination.isPublic() ? FLOW_KNOBS->PING_SKETCH_ACCURACY : 0.1) {
 	IFailureMonitor::failureMonitor().setStatus(destination, FailureStatus(false));
 }
 
@@ -3972,12 +4048,12 @@ void Peer::send(PacketBuffer* pb, ReliablePacket* rp, bool firstUnsent) {
 void Peer::prependConnectPacket() {
 	// Send the ConnectPacket expected at the beginning of a new connection
 	ConnectPacket pkt;
-	if (transport->localAddresses.address.isTLS() == destination.isTLS()) {
-		pkt.canonicalRemotePort = transport->localAddresses.address.port;
-		pkt.setCanonicalRemoteIp(transport->localAddresses.address.ip);
-	} else if (transport->localAddresses.secondaryAddress.present()) {
-		pkt.canonicalRemotePort = transport->localAddresses.secondaryAddress.get().port;
-		pkt.setCanonicalRemoteIp(transport->localAddresses.secondaryAddress.get().ip);
+	if (transport->localAddresses.getAddressList().address.isTLS() == destination.isTLS()) {
+		pkt.canonicalRemotePort = transport->localAddresses.getAddressList().address.port;
+		pkt.setCanonicalRemoteIp(transport->localAddresses.getAddressList().address.ip);
+	} else if (transport->localAddresses.getAddressList().secondaryAddress.present()) {
+		pkt.canonicalRemotePort = transport->localAddresses.getAddressList().secondaryAddress.get().port;
+		pkt.setCanonicalRemoteIp(transport->localAddresses.getAddressList().secondaryAddress.get().ip);
 	} else {
 		// a "mixed" TLS/non-TLS connection is like a client/server connection - there's no way to reverse it
 		pkt.canonicalRemotePort = 0;
@@ -3989,10 +4065,20 @@ void Peer::prependConnectPacket() {
 	pkt.protocolVersion.addObjectSerializerFlag();
 	pkt.connectionId = transport->transportId;
 
-	PacketBuffer* pb_first = PacketBuffer::create();
+	PacketBuffer *pb_first = PacketBuffer::create(), *pb_end = nullptr;
 	PacketWriter wr(pb_first, nullptr, Unversioned());
 	pkt.serialize(wr);
-	unsent.prependWriteBuffer(pb_first, wr.finish());
+	pb_end = wr.finish();
+#if VALGRIND
+	SendBuffer* checkbuf = pb_first;
+	while (checkbuf) {
+		int size = checkbuf->bytes_written;
+		const uint8_t* data = checkbuf->data();
+		VALGRIND_CHECK_MEM_IS_DEFINED(data, size);
+		checkbuf = checkbuf->next;
+	}
+#endif
+	unsent.prependWriteBuffer(pb_first, pb_end);
 }
 
 void Peer::discardUnreliablePackets() {
@@ -4014,20 +4100,21 @@ void Peer::onIncomingConnection(Reference<Peer> self, Reference<IConnection> con
 	++self->connectIncomingCount;
 	if (!destination.isPublic() && !outgoingConnectionIdle)
 		throw address_in_use();
-	NetworkAddress compatibleAddr = transport->localAddresses.address;
-	if (transport->localAddresses.secondaryAddress.present() &&
-	    transport->localAddresses.secondaryAddress.get().isTLS() == destination.isTLS()) {
-		compatibleAddr = transport->localAddresses.secondaryAddress.get();
+	NetworkAddress compatibleAddr = transport->localAddresses.getAddressList().address;
+	if (transport->localAddresses.getAddressList().secondaryAddress.present() &&
+	    transport->localAddresses.getAddressList().secondaryAddress.get().isTLS() == destination.isTLS()) {
+		compatibleAddr = transport->localAddresses.getAddressList().secondaryAddress.get();
 	}
 
 	if (!destination.isPublic() || outgoingConnectionIdle || destination > compatibleAddr ||
 	    (lastConnectTime > 1.0 && now() - lastConnectTime > FLOW_KNOBS->ALWAYS_ACCEPT_DELAY)) {
 		// Keep the new connection
-		TraceEvent("IncomingConnection", conn->getDebugID())
+		TraceEvent("IncomingConnection"_audit, conn->getDebugID())
 		    .suppressFor(1.0)
 		    .detail("FromAddr", conn->getPeerAddress())
 		    .detail("CanonicalAddr", destination)
-		    .detail("IsPublic", destination.isPublic());
+		    .detail("IsPublic", destination.isPublic())
+		    .detail("Trusted", self->transport->allowList(conn->getPeerAddress().ip) && conn->hasTrustedPeer());
 
 		connect.cancel();
 		prependConnectPacket();
@@ -4070,31 +4157,35 @@ static bool checkCompatible(const PeerCompatibilityPolicy& policy, ProtocolVersi
 // This actor looks up the task associated with an endpoint
 // and sends the message to it. The actual deserialization will
 // be done by that task (see NetworkMessageReceiver).
-															#line 4073 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 4160 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 namespace {
 // This generated class is to be used only via deliver()
-															#line 937 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1022 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 template <class DeliverActor>
-															#line 937 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1022 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 class DeliverActorState {
-															#line 4080 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 4167 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 public:
-															#line 937 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-	DeliverActorState(TransportData* const& self,Endpoint const& destination,TaskPriority const& priority,ArenaReader const& reader,bool const& inReadSocket,Future<Void> const& disconnect) 
-															#line 937 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-															#line 937 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1022 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+	DeliverActorState(TransportData* const& self,Endpoint const& destination,TaskPriority const& priority,ArenaReader const& reader,NetworkAddress const& peerAddress,bool const& isTrustedPeer,InReadSocket const& inReadSocket,Future<Void> const& disconnect) 
+															#line 1022 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1022 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		 : self(self),
-															#line 937 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1022 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		   destination(destination),
-															#line 937 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1022 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		   priority(priority),
-															#line 937 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1022 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		   reader(reader),
-															#line 937 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1022 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+		   peerAddress(peerAddress),
+															#line 1022 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+		   isTrustedPeer(isTrustedPeer),
+															#line 1022 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		   inReadSocket(inReadSocket),
-															#line 937 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1022 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		   disconnect(disconnect)
-															#line 4097 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 4188 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 	{
 		fdb_probe_actor_create("deliver", reinterpret_cast<unsigned long>(this));
 
@@ -4107,26 +4198,26 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 948 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1035 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			if (priority < TaskPriority::ReadSocket || !inReadSocket)
-															#line 4112 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 4203 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			{
-															#line 949 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1036 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				StrictFuture<Void> __when_expr_0 = orderedDelay(0, priority);
-															#line 949 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1036 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
-															#line 4118 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 4209 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 				static_cast<DeliverActor*>(this)->actor_wait_state = 1;
-															#line 949 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1036 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< DeliverActor, 0, Void >*>(static_cast<DeliverActor*>(this)));
-															#line 4122 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 4213 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 				loopDepth = 0;
 			}
 			else
 			{
-															#line 951 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1038 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				g_network->setCurrentTask(priority);
-															#line 4129 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 4220 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 				loopDepth = a_body1cont1(loopDepth);
 			}
 		}
@@ -4147,39 +4238,47 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 954 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1041 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		auto receiver = self->endpoints.get(destination.token);
-															#line 955 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-		if (receiver)
-															#line 4154 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1042 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+		if (receiver && (isTrustedPeer || receiver->isPublic()))
+															#line 4245 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		{
-															#line 956 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1043 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			if (!checkCompatible(receiver->peerCompatibilityPolicy(), reader.protocolVersion()))
-															#line 4158 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 4249 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			{
-															#line 957 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1044 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				delete static_cast<DeliverActor*>(this);
-															#line 4162 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 4253 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 				return 0;
 			}
 			try {
-															#line 960 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1047 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+				ASSERT(g_currentDeliveryPeerAddress == NetworkAddressList());
+															#line 1048 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+				ASSERT(!g_currentDeliverPeerAddressTrusted);
+															#line 1049 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				g_currentDeliveryPeerAddress = destination.addresses;
-															#line 961 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1050 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+				g_currentDeliverPeerAddressTrusted = isTrustedPeer;
+															#line 1051 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				g_currentDeliveryPeerDisconnect = disconnect;
-															#line 962 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1052 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				StringRef data = reader.arenaReadAll();
-															#line 963 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1053 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				ASSERT(data.size() > 8);
-															#line 964 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1054 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				ArenaObjectReader objReader(reader.arena(), reader.arenaReadAll(), AssumeVersion(reader.protocolVersion()));
-															#line 965 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1055 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				receiver->receive(objReader);
-															#line 966 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-				g_currentDeliveryPeerAddress = { NetworkAddress() };
-															#line 967 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1056 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+				g_currentDeliveryPeerAddress = NetworkAddressList();
+															#line 1057 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+				g_currentDeliverPeerAddressTrusted = false;
+															#line 1058 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				g_currentDeliveryPeerDisconnect = Future<Void>();
-															#line 4182 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 4281 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 				loopDepth = a_body1cont8(loopDepth);
 			}
 			catch (Error& error) {
@@ -4190,29 +4289,46 @@ public:
 		}
 		else
 		{
-															#line 980 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1072 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			if (destination.token.first() & TOKEN_STREAM_FLAG)
-															#line 4195 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 4294 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			{
-															#line 982 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-				if (destination.token.first() != -1)
-															#line 4199 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1074 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+				if (receiver)
+															#line 4298 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 				{
-															#line 983 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-					if (self->isLocalAddress(destination.getPrimaryAddress()))
-															#line 4203 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1075 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+					TraceEvent(SevWarnAlways, "AttemptedRPCToPrivatePrevented"_audit) .detail("From", peerAddress) .detail("Token", destination.token) .detail("Receiver", typeid(*receiver).name());
+															#line 1079 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+					ASSERT(!self->isLocalAddress(destination.getPrimaryAddress()));
+															#line 1080 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+					Reference<Peer> peer = self->getOrOpenPeer(destination.getPrimaryAddress());
+															#line 1081 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+					sendPacket(self, peer, SerializeSource<UID>(destination.token), Endpoint::wellKnown(destination.addresses, WLTOKEN_UNAUTHORIZED_ENDPOINT), false);
+															#line 4308 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+				}
+				else
+				{
+															#line 1087 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+					if (destination.token.first() != -1)
+															#line 4314 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 					{
-															#line 984 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-						sendLocal(self, SerializeSource<UID>(destination.token), Endpoint::wellKnown(destination.addresses, WLTOKEN_ENDPOINT_NOT_FOUND));
-															#line 4207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
-					}
-					else
-					{
-															#line 988 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-						Reference<Peer> peer = self->getOrOpenPeer(destination.getPrimaryAddress());
-															#line 989 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-						sendPacket(self, peer, SerializeSource<UID>(destination.token), Endpoint::wellKnown(destination.addresses, WLTOKEN_ENDPOINT_NOT_FOUND), false);
-															#line 4215 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1088 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+						if (self->isLocalAddress(destination.getPrimaryAddress()))
+															#line 4318 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+						{
+															#line 1089 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+							sendLocal(self, SerializeSource<UID>(destination.token), Endpoint::wellKnown(destination.addresses, WLTOKEN_ENDPOINT_NOT_FOUND));
+															#line 4322 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+						}
+						else
+						{
+															#line 1093 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+							Reference<Peer> peer = self->getOrOpenPeer(destination.getPrimaryAddress());
+															#line 1094 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+							sendPacket(self, peer, SerializeSource<UID>(destination.token), Endpoint::wellKnown(destination.addresses, WLTOKEN_ENDPOINT_NOT_FOUND), false);
+															#line 4330 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+						}
 					}
 				}
 			}
@@ -4298,7 +4414,7 @@ public:
 	}
 	int a_body1cont4(int loopDepth) 
 	{
-		loopDepth = a_body1cont14(loopDepth);
+		loopDepth = a_body1cont16(loopDepth);
 
 		return loopDepth;
 	}
@@ -4311,23 +4427,25 @@ public:
 	int a_body1cont1Catch1(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 969 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-			g_currentDeliveryPeerAddress = { NetworkAddress() };
-															#line 970 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1060 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+			g_currentDeliveryPeerAddress = NetworkAddressList();
+															#line 1061 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+			g_currentDeliverPeerAddressTrusted = false;
+															#line 1062 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			g_currentDeliveryPeerDisconnect = Future<Void>();
-															#line 971 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1063 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			TraceEvent(SevError, "ReceiverError") .error(e) .detail("Token", destination.token.toString()) .detail("Peer", destination.getPrimaryAddress());
-															#line 975 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1067 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			if (!FlowTransport::isClient())
-															#line 4322 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 4440 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			{
-															#line 976 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1068 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				flushAndExit(FDB_EXIT_ERROR);
-															#line 4326 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 4444 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			}
-															#line 978 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1070 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			return a_body1Catch1(e, loopDepth);
-															#line 4330 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 4448 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		}
 		catch (Error& error) {
 			loopDepth = a_body1Catch1(error, loopDepth);
@@ -4350,33 +4468,37 @@ public:
 
 		return loopDepth;
 	}
-	int a_body1cont14(int loopDepth) 
+	int a_body1cont16(int loopDepth) 
 	{
-															#line 937 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1022 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		delete static_cast<DeliverActor*>(this);
-															#line 4357 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 4475 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		return 0;
 
 		return loopDepth;
 	}
-															#line 937 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1022 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	TransportData* self;
-															#line 937 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1022 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	Endpoint destination;
-															#line 937 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1022 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	TaskPriority priority;
-															#line 937 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1022 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	ArenaReader reader;
-															#line 937 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-	bool inReadSocket;
-															#line 937 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1022 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+	NetworkAddress peerAddress;
+															#line 1022 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+	bool isTrustedPeer;
+															#line 1022 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+	InReadSocket inReadSocket;
+															#line 1022 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	Future<Void> disconnect;
-															#line 4374 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 4496 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 };
 // This generated class is to be used only via deliver()
-															#line 937 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1022 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 class DeliverActor final : public Actor<void>, public ActorCallback< DeliverActor, 0, Void >, public FastAllocated<DeliverActor>, public DeliverActorState<DeliverActor> {
-															#line 4379 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 4501 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 public:
 	using FastAllocated<DeliverActor>::operator new;
 	using FastAllocated<DeliverActor>::operator delete;
@@ -4385,11 +4507,11 @@ public:
 	void destroy() {{ ((Actor<void>*)this)->~Actor(); operator delete(this); }}
 #pragma clang diagnostic pop
 friend struct ActorCallback< DeliverActor, 0, Void >;
-															#line 937 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-	DeliverActor(TransportData* const& self,Endpoint const& destination,TaskPriority const& priority,ArenaReader const& reader,bool const& inReadSocket,Future<Void> const& disconnect) 
-															#line 4390 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1022 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+	DeliverActor(TransportData* const& self,Endpoint const& destination,TaskPriority const& priority,ArenaReader const& reader,NetworkAddress const& peerAddress,bool const& isTrustedPeer,InReadSocket const& inReadSocket,Future<Void> const& disconnect) 
+															#line 4512 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		 : Actor<void>(),
-		   DeliverActorState<DeliverActor>(self, destination, priority, reader, inReadSocket, disconnect)
+		   DeliverActorState<DeliverActor>(self, destination, priority, reader, peerAddress, isTrustedPeer, inReadSocket, disconnect)
 	{
 		fdb_probe_actor_enter("deliver", reinterpret_cast<unsigned long>(this), -1);
 		#ifdef ENABLE_SAMPLING
@@ -4402,23 +4524,24 @@ friend struct ActorCallback< DeliverActor, 0, Void >;
 	}
 };
 }
-															#line 937 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-static void deliver( TransportData* const& self, Endpoint const& destination, TaskPriority const& priority, ArenaReader const& reader, bool const& inReadSocket, Future<Void> const& disconnect ) {
-															#line 937 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-	new DeliverActor(self, destination, priority, reader, inReadSocket, disconnect);
-															#line 4409 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1022 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+static void deliver( TransportData* const& self, Endpoint const& destination, TaskPriority const& priority, ArenaReader const& reader, NetworkAddress const& peerAddress, bool const& isTrustedPeer, InReadSocket const& inReadSocket, Future<Void> const& disconnect ) {
+															#line 1022 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+	new DeliverActor(self, destination, priority, reader, peerAddress, isTrustedPeer, inReadSocket, disconnect);
+															#line 4531 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 }
 
-#line 998 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+#line 1104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 
 static void scanPackets(TransportData* transport,
                         uint8_t*& unprocessed_begin,
                         const uint8_t* e,
                         Arena& arena,
                         NetworkAddress const& peerAddress,
+                        bool isTrustedPeer,
                         ProtocolVersion peerProtocolVersion,
                         Future<Void> disconnect,
-                        bool isStableConnection) {
+                        IsStableConnection isStableConnection) {
 	// Find each complete packet in the given byte range and queue a ready task to deliver it.
 	// Remove the complete packets from the range by increasing unprocessed_begin.
 	// There won't be more than 64K of data plus one packet, so this shouldn't take a long time.
@@ -4453,14 +4576,26 @@ static void scanPackets(TransportData* transport,
 
 		if (e - p < packetLen)
 			break;
-		ASSERT(packetLen >= sizeof(UID));
+
+		if (packetLen < sizeof(UID)) {
+			if (g_network->isSimulated()) {
+				// Same as ASSERT(false), but prints packet length:
+				ASSERT_GE(packetLen, sizeof(UID));
+			} else {
+				TraceEvent(SevError, "PacketTooSmall")
+				    .detail("FromPeer", peerAddress.toString())
+				    .detail("Length", packetLen);
+				throw platform_error();
+			}
+		}
 
 		if (checksumEnabled) {
 			bool isBuggifyEnabled = false;
 			if (g_network->isSimulated() && !isStableConnection &&
-			    g_network->now() - g_simulator.lastConnectionFailure > g_simulator.connectionFailuresDisableDuration &&
+			    g_network->now() - g_simulator->lastConnectionFailure >
+			        g_simulator->connectionFailuresDisableDuration &&
 			    BUGGIFY_WITH_PROB(0.0001)) {
-				g_simulator.lastConnectionFailure = g_network->now();
+				g_simulator->lastConnectionFailure = g_network->now();
 				isBuggifyEnabled = true;
 				TraceEvent(SevInfo, "BitsFlip").log();
 				int flipBits = 32 - (int)floor(log2(deterministicRandom()->randomUInt32()));
@@ -4513,14 +4648,11 @@ static void scanPackets(TransportData* transport,
 		++transport->countPacketsReceived;
 
 		if (packetLen > FLOW_KNOBS->PACKET_WARNING) {
-			TraceEvent(transport->warnAlwaysForLargePacket ? SevWarnAlways : SevWarn, "LargePacketReceived")
+			TraceEvent(SevWarn, "LargePacketReceived")
 			    .suppressFor(1.0)
 			    .detail("FromPeer", peerAddress.toString())
 			    .detail("Length", (int)packetLen)
 			    .detail("Token", token);
-
-			if (g_network->isSimulated())
-				transport->warnAlwaysForLargePacket = false;
 		}
 
 		ASSERT(!reader.empty());
@@ -4532,7 +4664,14 @@ static void scanPackets(TransportData* transport,
 		// we have many messages to UnknownEndpoint we want to optimize earlier. As deliver is an actor it
 		// will allocate some state on the heap and this prevents it from doing that.
 		if (priority != TaskPriority::UnknownEndpoint || (token.first() & TOKEN_STREAM_FLAG) != 0) {
-			deliver(transport, Endpoint({ peerAddress }, token), priority, std::move(reader), true, disconnect);
+			deliver(transport,
+			        Endpoint({ peerAddress }, token),
+			        priority,
+			        std::move(reader),
+			        peerAddress,
+			        isTrustedPeer,
+			        InReadSocket::True,
+			        disconnect);
 		}
 
 		unprocessed_begin = p = p + packetLen;
@@ -4563,47 +4702,47 @@ static int getNewBufferSize(const uint8_t* begin,
 
 // This actor exists whenever there is an open or opening connection, whether incoming or outgoing
 // For incoming connections conn is set and peer is initially nullptr; for outgoing connections it is the reverse
-															#line 4566 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 4705 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 namespace {
 // This generated class is to be used only via connectionReader()
-															#line 1151 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1274 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 template <class ConnectionReaderActor>
-															#line 1151 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1274 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 class ConnectionReaderActorState {
-															#line 4573 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 4712 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 public:
-															#line 1151 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1274 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	ConnectionReaderActorState(TransportData* const& transport,Reference<IConnection> const& conn,Reference<Peer> const& peer,Promise<Reference<Peer>> const& onConnected) 
-															#line 1151 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-															#line 1151 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1274 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1274 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		 : transport(transport),
-															#line 1151 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1274 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		   conn(conn),
-															#line 1151 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1274 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		   peer(peer),
-															#line 1151 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1274 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		   onConnected(onConnected),
-															#line 1156 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1279 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		   arena(),
-															#line 1157 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1280 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		   unprocessed_begin(nullptr),
-															#line 1158 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1281 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		   unprocessed_end(nullptr),
-															#line 1159 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1282 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		   buffer_end(nullptr),
-															#line 1160 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1283 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		   expectConnectPacket(true),
-															#line 1161 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1284 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		   compatible(false),
-															#line 1162 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1285 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		   incompatiblePeerCounted(false),
-															#line 1163 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-		   incompatibleProtocolVersionNewer(false),
-															#line 1164 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1286 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		   peerAddress(),
-															#line 1165 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-		   peerProtocolVersion()
-															#line 4606 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1287 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+		   peerProtocolVersion(),
+															#line 1288 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+		   trusted(transport->allowList(conn->getPeerAddress().ip) && conn->hasTrustedPeer())
+															#line 4745 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 	{
 		fdb_probe_actor_create("connectionReader", reinterpret_cast<unsigned long>(this));
 
@@ -4616,20 +4755,20 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 1167 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1289 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			peerAddress = conn->getPeerAddress();
-															#line 1168 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1291 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			if (!peer)
-															#line 4623 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 4762 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			{
-															#line 1169 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1292 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				ASSERT(!peerAddress.isPublic());
-															#line 4627 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 4766 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			}
 			try {
-															#line 1172 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				;
-															#line 4632 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 4771 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 				loopDepth = a_body1loopHead1(loopDepth);
 			}
 			catch (Error& error) {
@@ -4657,19 +4796,19 @@ public:
 	int a_body1Catch2(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 1340 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1461 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			if (incompatiblePeerCounted)
-															#line 4662 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 4801 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			{
-															#line 1341 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1462 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				ASSERT(peer && peer->transport->numIncompatibleConnections > 0);
-															#line 1342 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1463 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				peer->transport->numIncompatibleConnections--;
-															#line 4668 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 4807 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			}
-															#line 1344 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1465 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			return a_body1Catch1(e, loopDepth);
-															#line 4672 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 4811 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		}
 		catch (Error& error) {
 			loopDepth = a_body1Catch1(error, loopDepth);
@@ -4688,25 +4827,25 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 1173 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1296 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		;
-															#line 4693 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 4832 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		loopDepth = a_body1loopBody1loopHead1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont1(int loopDepth) 
 	{
-															#line 1335 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1456 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		StrictFuture<Void> __when_expr_3 = conn->onReadable();
-															#line 1335 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1456 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (static_cast<ConnectionReaderActor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 4704 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 4843 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		if (__when_expr_3.isReady()) { if (__when_expr_3.isError()) return a_body1Catch2(__when_expr_3.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1cont1when1(__when_expr_3.get(), loopDepth); };
 		static_cast<ConnectionReaderActor*>(this)->actor_wait_state = 4;
-															#line 1335 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1456 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		__when_expr_3.addCallbackAndClear(static_cast<ActorCallback< ConnectionReaderActor, 3, Void >*>(static_cast<ConnectionReaderActor*>(this)));
-															#line 4709 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 4848 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -4720,45 +4859,45 @@ public:
 	}
 	int a_body1loopBody1loopBody1(int loopDepth) 
 	{
-															#line 1174 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1297 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		readAllBytes = buffer_end - unprocessed_end;
-															#line 1175 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1298 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (readAllBytes < FLOW_KNOBS->MIN_PACKET_BUFFER_FREE_BYTES)
-															#line 4727 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 4866 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		{
-															#line 1176 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1299 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			Arena newArena;
-															#line 1177 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1300 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			const int unproc_len = unprocessed_end - unprocessed_begin;
-															#line 1178 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1301 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			const int len = getNewBufferSize(unprocessed_begin, unprocessed_end, peerAddress, peerProtocolVersion);
-															#line 1180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1303 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			uint8_t* const newBuffer = new (newArena) uint8_t[len];
-															#line 1181 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1304 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			if (unproc_len > 0)
-															#line 4739 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 4878 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			{
-															#line 1182 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1305 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				memcpy(newBuffer, unprocessed_begin, unproc_len);
-															#line 4743 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 4882 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			}
-															#line 1184 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1307 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			arena = newArena;
-															#line 1185 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1308 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			unprocessed_begin = newBuffer;
-															#line 1186 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1309 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			unprocessed_end = newBuffer + unproc_len;
-															#line 1187 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1310 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			buffer_end = newBuffer + len;
-															#line 1188 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			readAllBytes = buffer_end - unprocessed_end;
-															#line 4755 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 4894 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		}
-															#line 1191 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1314 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		totalReadBytes = 0;
-															#line 1192 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1315 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		;
-															#line 4761 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 4900 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		loopDepth = a_body1loopBody1loopBody1loopHead1(loopDepth);
 
 		return loopDepth;
@@ -4778,200 +4917,194 @@ public:
 	}
 	int a_body1loopBody1loopBody1cont1(int loopDepth) 
 	{
-															#line 1203 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1326 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (peer)
-															#line 4783 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 4922 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		{
-															#line 1204 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1327 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			peer->bytesReceived += totalReadBytes;
-															#line 4787 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 4926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		}
-															#line 1206 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1329 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (totalReadBytes == 0)
-															#line 4791 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 4930 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		{
 			return a_body1loopBody1break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 1208 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1331 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		readWillBlock = totalReadBytes != readAllBytes;
-															#line 1210 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1333 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (expectConnectPacket && unprocessed_end - unprocessed_begin >= CONNECT_PACKET_V0_SIZE)
-															#line 4799 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 4938 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		{
-															#line 1213 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			int32_t connectPacketSize = ((ConnectPacket*)unprocessed_begin)->totalPacketSize();
-															#line 1214 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1337 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			if (unprocessed_end - unprocessed_begin >= connectPacketSize)
-															#line 4805 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 4944 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			{
-															#line 1215 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1338 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				auto protocolVersion = ((ConnectPacket*)unprocessed_begin)->protocolVersion;
-															#line 1216 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1339 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				BinaryReader pktReader(unprocessed_begin, connectPacketSize, AssumeVersion(protocolVersion));
-															#line 1217 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1340 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				ConnectPacket pkt;
-															#line 1218 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1341 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				serializer(pktReader, pkt);
-															#line 1220 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1343 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				uint64_t connectionId = pkt.connectionId;
-															#line 1221 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1344 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				if (!pkt.protocolVersion.hasObjectSerializerFlag() || !pkt.protocolVersion.isCompatible(g_network->protocolVersion()))
-															#line 4819 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 4958 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 				{
-															#line 1223 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-					incompatibleProtocolVersionNewer = pkt.protocolVersion > g_network->protocolVersion();
-															#line 1224 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1346 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 					NetworkAddress addr = pkt.canonicalRemotePort ? NetworkAddress(pkt.canonicalRemoteIp(), pkt.canonicalRemotePort) : conn->getPeerAddress();
-															#line 1227 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1349 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 					if (connectionId != 1)
-															#line 4827 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 4964 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 					{
-															#line 1228 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1350 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 						addr.port = 0;
-															#line 4831 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 4968 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 					}
-															#line 1230 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1352 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 					if (!transport->multiVersionConnections.count(connectionId))
-															#line 4835 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 4972 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 					{
-															#line 1231 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1353 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 						if (now() - transport->lastIncompatibleMessage > FLOW_KNOBS->CONNECTION_REJECTED_MESSAGE_DELAY)
-															#line 4839 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 4976 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 						{
-															#line 1233 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1355 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 							TraceEvent(SevWarn, "ConnectionRejected", conn->getDebugID()) .detail("Reason", "IncompatibleProtocolVersion") .detail("LocalVersion", g_network->protocolVersion()) .detail("RejectedVersion", pkt.protocolVersion) .detail("Peer", pkt.canonicalRemotePort ? NetworkAddress(pkt.canonicalRemoteIp(), pkt.canonicalRemotePort) : conn->getPeerAddress()) .detail("ConnectionId", connectionId);
-															#line 1242 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1364 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 							transport->lastIncompatibleMessage = now();
-															#line 4845 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 4982 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 						}
-															#line 1244 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1366 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 						if (!transport->incompatiblePeers.count(addr))
-															#line 4849 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 4986 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 						{
-															#line 1245 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1367 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 							transport->incompatiblePeers[addr] = std::make_pair(connectionId, now());
-															#line 4853 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 4990 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 						}
 					}
 					else
 					{
-															#line 1247 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1369 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 						if (connectionId > 1)
-															#line 4860 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 4997 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 						{
-															#line 1248 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1370 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 							transport->multiVersionConnections[connectionId] = now() + FLOW_KNOBS->CONNECTION_ID_TIMEOUT;
-															#line 4864 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5001 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 						}
 					}
-															#line 1251 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1373 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 					compatible = false;
-															#line 1252 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1374 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 					if (!protocolVersion.hasInexpensiveMultiVersionClient())
-															#line 4871 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5008 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 					{
-															#line 1253 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1375 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 						if (peer)
-															#line 4875 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5012 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 						{
-															#line 1254 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1376 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 							peer->protocolVersion->set(protocolVersion);
-															#line 4879 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5016 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 						}
-															#line 1259 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1381 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 						return a_body1Catch2(incompatible_protocol_version(), std::max(0, loopDepth - 2));
-															#line 4883 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5020 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 					}
 				}
 				else
 				{
-															#line 1262 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1384 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 					compatible = true;
-															#line 1263 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1385 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 					TraceEvent("ConnectionEstablished", conn->getDebugID()) .suppressFor(1.0) .detail("Peer", conn->getPeerAddress()) .detail("ConnectionId", connectionId);
-															#line 4892 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5029 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 				}
-															#line 1269 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1391 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				if (connectionId > 1)
-															#line 4896 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5033 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 				{
-															#line 1270 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1392 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 					transport->multiVersionConnections[connectionId] = now() + FLOW_KNOBS->CONNECTION_ID_TIMEOUT;
-															#line 4900 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5037 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 				}
-															#line 1273 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1395 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				unprocessed_begin += connectPacketSize;
-															#line 1274 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1396 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				expectConnectPacket = false;
-															#line 1276 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1398 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				if (peer)
-															#line 4908 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5045 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 				{
-															#line 1277 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1399 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 					peerProtocolVersion = protocolVersion;
-															#line 1279 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1401 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 					TraceEvent("ConnectedOutgoing") .suppressFor(1.0) .detail("PeerAddr", NetworkAddress(pkt.canonicalRemoteIp(), pkt.canonicalRemotePort));
-															#line 1282 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1404 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 					peer->compatible = compatible;
-															#line 1283 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-					peer->incompatibleProtocolVersionNewer = incompatibleProtocolVersionNewer;
-															#line 1284 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1405 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 					if (!compatible)
-															#line 4920 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5055 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 					{
-															#line 1285 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1406 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 						peer->transport->numIncompatibleConnections++;
-															#line 1286 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1407 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 						incompatiblePeerCounted = true;
-															#line 4926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5061 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 					}
-															#line 1288 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1409 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 					ASSERT(pkt.canonicalRemotePort == peerAddress.port);
-															#line 1289 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1410 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 					onConnected.send(peer);
-															#line 4932 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5067 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 					loopDepth = a_body1loopBody1loopBody1cont8(loopDepth);
 				}
 				else
 				{
-															#line 1291 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1412 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 					peerProtocolVersion = protocolVersion;
-															#line 1292 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1413 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 					if (pkt.canonicalRemotePort)
-															#line 4941 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5076 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 					{
-															#line 1293 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1414 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 						peerAddress = NetworkAddress(pkt.canonicalRemoteIp(), pkt.canonicalRemotePort, true, peerAddress.isTLS(), NetworkAddressFromHostname(peerAddress.fromHostname));
-															#line 4945 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5080 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 					}
-															#line 1299 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1420 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 					peer = transport->getOrOpenPeer(peerAddress, false);
-															#line 1300 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1421 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 					peer->compatible = compatible;
-															#line 1301 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-					peer->incompatibleProtocolVersionNewer = incompatibleProtocolVersionNewer;
-															#line 1302 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1422 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 					if (!compatible)
-															#line 4955 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5088 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 					{
-															#line 1303 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1423 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 						peer->transport->numIncompatibleConnections++;
-															#line 1304 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1424 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 						incompatiblePeerCounted = true;
-															#line 4961 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5094 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 					}
-															#line 1306 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1426 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 					onConnected.send(peer);
-															#line 1307 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1427 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 					StrictFuture<Void> __when_expr_1 = delay(0);
-															#line 1307 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1427 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 					if (static_cast<ConnectionReaderActor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), std::max(0, loopDepth - 2));
-															#line 4969 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5102 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 					if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch2(__when_expr_1.getError(), std::max(0, loopDepth - 2)); else return a_body1loopBody1loopBody1cont1when1(__when_expr_1.get(), loopDepth); };
 					static_cast<ConnectionReaderActor*>(this)->actor_wait_state = 2;
-															#line 1307 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1427 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 					__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< ConnectionReaderActor, 1, Void >*>(static_cast<ConnectionReaderActor*>(this)));
-															#line 4974 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5107 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 					loopDepth = 0;
 				}
 			}
@@ -4996,32 +5129,32 @@ public:
 	}
 	int a_body1loopBody1loopBody1loopBody1(int loopDepth) 
 	{
-															#line 1193 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1316 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		const int len = std::min<int>(buffer_end - unprocessed_end, FLOW_KNOBS->MAX_PACKET_SEND_BYTES);
-															#line 1194 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1317 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (len == 0)
-															#line 5003 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5136 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		{
 			return a_body1loopBody1loopBody1break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 1196 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1319 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		readBytes = conn->read(unprocessed_end, unprocessed_end + len);
-															#line 1197 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1320 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (readBytes == 0)
-															#line 5011 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5144 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		{
 			return a_body1loopBody1loopBody1break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 1199 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1322 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		StrictFuture<Void> __when_expr_0 = yield(TaskPriority::ReadSocket);
-															#line 1199 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1322 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (static_cast<ConnectionReaderActor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), std::max(0, loopDepth - 3));
-															#line 5019 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5152 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch2(__when_expr_0.getError(), std::max(0, loopDepth - 3)); else return a_body1loopBody1loopBody1loopBody1when1(__when_expr_0.get(), loopDepth); };
 		static_cast<ConnectionReaderActor*>(this)->actor_wait_state = 1;
-															#line 1199 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1322 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ConnectionReaderActor, 0, Void >*>(static_cast<ConnectionReaderActor*>(this)));
-															#line 5024 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5157 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -5041,22 +5174,22 @@ public:
 	}
 	int a_body1loopBody1loopBody1loopBody1cont1(Void const& _,int loopDepth) 
 	{
-															#line 1200 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1323 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		totalReadBytes += readBytes;
-															#line 1201 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1324 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		unprocessed_end += readBytes;
-															#line 5048 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5181 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		if (loopDepth == 0) return a_body1loopBody1loopBody1loopHead1(0);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1loopBody1loopBody1cont1(Void && _,int loopDepth) 
 	{
-															#line 1200 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1323 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		totalReadBytes += readBytes;
-															#line 1201 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1324 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		unprocessed_end += readBytes;
-															#line 5059 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5192 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		if (loopDepth == 0) return a_body1loopBody1loopBody1loopHead1(0);
 
 		return loopDepth;
@@ -5126,43 +5259,43 @@ public:
 	}
 	int a_body1loopBody1loopBody1cont4(int loopDepth) 
 	{
-															#line 1313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1433 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (!expectConnectPacket)
-															#line 5131 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5264 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		{
-															#line 1314 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1434 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			if (compatible || peerProtocolVersion.hasStableInterfaces())
-															#line 5135 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5268 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			{
-															#line 1315 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-				scanPackets(transport, unprocessed_begin, unprocessed_end, arena, peerAddress, peerProtocolVersion, peer->disconnect.getFuture(), g_network->isSimulated() && conn->isStableConnection());
-															#line 5139 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1435 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+				scanPackets(transport, unprocessed_begin, unprocessed_end, arena, peerAddress, trusted, peerProtocolVersion, peer->disconnect.getFuture(), IsStableConnection(g_network->isSimulated() && conn->isStableConnection()));
+															#line 5272 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			}
 			else
 			{
-															#line 1324 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1445 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				unprocessed_begin = unprocessed_end;
-															#line 1325 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1446 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				peer->resetPing.trigger();
-															#line 5147 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5280 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			}
 		}
-															#line 1329 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1450 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (readWillBlock)
-															#line 5152 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5285 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		{
 			return a_body1loopBody1break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 1332 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1453 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		StrictFuture<Void> __when_expr_2 = yield(TaskPriority::ReadSocket);
-															#line 1332 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1453 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (static_cast<ConnectionReaderActor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), std::max(0, loopDepth - 2));
-															#line 5160 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5293 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch2(__when_expr_2.getError(), std::max(0, loopDepth - 2)); else return a_body1loopBody1loopBody1cont4when1(__when_expr_2.get(), loopDepth); };
 		static_cast<ConnectionReaderActor*>(this)->actor_wait_state = 3;
-															#line 1332 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1453 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< ConnectionReaderActor, 2, Void >*>(static_cast<ConnectionReaderActor*>(this)));
-															#line 5165 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5298 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -5175,9 +5308,9 @@ public:
 	}
 	int a_body1loopBody1loopBody1cont8(int loopDepth) 
 	{
-															#line 1309 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1429 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		peer->protocolVersion->set(peerProtocolVersion);
-															#line 5180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		loopDepth = a_body1loopBody1loopBody1cont7(loopDepth);
 
 		return loopDepth;
@@ -5334,32 +5467,32 @@ public:
 	}
 	int a_body1loopBody1cont2(Void const& _,int loopDepth) 
 	{
-															#line 1336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1457 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		StrictFuture<Void> __when_expr_4 = delay(0, TaskPriority::ReadSocket);
-															#line 1336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1457 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (static_cast<ConnectionReaderActor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 5341 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5474 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		if (__when_expr_4.isReady()) { if (__when_expr_4.isError()) return a_body1Catch2(__when_expr_4.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1cont2when1(__when_expr_4.get(), loopDepth); };
 		static_cast<ConnectionReaderActor*>(this)->actor_wait_state = 5;
-															#line 1336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1457 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		__when_expr_4.addCallbackAndClear(static_cast<ActorCallback< ConnectionReaderActor, 4, Void >*>(static_cast<ConnectionReaderActor*>(this)));
-															#line 5346 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5479 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont2(Void && _,int loopDepth) 
 	{
-															#line 1336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1457 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		StrictFuture<Void> __when_expr_4 = delay(0, TaskPriority::ReadSocket);
-															#line 1336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1457 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (static_cast<ConnectionReaderActor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 5357 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5490 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		if (__when_expr_4.isReady()) { if (__when_expr_4.isError()) return a_body1Catch2(__when_expr_4.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1cont2when1(__when_expr_4.get(), loopDepth); };
 		static_cast<ConnectionReaderActor*>(this)->actor_wait_state = 5;
-															#line 1336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1457 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		__when_expr_4.addCallbackAndClear(static_cast<ActorCallback< ConnectionReaderActor, 4, Void >*>(static_cast<ConnectionReaderActor*>(this)));
-															#line 5362 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5495 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -5502,48 +5635,48 @@ public:
 		fdb_probe_actor_exit("connectionReader", reinterpret_cast<unsigned long>(this), 4);
 
 	}
-															#line 1151 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1274 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	TransportData* transport;
-															#line 1151 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1274 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	Reference<IConnection> conn;
-															#line 1151 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1274 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	Reference<Peer> peer;
-															#line 1151 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1274 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	Promise<Reference<Peer>> onConnected;
-															#line 1156 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1279 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	Arena arena;
-															#line 1157 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1280 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	uint8_t* unprocessed_begin;
-															#line 1158 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1281 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	uint8_t* unprocessed_end;
-															#line 1159 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1282 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	uint8_t* buffer_end;
-															#line 1160 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1283 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	bool expectConnectPacket;
-															#line 1161 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1284 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	bool compatible;
-															#line 1162 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1285 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	bool incompatiblePeerCounted;
-															#line 1163 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-	bool incompatibleProtocolVersionNewer;
-															#line 1164 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1286 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	NetworkAddress peerAddress;
-															#line 1165 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1287 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	ProtocolVersion peerProtocolVersion;
-															#line 1174 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1288 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+	bool trusted;
+															#line 1297 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	int readAllBytes;
-															#line 1191 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1314 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	int totalReadBytes;
-															#line 1196 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1319 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	int readBytes;
-															#line 1208 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1331 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	bool readWillBlock;
-															#line 5541 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5674 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 };
 // This generated class is to be used only via connectionReader()
-															#line 1151 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1274 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 class ConnectionReaderActor final : public Actor<Void>, public ActorCallback< ConnectionReaderActor, 0, Void >, public ActorCallback< ConnectionReaderActor, 1, Void >, public ActorCallback< ConnectionReaderActor, 2, Void >, public ActorCallback< ConnectionReaderActor, 3, Void >, public ActorCallback< ConnectionReaderActor, 4, Void >, public FastAllocated<ConnectionReaderActor>, public ConnectionReaderActorState<ConnectionReaderActor> {
-															#line 5546 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5679 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 public:
 	using FastAllocated<ConnectionReaderActor>::operator new;
 	using FastAllocated<ConnectionReaderActor>::operator delete;
@@ -5556,9 +5689,9 @@ friend struct ActorCallback< ConnectionReaderActor, 1, Void >;
 friend struct ActorCallback< ConnectionReaderActor, 2, Void >;
 friend struct ActorCallback< ConnectionReaderActor, 3, Void >;
 friend struct ActorCallback< ConnectionReaderActor, 4, Void >;
-															#line 1151 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1274 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	ConnectionReaderActor(TransportData* const& transport,Reference<IConnection> const& conn,Reference<Peer> const& peer,Promise<Reference<Peer>> const& onConnected) 
-															#line 5561 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5694 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		 : Actor<Void>(),
 		   ConnectionReaderActorState<ConnectionReaderActor>(transport, conn, peer, onConnected)
 	{
@@ -5586,32 +5719,32 @@ friend struct ActorCallback< ConnectionReaderActor, 4, Void >;
 	}
 };
 }
-															#line 1151 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1274 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 [[nodiscard]] static Future<Void> connectionReader( TransportData* const& transport, Reference<IConnection> const& conn, Reference<Peer> const& peer, Promise<Reference<Peer>> const& onConnected ) {
-															#line 1151 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1274 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	return Future<Void>(new ConnectionReaderActor(transport, conn, peer, onConnected));
-															#line 5593 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5726 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 }
 
-#line 1347 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+#line 1468 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 
-															#line 5598 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5731 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 namespace {
 // This generated class is to be used only via connectionIncoming()
-															#line 1348 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1469 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 template <class ConnectionIncomingActor>
-															#line 1348 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1469 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 class ConnectionIncomingActorState {
-															#line 5605 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5738 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 public:
-															#line 1348 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1469 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	ConnectionIncomingActorState(TransportData* const& self,Reference<IConnection> const& conn) 
-															#line 1348 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-															#line 1348 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1469 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1469 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		 : self(self),
-															#line 1348 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1469 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		   conn(conn)
-															#line 5614 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5747 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 	{
 		fdb_probe_actor_create("connectionIncoming", reinterpret_cast<unsigned long>(this));
 
@@ -5625,16 +5758,16 @@ public:
 	{
 		try {
 			try {
-															#line 1350 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1471 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				StrictFuture<Void> __when_expr_0 = conn->acceptHandshake();
-															#line 1350 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1471 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				if (static_cast<ConnectionIncomingActor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), loopDepth);
-															#line 5632 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5765 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 				if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch2(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 				static_cast<ConnectionIncomingActor*>(this)->actor_wait_state = 1;
-															#line 1350 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1471 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ConnectionIncomingActor, 0, Void >*>(static_cast<ConnectionIncomingActor*>(this)));
-															#line 5637 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5770 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 				loopDepth = 0;
 			}
 			catch (Error& error) {
@@ -5662,19 +5795,19 @@ public:
 	int a_body1Catch2(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 1368 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1489 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			if (e.code() != error_code_actor_cancelled)
-															#line 5667 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5800 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			{
-															#line 1369 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1490 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				TraceEvent("IncomingConnectionError", conn->getDebugID()) .errorUnsuppressed(e) .suppressFor(1.0) .detail("FromAddress", conn->getPeerAddress());
-															#line 5671 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5804 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			}
-															#line 1374 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1495 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			conn->close();
-															#line 1375 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1496 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			if (!static_cast<ConnectionIncomingActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~ConnectionIncomingActorState(); static_cast<ConnectionIncomingActor*>(this)->destroy(); return 0; }
-															#line 5677 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5810 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			new (&static_cast<ConnectionIncomingActor*>(this)->SAV< Void >::value()) Void(Void());
 			this->~ConnectionIncomingActorState();
 			static_cast<ConnectionIncomingActor*>(this)->finishSendAndDelPromiseRef();
@@ -5690,64 +5823,64 @@ public:
 	}
 	int a_body1cont2(Void const& _,int loopDepth) 
 	{
-															#line 1351 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1472 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		onConnected = Promise<Reference<Peer>>();
-															#line 1352 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1473 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		reader = connectionReader(self, conn, Reference<Peer>(), onConnected);
-															#line 1354 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1475 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = reader;
-															#line 1353 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1474 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (static_cast<ConnectionIncomingActor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), loopDepth);
-															#line 5701 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5834 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch2(__when_expr_1.getError(), loopDepth); else return a_body1cont2when1(__when_expr_1.get(), loopDepth); };
-															#line 1358 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1479 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		StrictFuture<Reference<Peer>> __when_expr_2 = onConnected.getFuture();
-															#line 5705 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5838 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch2(__when_expr_2.getError(), loopDepth); else return a_body1cont2when2(__when_expr_2.get(), loopDepth); };
-															#line 1361 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1482 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		StrictFuture<Void> __when_expr_3 = delayJittered(FLOW_KNOBS->CONNECTION_MONITOR_TIMEOUT);
-															#line 5709 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5842 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		if (__when_expr_3.isReady()) { if (__when_expr_3.isError()) return a_body1Catch2(__when_expr_3.getError(), loopDepth); else return a_body1cont2when3(__when_expr_3.get(), loopDepth); };
 		static_cast<ConnectionIncomingActor*>(this)->actor_wait_state = 2;
-															#line 1354 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1475 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< ConnectionIncomingActor, 1, Void >*>(static_cast<ConnectionIncomingActor*>(this)));
-															#line 1358 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1479 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< ConnectionIncomingActor, 2, Reference<Peer> >*>(static_cast<ConnectionIncomingActor*>(this)));
-															#line 1361 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1482 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		__when_expr_3.addCallbackAndClear(static_cast<ActorCallback< ConnectionIncomingActor, 3, Void >*>(static_cast<ConnectionIncomingActor*>(this)));
-															#line 5718 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5851 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont2(Void && _,int loopDepth) 
 	{
-															#line 1351 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1472 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		onConnected = Promise<Reference<Peer>>();
-															#line 1352 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1473 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		reader = connectionReader(self, conn, Reference<Peer>(), onConnected);
-															#line 1354 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1475 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = reader;
-															#line 1353 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1474 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (static_cast<ConnectionIncomingActor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), loopDepth);
-															#line 5733 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5866 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch2(__when_expr_1.getError(), loopDepth); else return a_body1cont2when1(__when_expr_1.get(), loopDepth); };
-															#line 1358 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1479 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		StrictFuture<Reference<Peer>> __when_expr_2 = onConnected.getFuture();
-															#line 5737 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5870 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch2(__when_expr_2.getError(), loopDepth); else return a_body1cont2when2(__when_expr_2.get(), loopDepth); };
-															#line 1361 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1482 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		StrictFuture<Void> __when_expr_3 = delayJittered(FLOW_KNOBS->CONNECTION_MONITOR_TIMEOUT);
-															#line 5741 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5874 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		if (__when_expr_3.isReady()) { if (__when_expr_3.isError()) return a_body1Catch2(__when_expr_3.getError(), loopDepth); else return a_body1cont2when3(__when_expr_3.get(), loopDepth); };
 		static_cast<ConnectionIncomingActor*>(this)->actor_wait_state = 2;
-															#line 1354 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1475 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< ConnectionIncomingActor, 1, Void >*>(static_cast<ConnectionIncomingActor*>(this)));
-															#line 1358 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1479 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< ConnectionIncomingActor, 2, Reference<Peer> >*>(static_cast<ConnectionIncomingActor*>(this)));
-															#line 1361 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1482 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		__when_expr_3.addCallbackAndClear(static_cast<ActorCallback< ConnectionIncomingActor, 3, Void >*>(static_cast<ConnectionIncomingActor*>(this)));
-															#line 5750 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5883 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -5817,9 +5950,9 @@ public:
 	}
 	int a_body1cont3(int loopDepth) 
 	{
-															#line 1366 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1487 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (!static_cast<ConnectionIncomingActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~ConnectionIncomingActorState(); static_cast<ConnectionIncomingActor*>(this)->destroy(); return 0; }
-															#line 5822 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5955 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		new (&static_cast<ConnectionIncomingActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~ConnectionIncomingActorState();
 		static_cast<ConnectionIncomingActor*>(this)->finishSendAndDelPromiseRef();
@@ -5829,11 +5962,11 @@ public:
 	}
 	int a_body1cont2when1(Void const& _,int loopDepth) 
 	{
-															#line 1355 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1476 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		ASSERT(false);
-															#line 1356 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1477 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (!static_cast<ConnectionIncomingActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~ConnectionIncomingActorState(); static_cast<ConnectionIncomingActor*>(this)->destroy(); return 0; }
-															#line 5836 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5969 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		new (&static_cast<ConnectionIncomingActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~ConnectionIncomingActorState();
 		static_cast<ConnectionIncomingActor*>(this)->finishSendAndDelPromiseRef();
@@ -5843,11 +5976,11 @@ public:
 	}
 	int a_body1cont2when1(Void && _,int loopDepth) 
 	{
-															#line 1355 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1476 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		ASSERT(false);
-															#line 1356 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1477 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (!static_cast<ConnectionIncomingActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~ConnectionIncomingActorState(); static_cast<ConnectionIncomingActor*>(this)->destroy(); return 0; }
-															#line 5850 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5983 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		new (&static_cast<ConnectionIncomingActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~ConnectionIncomingActorState();
 		static_cast<ConnectionIncomingActor*>(this)->finishSendAndDelPromiseRef();
@@ -5857,39 +5990,39 @@ public:
 	}
 	int a_body1cont2when2(Reference<Peer> const& p,int loopDepth) 
 	{
-															#line 1359 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1480 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		p->onIncomingConnection(p, conn, reader);
-															#line 5862 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 5995 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		loopDepth = a_body1cont3(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1cont2when2(Reference<Peer> && p,int loopDepth) 
 	{
-															#line 1359 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1480 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		p->onIncomingConnection(p, conn, reader);
-															#line 5871 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6004 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		loopDepth = a_body1cont3(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1cont2when3(Void const& _,int loopDepth) 
 	{
-															#line 1362 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-		TEST(true);
-															#line 1363 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1483 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+		CODE_PROBE(true, "Incoming connection timed out");
+															#line 1484 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		return a_body1Catch2(timed_out(), loopDepth);
-															#line 5882 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6015 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 
 		return loopDepth;
 	}
 	int a_body1cont2when3(Void && _,int loopDepth) 
 	{
-															#line 1362 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-		TEST(true);
-															#line 1363 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1483 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+		CODE_PROBE(true, "Incoming connection timed out");
+															#line 1484 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		return a_body1Catch2(timed_out(), loopDepth);
-															#line 5892 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6025 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 
 		return loopDepth;
 	}
@@ -6036,20 +6169,20 @@ public:
 		fdb_probe_actor_exit("connectionIncoming", reinterpret_cast<unsigned long>(this), 3);
 
 	}
-															#line 1348 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1469 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	TransportData* self;
-															#line 1348 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1469 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	Reference<IConnection> conn;
-															#line 1351 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1472 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	Promise<Reference<Peer>> onConnected;
-															#line 1352 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1473 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	Future<Void> reader;
-															#line 6047 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 };
 // This generated class is to be used only via connectionIncoming()
-															#line 1348 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1469 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 class ConnectionIncomingActor final : public Actor<Void>, public ActorCallback< ConnectionIncomingActor, 0, Void >, public ActorCallback< ConnectionIncomingActor, 1, Void >, public ActorCallback< ConnectionIncomingActor, 2, Reference<Peer> >, public ActorCallback< ConnectionIncomingActor, 3, Void >, public FastAllocated<ConnectionIncomingActor>, public ConnectionIncomingActorState<ConnectionIncomingActor> {
-															#line 6052 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6185 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 public:
 	using FastAllocated<ConnectionIncomingActor>::operator new;
 	using FastAllocated<ConnectionIncomingActor>::operator delete;
@@ -6061,9 +6194,9 @@ friend struct ActorCallback< ConnectionIncomingActor, 0, Void >;
 friend struct ActorCallback< ConnectionIncomingActor, 1, Void >;
 friend struct ActorCallback< ConnectionIncomingActor, 2, Reference<Peer> >;
 friend struct ActorCallback< ConnectionIncomingActor, 3, Void >;
-															#line 1348 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1469 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	ConnectionIncomingActor(TransportData* const& self,Reference<IConnection> const& conn) 
-															#line 6066 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6199 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		 : Actor<Void>(),
 		   ConnectionIncomingActorState<ConnectionIncomingActor>(self, conn)
 	{
@@ -6088,36 +6221,36 @@ friend struct ActorCallback< ConnectionIncomingActor, 3, Void >;
 	}
 };
 }
-															#line 1348 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1469 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 [[nodiscard]] static Future<Void> connectionIncoming( TransportData* const& self, Reference<IConnection> const& conn ) {
-															#line 1348 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1469 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	return Future<Void>(new ConnectionIncomingActor(self, conn));
-															#line 6095 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6228 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 }
 
-#line 1378 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+#line 1499 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 
-															#line 6100 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6233 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 namespace {
 // This generated class is to be used only via listen()
-															#line 1379 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1500 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 template <class ListenActor>
-															#line 1379 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1500 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 class ListenActorState {
-															#line 6107 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6240 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 public:
-															#line 1379 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1500 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	ListenActorState(TransportData* const& self,NetworkAddress const& listenAddr) 
-															#line 1379 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-															#line 1379 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1500 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1500 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		 : self(self),
-															#line 1379 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1500 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		   listenAddr(listenAddr),
-															#line 1380 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1501 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		   incoming(),
-															#line 1382 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1503 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		   listener(INetworkConnections::net()->listen(listenAddr))
-															#line 6120 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6253 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 	{
 		fdb_probe_actor_create("listen", reinterpret_cast<unsigned long>(this));
 
@@ -6130,23 +6263,25 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 1383 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-			if (!g_network->isSimulated() && self->localAddresses.address.port == 0)
-															#line 6135 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1504 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+			if (!g_network->isSimulated() && self->localAddresses.getAddressList().address.port == 0)
+															#line 6268 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			{
-															#line 1384 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1505 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				TraceEvent(SevInfo, "UpdatingListenAddress") .detail("AssignedListenAddress", listener->getListenAddress().toString());
-															#line 1386 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-				self->localAddresses.address = listener->getListenAddress();
-															#line 6141 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 1507 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+				self->localAddresses.setNetworkAddress(listener->getListenAddress());
+															#line 1508 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+				setTraceLocalAddress(listener->getListenAddress());
+															#line 6276 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			}
-															#line 1388 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1510 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			connectionCount = 0;
-															#line 6145 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6280 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			try {
-															#line 1390 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1512 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				;
-															#line 6149 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6284 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 				loopDepth = a_body1loopHead1(loopDepth);
 			}
 			catch (Error& error) {
@@ -6174,11 +6309,11 @@ public:
 	int a_body1Catch2(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 1405 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1527 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			TraceEvent(SevError, "ListenError").error(e);
-															#line 1406 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1528 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			return a_body1Catch1(e, loopDepth);
-															#line 6181 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6316 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		}
 		catch (Error& error) {
 			loopDepth = a_body1Catch1(error, loopDepth);
@@ -6197,48 +6332,48 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 1391 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1513 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		StrictFuture<Reference<IConnection>> __when_expr_0 = listener->accept();
-															#line 1391 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1513 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (static_cast<ListenActor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 6204 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6339 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch2(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 		static_cast<ListenActor*>(this)->actor_wait_state = 1;
-															#line 1391 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1513 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ListenActor, 0, Reference<IConnection> >*>(static_cast<ListenActor*>(this)));
-															#line 6209 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6344 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont1(Reference<IConnection> const& conn,int loopDepth) 
 	{
-															#line 1392 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1514 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (conn)
-															#line 6218 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6353 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		{
-															#line 1393 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1515 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			TraceEvent("ConnectionFrom", conn->getDebugID()) .suppressFor(1.0) .detail("FromAddress", conn->getPeerAddress()) .detail("ListenAddress", listenAddr.toString());
-															#line 1397 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1519 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			incoming.add(connectionIncoming(self, conn));
-															#line 6224 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6359 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		}
-															#line 1399 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1521 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		connectionCount++;
-															#line 1400 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1522 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (connectionCount % (FLOW_KNOBS->ACCEPT_BATCH_SIZE) == 0)
-															#line 6230 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6365 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		{
-															#line 1401 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1523 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			StrictFuture<Void> __when_expr_1 = delay(0, TaskPriority::AcceptSocket);
-															#line 1401 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1523 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			if (static_cast<ListenActor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 6236 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6371 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch2(__when_expr_1.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1cont1when1(__when_expr_1.get(), loopDepth); };
 			static_cast<ListenActor*>(this)->actor_wait_state = 2;
-															#line 1401 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1523 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< ListenActor, 1, Void >*>(static_cast<ListenActor*>(this)));
-															#line 6241 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6376 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			loopDepth = 0;
 		}
 		else
@@ -6250,32 +6385,32 @@ public:
 	}
 	int a_body1loopBody1cont1(Reference<IConnection> && conn,int loopDepth) 
 	{
-															#line 1392 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1514 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (conn)
-															#line 6255 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6390 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		{
-															#line 1393 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1515 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			TraceEvent("ConnectionFrom", conn->getDebugID()) .suppressFor(1.0) .detail("FromAddress", conn->getPeerAddress()) .detail("ListenAddress", listenAddr.toString());
-															#line 1397 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1519 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			incoming.add(connectionIncoming(self, conn));
-															#line 6261 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6396 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		}
-															#line 1399 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1521 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		connectionCount++;
-															#line 1400 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1522 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (connectionCount % (FLOW_KNOBS->ACCEPT_BATCH_SIZE) == 0)
-															#line 6267 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6402 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		{
-															#line 1401 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1523 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			StrictFuture<Void> __when_expr_1 = delay(0, TaskPriority::AcceptSocket);
-															#line 1401 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1523 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			if (static_cast<ListenActor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 6273 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6408 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch2(__when_expr_1.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1cont1when1(__when_expr_1.get(), loopDepth); };
 			static_cast<ListenActor*>(this)->actor_wait_state = 2;
-															#line 1401 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1523 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< ListenActor, 1, Void >*>(static_cast<ListenActor*>(this)));
-															#line 6278 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6413 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			loopDepth = 0;
 		}
 		else
@@ -6429,22 +6564,22 @@ public:
 		fdb_probe_actor_exit("listen", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 1379 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1500 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	TransportData* self;
-															#line 1379 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1500 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	NetworkAddress listenAddr;
-															#line 1380 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1501 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	ActorCollectionNoErrors incoming;
-															#line 1382 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1503 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	Reference<IListener> listener;
-															#line 1388 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1510 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	uint64_t connectionCount;
-															#line 6442 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6577 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 };
 // This generated class is to be used only via listen()
-															#line 1379 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1500 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 class ListenActor final : public Actor<Void>, public ActorCallback< ListenActor, 0, Reference<IConnection> >, public ActorCallback< ListenActor, 1, Void >, public FastAllocated<ListenActor>, public ListenActorState<ListenActor> {
-															#line 6447 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6582 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 public:
 	using FastAllocated<ListenActor>::operator new;
 	using FastAllocated<ListenActor>::operator delete;
@@ -6454,9 +6589,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< ListenActor, 0, Reference<IConnection> >;
 friend struct ActorCallback< ListenActor, 1, Void >;
-															#line 1379 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1500 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	ListenActor(TransportData* const& self,NetworkAddress const& listenAddr) 
-															#line 6459 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6594 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		 : Actor<Void>(),
 		   ListenActorState<ListenActor>(self, listenAddr)
 	{
@@ -6481,14 +6616,14 @@ friend struct ActorCallback< ListenActor, 1, Void >;
 	}
 };
 }
-															#line 1379 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1500 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 [[nodiscard]] static Future<Void> listen( TransportData* const& self, NetworkAddress const& listenAddr ) {
-															#line 1379 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1500 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	return Future<Void>(new ListenActor(self, listenAddr));
-															#line 6488 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6623 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 }
 
-#line 1409 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+#line 1531 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 
 Reference<Peer> TransportData::getPeer(NetworkAddress const& address) {
 	auto peer = peers.find(address);
@@ -6515,25 +6650,47 @@ Reference<Peer> TransportData::getOrOpenPeer(NetworkAddress const& address, bool
 }
 
 bool TransportData::isLocalAddress(const NetworkAddress& address) const {
-	return address == localAddresses.address ||
-	       (localAddresses.secondaryAddress.present() && address == localAddresses.secondaryAddress.get());
+	return address == localAddresses.getAddressList().address ||
+	       (localAddresses.getAddressList().secondaryAddress.present() &&
+	        address == localAddresses.getAddressList().secondaryAddress.get());
 }
 
-															#line 6522 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+void TransportData::applyPublicKeySet(StringRef jwkSetString) {
+	auto jwks = JsonWebKeySet::parse(jwkSetString, {});
+	if (!jwks.present())
+		throw pkey_decode_error();
+	const auto& keySet = jwks.get().keys;
+	publicKeys.clear();
+	int numPrivateKeys = 0;
+	for (auto [keyName, key] : keySet) {
+		// ignore private keys
+		if (key.isPublic()) {
+			publicKeys[keyName] = key.getPublic();
+		} else {
+			numPrivateKeys++;
+		}
+	}
+	TraceEvent(SevInfo, "AuthzPublicKeySetApply"_audit).detail("NumPublicKeys", publicKeys.size());
+	if (numPrivateKeys > 0) {
+		TraceEvent(SevWarnAlways, "AuthzPublicKeySetContainsPrivateKeys").detail("NumPrivateKeys", numPrivateKeys);
+	}
+}
+
+															#line 6679 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 namespace {
 // This generated class is to be used only via multiVersionCleanupWorker()
-															#line 1439 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1583 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 template <class MultiVersionCleanupWorkerActor>
-															#line 1439 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1583 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 class MultiVersionCleanupWorkerActorState {
-															#line 6529 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6686 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 public:
-															#line 1439 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1583 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	MultiVersionCleanupWorkerActorState(TransportData* const& self) 
-															#line 1439 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
-															#line 1439 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1583 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1583 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		 : self(self)
-															#line 6536 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6693 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 	{
 		fdb_probe_actor_create("multiVersionCleanupWorker", reinterpret_cast<unsigned long>(this));
 
@@ -6546,9 +6703,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 1440 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1584 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			;
-															#line 6551 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6708 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -6576,73 +6733,73 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 1441 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1585 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		StrictFuture<Void> __when_expr_0 = delay(FLOW_KNOBS->CONNECTION_CLEANUP_DELAY);
-															#line 1441 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1585 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (static_cast<MultiVersionCleanupWorkerActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 6583 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6740 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 		static_cast<MultiVersionCleanupWorkerActor*>(this)->actor_wait_state = 1;
-															#line 1441 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1585 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< MultiVersionCleanupWorkerActor, 0, Void >*>(static_cast<MultiVersionCleanupWorkerActor*>(this)));
-															#line 6588 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6745 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont1(Void const& _,int loopDepth) 
 	{
-															#line 1442 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1586 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		bool foundIncompatible = false;
-															#line 1443 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1587 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		for(auto it = self->incompatiblePeers.begin();it != self->incompatiblePeers.end();) {
-															#line 1444 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1588 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			if (self->multiVersionConnections.count(it->second.first))
-															#line 6601 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6758 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			{
-															#line 1445 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1589 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				it = self->incompatiblePeers.erase(it);
-															#line 6605 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6762 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			}
 			else
 			{
-															#line 1447 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1591 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				if (now() - it->second.second > FLOW_KNOBS->INCOMPATIBLE_PEER_DELAY_BEFORE_LOGGING)
-															#line 6611 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6768 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 				{
-															#line 1448 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1592 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 					foundIncompatible = true;
-															#line 6615 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6772 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 				}
-															#line 1450 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1594 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				it++;
-															#line 6619 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6776 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			}
 		}
-															#line 1454 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1598 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		for(auto it = self->multiVersionConnections.begin();it != self->multiVersionConnections.end();) {
-															#line 1455 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1599 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			if (it->second < now())
-															#line 6626 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6783 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			{
-															#line 1456 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1600 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				it = self->multiVersionConnections.erase(it);
-															#line 6630 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6787 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			}
 			else
 			{
-															#line 1458 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1602 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				it++;
-															#line 6636 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6793 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			}
 		}
-															#line 1462 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1606 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (foundIncompatible)
-															#line 6641 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6798 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		{
-															#line 1463 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1607 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			self->incompatiblePeersChanged.trigger();
-															#line 6645 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6802 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		}
 		if (loopDepth == 0) return a_body1loopHead1(0);
 
@@ -6650,57 +6807,57 @@ public:
 	}
 	int a_body1loopBody1cont1(Void && _,int loopDepth) 
 	{
-															#line 1442 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1586 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		bool foundIncompatible = false;
-															#line 1443 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1587 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		for(auto it = self->incompatiblePeers.begin();it != self->incompatiblePeers.end();) {
-															#line 1444 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1588 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			if (self->multiVersionConnections.count(it->second.first))
-															#line 6659 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6816 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			{
-															#line 1445 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1589 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				it = self->incompatiblePeers.erase(it);
-															#line 6663 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6820 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			}
 			else
 			{
-															#line 1447 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1591 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				if (now() - it->second.second > FLOW_KNOBS->INCOMPATIBLE_PEER_DELAY_BEFORE_LOGGING)
-															#line 6669 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6826 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 				{
-															#line 1448 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1592 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 					foundIncompatible = true;
-															#line 6673 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6830 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 				}
-															#line 1450 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1594 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				it++;
-															#line 6677 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6834 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			}
 		}
-															#line 1454 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1598 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		for(auto it = self->multiVersionConnections.begin();it != self->multiVersionConnections.end();) {
-															#line 1455 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1599 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			if (it->second < now())
-															#line 6684 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6841 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			{
-															#line 1456 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1600 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				it = self->multiVersionConnections.erase(it);
-															#line 6688 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6845 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			}
 			else
 			{
-															#line 1458 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1602 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 				it++;
-															#line 6694 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6851 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 			}
 		}
-															#line 1462 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1606 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 		if (foundIncompatible)
-															#line 6699 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6856 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		{
-															#line 1463 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1607 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 			self->incompatiblePeersChanged.trigger();
-															#line 6703 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6860 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		}
 		if (loopDepth == 0) return a_body1loopHead1(0);
 
@@ -6769,14 +6926,14 @@ public:
 		fdb_probe_actor_exit("multiVersionCleanupWorker", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 1439 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1583 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	TransportData* self;
-															#line 6774 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6931 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 };
 // This generated class is to be used only via multiVersionCleanupWorker()
-															#line 1439 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1583 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 class MultiVersionCleanupWorkerActor final : public Actor<Void>, public ActorCallback< MultiVersionCleanupWorkerActor, 0, Void >, public FastAllocated<MultiVersionCleanupWorkerActor>, public MultiVersionCleanupWorkerActorState<MultiVersionCleanupWorkerActor> {
-															#line 6779 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6936 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 public:
 	using FastAllocated<MultiVersionCleanupWorkerActor>::operator new;
 	using FastAllocated<MultiVersionCleanupWorkerActor>::operator delete;
@@ -6785,9 +6942,9 @@ public:
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< MultiVersionCleanupWorkerActor, 0, Void >;
-															#line 1439 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1583 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	MultiVersionCleanupWorkerActor(TransportData* const& self) 
-															#line 6790 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6947 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 		 : Actor<Void>(),
 		   MultiVersionCleanupWorkerActorState<MultiVersionCleanupWorkerActor>(self)
 	{
@@ -6811,18 +6968,23 @@ friend struct ActorCallback< MultiVersionCleanupWorkerActor, 0, Void >;
 	}
 };
 }
-															#line 1439 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1583 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 [[nodiscard]] static Future<Void> multiVersionCleanupWorker( TransportData* const& self ) {
-															#line 1439 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 1583 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 	return Future<Void>(new MultiVersionCleanupWorkerActor(self));
-															#line 6818 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+															#line 6975 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
 }
 
-#line 1467 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+#line 1611 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
 
-FlowTransport::FlowTransport(uint64_t transportId, int maxWellKnownEndpoints)
-  : self(new TransportData(transportId, maxWellKnownEndpoints)) {
+FlowTransport::FlowTransport(uint64_t transportId, int maxWellKnownEndpoints, IPAllowList const* allowList)
+  : self(new TransportData(transportId, maxWellKnownEndpoints, allowList)) {
 	self->multiVersionCleanup = multiVersionCleanupWorker(self);
+	if (g_network->isSimulated()) {
+		for (auto const& p : g_simulator->authKeys) {
+			self->publicKeys.emplace(p.first, p.second.toPublic());
+		}
+	}
 }
 
 FlowTransport::~FlowTransport() {
@@ -6834,11 +6996,21 @@ void FlowTransport::initMetrics() {
 }
 
 NetworkAddressList FlowTransport::getLocalAddresses() const {
-	return self->localAddresses;
+	return self->localAddresses.getAddressList();
 }
 
 NetworkAddress FlowTransport::getLocalAddress() const {
-	return self->localAddresses.address;
+	return self->localAddresses.getAddressList().address;
+}
+
+Standalone<StringRef> FlowTransport::getLocalAddressAsString() const {
+	return self->localAddresses.getLocalAddressAsString();
+}
+
+void FlowTransport::setLocalAddress(NetworkAddress const& address) {
+	auto newAddress = self->localAddresses.getAddressList();
+	newAddress.address = address;
+	self->localAddresses.setAddressList(newAddress);
 }
 
 const std::unordered_map<NetworkAddress, Reference<Peer>>& FlowTransport::getAllPeers() const {
@@ -6862,11 +7034,14 @@ Future<Void> FlowTransport::onIncompatibleChanged() {
 
 Future<Void> FlowTransport::bind(NetworkAddress publicAddress, NetworkAddress listenAddress) {
 	ASSERT(publicAddress.isPublic());
-	if (self->localAddresses.address == NetworkAddress()) {
-		self->localAddresses.address = publicAddress;
+	if (self->localAddresses.getAddressList().address == NetworkAddress()) {
+		self->localAddresses.setNetworkAddress(publicAddress);
 	} else {
-		self->localAddresses.secondaryAddress = publicAddress;
+		auto addrList = self->localAddresses.getAddressList();
+		addrList.secondaryAddress = publicAddress;
+		self->localAddresses.setAddressList(addrList);
 	}
+	// reformatLocalAddress()
 	TraceEvent("Binding").detail("PublicAddress", publicAddress).detail("ListenAddress", listenAddress);
 
 	Future<Void> listenF = listen(self, listenAddress);
@@ -6917,7 +7092,7 @@ void FlowTransport::removePeerReference(const Endpoint& endpoint, bool isStream)
 void FlowTransport::addEndpoint(Endpoint& endpoint, NetworkMessageReceiver* receiver, TaskPriority taskID) {
 	endpoint.token = deterministicRandom()->randomUniqueID();
 	if (receiver->isStream()) {
-		endpoint.addresses = self->localAddresses;
+		endpoint.addresses = self->localAddresses.getAddressList();
 		endpoint.token = UID(endpoint.token.first() | TOKEN_STREAM_FLAG, endpoint.token.second());
 	} else {
 		endpoint.addresses = NetworkAddressList();
@@ -6927,7 +7102,7 @@ void FlowTransport::addEndpoint(Endpoint& endpoint, NetworkMessageReceiver* rece
 }
 
 void FlowTransport::addEndpoints(std::vector<std::pair<FlowReceiver*, TaskPriority>> const& streams) {
-	self->endpoints.insert(self->localAddresses, streams);
+	self->endpoints.insert(self->localAddresses.getAddressList(), streams);
 }
 
 void FlowTransport::removeEndpoint(const Endpoint& endpoint, NetworkMessageReceiver* receiver) {
@@ -6935,13 +7110,13 @@ void FlowTransport::removeEndpoint(const Endpoint& endpoint, NetworkMessageRecei
 }
 
 void FlowTransport::addWellKnownEndpoint(Endpoint& endpoint, NetworkMessageReceiver* receiver, TaskPriority taskID) {
-	endpoint.addresses = self->localAddresses;
+	endpoint.addresses = self->localAddresses.getAddressList();
 	ASSERT(receiver->isStream());
 	self->endpoints.insertWellKnown(receiver, endpoint.token, taskID);
 }
 
 static void sendLocal(TransportData* self, ISerializeSource const& what, const Endpoint& destination) {
-	TEST(true); // "Loopback" delivery
+	CODE_PROBE(true, "\"Loopback\" delivery");
 	// SOMEDAY: Would it be better to avoid (de)serialization by doing this check in flow?
 
 	Standalone<StringRef> copy;
@@ -6958,8 +7133,10 @@ static void sendLocal(TransportData* self, ISerializeSource const& what, const E
 		deliver(self,
 		        destination,
 		        priority,
-		        ArenaReader(copy.arena(), copy, AssumeVersion(currentProtocolVersion)),
-		        false,
+		        ArenaReader(copy.arena(), copy, AssumeVersion(currentProtocolVersion())),
+		        NetworkAddress(),
+		        true,
+		        InReadSocket::False,
 		        Never());
 	}
 }
@@ -6974,9 +7151,8 @@ static ReliablePacket* sendPacket(TransportData* self,
 
 	// If there isn't an open connection, a public address, or the peer isn't compatible, we can't send
 	if (!peer || (peer->outgoingConnectionIdle && !destination.getPrimaryAddress().isPublic()) ||
-	    (peer->incompatibleProtocolVersionNewer &&
-	     destination.token != Endpoint::wellKnownToken(WLTOKEN_PING_PACKET))) {
-		TEST(true); // Can't send to private address without a compatible open connection
+	    (!peer->compatible && destination.token != Endpoint::wellKnownToken(WLTOKEN_PING_PACKET))) {
+		CODE_PROBE(true, "Can't send to private address without a compatible open connection");
 		return nullptr;
 	}
 
@@ -7073,15 +7249,12 @@ static ReliablePacket* sendPacket(TransportData* self,
 		    .detail("Length", (int)len);
 		// throw platform_error();  // FIXME: How to recover from this situation?
 	} else if (len > FLOW_KNOBS->PACKET_WARNING) {
-		TraceEvent(self->warnAlwaysForLargePacket ? SevWarnAlways : SevWarn, "LargePacketSent")
+		TraceEvent(SevWarn, "LargePacketSent")
 		    .suppressFor(1.0)
 		    .detail("ToPeer", destination.getPrimaryAddress())
 		    .detail("Length", (int)len)
 		    .detail("Token", destination.token)
 		    .backtrace();
-
-		if (g_network->isSimulated())
-			self->warnAlwaysForLargePacket = false;
 	}
 
 #if VALGRIND
@@ -7166,9 +7339,13 @@ bool FlowTransport::incompatibleOutgoingConnectionsPresent() {
 	return self->numIncompatibleConnections > 0;
 }
 
-void FlowTransport::createInstance(bool isClient, uint64_t transportId, int maxWellKnownEndpoints) {
+void FlowTransport::createInstance(bool isClient,
+                                   uint64_t transportId,
+                                   int maxWellKnownEndpoints,
+                                   IPAllowList const* allowList) {
+	TokenCache::createInstance();
 	g_network->setGlobal(INetwork::enFlowTransport,
-	                     (flowGlobalType) new FlowTransport(transportId, maxWellKnownEndpoints));
+	                     (flowGlobalType) new FlowTransport(transportId, maxWellKnownEndpoints, allowList));
 	g_network->setGlobal(INetwork::enNetworkAddressFunc, (flowGlobalType)&FlowTransport::getGlobalLocalAddress);
 	g_network->setGlobal(INetwork::enNetworkAddressesFunc, (flowGlobalType)&FlowTransport::getGlobalLocalAddresses);
 	g_network->setGlobal(INetwork::enFailureMonitor, (flowGlobalType) new SimpleFailureMonitor());
@@ -7177,4 +7354,750 @@ void FlowTransport::createInstance(bool isClient, uint64_t transportId, int maxW
 
 HealthMonitor* FlowTransport::healthMonitor() {
 	return &self->healthMonitor;
+}
+
+Optional<PublicKey> FlowTransport::getPublicKeyByName(StringRef name) const {
+	auto iter = self->publicKeys.find(name);
+	if (iter != self->publicKeys.end()) {
+		return iter->second;
+	}
+	return {};
+}
+
+NetworkAddress FlowTransport::currentDeliveryPeerAddress() const {
+	return g_currentDeliveryPeerAddress.address;
+}
+
+bool FlowTransport::currentDeliveryPeerIsTrusted() const {
+	return g_currentDeliverPeerAddressTrusted;
+}
+
+void FlowTransport::addPublicKey(StringRef name, PublicKey key) {
+	self->publicKeys[name] = key;
+}
+
+void FlowTransport::removePublicKey(StringRef name) {
+	self->publicKeys.erase(name);
+}
+
+void FlowTransport::removeAllPublicKeys() {
+	self->publicKeys.clear();
+}
+
+void FlowTransport::loadPublicKeyFile(const std::string& filePath) {
+	if (!fileExists(filePath)) {
+		throw file_not_found();
+	}
+	int64_t const len = fileSize(filePath);
+	if (len <= 0) {
+		TraceEvent(SevWarn, "AuthzPublicKeySetEmpty").detail("Path", filePath);
+	} else if (len > FLOW_KNOBS->PUBLIC_KEY_FILE_MAX_SIZE) {
+		throw file_too_large();
+	} else {
+		auto json = readFileBytes(filePath, len);
+		self->applyPublicKeySet(StringRef(json));
+	}
+}
+
+															#line 7402 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+namespace {
+// This generated class is to be used only via watchPublicKeyJwksFile()
+															#line 2034 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+template <class WatchPublicKeyJwksFileActor>
+															#line 2034 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+class WatchPublicKeyJwksFileActorState {
+															#line 7409 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+public:
+															#line 2034 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+	WatchPublicKeyJwksFileActorState(std::string const& filePath,TransportData* const& self) 
+															#line 2034 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+															#line 2034 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+		 : filePath(filePath),
+															#line 2034 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+		   self(self),
+															#line 2035 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+		   fileChanged(),
+															#line 2036 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+		   fileWatch(),
+															#line 2037 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+		   errorCount(0)
+															#line 7424 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+	{
+		fdb_probe_actor_create("watchPublicKeyJwksFile", reinterpret_cast<unsigned long>(this));
+
+	}
+	~WatchPublicKeyJwksFileActorState() 
+	{
+		fdb_probe_actor_destroy("watchPublicKeyJwksFile", reinterpret_cast<unsigned long>(this));
+
+	}
+	int a_body1(int loopDepth=0) 
+	{
+		try {
+															#line 2040 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+			;
+															#line 7439 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+			loopDepth = a_body1loopHead1(loopDepth);
+		}
+		catch (Error& error) {
+			loopDepth = a_body1Catch1(error, loopDepth);
+		} catch (...) {
+			loopDepth = a_body1Catch1(unknown_error(), loopDepth);
+		}
+
+		return loopDepth;
+	}
+	int a_body1Catch1(Error error,int loopDepth=0) 
+	{
+		this->~WatchPublicKeyJwksFileActorState();
+		static_cast<WatchPublicKeyJwksFileActor*>(this)->sendErrorAndDelPromiseRef(error);
+		loopDepth = 0;
+
+		return loopDepth;
+	}
+	int a_body1cont1(int loopDepth) 
+	{
+															#line 2045 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+		const int& intervalSeconds = FLOW_KNOBS->PUBLIC_KEY_FILE_REFRESH_INTERVAL_SECONDS;
+															#line 2046 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+		fileWatch = watchFileForChanges(filePath, &fileChanged, &intervalSeconds, "AuthzPublicKeySetRefreshStatError");
+															#line 2047 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+		;
+															#line 7466 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+		loopDepth = a_body1cont1loopHead1(loopDepth);
+
+		return loopDepth;
+	}
+	int a_body1loopHead1(int loopDepth) 
+	{
+		int oldLoopDepth = ++loopDepth;
+		while (loopDepth == oldLoopDepth) loopDepth = a_body1loopBody1(loopDepth);
+
+		return loopDepth;
+	}
+	int a_body1loopBody1(int loopDepth) 
+	{
+															#line 2041 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+		if (IAsyncFileSystem::filesystem())
+															#line 7482 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+		{
+			return a_body1break1(loopDepth==0?0:loopDepth-1); // break
+		}
+															#line 2043 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+		StrictFuture<Void> __when_expr_0 = delay(1.0);
+															#line 2043 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+		if (static_cast<WatchPublicKeyJwksFileActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
+															#line 7490 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+		if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
+		static_cast<WatchPublicKeyJwksFileActor*>(this)->actor_wait_state = 1;
+															#line 2043 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+		__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< WatchPublicKeyJwksFileActor, 0, Void >*>(static_cast<WatchPublicKeyJwksFileActor*>(this)));
+															#line 7495 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+		loopDepth = 0;
+
+		return loopDepth;
+	}
+	int a_body1break1(int loopDepth) 
+	{
+		try {
+			return a_body1cont1(loopDepth);
+		}
+		catch (Error& error) {
+			loopDepth = a_body1Catch1(error, loopDepth);
+		} catch (...) {
+			loopDepth = a_body1Catch1(unknown_error(), loopDepth);
+		}
+
+		return loopDepth;
+	}
+	int a_body1loopBody1cont1(Void const& _,int loopDepth) 
+	{
+		if (loopDepth == 0) return a_body1loopHead1(0);
+
+		return loopDepth;
+	}
+	int a_body1loopBody1cont1(Void && _,int loopDepth) 
+	{
+		if (loopDepth == 0) return a_body1loopHead1(0);
+
+		return loopDepth;
+	}
+	int a_body1loopBody1when1(Void const& _,int loopDepth) 
+	{
+		loopDepth = a_body1loopBody1cont1(_, loopDepth);
+
+		return loopDepth;
+	}
+	int a_body1loopBody1when1(Void && _,int loopDepth) 
+	{
+		loopDepth = a_body1loopBody1cont1(std::move(_), loopDepth);
+
+		return loopDepth;
+	}
+	void a_exitChoose1() 
+	{
+		if (static_cast<WatchPublicKeyJwksFileActor*>(this)->actor_wait_state > 0) static_cast<WatchPublicKeyJwksFileActor*>(this)->actor_wait_state = 0;
+		static_cast<WatchPublicKeyJwksFileActor*>(this)->ActorCallback< WatchPublicKeyJwksFileActor, 0, Void >::remove();
+
+	}
+	void a_callback_fire(ActorCallback< WatchPublicKeyJwksFileActor, 0, Void >*,Void const& value) 
+	{
+		fdb_probe_actor_enter("watchPublicKeyJwksFile", reinterpret_cast<unsigned long>(this), 0);
+		a_exitChoose1();
+		try {
+			a_body1loopBody1when1(value, 0);
+		}
+		catch (Error& error) {
+			a_body1Catch1(error, 0);
+		} catch (...) {
+			a_body1Catch1(unknown_error(), 0);
+		}
+		fdb_probe_actor_exit("watchPublicKeyJwksFile", reinterpret_cast<unsigned long>(this), 0);
+
+	}
+	void a_callback_fire(ActorCallback< WatchPublicKeyJwksFileActor, 0, Void >*,Void && value) 
+	{
+		fdb_probe_actor_enter("watchPublicKeyJwksFile", reinterpret_cast<unsigned long>(this), 0);
+		a_exitChoose1();
+		try {
+			a_body1loopBody1when1(std::move(value), 0);
+		}
+		catch (Error& error) {
+			a_body1Catch1(error, 0);
+		} catch (...) {
+			a_body1Catch1(unknown_error(), 0);
+		}
+		fdb_probe_actor_exit("watchPublicKeyJwksFile", reinterpret_cast<unsigned long>(this), 0);
+
+	}
+	void a_callback_error(ActorCallback< WatchPublicKeyJwksFileActor, 0, Void >*,Error err) 
+	{
+		fdb_probe_actor_enter("watchPublicKeyJwksFile", reinterpret_cast<unsigned long>(this), 0);
+		a_exitChoose1();
+		try {
+			a_body1Catch1(err, 0);
+		}
+		catch (Error& error) {
+			a_body1Catch1(error, 0);
+		} catch (...) {
+			a_body1Catch1(unknown_error(), 0);
+		}
+		fdb_probe_actor_exit("watchPublicKeyJwksFile", reinterpret_cast<unsigned long>(this), 0);
+
+	}
+	int a_body1cont1loopHead1(int loopDepth) 
+	{
+		int oldLoopDepth = ++loopDepth;
+		while (loopDepth == oldLoopDepth) loopDepth = a_body1cont1loopBody1(loopDepth);
+
+		return loopDepth;
+	}
+	int a_body1cont1loopBody1(int loopDepth) 
+	{
+		try {
+															#line 2049 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+			StrictFuture<Void> __when_expr_1 = fileChanged.onTrigger();
+															#line 2049 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+			if (static_cast<WatchPublicKeyJwksFileActor*>(this)->actor_wait_state < 0) return a_body1cont1loopBody1Catch1(actor_cancelled(), loopDepth);
+															#line 7602 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1cont1loopBody1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1loopBody1when1(__when_expr_1.get(), loopDepth); };
+			static_cast<WatchPublicKeyJwksFileActor*>(this)->actor_wait_state = 2;
+															#line 2049 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+			__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< WatchPublicKeyJwksFileActor, 1, Void >*>(static_cast<WatchPublicKeyJwksFileActor*>(this)));
+															#line 7607 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+			loopDepth = 0;
+		}
+		catch (Error& error) {
+			loopDepth = a_body1cont1loopBody1Catch1(error, loopDepth);
+		} catch (...) {
+			loopDepth = a_body1cont1loopBody1Catch1(unknown_error(), loopDepth);
+		}
+
+		return loopDepth;
+	}
+	int a_body1cont1loopBody1cont1(int loopDepth) 
+	{
+		if (loopDepth == 0) return a_body1cont1loopHead1(0);
+
+		return loopDepth;
+	}
+	int a_body1cont1loopBody1Catch1(const Error& e,int loopDepth=0) 
+	{
+		try {
+															#line 2064 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+			if (e.code() == error_code_actor_cancelled)
+															#line 7629 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+			{
+															#line 2065 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+				return a_body1Catch1(e, std::max(0, loopDepth - 1));
+															#line 7633 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+			}
+															#line 2068 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+			errorCount++;
+															#line 2069 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+			TraceEvent(SevWarn, "AuthzPublicKeySetRefreshError"_audit).error(e).detail("ErrorCount", errorCount);
+															#line 7639 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+			loopDepth = a_body1cont1loopBody1cont1(loopDepth);
+		}
+		catch (Error& error) {
+			loopDepth = a_body1Catch1(error, std::max(0, loopDepth - 1));
+		} catch (...) {
+			loopDepth = a_body1Catch1(unknown_error(), std::max(0, loopDepth - 1));
+		}
+
+		return loopDepth;
+	}
+	int a_body1cont1loopBody1cont2(Void const& _,int loopDepth) 
+	{
+															#line 2050 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+		StrictFuture<Reference<IAsyncFile>> __when_expr_2 = IAsyncFileSystem::filesystem()->open( filePath, IAsyncFile::OPEN_READONLY | IAsyncFile::OPEN_UNCACHED, 0);
+															#line 2050 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+		if (static_cast<WatchPublicKeyJwksFileActor*>(this)->actor_wait_state < 0) return a_body1cont1loopBody1Catch1(actor_cancelled(), loopDepth);
+															#line 7656 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1cont1loopBody1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1cont1loopBody1cont2when1(__when_expr_2.get(), loopDepth); };
+		static_cast<WatchPublicKeyJwksFileActor*>(this)->actor_wait_state = 3;
+															#line 2050 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+		__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< WatchPublicKeyJwksFileActor, 2, Reference<IAsyncFile> >*>(static_cast<WatchPublicKeyJwksFileActor*>(this)));
+															#line 7661 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+		loopDepth = 0;
+
+		return loopDepth;
+	}
+	int a_body1cont1loopBody1cont2(Void && _,int loopDepth) 
+	{
+															#line 2050 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+		StrictFuture<Reference<IAsyncFile>> __when_expr_2 = IAsyncFileSystem::filesystem()->open( filePath, IAsyncFile::OPEN_READONLY | IAsyncFile::OPEN_UNCACHED, 0);
+															#line 2050 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+		if (static_cast<WatchPublicKeyJwksFileActor*>(this)->actor_wait_state < 0) return a_body1cont1loopBody1Catch1(actor_cancelled(), loopDepth);
+															#line 7672 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1cont1loopBody1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1cont1loopBody1cont2when1(__when_expr_2.get(), loopDepth); };
+		static_cast<WatchPublicKeyJwksFileActor*>(this)->actor_wait_state = 3;
+															#line 2050 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+		__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< WatchPublicKeyJwksFileActor, 2, Reference<IAsyncFile> >*>(static_cast<WatchPublicKeyJwksFileActor*>(this)));
+															#line 7677 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+		loopDepth = 0;
+
+		return loopDepth;
+	}
+	int a_body1cont1loopBody1when1(Void const& _,int loopDepth) 
+	{
+		loopDepth = a_body1cont1loopBody1cont2(_, loopDepth);
+
+		return loopDepth;
+	}
+	int a_body1cont1loopBody1when1(Void && _,int loopDepth) 
+	{
+		loopDepth = a_body1cont1loopBody1cont2(std::move(_), loopDepth);
+
+		return loopDepth;
+	}
+	void a_exitChoose2() 
+	{
+		if (static_cast<WatchPublicKeyJwksFileActor*>(this)->actor_wait_state > 0) static_cast<WatchPublicKeyJwksFileActor*>(this)->actor_wait_state = 0;
+		static_cast<WatchPublicKeyJwksFileActor*>(this)->ActorCallback< WatchPublicKeyJwksFileActor, 1, Void >::remove();
+
+	}
+	void a_callback_fire(ActorCallback< WatchPublicKeyJwksFileActor, 1, Void >*,Void const& value) 
+	{
+		fdb_probe_actor_enter("watchPublicKeyJwksFile", reinterpret_cast<unsigned long>(this), 1);
+		a_exitChoose2();
+		try {
+			a_body1cont1loopBody1when1(value, 0);
+		}
+		catch (Error& error) {
+			a_body1cont1loopBody1Catch1(error, 0);
+		} catch (...) {
+			a_body1cont1loopBody1Catch1(unknown_error(), 0);
+		}
+		fdb_probe_actor_exit("watchPublicKeyJwksFile", reinterpret_cast<unsigned long>(this), 1);
+
+	}
+	void a_callback_fire(ActorCallback< WatchPublicKeyJwksFileActor, 1, Void >*,Void && value) 
+	{
+		fdb_probe_actor_enter("watchPublicKeyJwksFile", reinterpret_cast<unsigned long>(this), 1);
+		a_exitChoose2();
+		try {
+			a_body1cont1loopBody1when1(std::move(value), 0);
+		}
+		catch (Error& error) {
+			a_body1cont1loopBody1Catch1(error, 0);
+		} catch (...) {
+			a_body1cont1loopBody1Catch1(unknown_error(), 0);
+		}
+		fdb_probe_actor_exit("watchPublicKeyJwksFile", reinterpret_cast<unsigned long>(this), 1);
+
+	}
+	void a_callback_error(ActorCallback< WatchPublicKeyJwksFileActor, 1, Void >*,Error err) 
+	{
+		fdb_probe_actor_enter("watchPublicKeyJwksFile", reinterpret_cast<unsigned long>(this), 1);
+		a_exitChoose2();
+		try {
+			a_body1cont1loopBody1Catch1(err, 0);
+		}
+		catch (Error& error) {
+			a_body1cont1loopBody1Catch1(error, 0);
+		} catch (...) {
+			a_body1cont1loopBody1Catch1(unknown_error(), 0);
+		}
+		fdb_probe_actor_exit("watchPublicKeyJwksFile", reinterpret_cast<unsigned long>(this), 1);
+
+	}
+	int a_body1cont1loopBody1cont3(int loopDepth) 
+	{
+															#line 2052 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+		StrictFuture<int64_t> __when_expr_3 = file->size();
+															#line 2052 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+		if (static_cast<WatchPublicKeyJwksFileActor*>(this)->actor_wait_state < 0) return a_body1cont1loopBody1Catch1(actor_cancelled(), loopDepth);
+															#line 7751 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+		if (__when_expr_3.isReady()) { if (__when_expr_3.isError()) return a_body1cont1loopBody1Catch1(__when_expr_3.getError(), loopDepth); else return a_body1cont1loopBody1cont3when1(__when_expr_3.get(), loopDepth); };
+		static_cast<WatchPublicKeyJwksFileActor*>(this)->actor_wait_state = 4;
+															#line 2052 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+		__when_expr_3.addCallbackAndClear(static_cast<ActorCallback< WatchPublicKeyJwksFileActor, 3, int64_t >*>(static_cast<WatchPublicKeyJwksFileActor*>(this)));
+															#line 7756 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+		loopDepth = 0;
+
+		return loopDepth;
+	}
+	int a_body1cont1loopBody1cont2when1(Reference<IAsyncFile> const& __file,int loopDepth) 
+	{
+															#line 2050 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+		file = __file;
+															#line 7765 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+		loopDepth = a_body1cont1loopBody1cont3(loopDepth);
+
+		return loopDepth;
+	}
+	int a_body1cont1loopBody1cont2when1(Reference<IAsyncFile> && __file,int loopDepth) 
+	{
+		file = std::move(__file);
+		loopDepth = a_body1cont1loopBody1cont3(loopDepth);
+
+		return loopDepth;
+	}
+	void a_exitChoose3() 
+	{
+		if (static_cast<WatchPublicKeyJwksFileActor*>(this)->actor_wait_state > 0) static_cast<WatchPublicKeyJwksFileActor*>(this)->actor_wait_state = 0;
+		static_cast<WatchPublicKeyJwksFileActor*>(this)->ActorCallback< WatchPublicKeyJwksFileActor, 2, Reference<IAsyncFile> >::remove();
+
+	}
+	void a_callback_fire(ActorCallback< WatchPublicKeyJwksFileActor, 2, Reference<IAsyncFile> >*,Reference<IAsyncFile> const& value) 
+	{
+		fdb_probe_actor_enter("watchPublicKeyJwksFile", reinterpret_cast<unsigned long>(this), 2);
+		a_exitChoose3();
+		try {
+			a_body1cont1loopBody1cont2when1(value, 0);
+		}
+		catch (Error& error) {
+			a_body1cont1loopBody1Catch1(error, 0);
+		} catch (...) {
+			a_body1cont1loopBody1Catch1(unknown_error(), 0);
+		}
+		fdb_probe_actor_exit("watchPublicKeyJwksFile", reinterpret_cast<unsigned long>(this), 2);
+
+	}
+	void a_callback_fire(ActorCallback< WatchPublicKeyJwksFileActor, 2, Reference<IAsyncFile> >*,Reference<IAsyncFile> && value) 
+	{
+		fdb_probe_actor_enter("watchPublicKeyJwksFile", reinterpret_cast<unsigned long>(this), 2);
+		a_exitChoose3();
+		try {
+			a_body1cont1loopBody1cont2when1(std::move(value), 0);
+		}
+		catch (Error& error) {
+			a_body1cont1loopBody1Catch1(error, 0);
+		} catch (...) {
+			a_body1cont1loopBody1Catch1(unknown_error(), 0);
+		}
+		fdb_probe_actor_exit("watchPublicKeyJwksFile", reinterpret_cast<unsigned long>(this), 2);
+
+	}
+	void a_callback_error(ActorCallback< WatchPublicKeyJwksFileActor, 2, Reference<IAsyncFile> >*,Error err) 
+	{
+		fdb_probe_actor_enter("watchPublicKeyJwksFile", reinterpret_cast<unsigned long>(this), 2);
+		a_exitChoose3();
+		try {
+			a_body1cont1loopBody1Catch1(err, 0);
+		}
+		catch (Error& error) {
+			a_body1cont1loopBody1Catch1(error, 0);
+		} catch (...) {
+			a_body1cont1loopBody1Catch1(unknown_error(), 0);
+		}
+		fdb_probe_actor_exit("watchPublicKeyJwksFile", reinterpret_cast<unsigned long>(this), 2);
+
+	}
+	int a_body1cont1loopBody1cont4(int loopDepth) 
+	{
+															#line 2053 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+		json = std::string(filesize, '\0');
+															#line 2054 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+		if (filesize > FLOW_KNOBS->PUBLIC_KEY_FILE_MAX_SIZE)
+															#line 7834 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+		{
+															#line 2055 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+			return a_body1cont1loopBody1Catch1(file_too_large(), loopDepth);
+															#line 7838 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+		}
+															#line 2056 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+		if (filesize <= 0)
+															#line 7842 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+		{
+															#line 2057 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+			TraceEvent(SevWarn, "AuthzPublicKeySetEmpty").suppressFor(60);
+															#line 7846 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+			return a_body1cont1loopHead1(loopDepth); // continue
+		}
+															#line 2060 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+		StrictFuture<Void> __when_expr_4 = success(file->read(&json[0], filesize, 0));
+															#line 2060 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+		if (static_cast<WatchPublicKeyJwksFileActor*>(this)->actor_wait_state < 0) return a_body1cont1loopBody1Catch1(actor_cancelled(), loopDepth);
+															#line 7853 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+		if (__when_expr_4.isReady()) { if (__when_expr_4.isError()) return a_body1cont1loopBody1Catch1(__when_expr_4.getError(), loopDepth); else return a_body1cont1loopBody1cont4when1(__when_expr_4.get(), loopDepth); };
+		static_cast<WatchPublicKeyJwksFileActor*>(this)->actor_wait_state = 5;
+															#line 2060 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+		__when_expr_4.addCallbackAndClear(static_cast<ActorCallback< WatchPublicKeyJwksFileActor, 4, Void >*>(static_cast<WatchPublicKeyJwksFileActor*>(this)));
+															#line 7858 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+		loopDepth = 0;
+
+		return loopDepth;
+	}
+	int a_body1cont1loopBody1cont3when1(int64_t const& __filesize,int loopDepth) 
+	{
+															#line 2052 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+		filesize = __filesize;
+															#line 7867 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+		loopDepth = a_body1cont1loopBody1cont4(loopDepth);
+
+		return loopDepth;
+	}
+	int a_body1cont1loopBody1cont3when1(int64_t && __filesize,int loopDepth) 
+	{
+		filesize = std::move(__filesize);
+		loopDepth = a_body1cont1loopBody1cont4(loopDepth);
+
+		return loopDepth;
+	}
+	void a_exitChoose4() 
+	{
+		if (static_cast<WatchPublicKeyJwksFileActor*>(this)->actor_wait_state > 0) static_cast<WatchPublicKeyJwksFileActor*>(this)->actor_wait_state = 0;
+		static_cast<WatchPublicKeyJwksFileActor*>(this)->ActorCallback< WatchPublicKeyJwksFileActor, 3, int64_t >::remove();
+
+	}
+	void a_callback_fire(ActorCallback< WatchPublicKeyJwksFileActor, 3, int64_t >*,int64_t const& value) 
+	{
+		fdb_probe_actor_enter("watchPublicKeyJwksFile", reinterpret_cast<unsigned long>(this), 3);
+		a_exitChoose4();
+		try {
+			a_body1cont1loopBody1cont3when1(value, 0);
+		}
+		catch (Error& error) {
+			a_body1cont1loopBody1Catch1(error, 0);
+		} catch (...) {
+			a_body1cont1loopBody1Catch1(unknown_error(), 0);
+		}
+		fdb_probe_actor_exit("watchPublicKeyJwksFile", reinterpret_cast<unsigned long>(this), 3);
+
+	}
+	void a_callback_fire(ActorCallback< WatchPublicKeyJwksFileActor, 3, int64_t >*,int64_t && value) 
+	{
+		fdb_probe_actor_enter("watchPublicKeyJwksFile", reinterpret_cast<unsigned long>(this), 3);
+		a_exitChoose4();
+		try {
+			a_body1cont1loopBody1cont3when1(std::move(value), 0);
+		}
+		catch (Error& error) {
+			a_body1cont1loopBody1Catch1(error, 0);
+		} catch (...) {
+			a_body1cont1loopBody1Catch1(unknown_error(), 0);
+		}
+		fdb_probe_actor_exit("watchPublicKeyJwksFile", reinterpret_cast<unsigned long>(this), 3);
+
+	}
+	void a_callback_error(ActorCallback< WatchPublicKeyJwksFileActor, 3, int64_t >*,Error err) 
+	{
+		fdb_probe_actor_enter("watchPublicKeyJwksFile", reinterpret_cast<unsigned long>(this), 3);
+		a_exitChoose4();
+		try {
+			a_body1cont1loopBody1Catch1(err, 0);
+		}
+		catch (Error& error) {
+			a_body1cont1loopBody1Catch1(error, 0);
+		} catch (...) {
+			a_body1cont1loopBody1Catch1(unknown_error(), 0);
+		}
+		fdb_probe_actor_exit("watchPublicKeyJwksFile", reinterpret_cast<unsigned long>(this), 3);
+
+	}
+	int a_body1cont1loopBody1cont5(Void const& _,int loopDepth) 
+	{
+															#line 2061 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+		self->applyPublicKeySet(StringRef(json));
+															#line 2062 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+		errorCount = 0;
+															#line 7936 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+		loopDepth = a_body1cont1loopBody1cont9(loopDepth);
+
+		return loopDepth;
+	}
+	int a_body1cont1loopBody1cont5(Void && _,int loopDepth) 
+	{
+															#line 2061 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+		self->applyPublicKeySet(StringRef(json));
+															#line 2062 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+		errorCount = 0;
+															#line 7947 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+		loopDepth = a_body1cont1loopBody1cont9(loopDepth);
+
+		return loopDepth;
+	}
+	int a_body1cont1loopBody1cont4when1(Void const& _,int loopDepth) 
+	{
+		loopDepth = a_body1cont1loopBody1cont5(_, loopDepth);
+
+		return loopDepth;
+	}
+	int a_body1cont1loopBody1cont4when1(Void && _,int loopDepth) 
+	{
+		loopDepth = a_body1cont1loopBody1cont5(std::move(_), loopDepth);
+
+		return loopDepth;
+	}
+	void a_exitChoose5() 
+	{
+		if (static_cast<WatchPublicKeyJwksFileActor*>(this)->actor_wait_state > 0) static_cast<WatchPublicKeyJwksFileActor*>(this)->actor_wait_state = 0;
+		static_cast<WatchPublicKeyJwksFileActor*>(this)->ActorCallback< WatchPublicKeyJwksFileActor, 4, Void >::remove();
+
+	}
+	void a_callback_fire(ActorCallback< WatchPublicKeyJwksFileActor, 4, Void >*,Void const& value) 
+	{
+		fdb_probe_actor_enter("watchPublicKeyJwksFile", reinterpret_cast<unsigned long>(this), 4);
+		a_exitChoose5();
+		try {
+			a_body1cont1loopBody1cont4when1(value, 0);
+		}
+		catch (Error& error) {
+			a_body1cont1loopBody1Catch1(error, 0);
+		} catch (...) {
+			a_body1cont1loopBody1Catch1(unknown_error(), 0);
+		}
+		fdb_probe_actor_exit("watchPublicKeyJwksFile", reinterpret_cast<unsigned long>(this), 4);
+
+	}
+	void a_callback_fire(ActorCallback< WatchPublicKeyJwksFileActor, 4, Void >*,Void && value) 
+	{
+		fdb_probe_actor_enter("watchPublicKeyJwksFile", reinterpret_cast<unsigned long>(this), 4);
+		a_exitChoose5();
+		try {
+			a_body1cont1loopBody1cont4when1(std::move(value), 0);
+		}
+		catch (Error& error) {
+			a_body1cont1loopBody1Catch1(error, 0);
+		} catch (...) {
+			a_body1cont1loopBody1Catch1(unknown_error(), 0);
+		}
+		fdb_probe_actor_exit("watchPublicKeyJwksFile", reinterpret_cast<unsigned long>(this), 4);
+
+	}
+	void a_callback_error(ActorCallback< WatchPublicKeyJwksFileActor, 4, Void >*,Error err) 
+	{
+		fdb_probe_actor_enter("watchPublicKeyJwksFile", reinterpret_cast<unsigned long>(this), 4);
+		a_exitChoose5();
+		try {
+			a_body1cont1loopBody1Catch1(err, 0);
+		}
+		catch (Error& error) {
+			a_body1cont1loopBody1Catch1(error, 0);
+		} catch (...) {
+			a_body1cont1loopBody1Catch1(unknown_error(), 0);
+		}
+		fdb_probe_actor_exit("watchPublicKeyJwksFile", reinterpret_cast<unsigned long>(this), 4);
+
+	}
+	int a_body1cont1loopBody1cont9(int loopDepth) 
+	{
+		try {
+			loopDepth = a_body1cont1loopBody1cont1(loopDepth);
+		}
+		catch (Error& error) {
+			loopDepth = a_body1Catch1(error, std::max(0, loopDepth - 1));
+		} catch (...) {
+			loopDepth = a_body1Catch1(unknown_error(), std::max(0, loopDepth - 1));
+		}
+
+		return loopDepth;
+	}
+															#line 2034 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+	std::string filePath;
+															#line 2034 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+	TransportData* self;
+															#line 2035 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+	AsyncTrigger fileChanged;
+															#line 2036 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+	Future<Void> fileWatch;
+															#line 2037 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+	unsigned errorCount;
+															#line 2050 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+	Reference<IAsyncFile> file;
+															#line 2052 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+	int64_t filesize;
+															#line 2053 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+	std::string json;
+															#line 8044 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+};
+// This generated class is to be used only via watchPublicKeyJwksFile()
+															#line 2034 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+class WatchPublicKeyJwksFileActor final : public Actor<Void>, public ActorCallback< WatchPublicKeyJwksFileActor, 0, Void >, public ActorCallback< WatchPublicKeyJwksFileActor, 1, Void >, public ActorCallback< WatchPublicKeyJwksFileActor, 2, Reference<IAsyncFile> >, public ActorCallback< WatchPublicKeyJwksFileActor, 3, int64_t >, public ActorCallback< WatchPublicKeyJwksFileActor, 4, Void >, public FastAllocated<WatchPublicKeyJwksFileActor>, public WatchPublicKeyJwksFileActorState<WatchPublicKeyJwksFileActor> {
+															#line 8049 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+public:
+	using FastAllocated<WatchPublicKeyJwksFileActor>::operator new;
+	using FastAllocated<WatchPublicKeyJwksFileActor>::operator delete;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdelete-non-virtual-dtor"
+	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
+#pragma clang diagnostic pop
+friend struct ActorCallback< WatchPublicKeyJwksFileActor, 0, Void >;
+friend struct ActorCallback< WatchPublicKeyJwksFileActor, 1, Void >;
+friend struct ActorCallback< WatchPublicKeyJwksFileActor, 2, Reference<IAsyncFile> >;
+friend struct ActorCallback< WatchPublicKeyJwksFileActor, 3, int64_t >;
+friend struct ActorCallback< WatchPublicKeyJwksFileActor, 4, Void >;
+															#line 2034 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+	WatchPublicKeyJwksFileActor(std::string const& filePath,TransportData* const& self) 
+															#line 8064 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+		 : Actor<Void>(),
+		   WatchPublicKeyJwksFileActorState<WatchPublicKeyJwksFileActor>(filePath, self)
+	{
+		fdb_probe_actor_enter("watchPublicKeyJwksFile", reinterpret_cast<unsigned long>(this), -1);
+		#ifdef ENABLE_SAMPLING
+		this->lineage.setActorName("watchPublicKeyJwksFile");
+		LineageScope _(&this->lineage);
+		#endif
+		this->a_body1();
+		fdb_probe_actor_exit("watchPublicKeyJwksFile", reinterpret_cast<unsigned long>(this), -1);
+
+	}
+	void cancel() override
+	{
+		auto wait_state = this->actor_wait_state;
+		this->actor_wait_state = -1;
+		switch (wait_state) {
+		case 1: this->a_callback_error((ActorCallback< WatchPublicKeyJwksFileActor, 0, Void >*)0, actor_cancelled()); break;
+		case 2: this->a_callback_error((ActorCallback< WatchPublicKeyJwksFileActor, 1, Void >*)0, actor_cancelled()); break;
+		case 3: this->a_callback_error((ActorCallback< WatchPublicKeyJwksFileActor, 2, Reference<IAsyncFile> >*)0, actor_cancelled()); break;
+		case 4: this->a_callback_error((ActorCallback< WatchPublicKeyJwksFileActor, 3, int64_t >*)0, actor_cancelled()); break;
+		case 5: this->a_callback_error((ActorCallback< WatchPublicKeyJwksFileActor, 4, Void >*)0, actor_cancelled()); break;
+		}
+
+	}
+};
+}
+															#line 2034 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+[[nodiscard]] static Future<Void> watchPublicKeyJwksFile( std::string const& filePath, TransportData* const& self ) {
+															#line 2034 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+	return Future<Void>(new WatchPublicKeyJwksFileActor(filePath, self));
+															#line 8096 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.g.cpp"
+}
+
+#line 2073 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/FlowTransport.actor.cpp"
+
+void FlowTransport::watchPublicKeyFile(const std::string& publicKeyFilePath) {
+	self->publicKeyFileWatch = watchPublicKeyJwksFile(publicKeyFilePath, self);
 }

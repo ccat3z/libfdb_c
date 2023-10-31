@@ -1525,7 +1525,7 @@ public:
 	{
 		try {
 															#line 267 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
-			generateRandomData(&writeBuffer.front(), bytes);
+			deterministicRandom()->randomBytes(&writeBuffer.front(), bytes);
 															#line 268 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
 			readBuffer = std::vector<unsigned char>(bytes, 0);
 															#line 269 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
