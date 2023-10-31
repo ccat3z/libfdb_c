@@ -13,11 +13,23 @@ function(glob_flow_source VAR_NAME)
     set(${VAR_NAME} "${${VAR_NAME}}" PARENT_SCOPE)
 endfunction()
 
-find_package(Boost REQUIRED)
-find_package(fmt CONFIG REQUIRED)
-find_package(msgpack-cxx CONFIG REQUIRED)
-find_package(OpenSSL REQUIRED)
-find_package(absl CONFIG REQUIRED)
+if(NOT TARGET fdbdeps)
+    find_package(Boost REQUIRED)
+    find_package(fmt CONFIG REQUIRED)
+    find_package(msgpack-cxx CONFIG REQUIRED)
+    find_package(OpenSSL REQUIRED)
+    find_package(absl CONFIG REQUIRED)
+
+    add_library(fdbdeps INTERFACE)
+    target_link_libraries(fdbdeps INTERFACE
+        Boost::headers
+        fmt::fmt
+        msgpack-cxx
+        OpenSSL::SSL
+        OpenSSL::Crypto
+        absl::debugging
+    )
+endif()
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_CXX_STANDARD 20)

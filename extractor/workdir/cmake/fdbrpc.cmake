@@ -1,10 +1,7 @@
 glob_flow_source(FDBRPC_SRC)
 
 add_library(fdbrpc STATIC ${FDBRPC_SRC})
-target_link_libraries(fdbrpc
-    PRIVATE
-        flow
-)
+target_link_libraries(fdbrpc PRIVATE flow fdbdeps)
 
 add_library(fdbb64 STATIC libb64/cdecode.c libb64/cencode.c)
 target_link_libraries(fdbrpc PRIVATE fdbb64)
