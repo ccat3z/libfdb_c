@@ -21,7 +21,7 @@ git reset HEAD --hard
 git clean -dffx
 
 # Apply patchs
-for patch in fix-fmt-format.patch build-c-binding-only.patch backport-doctest.patch
+for patch in fix-fmt-format.patch build-c-binding-only.patch backport-doctest.patch namespace.patch
 do
     git apply "${WORKDIR}/patches/${patch}"
 done

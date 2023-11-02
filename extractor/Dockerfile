@@ -43,5 +43,12 @@ RUN apt-get update \
         --yes --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
+# Install build depends
+RUN apt-get update \
+    && apt-get install \
+        llvm-${LLVM_VERSION}-dev \
+        --yes --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/*
+
 ENV CC=clang-15
 ENV CXX=clang++-15

@@ -25,6 +25,11 @@ build: $(CMAKE_CONFIGURE_DEPS)
 build-tests:
 	$(MAKE) -C extractor build-tests
 
+.PHONY: symbols.list
+symbols.list:
+	$(MAKE) -C extractor global-sym \
+		OUTPUT_SYMBOL_FILE="$(CURDIR)/symbols.list"
+
 extract:
 	$(MAKE) -C extractor \
 		OUTPUT_DIR="$(CURDIR)/src"

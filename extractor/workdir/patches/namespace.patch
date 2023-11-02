@@ -1,0 +1,55 @@
+diff --git a/fdbrpc/ActorFuzz.h b/fdbrpc/ActorFuzz.h
+index 996f51563..2507cd868 100644
+--- a/fdbrpc/ActorFuzz.h
++++ b/fdbrpc/ActorFuzz.h
+@@ -22,9 +22,12 @@
+ #include <vector>
+ #include "flow/actorcompiler.h"
+ 
++namespace fdb::error_code {
+ inline void throw_operation_failed() {
+ 	throw operation_failed();
+ }
++}
++using namespace fdb::error_code;
+ 
+ // This is in dsltest.actor.cpp:
+ bool testFuzzActor(Future<int> (*actor)(FutureStream<int> const&, PromiseStream<int> const&, Future<Void> const&),
+diff --git a/flow/Error.h b/flow/Error.h
+index 3cd72d039..ecd0476ae 100644
+--- a/flow/Error.h
++++ b/flow/Error.h
+@@ -85,6 +85,7 @@ Error systemErrorCodeToError();
+ 	inline Error name() { return Error(number); };                                                                     \
+ 	enum { error_code_##name = number };
+ 
++namespace fdb::error_code {
+ #include "error_definitions.h"
+ 
+ // actor_cancelled has been renamed
+@@ -92,6 +93,8 @@ inline Error actor_cancelled() {
+ 	return Error(error_code_operation_cancelled);
+ }
+ enum { error_code_actor_cancelled = error_code_operation_cancelled };
++}
++using namespace fdb::error_code;
+ 
+ extern Error internal_error_impl(const char* file, int line);
+ extern Error internal_error_impl(const char* msg, const char* file, int line);
+diff --git a/flow/flow.h b/flow/flow.h
+index d8a142d41..4e1090917 100644
+--- a/flow/flow.h
++++ b/flow/flow.h
+@@ -1349,9 +1349,12 @@ struct ActorSingleCallback : SingleCallback<ValueType> {
+ 		static_cast<ActorType*>(this)->a_callback_error(this, e);
+ 	}
+ };
++namespace fdb {
+ inline double now() {
+ 	return g_network->now();
+ }
++}
++using namespace fdb;
+ inline Future<Void> delay(double seconds, TaskPriority taskID = TaskPriority::DefaultDelay) {
+ 	return g_network->delay(seconds, taskID);
+ }

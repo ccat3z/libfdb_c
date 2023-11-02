@@ -1,3 +1,5 @@
 /foundationdb_ep
 /foundationdb_build
-
+/global-sym
+/global-sym.log
+/global-sym.list
