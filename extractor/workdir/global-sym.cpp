@@ -259,6 +259,7 @@ bool is_knowned_name(const llvm::itanium_demangle::NameType *node) {
       "tm",
       "sockaddr",
       "__mbstate_t",
+      "_IO_FILE",
   };
   static std::vector<std::string> knowned_prefixs = {
       "fdb_", "ssl_", "msgpack_", "x509_", "boost_",

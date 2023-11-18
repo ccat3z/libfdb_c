@@ -733,7 +733,6 @@ XmlTraceLogFormatter
 YieldMockNetwork
 YieldedAsyncMap
 YieldedFutureActor
-_IO_FILE
 allocateFast
 allocateFast4kAligned
 assert_num_impl

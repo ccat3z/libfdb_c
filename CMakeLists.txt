@@ -34,6 +34,12 @@ endif()
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_CXX_STANDARD 20)
 
+# Rename ambiguous symbols
+file(STRINGS "symbols.list" SYMBOL_LISTS)
+foreach(symbol IN LISTS SYMBOL_LISTS)
+    add_compile_definitions(${symbol}=_fdb_${symbol})
+endforeach()
+
 add_compile_definitions(NO_INTELLISENSE)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_CURRENT_BINARY_DIR}/src)
 add_subdirectory(src/flow)
