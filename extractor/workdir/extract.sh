@@ -134,3 +134,7 @@ generate_fdb_c_asm linux aarch64
 generate_fdb_c_asm osx aarch64
 cp "${WORKDIR}/cmake/fdb_c.cmake" "${OUTPUT_DIR}/bindings/c/CMakeLists.txt"
 
+# extended FDB api for FDBKeeper
+$ACTORCOMPILER "${WORKDIR}/patches/fdb_c.actor.cpp" "${OUTPUT_DIR}/bindings/c/fdb_c.actor.g.cpp"
+cp "${WORKDIR}/patches/fdb_c_ext.h" "${OUTPUT_DIR}/bindings/c/foundationdb/fdb_c_ext.h"
+

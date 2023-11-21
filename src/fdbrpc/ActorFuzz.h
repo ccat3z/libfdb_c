@@ -22,9 +22,12 @@
 #include <vector>
 #include "flow/actorcompiler.h"
 
+namespace fdb::error_code {
 inline void throw_operation_failed() {
 	throw operation_failed();
 }
+}
+using namespace fdb::error_code;
 
 // This is in dsltest.actor.cpp:
 bool testFuzzActor(Future<int> (*actor)(FutureStream<int> const&, PromiseStream<int> const&, Future<Void> const&),

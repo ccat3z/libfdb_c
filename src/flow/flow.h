@@ -1349,9 +1349,12 @@ struct ActorSingleCallback : SingleCallback<ValueType> {
 		static_cast<ActorType*>(this)->a_callback_error(this, e);
 	}
 };
+namespace fdb {
 inline double now() {
 	return g_network->now();
 }
+}
+using namespace fdb;
 inline Future<Void> delay(double seconds, TaskPriority taskID = TaskPriority::DefaultDelay) {
 	return g_network->delay(seconds, taskID);
 }

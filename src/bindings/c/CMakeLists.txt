@@ -18,7 +18,7 @@ endif()
 
 set(FDB_C_ASM_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${os}-${cpu})
 
-add_library(fdb_c SHARED fdb_c.cpp ${FDB_C_ASM_DIR}/fdb_c.g.S)
+add_library(fdb_c SHARED fdb_c.cpp fdb_c.actor.g.cpp ${FDB_C_ASM_DIR}/fdb_c.g.S)
 target_include_directories(fdb_c
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
     PRIVATE ${FDB_C_ASM_DIR}

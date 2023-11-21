@@ -85,6 +85,7 @@ Error systemErrorCodeToError();
 	inline Error name() { return Error(number); };                                                                     \
 	enum { error_code_##name = number };
 
+namespace fdb::error_code {
 #include "error_definitions.h"
 
 // actor_cancelled has been renamed
@@ -92,6 +93,8 @@ inline Error actor_cancelled() {
 	return Error(error_code_operation_cancelled);
 }
 enum { error_code_actor_cancelled = error_code_operation_cancelled };
+}
+using namespace fdb::error_code;
 
 extern Error internal_error_impl(const char* file, int line);
 extern Error internal_error_impl(const char* msg, const char* file, int line);
