@@ -573,7 +573,7 @@ public:
 			if (c != 0)
 				return c;
 		}
-		return ::compare(size(), other.size());
+		return fdb::compare(size(), other.size());
 	}
 
 	int compareSuffix(StringRef const& other, int prefixLen) const {
@@ -584,7 +584,7 @@ public:
 			if (c != 0)
 				return c;
 		}
-		return ::compare(size(), other.size());
+		return fdb::compare(size(), other.size());
 	}
 
 	// Removes bytes from begin up to and including the sep string, returns StringRef of the part before sep

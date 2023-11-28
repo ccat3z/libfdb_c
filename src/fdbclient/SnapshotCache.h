@@ -85,7 +85,7 @@ struct ExtStringRef {
 		for (int i = cbl; i < rhs.base.size(); i++)
 			if (rhs.base[i])
 				return -1;
-		return ::compare(size(), rhs.size());
+		return fdb::compare(size(), rhs.size());
 	}
 
 	bool startsWith(const ExtStringRef& s) const {
@@ -162,7 +162,7 @@ private:
 		Entry(KeyValueRef const& kv, Arena& arena) : beginKey(kv.key), endKey(kv.key, 1) {
 			values.push_back(arena, kv);
 		}
-		int compare(Entry const& r) const { return ::compare(beginKey, r.beginKey); }
+		int compare(Entry const& r) const { return fdb::compare(beginKey, r.beginKey); }
 		bool operator<(Entry const& r) const { return beginKey < r.beginKey; }
 		int segments() const { return 2 * (values.size() + 1); }
 	};

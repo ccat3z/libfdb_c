@@ -384,10 +384,10 @@ public:
 		value = std::move(r.value);
 	}
 
-	int compare(MapPair<Key, Value> const& r) const { return ::compare(key, r.key); }
+	int compare(MapPair<Key, Value> const& r) const { return fdb::compare(key, r.key); }
 	template <class CompatibleWithKey>
 	int compare(CompatibleWithKey const& r) const {
-		return ::compare(key, r);
+		return fdb::compare(key, r);
 	}
 	bool operator<(MapPair<Key, Value> const& r) const { return key < r.key; }
 	bool operator>(MapPair<Key, Value> const& r) const { return key > r.key; }
@@ -1113,7 +1113,7 @@ void IndexedSet<T, Metric>::erase(typename IndexedSet<T, Metric>::iterator begin
 	// Removes all nodes in the set between first and last, inclusive.
 	// toFree is extended with the roots of completely removed subtrees.
 
-	ASSERT(!end.node || (begin.node && (::compare(*begin, *end) <= 0)));
+	ASSERT(!end.node || (begin.node && (fdb::compare(*begin, *end) <= 0)));
 
 	if (begin == end)
 		return;

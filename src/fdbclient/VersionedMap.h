@@ -284,7 +284,7 @@ void insert(Reference<PTree<T>>& p, Version at, const T& x) {
 	if (!p) {
 		p = makeReference<PTree<T>>(x, at);
 	} else {
-		int c = ::compare(x, p->data);
+		int c = fdb::compare(x, p->data);
 		if (c == 0) {
 			p = makeReference<PTree<T>>(p->priority, x, p->left(at), p->right(at), at);
 		} else {

@@ -53,3 +53,173 @@ index d8a142d41..4e1090917 100644
  inline Future<Void> delay(double seconds, TaskPriority taskID = TaskPriority::DefaultDelay) {
  	return g_network->delay(seconds, taskID);
  }
+diff --git a/fdbclient/SnapshotCache.h b/fdbclient/SnapshotCache.h
+index 7944faa0d..0e2aaaa1b 100644
+--- a/fdbclient/SnapshotCache.h
++++ b/fdbclient/SnapshotCache.h
+@@ -85,7 +85,7 @@ struct ExtStringRef {
+ 		for (int i = cbl; i < rhs.base.size(); i++)
+ 			if (rhs.base[i])
+ 				return -1;
+-		return ::compare(size(), rhs.size());
++		return fdb::compare(size(), rhs.size());
+ 	}
+ 
+ 	bool startsWith(const ExtStringRef& s) const {
+@@ -162,7 +162,7 @@ private:
+ 		Entry(KeyValueRef const& kv, Arena& arena) : beginKey(kv.key), endKey(kv.key, 1) {
+ 			values.push_back(arena, kv);
+ 		}
+-		int compare(Entry const& r) const { return ::compare(beginKey, r.beginKey); }
++		int compare(Entry const& r) const { return fdb::compare(beginKey, r.beginKey); }
+ 		bool operator<(Entry const& r) const { return beginKey < r.beginKey; }
+ 		int segments() const { return 2 * (values.size() + 1); }
+ 	};
+diff --git a/fdbclient/VersionedMap.h b/fdbclient/VersionedMap.h
+index 2b47c96fc..041c39556 100644
+--- a/fdbclient/VersionedMap.h
++++ b/fdbclient/VersionedMap.h
+@@ -284,7 +284,7 @@ void insert(Reference<PTree<T>>& p, Version at, const T& x) {
+ 	if (!p) {
+ 		p = makeReference<PTree<T>>(x, at);
+ 	} else {
+-		int c = ::compare(x, p->data);
++		int c = fdb::compare(x, p->data);
+ 		if (c == 0) {
+ 			p = makeReference<PTree<T>>(p->priority, x, p->left(at), p->right(at), at);
+ 		} else {
+diff --git a/fdbserver/IKeyValueContainer.h b/fdbserver/IKeyValueContainer.h
+index 942f4c297..67a977a7b 100644
+--- a/fdbserver/IKeyValueContainer.h
++++ b/fdbserver/IKeyValueContainer.h
+@@ -41,11 +41,11 @@ struct KeyValueMapPair {
+ 	KeyValueMapPair(KeyRef key, ValueRef value)
+ 	  : arena(key.expectedSize() + value.expectedSize()), key(arena, key), value(arena, value) {}
+ 
+-	int compare(KeyValueMapPair const& r) const { return ::compare(key, r.key); }
++	int compare(KeyValueMapPair const& r) const { return fdb::compare(key, r.key); }
+ 
+ 	template <class CompatibleWithKey>
+ 	int compare(CompatibleWithKey const& r) const {
+-		return ::compare(key, r);
++		return fdb::compare(key, r);
+ 	}
+ 
+ 	bool operator<(KeyValueMapPair const& r) const { return key < r.key; }
+@@ -58,7 +58,7 @@ struct KeyValueMapPair {
+ 
+ template <class CompatibleWithKey>
+ int compare(CompatibleWithKey const& l, KeyValueMapPair const& r) {
+-	return ::compare(l, r.key);
++	return fdb::compare(l, r.key);
+ }
+ template <class CompatibleWithKey>
+ bool operator<(KeyValueMapPair const& l, CompatibleWithKey const& r) {
+diff --git a/fdbserver/workloads/ApiWorkload.actor.cpp b/fdbserver/workloads/ApiWorkload.actor.cpp
+index e326029b4..9dd0e69e4 100644
+--- a/fdbserver/workloads/ApiWorkload.actor.cpp
++++ b/fdbserver/workloads/ApiWorkload.actor.cpp
+@@ -200,7 +200,7 @@ ACTOR Future<bool> compareDatabaseToMemory(ApiWorkload* self) {
+ }
+ 
+ Future<bool> ApiWorkload::compareDatabaseToMemory() {
+-	return ::compareDatabaseToMemory(this);
++	return fdb::compareDatabaseToMemory(this);
+ }
+ 
+ // Generates a set of random key-value pairs with an optional prefix
+diff --git a/flow/Arena.h b/flow/Arena.h
+index 4185e0e85..73aaab266 100644
+--- a/flow/Arena.h
++++ b/flow/Arena.h
+@@ -573,7 +573,7 @@ public:
+ 			if (c != 0)
+ 				return c;
+ 		}
+-		return ::compare(size(), other.size());
++		return fdb::compare(size(), other.size());
+ 	}
+ 
+ 	int compareSuffix(StringRef const& other, int prefixLen) const {
+@@ -584,7 +584,7 @@ public:
+ 			if (c != 0)
+ 				return c;
+ 		}
+-		return ::compare(size(), other.size());
++		return fdb::compare(size(), other.size());
+ 	}
+ 
+ 	// Removes bytes from begin up to and including the sep string, returns StringRef of the part before sep
+diff --git a/flow/IRandom.h b/flow/IRandom.h
+index 87f7f4242..d17a1711f 100644
+--- a/flow/IRandom.h
++++ b/flow/IRandom.h
+@@ -38,6 +38,7 @@
+ // Until we move to C++20, we'll need something to take the place of operator<=>.
+ // This is as good a place as any, I guess.
+ 
++namespace fdb {
+ template <typename T>
+ typename std::enable_if<std::is_integral<T>::value, int>::type compare(T l, T r) {
+ 	const int gt = l > r;
+@@ -60,6 +61,8 @@ int compare(std::pair<K, V> const& l, std::pair<K, V> const& r) {
+ 	}
+ 	return compare(l.second, r.second);
+ }
++}
++using namespace fdb;
+ 
+ class UID {
+ 	uint64_t part[2];
+@@ -73,10 +76,10 @@ public:
+ 	bool isValid() const { return part[0] || part[1]; }
+ 
+ 	int compare(const UID& r) const {
+-		if (int cmp = ::compare(part[0], r.part[0])) {
++		if (int cmp = fdb::compare(part[0], r.part[0])) {
+ 			return cmp;
+ 		}
+-		return ::compare(part[1], r.part[1]);
++		return fdb::compare(part[1], r.part[1]);
+ 	}
+ 	bool operator==(const UID& r) const { return part[0] == r.part[0] && part[1] == r.part[1]; }
+ 	bool operator!=(const UID& r) const { return part[0] != r.part[0] || part[1] != r.part[1]; }
+diff --git a/flow/IndexedSet.cpp b/flow/IndexedSet.cpp
+index 7f1337279..a5744b460 100644
+--- a/flow/IndexedSet.cpp
++++ b/flow/IndexedSet.cpp
+@@ -433,7 +433,7 @@ TEST_CASE("/flow/IndexedSet/data constructor and destructor calls match") {
+ 		~Counter() { count--; }
+ 		Counter(const Counter& r) : value(r.value) { count++; }
+ 		void operator=(const Counter& r) { value = r.value; }
+-		int compare(const Counter& r) const { return ::compare(value, r.value); }
++		int compare(const Counter& r) const { return fdb::compare(value, r.value); }
+ 		bool operator<(const Counter& r) const { return value < r.value; }
+ 	};
+ 	IndexedSet<Counter, NoMetric> mySet;
+diff --git a/flow/IndexedSet.h b/flow/IndexedSet.h
+index 197fe2acf..b50af8973 100644
+--- a/flow/IndexedSet.h
++++ b/flow/IndexedSet.h
+@@ -384,10 +384,10 @@ public:
+ 		value = std::move(r.value);
+ 	}
+ 
+-	int compare(MapPair<Key, Value> const& r) const { return ::compare(key, r.key); }
++	int compare(MapPair<Key, Value> const& r) const { return fdb::compare(key, r.key); }
+ 	template <class CompatibleWithKey>
+ 	int compare(CompatibleWithKey const& r) const {
+-		return ::compare(key, r);
++		return fdb::compare(key, r);
+ 	}
+ 	bool operator<(MapPair<Key, Value> const& r) const { return key < r.key; }
+ 	bool operator>(MapPair<Key, Value> const& r) const { return key > r.key; }
+@@ -1113,7 +1113,7 @@ void IndexedSet<T, Metric>::erase(typename IndexedSet<T, Metric>::iterator begin
+ 	// Removes all nodes in the set between first and last, inclusive.
+ 	// toFree is extended with the roots of completely removed subtrees.
+ 
+-	ASSERT(!end.node || (begin.node && (::compare(*begin, *end) <= 0)));
++	ASSERT(!end.node || (begin.node && (fdb::compare(*begin, *end) <= 0)));
+ 
+ 	if (begin == end)
+ 		return;

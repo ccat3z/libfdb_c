@@ -737,7 +737,6 @@ allocateFast
 allocateFast4kAligned
 assert_num_impl
 base16Char
-compare
 describe
 describeList
 dynamic_size_traits
