@@ -1,5 +1,5 @@
 #define POST_ACTOR_COMPILER 1
-#line 1 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+#line 1 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 /*
  * BackupAgentBase.actor.cpp
  *
@@ -402,41 +402,41 @@ Future<Void> logError(Reference<ReadYourWritesTransaction> tr, Key keyErrors, co
 	return logError(tr->getDatabase(), keyErrors, message);
 }
 
-															#line 405 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 405 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 namespace {
 // This generated class is to be used only via readCommitted()
-															#line 403 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 403 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 template <class ReadCommittedActor>
-															#line 403 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 403 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 class ReadCommittedActorState {
-															#line 412 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 412 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 public:
-															#line 403 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 403 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	ReadCommittedActorState(Database const& cx,PromiseStream<RangeResultWithVersion> const& results,Reference<FlowLock> const& lock,KeyRangeRef const& range,Terminator const& terminator,AccessSystemKeys const& systemAccess,LockAware const& lockAware) 
-															#line 403 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
-															#line 403 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 403 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
+															#line 403 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		 : cx(cx),
-															#line 403 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 403 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   results(results),
-															#line 403 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 403 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   lock(lock),
-															#line 403 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 403 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   range(range),
-															#line 403 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 403 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   terminator(terminator),
-															#line 403 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 403 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   systemAccess(systemAccess),
-															#line 403 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 403 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   lockAware(lockAware),
-															#line 410 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 410 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   begin(firstGreaterOrEqual(range.begin)),
-															#line 411 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 411 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   end(firstGreaterOrEqual(range.end)),
-															#line 412 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 412 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   tr(cx),
-															#line 413 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 413 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   releaser()
-															#line 439 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 439 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 	{
 		fdb_probe_actor_create("readCommitted", reinterpret_cast<unsigned long>(this));
 
@@ -449,9 +449,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 415 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 415 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			;
-															#line 454 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 454 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -480,36 +480,36 @@ public:
 	int a_body1loopBody1(int loopDepth) 
 	{
 		try {
-															#line 417 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 417 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			limits = GetRangeLimits(GetRangeLimits::ROW_LIMIT_UNLIMITED, (g_network->isSimulated() && !g_simulator.speedUpSimulation) ? CLIENT_KNOBS->BACKUP_SIMULATED_LIMIT_BYTES : CLIENT_KNOBS->BACKUP_GET_RANGE_LIMIT_BYTES);
-															#line 422 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 422 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			if (systemAccess)
-															#line 487 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 487 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			{
-															#line 423 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 423 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				tr.setOption(FDBTransactionOptions::ACCESS_SYSTEM_KEYS);
-															#line 491 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 491 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			}
-															#line 424 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 424 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			if (lockAware)
-															#line 495 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 495 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			{
-															#line 425 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 425 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				tr.setOption(FDBTransactionOptions::LOCK_AWARE);
-															#line 499 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 499 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			}
-															#line 428 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 428 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			releaser.release();
-															#line 429 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 429 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			StrictFuture<Void> __when_expr_0 = lock->take(TaskPriority::DefaultYield, limits.bytes + CLIENT_KNOBS->VALUE_SIZE_LIMIT + CLIENT_KNOBS->SYSTEM_KEY_SIZE_LIMIT);
-															#line 429 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 429 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			if (static_cast<ReadCommittedActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 507 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 507 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1loopBody1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<ReadCommittedActor*>(this)->actor_wait_state = 1;
-															#line 429 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 429 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ReadCommittedActor, 0, Void >*>(static_cast<ReadCommittedActor*>(this)));
-															#line 512 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 512 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -529,27 +529,27 @@ public:
 	int a_body1loopBody1Catch1(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 466 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 466 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			if (e.code() == error_code_transaction_too_old)
-															#line 534 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 534 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			{
-															#line 469 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 469 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				tr.fullReset();
-															#line 538 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 538 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 				loopDepth = a_body1loopBody1Catch1cont1(loopDepth);
 			}
 			else
 			{
-															#line 471 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 471 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				StrictFuture<Void> __when_expr_3 = tr.onError(e);
-															#line 471 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 471 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				if (static_cast<ReadCommittedActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 547 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 547 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 				if (__when_expr_3.isReady()) { if (__when_expr_3.isError()) return a_body1Catch1(__when_expr_3.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1Catch1when1(__when_expr_3.get(), loopDepth); };
 				static_cast<ReadCommittedActor*>(this)->actor_wait_state = 4;
-															#line 471 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 471 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				__when_expr_3.addCallbackAndClear(static_cast<ActorCallback< ReadCommittedActor, 3, Void >*>(static_cast<ReadCommittedActor*>(this)));
-															#line 552 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 552 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 				loopDepth = 0;
 			}
 		}
@@ -563,36 +563,36 @@ public:
 	}
 	int a_body1loopBody1cont2(Void const& _,int loopDepth) 
 	{
-															#line 431 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 431 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		releaser = FlowLock::Releaser( *lock, limits.bytes + CLIENT_KNOBS->VALUE_SIZE_LIMIT + CLIENT_KNOBS->SYSTEM_KEY_SIZE_LIMIT);
-															#line 434 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 434 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		StrictFuture<RangeResult> __when_expr_1 = tr.getRange(begin, end, limits);
-															#line 434 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 434 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		if (static_cast<ReadCommittedActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 572 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 572 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1loopBody1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1loopBody1cont2when1(__when_expr_1.get(), loopDepth); };
 		static_cast<ReadCommittedActor*>(this)->actor_wait_state = 2;
-															#line 434 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 434 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< ReadCommittedActor, 1, RangeResult >*>(static_cast<ReadCommittedActor*>(this)));
-															#line 577 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 577 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont2(Void && _,int loopDepth) 
 	{
-															#line 431 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 431 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		releaser = FlowLock::Releaser( *lock, limits.bytes + CLIENT_KNOBS->VALUE_SIZE_LIMIT + CLIENT_KNOBS->SYSTEM_KEY_SIZE_LIMIT);
-															#line 434 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 434 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		StrictFuture<RangeResult> __when_expr_1 = tr.getRange(begin, end, limits);
-															#line 434 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 434 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		if (static_cast<ReadCommittedActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 590 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 590 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1loopBody1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1loopBody1cont2when1(__when_expr_1.get(), loopDepth); };
 		static_cast<ReadCommittedActor*>(this)->actor_wait_state = 2;
-															#line 434 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 434 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< ReadCommittedActor, 1, RangeResult >*>(static_cast<ReadCommittedActor*>(this)));
-															#line 595 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 595 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -662,36 +662,36 @@ public:
 	}
 	int a_body1loopBody1cont5(int loopDepth) 
 	{
-															#line 438 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 438 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		if (values.size() > 1 && BUGGIFY)
-															#line 667 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 667 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		{
-															#line 439 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 439 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			RangeResult copy;
-															#line 441 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 441 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			for(int i = 0;i < values.size() / 2;i++) {
-															#line 442 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 442 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				copy.push_back_deep(copy.arena(), values[i]);
-															#line 675 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 675 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			}
-															#line 444 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 444 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			values = copy;
-															#line 445 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 445 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			values.more = true;
-															#line 447 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 447 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			if (deterministicRandom()->random01() < 0.5)
-															#line 683 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 683 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			{
-															#line 448 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 448 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				StrictFuture<Void> __when_expr_2 = delay(6.0);
-															#line 448 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 448 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				if (static_cast<ReadCommittedActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 689 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 689 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 				if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1loopBody1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1loopBody1cont5when1(__when_expr_2.get(), loopDepth); };
 				static_cast<ReadCommittedActor*>(this)->actor_wait_state = 3;
-															#line 448 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 448 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< ReadCommittedActor, 2, Void >*>(static_cast<ReadCommittedActor*>(this)));
-															#line 694 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 694 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 				loopDepth = 0;
 			}
 			else
@@ -708,9 +708,9 @@ public:
 	}
 	int a_body1loopBody1cont2when1(RangeResult const& __values,int loopDepth) 
 	{
-															#line 434 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 434 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		values = __values;
-															#line 713 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 713 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont5(loopDepth);
 
 		return loopDepth;
@@ -775,35 +775,35 @@ public:
 	}
 	int a_body1loopBody1cont6(int loopDepth) 
 	{
-															#line 451 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 451 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		releaser.remaining -= values.expectedSize();
-															#line 453 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 453 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		ASSERT(releaser.remaining >= 0);
-															#line 455 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 455 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		results.send(RangeResultWithVersion(values, tr.getReadVersion().get()));
-															#line 457 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 457 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		if (values.size() > 0)
-															#line 786 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 786 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		{
-															#line 458 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 458 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			begin = firstGreaterThan(values.end()[-1].key);
-															#line 790 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 790 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		}
-															#line 460 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 460 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		if (!values.more && !limits.isReached())
-															#line 794 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 794 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		{
-															#line 461 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 461 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			if (terminator)
-															#line 798 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 798 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			{
-															#line 462 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 462 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				results.sendError(end_of_stream());
-															#line 802 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 802 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			}
-															#line 463 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 463 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			if (!static_cast<ReadCommittedActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~ReadCommittedActorState(); static_cast<ReadCommittedActor*>(this)->destroy(); return 0; }
-															#line 806 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 806 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			new (&static_cast<ReadCommittedActor*>(this)->SAV< Void >::value()) Void(Void());
 			this->~ReadCommittedActorState();
 			static_cast<ReadCommittedActor*>(this)->finishSendAndDelPromiseRef();
@@ -988,38 +988,38 @@ public:
 		fdb_probe_actor_exit("readCommitted", reinterpret_cast<unsigned long>(this), 3);
 
 	}
-															#line 403 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 403 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Database cx;
-															#line 403 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 403 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	PromiseStream<RangeResultWithVersion> results;
-															#line 403 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 403 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Reference<FlowLock> lock;
-															#line 403 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 403 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	KeyRangeRef range;
-															#line 403 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 403 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Terminator terminator;
-															#line 403 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 403 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	AccessSystemKeys systemAccess;
-															#line 403 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 403 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	LockAware lockAware;
-															#line 410 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 410 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	KeySelector begin;
-															#line 411 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 411 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	KeySelector end;
-															#line 412 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 412 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Transaction tr;
-															#line 413 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 413 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	FlowLock::Releaser releaser;
-															#line 417 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 417 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	GetRangeLimits limits;
-															#line 434 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 434 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	RangeResult values;
-															#line 1017 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1017 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 };
 // This generated class is to be used only via readCommitted()
-															#line 403 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 403 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 class ReadCommittedActor final : public Actor<Void>, public ActorCallback< ReadCommittedActor, 0, Void >, public ActorCallback< ReadCommittedActor, 1, RangeResult >, public ActorCallback< ReadCommittedActor, 2, Void >, public ActorCallback< ReadCommittedActor, 3, Void >, public FastAllocated<ReadCommittedActor>, public ReadCommittedActorState<ReadCommittedActor> {
-															#line 1022 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1022 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 public:
 	using FastAllocated<ReadCommittedActor>::operator new;
 	using FastAllocated<ReadCommittedActor>::operator delete;
@@ -1031,9 +1031,9 @@ friend struct ActorCallback< ReadCommittedActor, 0, Void >;
 friend struct ActorCallback< ReadCommittedActor, 1, RangeResult >;
 friend struct ActorCallback< ReadCommittedActor, 2, Void >;
 friend struct ActorCallback< ReadCommittedActor, 3, Void >;
-															#line 403 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 403 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	ReadCommittedActor(Database const& cx,PromiseStream<RangeResultWithVersion> const& results,Reference<FlowLock> const& lock,KeyRangeRef const& range,Terminator const& terminator,AccessSystemKeys const& systemAccess,LockAware const& lockAware) 
-															#line 1036 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1036 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		 : Actor<Void>(),
 		   ReadCommittedActorState<ReadCommittedActor>(cx, results, lock, range, terminator, systemAccess, lockAware)
 	{
@@ -1060,58 +1060,58 @@ friend struct ActorCallback< ReadCommittedActor, 3, Void >;
 	}
 };
 }
-															#line 403 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 403 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 [[nodiscard]] Future<Void> readCommitted( Database const& cx, PromiseStream<RangeResultWithVersion> const& results, Reference<FlowLock> const& lock, KeyRangeRef const& range, Terminator const& terminator, AccessSystemKeys const& systemAccess, LockAware const& lockAware ) {
-															#line 403 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 403 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	return Future<Void>(new ReadCommittedActor(cx, results, lock, range, terminator, systemAccess, lockAware));
-															#line 1067 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1067 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 }
 
-#line 476 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+#line 476 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 
-															#line 1072 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1072 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 namespace {
 // This generated class is to be used only via readCommitted()
-															#line 477 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 477 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 template <class ReadCommittedActor1>
-															#line 477 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 477 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 class ReadCommittedActor1State {
-															#line 1079 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1079 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 public:
-															#line 477 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 477 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	ReadCommittedActor1State(Database const& cx,PromiseStream<RCGroup> const& results,Future<Void> const& active,Reference<FlowLock> const& lock,KeyRangeRef const& range,std::function<std::pair<uint64_t, uint32_t>(Key key)> const& groupBy,Terminator const& terminator,AccessSystemKeys const& systemAccess,LockAware const& lockAware) 
-															#line 477 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
-															#line 477 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 477 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
+															#line 477 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		 : cx(cx),
-															#line 477 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 477 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   results(results),
-															#line 477 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 477 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   active(active),
-															#line 477 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 477 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   lock(lock),
-															#line 477 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 477 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   range(range),
-															#line 477 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 477 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   groupBy(groupBy),
-															#line 477 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 477 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   terminator(terminator),
-															#line 477 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 477 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   systemAccess(systemAccess),
-															#line 477 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 477 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   lockAware(lockAware),
-															#line 486 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 486 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   nextKey(firstGreaterOrEqual(range.begin)),
-															#line 487 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 487 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   end(firstGreaterOrEqual(range.end)),
-															#line 489 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 489 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   rcGroup(RCGroup()),
-															#line 490 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 490 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   skipGroup(ULLONG_MAX),
-															#line 491 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 491 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   tr(cx),
-															#line 492 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 492 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   releaser()
-															#line 1114 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1114 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 	{
 		fdb_probe_actor_create("readCommitted", reinterpret_cast<unsigned long>(this));
 
@@ -1124,9 +1124,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 494 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 494 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			;
-															#line 1129 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1129 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -1155,34 +1155,34 @@ public:
 	int a_body1loopBody1(int loopDepth) 
 	{
 		try {
-															#line 496 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 496 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			limits = GetRangeLimits(GetRangeLimits::ROW_LIMIT_UNLIMITED, (g_network->isSimulated() && !g_simulator.speedUpSimulation) ? CLIENT_KNOBS->BACKUP_SIMULATED_LIMIT_BYTES : CLIENT_KNOBS->BACKUP_GET_RANGE_LIMIT_BYTES);
-															#line 501 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 501 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			if (systemAccess)
-															#line 1162 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1162 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			{
-															#line 502 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 502 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				tr.setOption(FDBTransactionOptions::ACCESS_SYSTEM_KEYS);
-															#line 1166 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1166 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			}
-															#line 503 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 503 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			if (lockAware)
-															#line 1170 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1170 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			{
-															#line 504 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 504 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				tr.setOption(FDBTransactionOptions::LOCK_AWARE);
-															#line 1174 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1174 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			}
-															#line 506 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 506 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			StrictFuture<RangeResult> __when_expr_0 = tr.getRange(nextKey, end, limits);
-															#line 506 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 506 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			if (static_cast<ReadCommittedActor1*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 1180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1180 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1loopBody1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<ReadCommittedActor1*>(this)->actor_wait_state = 1;
-															#line 506 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 506 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ReadCommittedActor1, 0, RangeResult >*>(static_cast<ReadCommittedActor1*>(this)));
-															#line 1185 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1185 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -1202,27 +1202,27 @@ public:
 	int a_body1loopBody1Catch1(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 576 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 576 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			if (e.code() == error_code_transaction_too_old)
-															#line 1207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1207 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			{
-															#line 579 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 579 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				tr.fullReset();
-															#line 1211 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1211 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 				loopDepth = a_body1loopBody1Catch1cont1(loopDepth);
 			}
 			else
 			{
-															#line 581 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 581 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				StrictFuture<Void> __when_expr_4 = tr.onError(e);
-															#line 581 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 581 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				if (static_cast<ReadCommittedActor1*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 1220 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1220 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 				if (__when_expr_4.isReady()) { if (__when_expr_4.isError()) return a_body1Catch1(__when_expr_4.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1Catch1when1(__when_expr_4.get(), loopDepth); };
 				static_cast<ReadCommittedActor1*>(this)->actor_wait_state = 5;
-															#line 581 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 581 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				__when_expr_4.addCallbackAndClear(static_cast<ActorCallback< ReadCommittedActor1, 4, Void >*>(static_cast<ReadCommittedActor1*>(this)));
-															#line 1225 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1225 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 				loopDepth = 0;
 			}
 		}
@@ -1236,36 +1236,36 @@ public:
 	}
 	int a_body1loopBody1cont2(int loopDepth) 
 	{
-															#line 510 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 510 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		if (rangevalue.size() > 1 && BUGGIFY)
-															#line 1241 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1241 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		{
-															#line 511 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 511 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			RangeResult copy;
-															#line 513 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 513 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			for(int i = 0;i < rangevalue.size() / 2;i++) {
-															#line 514 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 514 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				copy.push_back_deep(copy.arena(), rangevalue[i]);
-															#line 1249 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1249 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			}
-															#line 516 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 516 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			rangevalue = copy;
-															#line 517 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 517 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			rangevalue.more = true;
-															#line 519 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 519 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			if (deterministicRandom()->random01() < 0.5)
-															#line 1257 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1257 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			{
-															#line 520 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 520 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				StrictFuture<Void> __when_expr_1 = delay(6.0);
-															#line 520 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 520 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				if (static_cast<ReadCommittedActor1*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 1263 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1263 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 				if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1loopBody1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1loopBody1cont2when1(__when_expr_1.get(), loopDepth); };
 				static_cast<ReadCommittedActor1*>(this)->actor_wait_state = 2;
-															#line 520 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 520 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< ReadCommittedActor1, 1, Void >*>(static_cast<ReadCommittedActor1*>(this)));
-															#line 1268 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1268 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 				loopDepth = 0;
 			}
 			else
@@ -1282,9 +1282,9 @@ public:
 	}
 	int a_body1loopBody1when1(RangeResult const& __rangevalue,int loopDepth) 
 	{
-															#line 506 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 506 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		rangevalue = __rangevalue;
-															#line 1287 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1287 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont2(loopDepth);
 
 		return loopDepth;
@@ -1349,16 +1349,16 @@ public:
 	}
 	int a_body1loopBody1cont5(int loopDepth) 
 	{
-															#line 524 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 524 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		StrictFuture<Void> __when_expr_2 = active;
-															#line 524 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 524 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		if (static_cast<ReadCommittedActor1*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 1356 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1356 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1loopBody1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1loopBody1cont5when1(__when_expr_2.get(), loopDepth); };
 		static_cast<ReadCommittedActor1*>(this)->actor_wait_state = 3;
-															#line 524 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 524 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< ReadCommittedActor1, 2, Void >*>(static_cast<ReadCommittedActor1*>(this)));
-															#line 1361 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1361 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -1446,36 +1446,36 @@ public:
 	}
 	int a_body1loopBody1cont9(Void const& _,int loopDepth) 
 	{
-															#line 525 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 525 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		releaser.release();
-															#line 526 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 526 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		StrictFuture<Void> __when_expr_3 = lock->take(TaskPriority::DefaultYield, rangevalue.expectedSize() + rcGroup.items.expectedSize());
-															#line 526 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 526 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		if (static_cast<ReadCommittedActor1*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 1455 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1455 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		if (__when_expr_3.isReady()) { if (__when_expr_3.isError()) return a_body1loopBody1Catch1(__when_expr_3.getError(), loopDepth); else return a_body1loopBody1cont9when1(__when_expr_3.get(), loopDepth); };
 		static_cast<ReadCommittedActor1*>(this)->actor_wait_state = 4;
-															#line 526 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 526 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		__when_expr_3.addCallbackAndClear(static_cast<ActorCallback< ReadCommittedActor1, 3, Void >*>(static_cast<ReadCommittedActor1*>(this)));
-															#line 1460 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1460 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont9(Void && _,int loopDepth) 
 	{
-															#line 525 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 525 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		releaser.release();
-															#line 526 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 526 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		StrictFuture<Void> __when_expr_3 = lock->take(TaskPriority::DefaultYield, rangevalue.expectedSize() + rcGroup.items.expectedSize());
-															#line 526 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 526 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		if (static_cast<ReadCommittedActor1*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 1473 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1473 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		if (__when_expr_3.isReady()) { if (__when_expr_3.isError()) return a_body1loopBody1Catch1(__when_expr_3.getError(), loopDepth); else return a_body1loopBody1cont9when1(__when_expr_3.get(), loopDepth); };
 		static_cast<ReadCommittedActor1*>(this)->actor_wait_state = 4;
-															#line 526 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 526 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		__when_expr_3.addCallbackAndClear(static_cast<ActorCallback< ReadCommittedActor1, 3, Void >*>(static_cast<ReadCommittedActor1*>(this)));
-															#line 1478 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1478 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -1545,182 +1545,182 @@ public:
 	}
 	int a_body1loopBody1cont10(Void const& _,int loopDepth) 
 	{
-															#line 527 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 527 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		releaser = FlowLock::Releaser(*lock, rangevalue.expectedSize() + rcGroup.items.expectedSize());
-															#line 529 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 529 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		for( auto& s : rangevalue ) {
-															#line 530 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 530 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			uint64_t groupKey = groupBy(s.key).first;
-															#line 532 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 532 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			if (groupKey != skipGroup)
-															#line 1556 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1556 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			{
-															#line 533 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 533 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				if (rcGroup.version == -1)
-															#line 1560 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1560 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 				{
-															#line 534 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 534 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 					rcGroup.version = tr.getReadVersion().get();
-															#line 535 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 535 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 					rcGroup.groupKey = groupKey;
-															#line 1566 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1566 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 				}
 				else
 				{
-															#line 536 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 536 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 					if (rcGroup.groupKey != groupKey)
-															#line 1572 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1572 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 					{
-															#line 543 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 543 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 						releaser.remaining -= rcGroup.items .expectedSize();
-															#line 546 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 546 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 						ASSERT(releaser.remaining >= 0);
-															#line 547 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 547 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 						results.send(rcGroup);
-															#line 548 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 548 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 						nextKey = firstGreaterThan(rcGroup.items.end()[-1].key);
-															#line 549 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 549 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 						skipGroup = rcGroup.groupKey;
-															#line 551 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 551 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 						rcGroup = RCGroup();
-															#line 552 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 552 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 						rcGroup.version = tr.getReadVersion().get();
-															#line 553 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 553 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 						rcGroup.groupKey = groupKey;
-															#line 1590 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1590 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 					}
 				}
-															#line 555 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 555 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				rcGroup.items.push_back_deep(rcGroup.items.arena(), s);
-															#line 1595 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1595 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			}
 		}
-															#line 559 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 559 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		if (!rangevalue.more)
-															#line 1600 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1600 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		{
-															#line 560 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 560 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			if (rcGroup.version != -1)
-															#line 1604 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1604 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			{
-															#line 561 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 561 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				releaser.remaining -= rcGroup.items .expectedSize();
-															#line 564 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 564 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				ASSERT(releaser.remaining >= 0);
-															#line 566 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 566 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				results.send(rcGroup);
-															#line 1612 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1612 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			}
-															#line 569 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 569 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			if (terminator)
-															#line 1616 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1616 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			{
-															#line 570 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 570 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				results.sendError(end_of_stream());
-															#line 1620 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1620 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			}
-															#line 571 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 571 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			if (!static_cast<ReadCommittedActor1*>(this)->SAV<Void>::futures) { (void)(Void()); this->~ReadCommittedActor1State(); static_cast<ReadCommittedActor1*>(this)->destroy(); return 0; }
-															#line 1624 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1624 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			new (&static_cast<ReadCommittedActor1*>(this)->SAV< Void >::value()) Void(Void());
 			this->~ReadCommittedActor1State();
 			static_cast<ReadCommittedActor1*>(this)->finishSendAndDelPromiseRef();
 			return 0;
 		}
-															#line 574 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 574 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		nextKey = firstGreaterThan(rangevalue.end()[-1].key);
-															#line 1632 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1632 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont10cont10(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont10(Void && _,int loopDepth) 
 	{
-															#line 527 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 527 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		releaser = FlowLock::Releaser(*lock, rangevalue.expectedSize() + rcGroup.items.expectedSize());
-															#line 529 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 529 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		for( auto& s : rangevalue ) {
-															#line 530 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 530 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			uint64_t groupKey = groupBy(s.key).first;
-															#line 532 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 532 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			if (groupKey != skipGroup)
-															#line 1647 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1647 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			{
-															#line 533 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 533 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				if (rcGroup.version == -1)
-															#line 1651 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1651 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 				{
-															#line 534 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 534 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 					rcGroup.version = tr.getReadVersion().get();
-															#line 535 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 535 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 					rcGroup.groupKey = groupKey;
-															#line 1657 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1657 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 				}
 				else
 				{
-															#line 536 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 536 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 					if (rcGroup.groupKey != groupKey)
-															#line 1663 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1663 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 					{
-															#line 543 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 543 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 						releaser.remaining -= rcGroup.items .expectedSize();
-															#line 546 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 546 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 						ASSERT(releaser.remaining >= 0);
-															#line 547 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 547 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 						results.send(rcGroup);
-															#line 548 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 548 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 						nextKey = firstGreaterThan(rcGroup.items.end()[-1].key);
-															#line 549 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 549 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 						skipGroup = rcGroup.groupKey;
-															#line 551 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 551 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 						rcGroup = RCGroup();
-															#line 552 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 552 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 						rcGroup.version = tr.getReadVersion().get();
-															#line 553 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 553 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 						rcGroup.groupKey = groupKey;
-															#line 1681 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1681 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 					}
 				}
-															#line 555 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 555 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				rcGroup.items.push_back_deep(rcGroup.items.arena(), s);
-															#line 1686 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1686 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			}
 		}
-															#line 559 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 559 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		if (!rangevalue.more)
-															#line 1691 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1691 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		{
-															#line 560 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 560 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			if (rcGroup.version != -1)
-															#line 1695 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1695 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			{
-															#line 561 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 561 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				releaser.remaining -= rcGroup.items .expectedSize();
-															#line 564 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 564 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				ASSERT(releaser.remaining >= 0);
-															#line 566 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 566 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				results.send(rcGroup);
-															#line 1703 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1703 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			}
-															#line 569 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 569 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			if (terminator)
-															#line 1707 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1707 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			{
-															#line 570 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 570 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				results.sendError(end_of_stream());
-															#line 1711 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1711 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			}
-															#line 571 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 571 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			if (!static_cast<ReadCommittedActor1*>(this)->SAV<Void>::futures) { (void)(Void()); this->~ReadCommittedActor1State(); static_cast<ReadCommittedActor1*>(this)->destroy(); return 0; }
-															#line 1715 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1715 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			new (&static_cast<ReadCommittedActor1*>(this)->SAV< Void >::value()) Void(Void());
 			this->~ReadCommittedActor1State();
 			static_cast<ReadCommittedActor1*>(this)->finishSendAndDelPromiseRef();
 			return 0;
 		}
-															#line 574 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 574 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		nextKey = firstGreaterThan(rangevalue.end()[-1].key);
-															#line 1723 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1723 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont10cont10(loopDepth);
 
 		return loopDepth;
@@ -1882,46 +1882,46 @@ public:
 		fdb_probe_actor_exit("readCommitted", reinterpret_cast<unsigned long>(this), 4);
 
 	}
-															#line 477 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 477 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Database cx;
-															#line 477 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 477 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	PromiseStream<RCGroup> results;
-															#line 477 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 477 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Future<Void> active;
-															#line 477 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 477 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Reference<FlowLock> lock;
-															#line 477 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 477 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	KeyRangeRef range;
-															#line 477 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 477 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	std::function<std::pair<uint64_t, uint32_t>(Key key)> groupBy;
-															#line 477 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 477 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Terminator terminator;
-															#line 477 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 477 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	AccessSystemKeys systemAccess;
-															#line 477 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 477 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	LockAware lockAware;
-															#line 486 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 486 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	KeySelector nextKey;
-															#line 487 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 487 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	KeySelector end;
-															#line 489 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 489 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	RCGroup rcGroup;
-															#line 490 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 490 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	uint64_t skipGroup;
-															#line 491 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 491 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Transaction tr;
-															#line 492 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 492 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	FlowLock::Releaser releaser;
-															#line 496 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 496 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	GetRangeLimits limits;
-															#line 506 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 506 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	RangeResult rangevalue;
-															#line 1919 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1919 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 };
 // This generated class is to be used only via readCommitted()
-															#line 477 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 477 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 class ReadCommittedActor1 final : public Actor<Void>, public ActorCallback< ReadCommittedActor1, 0, RangeResult >, public ActorCallback< ReadCommittedActor1, 1, Void >, public ActorCallback< ReadCommittedActor1, 2, Void >, public ActorCallback< ReadCommittedActor1, 3, Void >, public ActorCallback< ReadCommittedActor1, 4, Void >, public FastAllocated<ReadCommittedActor1>, public ReadCommittedActor1State<ReadCommittedActor1> {
-															#line 1924 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1924 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 public:
 	using FastAllocated<ReadCommittedActor1>::operator new;
 	using FastAllocated<ReadCommittedActor1>::operator delete;
@@ -1934,9 +1934,9 @@ friend struct ActorCallback< ReadCommittedActor1, 1, Void >;
 friend struct ActorCallback< ReadCommittedActor1, 2, Void >;
 friend struct ActorCallback< ReadCommittedActor1, 3, Void >;
 friend struct ActorCallback< ReadCommittedActor1, 4, Void >;
-															#line 477 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 477 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	ReadCommittedActor1(Database const& cx,PromiseStream<RCGroup> const& results,Future<Void> const& active,Reference<FlowLock> const& lock,KeyRangeRef const& range,std::function<std::pair<uint64_t, uint32_t>(Key key)> const& groupBy,Terminator const& terminator,AccessSystemKeys const& systemAccess,LockAware const& lockAware) 
-															#line 1939 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1939 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		 : Actor<Void>(),
 		   ReadCommittedActor1State<ReadCommittedActor1>(cx, results, active, lock, range, groupBy, terminator, systemAccess, lockAware)
 	{
@@ -1964,14 +1964,14 @@ friend struct ActorCallback< ReadCommittedActor1, 4, Void >;
 	}
 };
 }
-															#line 477 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 477 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 [[nodiscard]] Future<Void> readCommitted( Database const& cx, PromiseStream<RCGroup> const& results, Future<Void> const& active, Reference<FlowLock> const& lock, KeyRangeRef const& range, std::function<std::pair<uint64_t, uint32_t>(Key key)> const& groupBy, Terminator const& terminator, AccessSystemKeys const& systemAccess, LockAware const& lockAware ) {
-															#line 477 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 477 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	return Future<Void>(new ReadCommittedActor1(cx, results, active, lock, range, groupBy, terminator, systemAccess, lockAware));
-															#line 1971 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1971 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 }
 
-#line 586 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+#line 586 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 
 Future<Void> readCommitted(Database cx,
                            PromiseStream<RCGroup> results,
@@ -1982,51 +1982,51 @@ Future<Void> readCommitted(Database cx,
 	    cx, results, Void(), lock, range, groupBy, Terminator::True, AccessSystemKeys::True, LockAware::True);
 }
 
-															#line 1985 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1985 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 namespace {
 // This generated class is to be used only via dumpData()
-															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 596 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 template <class DumpDataActor>
-															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 596 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 class DumpDataActorState {
-															#line 1992 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 1992 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 public:
-															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 596 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	DumpDataActorState(Database const& cx,PromiseStream<RCGroup> const& results,Reference<FlowLock> const& lock,Key const& uid,Key const& addPrefix,Key const& removePrefix,RequestStream<CommitTransactionRequest> const& commit,NotifiedVersion* const& committedVersion,Optional<Version> const& endVersion,Key const& rangeBegin,PromiseStream<Future<Void>> const& addActor,FlowLock* const& commitLock,Reference<KeyRangeMap<Version>> const& keyVersion) 
-															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
-															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 596 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
+															#line 596 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		 : cx(cx),
-															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 596 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   results(results),
-															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 596 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   lock(lock),
-															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 596 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   uid(uid),
-															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 596 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   addPrefix(addPrefix),
-															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 596 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   removePrefix(removePrefix),
-															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 596 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   commit(commit),
-															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 596 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   committedVersion(committedVersion),
-															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 596 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   endVersion(endVersion),
-															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 596 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   rangeBegin(rangeBegin),
-															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 596 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   addActor(addActor),
-															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 596 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   commitLock(commitLock),
-															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 596 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   keyVersion(keyVersion),
-															#line 609 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 609 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   lastVersion(invalidVersion),
-															#line 610 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 610 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   endOfStream(false),
-															#line 611 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 611 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   totalBytes(0)
-															#line 2029 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2029 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 	{
 		fdb_probe_actor_create("dumpData", reinterpret_cast<unsigned long>(this));
 
@@ -2039,9 +2039,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 612 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 612 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			;
-															#line 2044 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2044 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -2069,51 +2069,51 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 613 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 613 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		req = CommitTransactionRequest();
-															#line 614 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 614 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		newBeginVersion = invalidVersion;
-															#line 615 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 615 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		mutationSize = 0;
-															#line 616 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 616 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		;
-															#line 2080 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2080 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		loopDepth = a_body1loopBody1loopHead1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont1(int loopDepth) 
 	{
-															#line 651 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 651 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		Key applyBegin = uid.withPrefix(applyMutationsBeginRange.begin);
-															#line 652 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 652 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		Key versionKey = BinaryWriter::toValue(newBeginVersion, Unversioned());
-															#line 653 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 653 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		Key rangeEnd = getApplyKey(newBeginVersion, uid);
-															#line 655 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 655 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		req.transaction.mutations.push_back_deep(req.arena, MutationRef(MutationRef::SetValue, applyBegin, versionKey));
-															#line 656 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 656 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		req.transaction.write_conflict_ranges.push_back_deep(req.arena, singleKeyRange(applyBegin));
-															#line 657 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 657 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		req.transaction.mutations.push_back_deep(req.arena, MutationRef(MutationRef::ClearRange, rangeBegin, rangeEnd));
-															#line 658 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 658 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		req.transaction.write_conflict_ranges.push_back_deep(req.arena, singleKeyRange(rangeBegin));
-															#line 663 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 663 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		req.transaction.read_snapshot = committedVersion->get();
-															#line 664 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 664 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		req.flags = req.flags | CommitTransactionRequest::FLAG_IS_LOCK_AWARE;
-															#line 666 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 666 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		totalBytes += mutationSize;
-															#line 667 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 667 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = commitLock->take(TaskPriority::DefaultYield, mutationSize);
-															#line 667 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 667 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		if (static_cast<DumpDataActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 2111 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2111 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1cont1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<DumpDataActor*>(this)->actor_wait_state = 2;
-															#line 667 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 667 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< DumpDataActor, 1, Void >*>(static_cast<DumpDataActor*>(this)));
-															#line 2116 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2116 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -2128,16 +2128,16 @@ public:
 	int a_body1loopBody1loopBody1(int loopDepth) 
 	{
 		try {
-															#line 618 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 618 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			FutureStream<RCGroup> __when_expr_0 = results.getFuture();
-															#line 618 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 618 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			if (static_cast<DumpDataActor*>(this)->actor_wait_state < 0) return a_body1loopBody1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 2135 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2135 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1loopBody1loopBody1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1loopBody1loopBody1when1(__when_expr_0.pop(), loopDepth); };
 			static_cast<DumpDataActor*>(this)->actor_wait_state = 1;
-															#line 618 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 618 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorSingleCallback< DumpDataActor, 0, RCGroup >*>(static_cast<DumpDataActor*>(this)));
-															#line 2140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2140 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -2170,38 +2170,38 @@ public:
 	int a_body1loopBody1loopBody1Catch1(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 638 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 638 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			if (e.code() == error_code_end_of_stream)
-															#line 2175 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2175 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			{
-															#line 639 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 639 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				if (endVersion.present() && endVersion.get() > lastVersion && endVersion.get() > newBeginVersion)
-															#line 2179 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2179 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 				{
-															#line 640 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 640 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 					newBeginVersion = endVersion.get();
-															#line 2183 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2183 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 				}
-															#line 642 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 642 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				if (newBeginVersion == invalidVersion)
-															#line 2187 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2187 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 				{
-															#line 643 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 643 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 					if (!static_cast<DumpDataActor*>(this)->SAV<int>::futures) { (void)(totalBytes); this->~DumpDataActorState(); static_cast<DumpDataActor*>(this)->destroy(); return 0; }
-															#line 2191 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2191 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 					new (&static_cast<DumpDataActor*>(this)->SAV< int >::value()) int(std::move(totalBytes)); // state_var_RVO
 					this->~DumpDataActorState();
 					static_cast<DumpDataActor*>(this)->finishSendAndDelPromiseRef();
 					return 0;
 				}
-															#line 644 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 644 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				endOfStream = true;
-															#line 2199 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2199 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 				return a_body1loopBody1break1(loopDepth==0?0:loopDepth-1); // break
 			}
-															#line 647 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 647 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			return a_body1Catch1(e, std::max(0, loopDepth - 2));
-															#line 2204 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2204 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		}
 		catch (Error& error) {
 			loopDepth = a_body1Catch1(error, std::max(0, loopDepth - 2));
@@ -2213,23 +2213,23 @@ public:
 	}
 	int a_body1loopBody1loopBody1cont2(RCGroup const& group,int loopDepth) 
 	{
-															#line 619 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 619 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		lock->release(group.items.expectedSize());
-															#line 621 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 621 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		BinaryWriter bw(Unversioned());
-															#line 622 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 622 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		for(int i = 0;i < group.items.size();++i) {
-															#line 623 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 623 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			bw.serializeBytes(group.items[i].value);
-															#line 2224 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2224 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		}
-															#line 625 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 625 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		decodeBackupLogValue(req.arena, req.transaction.mutations, mutationSize, bw.toValue(), addPrefix, removePrefix, group.groupKey, keyVersion);
-															#line 633 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 633 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		newBeginVersion = group.groupKey + 1;
-															#line 634 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 634 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		if (mutationSize >= CLIENT_KNOBS->BACKUP_LOG_WRITE_BATCH_MAX_SIZE)
-															#line 2232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2232 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		{
 			return a_body1loopBody1break1(loopDepth==0?0:loopDepth-1); // break
 		}
@@ -2239,23 +2239,23 @@ public:
 	}
 	int a_body1loopBody1loopBody1cont2(RCGroup && group,int loopDepth) 
 	{
-															#line 619 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 619 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		lock->release(group.items.expectedSize());
-															#line 621 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 621 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		BinaryWriter bw(Unversioned());
-															#line 622 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 622 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		for(int i = 0;i < group.items.size();++i) {
-															#line 623 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 623 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			bw.serializeBytes(group.items[i].value);
-															#line 2250 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2250 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		}
-															#line 625 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 625 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		decodeBackupLogValue(req.arena, req.transaction.mutations, mutationSize, bw.toValue(), addPrefix, removePrefix, group.groupKey, keyVersion);
-															#line 633 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 633 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		newBeginVersion = group.groupKey + 1;
-															#line 634 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 634 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		if (mutationSize >= CLIENT_KNOBS->BACKUP_LOG_WRITE_BATCH_MAX_SIZE)
-															#line 2258 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2258 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		{
 			return a_body1loopBody1break1(loopDepth==0?0:loopDepth-1); // break
 		}
@@ -2341,15 +2341,15 @@ public:
 	}
 	int a_body1loopBody1cont2(Void const& _,int loopDepth) 
 	{
-															#line 668 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 668 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		addActor.send(commitLock->releaseWhen(success(commit.getReply(req)), mutationSize));
-															#line 670 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 670 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		if (endOfStream)
-															#line 2348 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2348 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		{
-															#line 671 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 671 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			if (!static_cast<DumpDataActor*>(this)->SAV<int>::futures) { (void)(totalBytes); this->~DumpDataActorState(); static_cast<DumpDataActor*>(this)->destroy(); return 0; }
-															#line 2352 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2352 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			new (&static_cast<DumpDataActor*>(this)->SAV< int >::value()) int(std::move(totalBytes)); // state_var_RVO
 			this->~DumpDataActorState();
 			static_cast<DumpDataActor*>(this)->finishSendAndDelPromiseRef();
@@ -2361,15 +2361,15 @@ public:
 	}
 	int a_body1loopBody1cont2(Void && _,int loopDepth) 
 	{
-															#line 668 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 668 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		addActor.send(commitLock->releaseWhen(success(commit.getReply(req)), mutationSize));
-															#line 670 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 670 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		if (endOfStream)
-															#line 2368 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2368 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		{
-															#line 671 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 671 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			if (!static_cast<DumpDataActor*>(this)->SAV<int>::futures) { (void)(totalBytes); this->~DumpDataActorState(); static_cast<DumpDataActor*>(this)->destroy(); return 0; }
-															#line 2372 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2372 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			new (&static_cast<DumpDataActor*>(this)->SAV< int >::value()) int(std::move(totalBytes)); // state_var_RVO
 			this->~DumpDataActorState();
 			static_cast<DumpDataActor*>(this)->finishSendAndDelPromiseRef();
@@ -2442,50 +2442,50 @@ public:
 		fdb_probe_actor_exit("dumpData", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 596 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Database cx;
-															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 596 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	PromiseStream<RCGroup> results;
-															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 596 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Reference<FlowLock> lock;
-															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 596 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Key uid;
-															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 596 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Key addPrefix;
-															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 596 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Key removePrefix;
-															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 596 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	RequestStream<CommitTransactionRequest> commit;
-															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 596 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	NotifiedVersion* committedVersion;
-															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 596 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Optional<Version> endVersion;
-															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 596 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Key rangeBegin;
-															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 596 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	PromiseStream<Future<Void>> addActor;
-															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 596 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	FlowLock* commitLock;
-															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 596 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Reference<KeyRangeMap<Version>> keyVersion;
-															#line 609 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 609 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Version lastVersion;
-															#line 610 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 610 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	bool endOfStream;
-															#line 611 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 611 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	int totalBytes;
-															#line 613 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 613 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	CommitTransactionRequest req;
-															#line 614 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 614 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Version newBeginVersion;
-															#line 615 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 615 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	int mutationSize;
-															#line 2483 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2483 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 };
 // This generated class is to be used only via dumpData()
-															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 596 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 class DumpDataActor final : public Actor<int>, public ActorSingleCallback< DumpDataActor, 0, RCGroup >, public ActorCallback< DumpDataActor, 1, Void >, public FastAllocated<DumpDataActor>, public DumpDataActorState<DumpDataActor> {
-															#line 2488 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2488 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 public:
 	using FastAllocated<DumpDataActor>::operator new;
 	using FastAllocated<DumpDataActor>::operator delete;
@@ -2495,9 +2495,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorSingleCallback< DumpDataActor, 0, RCGroup >;
 friend struct ActorCallback< DumpDataActor, 1, Void >;
-															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 596 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	DumpDataActor(Database const& cx,PromiseStream<RCGroup> const& results,Reference<FlowLock> const& lock,Key const& uid,Key const& addPrefix,Key const& removePrefix,RequestStream<CommitTransactionRequest> const& commit,NotifiedVersion* const& committedVersion,Optional<Version> const& endVersion,Key const& rangeBegin,PromiseStream<Future<Void>> const& addActor,FlowLock* const& commitLock,Reference<KeyRangeMap<Version>> const& keyVersion) 
-															#line 2500 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2500 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		 : Actor<int>(),
 		   DumpDataActorState<DumpDataActor>(cx, results, lock, uid, addPrefix, removePrefix, commit, committedVersion, endVersion, rangeBegin, addActor, commitLock, keyVersion)
 	{
@@ -2522,42 +2522,42 @@ friend struct ActorCallback< DumpDataActor, 1, Void >;
 	}
 };
 }
-															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 596 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 [[nodiscard]] Future<int> dumpData( Database const& cx, PromiseStream<RCGroup> const& results, Reference<FlowLock> const& lock, Key const& uid, Key const& addPrefix, Key const& removePrefix, RequestStream<CommitTransactionRequest> const& commit, NotifiedVersion* const& committedVersion, Optional<Version> const& endVersion, Key const& rangeBegin, PromiseStream<Future<Void>> const& addActor, FlowLock* const& commitLock, Reference<KeyRangeMap<Version>> const& keyVersion ) {
-															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 596 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	return Future<int>(new DumpDataActor(cx, results, lock, uid, addPrefix, removePrefix, commit, committedVersion, endVersion, rangeBegin, addActor, commitLock, keyVersion));
-															#line 2529 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2529 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 }
 
-#line 675 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+#line 675 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 
-															#line 2534 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2534 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 namespace {
 // This generated class is to be used only via coalesceKeyVersionCache()
-															#line 676 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 676 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 template <class CoalesceKeyVersionCacheActor>
-															#line 676 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 676 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 class CoalesceKeyVersionCacheActorState {
-															#line 2541 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2541 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 public:
-															#line 676 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 676 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	CoalesceKeyVersionCacheActorState(Key const& uid,Version const& endVersion,Reference<KeyRangeMap<Version>> const& keyVersion,RequestStream<CommitTransactionRequest> const& commit,NotifiedVersion* const& committedVersion,PromiseStream<Future<Void>> const& addActor,FlowLock* const& commitLock) 
-															#line 676 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
-															#line 676 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 676 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
+															#line 676 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		 : uid(uid),
-															#line 676 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 676 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   endVersion(endVersion),
-															#line 676 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 676 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   keyVersion(keyVersion),
-															#line 676 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 676 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   commit(commit),
-															#line 676 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 676 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   committedVersion(committedVersion),
-															#line 676 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 676 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   addActor(addActor),
-															#line 676 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 676 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   commitLock(commitLock)
-															#line 2560 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2560 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 	{
 		fdb_probe_actor_create("coalesceKeyVersionCache", reinterpret_cast<unsigned long>(this));
 
@@ -2570,78 +2570,78 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 683 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 683 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			Version lastVersion = -1000;
-															#line 684 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 684 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			int64_t removed = 0;
-															#line 685 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 685 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			req = CommitTransactionRequest();
-															#line 686 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 686 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			mutationSize = 0;
-															#line 687 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 687 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			Key mapPrefix = uid.withPrefix(applyMutationsKeyVersionMapRange.begin);
-															#line 689 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 689 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			for( auto it : keyVersion->ranges() ) {
-															#line 690 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 690 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				if (lastVersion == -1000)
-															#line 2587 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2587 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 				{
-															#line 691 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 691 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 					lastVersion = it.value();
-															#line 2591 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2591 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 				}
 				else
 				{
-															#line 693 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 693 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 					Version ver = it.value();
-															#line 694 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 694 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 					if (ver < endVersion && lastVersion < endVersion && ver != invalidVersion && lastVersion != invalidVersion)
-															#line 2599 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2599 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 					{
-															#line 696 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 696 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 						Key removeKey = it.range().begin.withPrefix(mapPrefix);
-															#line 697 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 697 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 						Key removeEnd = keyAfter(removeKey);
-															#line 698 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 698 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 						req.transaction.mutations.push_back_deep(req.arena, MutationRef(MutationRef::ClearRange, removeKey, removeEnd));
-															#line 700 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 700 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 						mutationSize += removeKey.size() + removeEnd.size();
-															#line 701 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 701 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 						removed--;
-															#line 2611 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2611 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 					}
 					else
 					{
-															#line 703 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 703 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 						lastVersion = ver;
-															#line 2617 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2617 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 					}
 				}
 			}
-															#line 708 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 708 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			if (removed != 0)
-															#line 2623 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2623 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			{
-															#line 709 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 709 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				Key countKey = uid.withPrefix(applyMutationsKeyVersionCountRange.begin);
-															#line 710 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 710 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				req.transaction.write_conflict_ranges.push_back_deep(req.arena, singleKeyRange(countKey));
-															#line 711 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 711 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				req.transaction.mutations.push_back_deep( req.arena, MutationRef(MutationRef::AddValue, countKey, StringRef((uint8_t*)&removed, 8)));
-															#line 713 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 713 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				req.transaction.read_snapshot = committedVersion->get();
-															#line 714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 714 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				req.flags = req.flags | CommitTransactionRequest::FLAG_IS_LOCK_AWARE;
-															#line 716 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 716 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				StrictFuture<Void> __when_expr_0 = commitLock->take(TaskPriority::DefaultYield, mutationSize);
-															#line 716 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 716 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				if (static_cast<CoalesceKeyVersionCacheActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 2639 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2639 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 				if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 				static_cast<CoalesceKeyVersionCacheActor*>(this)->actor_wait_state = 1;
-															#line 716 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 716 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< CoalesceKeyVersionCacheActor, 0, Void >*>(static_cast<CoalesceKeyVersionCacheActor*>(this)));
-															#line 2644 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2644 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 				loopDepth = 0;
 			}
 			else
@@ -2667,9 +2667,9 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 720 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 720 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		if (!static_cast<CoalesceKeyVersionCacheActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~CoalesceKeyVersionCacheActorState(); static_cast<CoalesceKeyVersionCacheActor*>(this)->destroy(); return 0; }
-															#line 2672 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2672 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		new (&static_cast<CoalesceKeyVersionCacheActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~CoalesceKeyVersionCacheActorState();
 		static_cast<CoalesceKeyVersionCacheActor*>(this)->finishSendAndDelPromiseRef();
@@ -2679,18 +2679,18 @@ public:
 	}
 	int a_body1cont7(Void const& _,int loopDepth) 
 	{
-															#line 717 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 717 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		addActor.send(commitLock->releaseWhen(success(commit.getReply(req)), mutationSize));
-															#line 2684 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2684 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		loopDepth = a_body1cont1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1cont7(Void && _,int loopDepth) 
 	{
-															#line 717 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 717 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		addActor.send(commitLock->releaseWhen(success(commit.getReply(req)), mutationSize));
-															#line 2693 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2693 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		loopDepth = a_body1cont1(loopDepth);
 
 		return loopDepth;
@@ -2758,30 +2758,30 @@ public:
 		fdb_probe_actor_exit("coalesceKeyVersionCache", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 676 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 676 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Key uid;
-															#line 676 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 676 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Version endVersion;
-															#line 676 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 676 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Reference<KeyRangeMap<Version>> keyVersion;
-															#line 676 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 676 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	RequestStream<CommitTransactionRequest> commit;
-															#line 676 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 676 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	NotifiedVersion* committedVersion;
-															#line 676 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 676 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	PromiseStream<Future<Void>> addActor;
-															#line 676 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 676 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	FlowLock* commitLock;
-															#line 685 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 685 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	CommitTransactionRequest req;
-															#line 686 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 686 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	int64_t mutationSize;
-															#line 2779 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2779 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 };
 // This generated class is to be used only via coalesceKeyVersionCache()
-															#line 676 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 676 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 class CoalesceKeyVersionCacheActor final : public Actor<Void>, public ActorCallback< CoalesceKeyVersionCacheActor, 0, Void >, public FastAllocated<CoalesceKeyVersionCacheActor>, public CoalesceKeyVersionCacheActorState<CoalesceKeyVersionCacheActor> {
-															#line 2784 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2784 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 public:
 	using FastAllocated<CoalesceKeyVersionCacheActor>::operator new;
 	using FastAllocated<CoalesceKeyVersionCacheActor>::operator delete;
@@ -2790,9 +2790,9 @@ public:
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< CoalesceKeyVersionCacheActor, 0, Void >;
-															#line 676 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 676 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	CoalesceKeyVersionCacheActor(Key const& uid,Version const& endVersion,Reference<KeyRangeMap<Version>> const& keyVersion,RequestStream<CommitTransactionRequest> const& commit,NotifiedVersion* const& committedVersion,PromiseStream<Future<Void>> const& addActor,FlowLock* const& commitLock) 
-															#line 2795 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2795 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		 : Actor<Void>(),
 		   CoalesceKeyVersionCacheActorState<CoalesceKeyVersionCacheActor>(uid, endVersion, keyVersion, commit, committedVersion, addActor, commitLock)
 	{
@@ -2816,54 +2816,54 @@ friend struct ActorCallback< CoalesceKeyVersionCacheActor, 0, Void >;
 	}
 };
 }
-															#line 676 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 676 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 [[nodiscard]] Future<Void> coalesceKeyVersionCache( Key const& uid, Version const& endVersion, Reference<KeyRangeMap<Version>> const& keyVersion, RequestStream<CommitTransactionRequest> const& commit, NotifiedVersion* const& committedVersion, PromiseStream<Future<Void>> const& addActor, FlowLock* const& commitLock ) {
-															#line 676 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 676 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	return Future<Void>(new CoalesceKeyVersionCacheActor(uid, endVersion, keyVersion, commit, committedVersion, addActor, commitLock));
-															#line 2823 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2823 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 }
 
-#line 722 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+#line 722 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 
-															#line 2828 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2828 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 namespace {
 // This generated class is to be used only via applyMutations()
-															#line 723 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 723 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 template <class ApplyMutationsActor>
-															#line 723 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 723 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 class ApplyMutationsActorState {
-															#line 2835 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2835 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 public:
-															#line 723 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 723 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	ApplyMutationsActorState(Database const& cx,Key const& uid,Key const& addPrefix,Key const& removePrefix,Version const& beginVersion,Version* const& endVersion,RequestStream<CommitTransactionRequest> const& commit,NotifiedVersion* const& committedVersion,Reference<KeyRangeMap<Version>> const& keyVersion) 
-															#line 723 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
-															#line 723 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 723 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
+															#line 723 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		 : cx(cx),
-															#line 723 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 723 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   uid(uid),
-															#line 723 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 723 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   addPrefix(addPrefix),
-															#line 723 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 723 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   removePrefix(removePrefix),
-															#line 723 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 723 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   beginVersion(beginVersion),
-															#line 723 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 723 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   endVersion(endVersion),
-															#line 723 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 723 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   commit(commit),
-															#line 723 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 723 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   committedVersion(committedVersion),
-															#line 723 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 723 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   keyVersion(keyVersion),
-															#line 732 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 732 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   commitLock(CLIENT_KNOBS->BACKUP_LOCK_BYTES),
-															#line 733 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 733 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   addActor(),
-															#line 734 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 734 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   error(actorCollection(addActor.getFuture())),
-															#line 735 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 735 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   maxBytes(CLIENT_KNOBS->APPLY_MIN_LOCK_BYTES)
-															#line 2866 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2866 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 	{
 		fdb_probe_actor_create("applyMutations", reinterpret_cast<unsigned long>(this));
 
@@ -2876,13 +2876,13 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 737 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 737 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			keyVersion->insert(metadataVersionKey, 0);
-															#line 2881 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2881 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			try {
-															#line 740 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 740 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				;
-															#line 2885 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2885 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 				loopDepth = a_body1loopHead1(loopDepth);
 			}
 			catch (Error& error) {
@@ -2910,11 +2910,11 @@ public:
 	int a_body1Catch2(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 794 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 794 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			TraceEvent(e.code() == error_code_restore_missing_data ? SevWarnAlways : SevError, "ApplyMutationsError") .error(e);
-															#line 796 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 796 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			return a_body1Catch1(e, loopDepth);
-															#line 2917 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2917 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		}
 		catch (Error& error) {
 			loopDepth = a_body1Catch1(error, loopDepth);
@@ -2933,20 +2933,20 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 741 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 741 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		if (beginVersion >= *endVersion)
-															#line 2938 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2938 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		{
-															#line 742 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 742 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			StrictFuture<Void> __when_expr_0 = commitLock.take(TaskPriority::DefaultYield, CLIENT_KNOBS->BACKUP_LOCK_BYTES);
-															#line 742 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 742 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			if (static_cast<ApplyMutationsActor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 2944 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2944 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch2(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<ApplyMutationsActor*>(this)->actor_wait_state = 1;
-															#line 742 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 742 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ApplyMutationsActor, 0, Void >*>(static_cast<ApplyMutationsActor*>(this)));
-															#line 2949 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2949 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			loopDepth = 0;
 		}
 		else
@@ -2958,50 +2958,50 @@ public:
 	}
 	int a_body1loopBody1cont1(int loopDepth) 
 	{
-															#line 749 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 749 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		int rangeCount = std::max(1, CLIENT_KNOBS->APPLY_MAX_LOCK_BYTES / maxBytes);
-															#line 750 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 750 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		newEndVersion = std::min(*endVersion, ((beginVersion / CLIENT_KNOBS->APPLY_BLOCK_SIZE) + rangeCount) * CLIENT_KNOBS->APPLY_BLOCK_SIZE);
-															#line 753 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 753 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		ranges = getApplyRanges(beginVersion, newEndVersion, uid);
-															#line 754 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 754 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		idx = size_t();
-															#line 755 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 755 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		results = std::vector<PromiseStream<RCGroup>>();
-															#line 756 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 756 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		rc = std::vector<Future<Void>>();
-															#line 757 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 757 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		locks = std::vector<Reference<FlowLock>>();
-															#line 759 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 759 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		for(int i = 0;i < ranges.size();++i) {
-															#line 760 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 760 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			results.push_back(PromiseStream<RCGroup>());
-															#line 761 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 761 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			locks.push_back(makeReference<FlowLock>( std::max(CLIENT_KNOBS->APPLY_MAX_LOCK_BYTES / ranges.size(), CLIENT_KNOBS->APPLY_MIN_LOCK_BYTES)));
-															#line 763 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 763 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			rc.push_back(readCommitted(cx, results[i], locks[i], ranges[i], decodeBKMutationLogKey));
-															#line 2983 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2983 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		}
-															#line 766 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 766 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		maxBytes = std::max<int>(maxBytes * CLIENT_KNOBS->APPLY_MAX_DECAY_RATE, CLIENT_KNOBS->APPLY_MIN_LOCK_BYTES);
-															#line 767 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 767 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		idx = 0;
-															#line 2989 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 2989 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont1loopHead1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont2(Void const& _,int loopDepth) 
 	{
-															#line 743 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 743 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		commitLock.release(CLIENT_KNOBS->BACKUP_LOCK_BYTES);
-															#line 744 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 744 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		if (beginVersion >= *endVersion)
-															#line 3000 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3000 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		{
-															#line 745 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 745 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			if (!static_cast<ApplyMutationsActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~ApplyMutationsActorState(); static_cast<ApplyMutationsActor*>(this)->destroy(); return 0; }
-															#line 3004 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3004 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			new (&static_cast<ApplyMutationsActor*>(this)->SAV< Void >::value()) Void(Void());
 			this->~ApplyMutationsActorState();
 			static_cast<ApplyMutationsActor*>(this)->finishSendAndDelPromiseRef();
@@ -3013,15 +3013,15 @@ public:
 	}
 	int a_body1loopBody1cont2(Void && _,int loopDepth) 
 	{
-															#line 743 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 743 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		commitLock.release(CLIENT_KNOBS->BACKUP_LOCK_BYTES);
-															#line 744 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 744 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		if (beginVersion >= *endVersion)
-															#line 3020 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3020 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		{
-															#line 745 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 745 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			if (!static_cast<ApplyMutationsActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~ApplyMutationsActorState(); static_cast<ApplyMutationsActor*>(this)->destroy(); return 0; }
-															#line 3024 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3024 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			new (&static_cast<ApplyMutationsActor*>(this)->SAV< Void >::value()) Void(Void());
 			this->~ApplyMutationsActorState();
 			static_cast<ApplyMutationsActor*>(this)->finishSendAndDelPromiseRef();
@@ -3096,16 +3096,16 @@ public:
 	}
 	int a_body1loopBody1cont5(int loopDepth) 
 	{
-															#line 786 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 786 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		StrictFuture<Void> __when_expr_2 = coalesceKeyVersionCache( uid, newEndVersion, keyVersion, commit, committedVersion, addActor, &commitLock);
-															#line 786 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 786 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		if (static_cast<ApplyMutationsActor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 3103 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3103 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch2(__when_expr_2.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1cont5when1(__when_expr_2.get(), loopDepth); };
 		static_cast<ApplyMutationsActor*>(this)->actor_wait_state = 3;
-															#line 786 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 786 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< ApplyMutationsActor, 2, Void >*>(static_cast<ApplyMutationsActor*>(this)));
-															#line 3108 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3108 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -3119,22 +3119,22 @@ public:
 	}
 	int a_body1loopBody1cont1loopBody1(int loopDepth) 
 	{
-															#line 767 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 767 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		if (!(idx < ranges.size()))
-															#line 3124 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3124 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		{
 			return a_body1loopBody1cont1break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 768 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 768 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		StrictFuture<int> __when_expr_1 = dumpData(cx, results[idx], locks[idx], uid, addPrefix, removePrefix, commit, committedVersion, idx == ranges.size() - 1 ? newEndVersion : Optional<Version>(), ranges[idx].begin, addActor, &commitLock, keyVersion);
-															#line 768 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 768 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		if (static_cast<ApplyMutationsActor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), std::max(0, loopDepth - 2));
-															#line 3132 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3132 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch2(__when_expr_1.getError(), std::max(0, loopDepth - 2)); else return a_body1loopBody1cont1loopBody1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<ApplyMutationsActor*>(this)->actor_wait_state = 2;
-															#line 768 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 768 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< ApplyMutationsActor, 1, int >*>(static_cast<ApplyMutationsActor*>(this)));
-															#line 3137 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3137 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -3154,38 +3154,38 @@ public:
 	}
 	int a_body1loopBody1cont1loopBody1cont1(int const& bytes,int loopDepth) 
 	{
-															#line 781 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 781 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		maxBytes = std::max<int>(CLIENT_KNOBS->APPLY_MAX_INCREASE_FACTOR * bytes, maxBytes);
-															#line 782 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 782 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		if (error.isError())
-															#line 3161 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3161 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		{
-															#line 783 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 783 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			return a_body1Catch2(error.getError(), std::max(0, loopDepth - 2));
-															#line 3165 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3165 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		}
-															#line 767 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 767 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		++idx;
-															#line 3169 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3169 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		if (loopDepth == 0) return a_body1loopBody1cont1loopHead1(0);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont1loopBody1cont1(int && bytes,int loopDepth) 
 	{
-															#line 781 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 781 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		maxBytes = std::max<int>(CLIENT_KNOBS->APPLY_MAX_INCREASE_FACTOR * bytes, maxBytes);
-															#line 782 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 782 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		if (error.isError())
-															#line 3180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3180 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		{
-															#line 783 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 783 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			return a_body1Catch2(error.getError(), std::max(0, loopDepth - 2));
-															#line 3184 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3184 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		}
-															#line 767 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 767 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		++idx;
-															#line 3188 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3188 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		if (loopDepth == 0) return a_body1loopBody1cont1loopHead1(0);
 
 		return loopDepth;
@@ -3255,22 +3255,22 @@ public:
 	}
 	int a_body1loopBody1cont7(Void const& _,int loopDepth) 
 	{
-															#line 788 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 788 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		beginVersion = newEndVersion;
-															#line 789 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 789 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		if (BUGGIFY)
-															#line 3262 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3262 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		{
-															#line 790 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 790 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			StrictFuture<Void> __when_expr_3 = delay(2.0);
-															#line 790 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 790 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			if (static_cast<ApplyMutationsActor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 3268 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3268 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			if (__when_expr_3.isReady()) { if (__when_expr_3.isError()) return a_body1Catch2(__when_expr_3.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1cont7when1(__when_expr_3.get(), loopDepth); };
 			static_cast<ApplyMutationsActor*>(this)->actor_wait_state = 4;
-															#line 790 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 790 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			__when_expr_3.addCallbackAndClear(static_cast<ActorCallback< ApplyMutationsActor, 3, Void >*>(static_cast<ApplyMutationsActor*>(this)));
-															#line 3273 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3273 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			loopDepth = 0;
 		}
 		else
@@ -3282,22 +3282,22 @@ public:
 	}
 	int a_body1loopBody1cont7(Void && _,int loopDepth) 
 	{
-															#line 788 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 788 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		beginVersion = newEndVersion;
-															#line 789 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 789 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		if (BUGGIFY)
-															#line 3289 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3289 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		{
-															#line 790 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 790 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			StrictFuture<Void> __when_expr_3 = delay(2.0);
-															#line 790 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 790 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			if (static_cast<ApplyMutationsActor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 3295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3295 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			if (__when_expr_3.isReady()) { if (__when_expr_3.isError()) return a_body1Catch2(__when_expr_3.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1cont7when1(__when_expr_3.get(), loopDepth); };
 			static_cast<ApplyMutationsActor*>(this)->actor_wait_state = 4;
-															#line 790 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 790 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			__when_expr_3.addCallbackAndClear(static_cast<ActorCallback< ApplyMutationsActor, 3, Void >*>(static_cast<ApplyMutationsActor*>(this)));
-															#line 3300 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3300 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			loopDepth = 0;
 		}
 		else
@@ -3451,50 +3451,50 @@ public:
 		fdb_probe_actor_exit("applyMutations", reinterpret_cast<unsigned long>(this), 3);
 
 	}
-															#line 723 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 723 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Database cx;
-															#line 723 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 723 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Key uid;
-															#line 723 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 723 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Key addPrefix;
-															#line 723 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 723 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Key removePrefix;
-															#line 723 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 723 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Version beginVersion;
-															#line 723 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 723 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Version* endVersion;
-															#line 723 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 723 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	RequestStream<CommitTransactionRequest> commit;
-															#line 723 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 723 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	NotifiedVersion* committedVersion;
-															#line 723 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 723 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Reference<KeyRangeMap<Version>> keyVersion;
-															#line 732 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 732 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	FlowLock commitLock;
-															#line 733 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 733 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	PromiseStream<Future<Void>> addActor;
-															#line 734 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 734 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Future<Void> error;
-															#line 735 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 735 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	int maxBytes;
-															#line 750 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 750 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Version newEndVersion;
-															#line 753 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 753 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Standalone<VectorRef<KeyRangeRef>> ranges;
-															#line 754 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 754 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	size_t idx;
-															#line 755 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 755 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	std::vector<PromiseStream<RCGroup>> results;
-															#line 756 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 756 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	std::vector<Future<Void>> rc;
-															#line 757 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 757 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	std::vector<Reference<FlowLock>> locks;
-															#line 3492 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3492 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 };
 // This generated class is to be used only via applyMutations()
-															#line 723 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 723 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 class ApplyMutationsActor final : public Actor<Void>, public ActorCallback< ApplyMutationsActor, 0, Void >, public ActorCallback< ApplyMutationsActor, 1, int >, public ActorCallback< ApplyMutationsActor, 2, Void >, public ActorCallback< ApplyMutationsActor, 3, Void >, public FastAllocated<ApplyMutationsActor>, public ApplyMutationsActorState<ApplyMutationsActor> {
-															#line 3497 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3497 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 public:
 	using FastAllocated<ApplyMutationsActor>::operator new;
 	using FastAllocated<ApplyMutationsActor>::operator delete;
@@ -3506,9 +3506,9 @@ friend struct ActorCallback< ApplyMutationsActor, 0, Void >;
 friend struct ActorCallback< ApplyMutationsActor, 1, int >;
 friend struct ActorCallback< ApplyMutationsActor, 2, Void >;
 friend struct ActorCallback< ApplyMutationsActor, 3, Void >;
-															#line 723 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 723 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	ApplyMutationsActor(Database const& cx,Key const& uid,Key const& addPrefix,Key const& removePrefix,Version const& beginVersion,Version* const& endVersion,RequestStream<CommitTransactionRequest> const& commit,NotifiedVersion* const& committedVersion,Reference<KeyRangeMap<Version>> const& keyVersion) 
-															#line 3511 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3511 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		 : Actor<Void>(),
 		   ApplyMutationsActorState<ApplyMutationsActor>(cx, uid, addPrefix, removePrefix, beginVersion, endVersion, commit, committedVersion, keyVersion)
 	{
@@ -3535,44 +3535,44 @@ friend struct ActorCallback< ApplyMutationsActor, 3, Void >;
 	}
 };
 }
-															#line 723 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 723 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 [[nodiscard]] Future<Void> applyMutations( Database const& cx, Key const& uid, Key const& addPrefix, Key const& removePrefix, Version const& beginVersion, Version* const& endVersion, RequestStream<CommitTransactionRequest> const& commit, NotifiedVersion* const& committedVersion, Reference<KeyRangeMap<Version>> const& keyVersion ) {
-															#line 723 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 723 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	return Future<Void>(new ApplyMutationsActor(cx, uid, addPrefix, removePrefix, beginVersion, endVersion, commit, committedVersion, keyVersion));
-															#line 3542 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3542 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 }
 
-#line 799 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+#line 799 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 
-															#line 3547 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3547 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 namespace {
 // This generated class is to be used only via _eraseLogData()
-															#line 800 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 800 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 template <class _eraseLogDataActor>
-															#line 800 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 800 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 class _eraseLogDataActorState {
-															#line 3554 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3554 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 public:
-															#line 800 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 800 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	_eraseLogDataActorState(Reference<ReadYourWritesTransaction> const& tr,Key const& logUidValue,Key const& destUidValue,Optional<Version> const& endVersion,CheckBackupUID const& checkBackupUid,Version const& backupUid) 
-															#line 800 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
-															#line 800 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 800 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
+															#line 800 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		 : tr(tr),
-															#line 800 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 800 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   logUidValue(logUidValue),
-															#line 800 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 800 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   destUidValue(destUidValue),
-															#line 800 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 800 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   endVersion(endVersion),
-															#line 800 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 800 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   checkBackupUid(checkBackupUid),
-															#line 800 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 800 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   backupUid(backupUid),
-															#line 806 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 806 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   backupLatestVersionsPath(destUidValue.withPrefix(backupLatestVersionsPrefix)),
-															#line 807 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 807 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   backupLatestVersionsKey(logUidValue.withPrefix(backupLatestVersionsPath))
-															#line 3575 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3575 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 	{
 		fdb_probe_actor_create("_eraseLogData", reinterpret_cast<unsigned long>(this));
 
@@ -3585,38 +3585,38 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 809 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 809 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			if (!destUidValue.size())
-															#line 3590 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3590 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			{
-															#line 810 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 810 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				if (!static_cast<_eraseLogDataActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~_eraseLogDataActorState(); static_cast<_eraseLogDataActor*>(this)->destroy(); return 0; }
-															#line 3594 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3594 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 				new (&static_cast<_eraseLogDataActor*>(this)->SAV< Void >::value()) Void(Void());
 				this->~_eraseLogDataActorState();
 				static_cast<_eraseLogDataActor*>(this)->finishSendAndDelPromiseRef();
 				return 0;
 			}
-															#line 813 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 813 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			tr->setOption(FDBTransactionOptions::LOCK_AWARE);
-															#line 814 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 814 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			tr->setOption(FDBTransactionOptions::ACCESS_SYSTEM_KEYS);
-															#line 816 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 816 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			if (checkBackupUid)
-															#line 3606 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3606 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			{
-															#line 817 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 817 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				Subspace sourceStates = Subspace(databaseBackupPrefixRange.begin).get(BackupAgentBase::keySourceStates).get(logUidValue);
-															#line 819 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 819 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				StrictFuture<Optional<Value>> __when_expr_0 = tr->get(sourceStates.pack(DatabaseBackupAgent::keyFolderId));
-															#line 819 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 819 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				if (static_cast<_eraseLogDataActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 3614 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3614 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 				if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 				static_cast<_eraseLogDataActor*>(this)->actor_wait_state = 1;
-															#line 819 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 819 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< _eraseLogDataActor, 0, Optional<Value> >*>(static_cast<_eraseLogDataActor*>(this)));
-															#line 3619 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3619 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 				loopDepth = 0;
 			}
 			else
@@ -3642,29 +3642,29 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 824 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 824 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		StrictFuture<RangeResult> __when_expr_1 = tr->getRange(KeyRangeRef(backupLatestVersionsPath, strinc(backupLatestVersionsPath)), CLIENT_KNOBS->TOO_MANY);
-															#line 824 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 824 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		if (static_cast<_eraseLogDataActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 3649 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3649 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<_eraseLogDataActor*>(this)->actor_wait_state = 2;
-															#line 824 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 824 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< _eraseLogDataActor, 1, RangeResult >*>(static_cast<_eraseLogDataActor*>(this)));
-															#line 3654 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3654 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont3(Optional<Value> const& v,int loopDepth) 
 	{
-															#line 820 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 820 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		if (v.present() && BinaryReader::fromStringRef<Version>(v.get(), Unversioned()) > backupUid)
-															#line 3663 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3663 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		{
-															#line 821 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 821 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			if (!static_cast<_eraseLogDataActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~_eraseLogDataActorState(); static_cast<_eraseLogDataActor*>(this)->destroy(); return 0; }
-															#line 3667 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3667 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			new (&static_cast<_eraseLogDataActor*>(this)->SAV< Void >::value()) Void(Void());
 			this->~_eraseLogDataActorState();
 			static_cast<_eraseLogDataActor*>(this)->finishSendAndDelPromiseRef();
@@ -3676,13 +3676,13 @@ public:
 	}
 	int a_body1cont3(Optional<Value> && v,int loopDepth) 
 	{
-															#line 820 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 820 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		if (v.present() && BinaryReader::fromStringRef<Version>(v.get(), Unversioned()) > backupUid)
-															#line 3681 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3681 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		{
-															#line 821 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 821 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			if (!static_cast<_eraseLogDataActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~_eraseLogDataActorState(); static_cast<_eraseLogDataActor*>(this)->destroy(); return 0; }
-															#line 3685 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3685 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			new (&static_cast<_eraseLogDataActor*>(this)->SAV< Void >::value()) Void(Void());
 			this->~_eraseLogDataActorState();
 			static_cast<_eraseLogDataActor*>(this)->finishSendAndDelPromiseRef();
@@ -3757,158 +3757,158 @@ public:
 	}
 	int a_body1cont6(int loopDepth) 
 	{
-															#line 828 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 828 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		currBeginVersion = invalidVersion;
-															#line 829 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 829 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		for( auto backupVersion : backupVersions ) {
-															#line 830 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 830 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			Key currLogUidValue = backupVersion.key.removePrefix(backupLatestVersionsPrefix).removePrefix(destUidValue);
-															#line 832 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 832 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			if (currLogUidValue == logUidValue)
-															#line 3768 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3768 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			{
-															#line 833 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 833 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				currBeginVersion = BinaryReader::fromStringRef<Version>(backupVersion.value, Unversioned());
-															#line 3772 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3772 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 				break;
 			}
 		}
-															#line 839 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 839 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		if (currBeginVersion == invalidVersion)
-															#line 3778 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3778 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		{
-															#line 840 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 840 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			if (!static_cast<_eraseLogDataActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~_eraseLogDataActorState(); static_cast<_eraseLogDataActor*>(this)->destroy(); return 0; }
-															#line 3782 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3782 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			new (&static_cast<_eraseLogDataActor*>(this)->SAV< Void >::value()) Void(Void());
 			this->~_eraseLogDataActorState();
 			static_cast<_eraseLogDataActor*>(this)->finishSendAndDelPromiseRef();
 			return 0;
 		}
-															#line 843 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 843 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		currEndVersion = std::numeric_limits<Version>::max();
-															#line 844 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 844 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		if (endVersion.present())
-															#line 3792 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3792 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		{
-															#line 845 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 845 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			currEndVersion = std::min(currEndVersion, endVersion.get());
-															#line 3796 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3796 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		}
-															#line 848 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 848 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		nextSmallestVersion = currEndVersion;
-															#line 849 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 849 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		bool clearLogRangesRequired = true;
-															#line 852 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 852 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		if (backupVersions.size() > 1)
-															#line 3804 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3804 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		{
-															#line 853 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 853 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			for( auto backupVersion : backupVersions ) {
-															#line 854 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 854 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				Key currLogUidValue = backupVersion.key.removePrefix(backupLatestVersionsPrefix).removePrefix(destUidValue);
-															#line 855 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 855 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				Version currVersion = BinaryReader::fromStringRef<Version>(backupVersion.value, Unversioned());
-															#line 857 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 857 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				if (currLogUidValue == logUidValue)
-															#line 3814 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3814 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 				{
 					continue;
 				}
 				else
 				{
-															#line 859 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 859 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 					if (currVersion > currBeginVersion)
-															#line 3822 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3822 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 					{
-															#line 860 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 860 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 						nextSmallestVersion = std::min(currVersion, nextSmallestVersion);
-															#line 3826 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3826 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 					}
 					else
 					{
-															#line 863 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 863 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 						clearLogRangesRequired = false;
-															#line 3832 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3832 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 						break;
 					}
 				}
 			}
 		}
-															#line 869 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 869 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		if (endVersion.present() || backupVersions.size() != 1 || BUGGIFY)
-															#line 3840 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3840 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		{
-															#line 870 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 870 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			if (!endVersion.present())
-															#line 3844 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3844 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			{
-															#line 872 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 872 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				tr->clear(backupLatestVersionsKey);
-															#line 873 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 873 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				if (backupVersions.size() == 1)
-															#line 3850 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3850 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 				{
-															#line 874 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 874 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 					tr->clear(prefixRange(destUidValue.withPrefix(logRangesRange.begin)));
-															#line 3854 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3854 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 				}
 			}
 			else
 			{
-															#line 878 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 878 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				tr->set(backupLatestVersionsKey, BinaryWriter::toValue<Version>(currEndVersion, Unversioned()));
-															#line 3861 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3861 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			}
-															#line 882 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 882 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			if (clearLogRangesRequired)
-															#line 3865 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3865 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			{
-															#line 883 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 883 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				if ((nextSmallestVersion - currBeginVersion) / CLIENT_KNOBS->LOG_RANGE_BLOCK_SIZE >= std::numeric_limits<uint8_t>::max() || BUGGIFY)
-															#line 3869 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3869 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 				{
-															#line 886 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 886 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 					Key baLogRangePrefix = destUidValue.withPrefix(backupLogKeys.begin);
-															#line 888 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 888 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 					for(int h = 0;h <= std::numeric_limits<uint8_t>::max();h++) {
-															#line 889 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 889 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 						uint64_t bv = bigEndian64(Version(0));
-															#line 890 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 890 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 						uint64_t ev = bigEndian64(nextSmallestVersion);
-															#line 891 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 891 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 						uint8_t h1 = h;
-															#line 892 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 892 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 						Key vblockPrefix = StringRef(&h1, sizeof(uint8_t)).withPrefix(baLogRangePrefix);
-															#line 893 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 893 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 						KeyRange range = KeyRangeRef(StringRef((uint8_t*)&bv, sizeof(uint64_t)).withPrefix(vblockPrefix), StringRef((uint8_t*)&ev, sizeof(uint64_t)).withPrefix(vblockPrefix));
-															#line 895 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 895 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 						tr->clear(range);
-															#line 896 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 896 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 						if (CLIENT_KNOBS->BACKUP_AGENT_VERBOSE_LOGGING)
-															#line 3889 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3889 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 						{
-															#line 897 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 897 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 							TraceEvent("EraseLogDataClearLogRanges") .detail("Range", range) .detail("Begin", 0) .detail("End", nextSmallestVersion) .detail("HexRangeBegin", range.begin.toHex()) .detail("HexRangeEnd", range.end.toHex());
-															#line 3893 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3893 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 						}
 					}
 				}
 				else
 				{
-															#line 906 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 906 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 					Standalone<VectorRef<KeyRangeRef>> ranges = getLogRanges(currBeginVersion, nextSmallestVersion, destUidValue);
-															#line 908 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 908 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 					for( auto& range : ranges ) {
-															#line 909 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 909 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 						tr->clear(range);
-															#line 910 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 910 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 						if (CLIENT_KNOBS->BACKUP_AGENT_VERBOSE_LOGGING)
-															#line 3907 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3907 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 						{
-															#line 911 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 911 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 							TraceEvent("EraseLogDataClearLogRanges") .detail("Range", range) .detail("Begin", currBeginVersion) .detail("End", nextSmallestVersion) .detail("HexRangeBegin", range.begin.toHex()) .detail("HexRangeEnd", range.end.toHex());
-															#line 3911 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3911 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 						}
 					}
 				}
@@ -3916,28 +3916,28 @@ public:
 		}
 		else
 		{
-															#line 923 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 923 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			tr->clear(prefixRange(backupLatestVersionsPath));
-															#line 926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 926 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			tr->clear(prefixRange(destUidValue.withPrefix(backupLogKeys.begin)));
-															#line 929 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 929 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			tr->clear(prefixRange(destUidValue.withPrefix(logRangesRange.begin)));
-															#line 3925 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3925 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		}
-															#line 932 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 932 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		if (!endVersion.present() && backupVersions.size() == 1)
-															#line 3929 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3929 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		{
-															#line 933 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 933 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			StrictFuture<RangeResult> __when_expr_2 = tr->getRange(KeyRangeRef(destUidLookupPrefix, strinc(destUidLookupPrefix)), CLIENT_KNOBS->TOO_MANY);
-															#line 933 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 933 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			if (static_cast<_eraseLogDataActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 3935 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3935 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1cont6when1(__when_expr_2.get(), loopDepth); };
 			static_cast<_eraseLogDataActor*>(this)->actor_wait_state = 3;
-															#line 933 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 933 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< _eraseLogDataActor, 2, RangeResult >*>(static_cast<_eraseLogDataActor*>(this)));
-															#line 3940 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3940 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			loopDepth = 0;
 		}
 		else
@@ -3949,9 +3949,9 @@ public:
 	}
 	int a_body1cont1when1(RangeResult const& __backupVersions,int loopDepth) 
 	{
-															#line 824 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 824 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		backupVersions = __backupVersions;
-															#line 3954 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 3954 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		loopDepth = a_body1cont6(loopDepth);
 
 		return loopDepth;
@@ -4016,9 +4016,9 @@ public:
 	}
 	int a_body1cont7(int loopDepth) 
 	{
-															#line 942 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 942 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		if (!static_cast<_eraseLogDataActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~_eraseLogDataActorState(); static_cast<_eraseLogDataActor*>(this)->destroy(); return 0; }
-															#line 4021 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4021 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		new (&static_cast<_eraseLogDataActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~_eraseLogDataActorState();
 		static_cast<_eraseLogDataActor*>(this)->finishSendAndDelPromiseRef();
@@ -4028,15 +4028,15 @@ public:
 	}
 	int a_body1cont30(RangeResult const& existingDestUidValues,int loopDepth) 
 	{
-															#line 935 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 935 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		for( auto it : existingDestUidValues ) {
-															#line 936 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 936 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			if (it.value == destUidValue)
-															#line 4035 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4035 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			{
-															#line 937 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 937 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				tr->clear(it.key);
-															#line 4039 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4039 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			}
 		}
 		loopDepth = a_body1cont7(loopDepth);
@@ -4045,15 +4045,15 @@ public:
 	}
 	int a_body1cont30(RangeResult && existingDestUidValues,int loopDepth) 
 	{
-															#line 935 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 935 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		for( auto it : existingDestUidValues ) {
-															#line 936 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 936 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			if (it.value == destUidValue)
-															#line 4052 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4052 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			{
-															#line 937 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 937 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				tr->clear(it.key);
-															#line 4056 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4056 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			}
 		}
 		loopDepth = a_body1cont7(loopDepth);
@@ -4123,36 +4123,36 @@ public:
 		fdb_probe_actor_exit("_eraseLogData", reinterpret_cast<unsigned long>(this), 2);
 
 	}
-															#line 800 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 800 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Reference<ReadYourWritesTransaction> tr;
-															#line 800 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 800 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Key logUidValue;
-															#line 800 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 800 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Key destUidValue;
-															#line 800 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 800 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Optional<Version> endVersion;
-															#line 800 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 800 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	CheckBackupUID checkBackupUid;
-															#line 800 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 800 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Version backupUid;
-															#line 806 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 806 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Key backupLatestVersionsPath;
-															#line 807 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 807 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Key backupLatestVersionsKey;
-															#line 824 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 824 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	RangeResult backupVersions;
-															#line 828 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 828 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Version currBeginVersion;
-															#line 843 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 843 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Version currEndVersion;
-															#line 848 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 848 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Version nextSmallestVersion;
-															#line 4150 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4150 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 };
 // This generated class is to be used only via _eraseLogData()
-															#line 800 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 800 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 class _eraseLogDataActor final : public Actor<Void>, public ActorCallback< _eraseLogDataActor, 0, Optional<Value> >, public ActorCallback< _eraseLogDataActor, 1, RangeResult >, public ActorCallback< _eraseLogDataActor, 2, RangeResult >, public FastAllocated<_eraseLogDataActor>, public _eraseLogDataActorState<_eraseLogDataActor> {
-															#line 4155 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4155 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 public:
 	using FastAllocated<_eraseLogDataActor>::operator new;
 	using FastAllocated<_eraseLogDataActor>::operator delete;
@@ -4163,9 +4163,9 @@ public:
 friend struct ActorCallback< _eraseLogDataActor, 0, Optional<Value> >;
 friend struct ActorCallback< _eraseLogDataActor, 1, RangeResult >;
 friend struct ActorCallback< _eraseLogDataActor, 2, RangeResult >;
-															#line 800 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 800 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	_eraseLogDataActor(Reference<ReadYourWritesTransaction> const& tr,Key const& logUidValue,Key const& destUidValue,Optional<Version> const& endVersion,CheckBackupUID const& checkBackupUid,Version const& backupUid) 
-															#line 4168 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4168 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		 : Actor<Void>(),
 		   _eraseLogDataActorState<_eraseLogDataActor>(tr, logUidValue, destUidValue, endVersion, checkBackupUid, backupUid)
 	{
@@ -4191,14 +4191,14 @@ friend struct ActorCallback< _eraseLogDataActor, 2, RangeResult >;
 	}
 };
 }
-															#line 800 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 800 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 [[nodiscard]] static Future<Void> _eraseLogData( Reference<ReadYourWritesTransaction> const& tr, Key const& logUidValue, Key const& destUidValue, Optional<Version> const& endVersion, CheckBackupUID const& checkBackupUid, Version const& backupUid ) {
-															#line 800 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 800 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	return Future<Void>(new _eraseLogDataActor(tr, logUidValue, destUidValue, endVersion, checkBackupUid, backupUid));
-															#line 4198 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4198 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 }
 
-#line 944 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+#line 944 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 
 Future<Void> eraseLogData(Reference<ReadYourWritesTransaction> tr,
                           Key logUidValue,
@@ -4209,33 +4209,33 @@ Future<Void> eraseLogData(Reference<ReadYourWritesTransaction> tr,
 	return _eraseLogData(tr, logUidValue, destUidValue, endVersion, checkBackupUid, backupUid);
 }
 
-															#line 4212 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4212 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 namespace {
 // This generated class is to be used only via cleanupLogMutations()
-															#line 954 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 954 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 template <class CleanupLogMutationsActor>
-															#line 954 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 954 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 class CleanupLogMutationsActorState {
-															#line 4219 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4219 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 public:
-															#line 954 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 954 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	CleanupLogMutationsActorState(Database const& cx,Value const& destUidValue,bool const& deleteData) 
-															#line 954 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
-															#line 954 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 954 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
+															#line 954 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		 : cx(cx),
-															#line 954 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 954 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   destUidValue(destUidValue),
-															#line 954 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 954 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   deleteData(deleteData),
-															#line 955 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 955 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   backupLatestVersionsPath(destUidValue.withPrefix(backupLatestVersionsPrefix)),
-															#line 957 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 957 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   tr(new ReadYourWritesTransaction(cx)),
-															#line 958 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 958 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   removingLogUid(),
-															#line 959 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 959 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   loggedLogUids()
-															#line 4238 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4238 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 	{
 		fdb_probe_actor_create("cleanupLogMutations", reinterpret_cast<unsigned long>(this));
 
@@ -4248,9 +4248,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 961 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 961 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			;
-															#line 4253 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4253 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -4279,20 +4279,20 @@ public:
 	int a_body1loopBody1(int loopDepth) 
 	{
 		try {
-															#line 963 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 963 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			tr->setOption(FDBTransactionOptions::LOCK_AWARE);
-															#line 964 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 964 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			tr->setOption(FDBTransactionOptions::ACCESS_SYSTEM_KEYS);
-															#line 966 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 966 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			StrictFuture<RangeResult> __when_expr_0 = tr->getRange( KeyRangeRef(backupLatestVersionsPath, strinc(backupLatestVersionsPath)), CLIENT_KNOBS->TOO_MANY);
-															#line 966 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 966 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			if (static_cast<CleanupLogMutationsActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 4290 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4290 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1loopBody1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<CleanupLogMutationsActor*>(this)->actor_wait_state = 1;
-															#line 966 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 966 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< CleanupLogMutationsActor, 0, RangeResult >*>(static_cast<CleanupLogMutationsActor*>(this)));
-															#line 4295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4295 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -4312,16 +4312,16 @@ public:
 	int a_body1loopBody1Catch1(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 1041 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1041 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			StrictFuture<Void> __when_expr_4 = tr->onError(e);
-															#line 1041 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1041 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			if (static_cast<CleanupLogMutationsActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 4319 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4319 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			if (__when_expr_4.isReady()) { if (__when_expr_4.isError()) return a_body1Catch1(__when_expr_4.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1Catch1when1(__when_expr_4.get(), loopDepth); };
 			static_cast<CleanupLogMutationsActor*>(this)->actor_wait_state = 5;
-															#line 1041 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1041 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			__when_expr_4.addCallbackAndClear(static_cast<ActorCallback< CleanupLogMutationsActor, 4, Void >*>(static_cast<CleanupLogMutationsActor*>(this)));
-															#line 4324 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4324 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -4334,26 +4334,26 @@ public:
 	}
 	int a_body1loopBody1cont2(int loopDepth) 
 	{
-															#line 968 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 968 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		readVer = tr->getReadVersion().get();
-															#line 970 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 970 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		minVersion = std::numeric_limits<Version>::max();
-															#line 971 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 971 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		minVersionLogUid = Key();
-															#line 973 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 973 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		backupIdx = 0;
-															#line 974 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 974 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		;
-															#line 4347 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4347 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont2loopHead1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1when1(RangeResult const& __backupVersions,int loopDepth) 
 	{
-															#line 966 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 966 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		backupVersions = __backupVersions;
-															#line 4356 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4356 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont2(loopDepth);
 
 		return loopDepth;
@@ -4418,62 +4418,62 @@ public:
 	}
 	int a_body1loopBody1cont3(int loopDepth) 
 	{
-															#line 1013 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1013 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		if (deleteData)
-															#line 4423 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4423 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		{
-															#line 1014 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1014 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			if (readVer - minVersion > CLIENT_KNOBS->MIN_CLEANUP_SECONDS * CLIENT_KNOBS->CORE_VERSIONSPERSECOND && (!removingLogUid.present() || minVersionLogUid == removingLogUid.get()))
-															#line 4427 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4427 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			{
-															#line 1016 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1016 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				removingLogUid = minVersionLogUid;
-															#line 1017 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1017 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				StrictFuture<Void> __when_expr_2 = eraseLogData(tr, minVersionLogUid, destUidValue);
-															#line 1017 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1017 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				if (static_cast<CleanupLogMutationsActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 4435 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4435 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 				if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1loopBody1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1loopBody1cont3when1(__when_expr_2.get(), loopDepth); };
 				static_cast<CleanupLogMutationsActor*>(this)->actor_wait_state = 3;
-															#line 1017 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1017 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< CleanupLogMutationsActor, 2, Void >*>(static_cast<CleanupLogMutationsActor*>(this)));
-															#line 4440 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4440 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 				loopDepth = 0;
 			}
 			else
 			{
-															#line 1021 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1021 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				if (removingLogUid.present() && minVersionLogUid != removingLogUid.get())
-															#line 4447 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4447 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 				{
-															#line 1022 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1022 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 					printf("\nWARNING: The oldest tag was possibly removed, run again without `--delete-data' to " "check.\n\n");
-															#line 4451 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4451 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 				}
 				else
 				{
-															#line 1025 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1025 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 					printf("\nWARNING: Did not delete data because the tag is not at least %.4f hours behind. Change " "`--min-cleanup-seconds' to adjust this threshold.\n\n", CLIENT_KNOBS->MIN_CLEANUP_SECONDS / 3600.0);
-															#line 4457 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4457 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 				}
 				loopDepth = a_body1loopBody1cont5(loopDepth);
 			}
 		}
 		else
 		{
-															#line 1029 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1029 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			if (readVer - minVersion > CLIENT_KNOBS->MIN_CLEANUP_SECONDS * CLIENT_KNOBS->CORE_VERSIONSPERSECOND)
-															#line 4466 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4466 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			{
-															#line 1031 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1031 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				printf("\nPassing `--delete-data' would delete the tag that is %.4f hours behind.\n\n", (readVer - minVersion) / (3600.0 * CLIENT_KNOBS->CORE_VERSIONSPERSECOND));
-															#line 4470 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4470 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			}
 			else
 			{
-															#line 1034 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1034 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				printf("\nPassing `--delete-data' would not delete the tag that is %.4f hours behind. Change " "`--min-cleanup-seconds' to adjust the cleanup threshold.\n\n", (readVer - minVersion) / (3600.0 * CLIENT_KNOBS->CORE_VERSIONSPERSECOND));
-															#line 4476 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4476 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			}
 			loopDepth = a_body1loopBody1cont4(loopDepth);
 		}
@@ -4489,44 +4489,44 @@ public:
 	}
 	int a_body1loopBody1cont2loopBody1(int loopDepth) 
 	{
-															#line 974 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 974 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		if (!(backupIdx < backupVersions.size()))
-															#line 4494 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4494 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		{
 			return a_body1loopBody1cont2break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 975 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 975 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		currVersion = BinaryReader::fromStringRef<Version>(backupVersions[backupIdx].value, Unversioned());
-															#line 977 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 977 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		currLogUid = backupVersions[backupIdx].key.removePrefix(backupLatestVersionsPrefix).removePrefix(destUidValue);
-															#line 979 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 979 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		if (currVersion < minVersion)
-															#line 4504 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4504 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		{
-															#line 980 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 980 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			minVersionLogUid = currLogUid;
-															#line 981 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 981 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			minVersion = currVersion;
-															#line 4510 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4510 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		}
-															#line 984 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 984 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		if (!loggedLogUids.count(currLogUid))
-															#line 4514 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4514 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		{
-															#line 985 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 985 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			foundDRKey = tr->get(Subspace(databaseBackupPrefixRange.begin) .get(BackupAgentBase::keySourceStates) .get(currLogUid) .pack(DatabaseBackupAgent::keyStateStatus));
-															#line 989 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 989 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			foundBackupKey = tr->get(Subspace(currLogUid.withPrefix(LiteralStringRef("uid->config/")) .withPrefix(fileBackupPrefixRange.begin)) .pack(LiteralStringRef("stateEnum")));
-															#line 993 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 993 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			StrictFuture<Void> __when_expr_1 = success(foundDRKey) && success(foundBackupKey);
-															#line 993 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 993 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			if (static_cast<CleanupLogMutationsActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 4524 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4524 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1loopBody1Catch1(__when_expr_1.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1cont2loopBody1when1(__when_expr_1.get(), loopDepth); };
 			static_cast<CleanupLogMutationsActor*>(this)->actor_wait_state = 2;
-															#line 993 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 993 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< CleanupLogMutationsActor, 1, Void >*>(static_cast<CleanupLogMutationsActor*>(this)));
-															#line 4529 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4529 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			loopDepth = 0;
 		}
 		else
@@ -4551,99 +4551,99 @@ public:
 	}
 	int a_body1loopBody1cont2loopBody1cont1(int loopDepth) 
 	{
-															#line 974 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 974 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		backupIdx++;
-															#line 4556 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4556 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		if (loopDepth == 0) return a_body1loopBody1cont2loopHead1(0);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont2loopBody1cont4(Void const& _,int loopDepth) 
 	{
-															#line 995 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 995 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		if (foundDRKey.get().present() && foundBackupKey.get().present())
-															#line 4565 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4565 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		{
-															#line 996 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 996 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			printf("WARNING: Found a tag that looks like both a backup and a DR. This tag is %.4f hours " "behind.\n", (readVer - currVersion) / (3600.0 * CLIENT_KNOBS->CORE_VERSIONSPERSECOND));
-															#line 4569 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4569 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		}
 		else
 		{
-															#line 999 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 999 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			if (foundDRKey.get().present() && !foundBackupKey.get().present())
-															#line 4575 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4575 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			{
-															#line 1000 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1000 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				printf("Found a DR that is %.4f hours behind.\n", (readVer - currVersion) / (3600.0 * CLIENT_KNOBS->CORE_VERSIONSPERSECOND));
-															#line 4579 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4579 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			}
 			else
 			{
-															#line 1002 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1002 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				if (!foundDRKey.get().present() && foundBackupKey.get().present())
-															#line 4585 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4585 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 				{
-															#line 1003 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1003 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 					printf("Found a Backup that is %.4f hours behind.\n", (readVer - currVersion) / (3600.0 * CLIENT_KNOBS->CORE_VERSIONSPERSECOND));
-															#line 4589 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4589 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 				}
 				else
 				{
-															#line 1006 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1006 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 					printf("WARNING: Found an unknown tag that is %.4f hours behind.\n", (readVer - currVersion) / (3600.0 * CLIENT_KNOBS->CORE_VERSIONSPERSECOND));
-															#line 4595 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4595 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 				}
 			}
 		}
-															#line 1009 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1009 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		loggedLogUids.insert(currLogUid);
-															#line 4601 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4601 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont2loopBody1cont1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont2loopBody1cont4(Void && _,int loopDepth) 
 	{
-															#line 995 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 995 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		if (foundDRKey.get().present() && foundBackupKey.get().present())
-															#line 4610 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4610 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		{
-															#line 996 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 996 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			printf("WARNING: Found a tag that looks like both a backup and a DR. This tag is %.4f hours " "behind.\n", (readVer - currVersion) / (3600.0 * CLIENT_KNOBS->CORE_VERSIONSPERSECOND));
-															#line 4614 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4614 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		}
 		else
 		{
-															#line 999 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 999 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			if (foundDRKey.get().present() && !foundBackupKey.get().present())
-															#line 4620 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4620 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			{
-															#line 1000 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1000 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				printf("Found a DR that is %.4f hours behind.\n", (readVer - currVersion) / (3600.0 * CLIENT_KNOBS->CORE_VERSIONSPERSECOND));
-															#line 4624 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4624 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			}
 			else
 			{
-															#line 1002 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1002 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 				if (!foundDRKey.get().present() && foundBackupKey.get().present())
-															#line 4630 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4630 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 				{
-															#line 1003 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1003 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 					printf("Found a Backup that is %.4f hours behind.\n", (readVer - currVersion) / (3600.0 * CLIENT_KNOBS->CORE_VERSIONSPERSECOND));
-															#line 4634 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4634 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 				}
 				else
 				{
-															#line 1006 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1006 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 					printf("WARNING: Found an unknown tag that is %.4f hours behind.\n", (readVer - currVersion) / (3600.0 * CLIENT_KNOBS->CORE_VERSIONSPERSECOND));
-															#line 4640 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4640 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 				}
 			}
 		}
-															#line 1009 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1009 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		loggedLogUids.insert(currLogUid);
-															#line 4646 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4646 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont2loopBody1cont1(loopDepth);
 
 		return loopDepth;
@@ -4713,9 +4713,9 @@ public:
 	}
 	int a_body1loopBody1cont4(int loopDepth) 
 	{
-															#line 1039 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1039 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		if (!static_cast<CleanupLogMutationsActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~CleanupLogMutationsActorState(); static_cast<CleanupLogMutationsActor*>(this)->destroy(); return 0; }
-															#line 4718 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4718 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		new (&static_cast<CleanupLogMutationsActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~CleanupLogMutationsActorState();
 		static_cast<CleanupLogMutationsActor*>(this)->finishSendAndDelPromiseRef();
@@ -4731,32 +4731,32 @@ public:
 	}
 	int a_body1loopBody1cont6(Void const& _,int loopDepth) 
 	{
-															#line 1018 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1018 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		StrictFuture<Void> __when_expr_3 = tr->commit();
-															#line 1018 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1018 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		if (static_cast<CleanupLogMutationsActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 4738 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4738 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		if (__when_expr_3.isReady()) { if (__when_expr_3.isError()) return a_body1loopBody1Catch1(__when_expr_3.getError(), loopDepth); else return a_body1loopBody1cont6when1(__when_expr_3.get(), loopDepth); };
 		static_cast<CleanupLogMutationsActor*>(this)->actor_wait_state = 4;
-															#line 1018 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1018 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		__when_expr_3.addCallbackAndClear(static_cast<ActorCallback< CleanupLogMutationsActor, 3, Void >*>(static_cast<CleanupLogMutationsActor*>(this)));
-															#line 4743 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4743 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont6(Void && _,int loopDepth) 
 	{
-															#line 1018 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1018 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		StrictFuture<Void> __when_expr_3 = tr->commit();
-															#line 1018 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1018 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		if (static_cast<CleanupLogMutationsActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 4754 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4754 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		if (__when_expr_3.isReady()) { if (__when_expr_3.isError()) return a_body1loopBody1Catch1(__when_expr_3.getError(), loopDepth); else return a_body1loopBody1cont6when1(__when_expr_3.get(), loopDepth); };
 		static_cast<CleanupLogMutationsActor*>(this)->actor_wait_state = 4;
-															#line 1018 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1018 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		__when_expr_3.addCallbackAndClear(static_cast<ActorCallback< CleanupLogMutationsActor, 3, Void >*>(static_cast<CleanupLogMutationsActor*>(this)));
-															#line 4759 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4759 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -4826,18 +4826,18 @@ public:
 	}
 	int a_body1loopBody1cont7(Void const& _,int loopDepth) 
 	{
-															#line 1019 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1019 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		printf("\nSuccessfully removed the tag that was %.4f hours behind.\n\n", (readVer - minVersion) / (3600.0 * CLIENT_KNOBS->CORE_VERSIONSPERSECOND));
-															#line 4831 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4831 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont5(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont7(Void && _,int loopDepth) 
 	{
-															#line 1019 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1019 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		printf("\nSuccessfully removed the tag that was %.4f hours behind.\n\n", (readVer - minVersion) / (3600.0 * CLIENT_KNOBS->CORE_VERSIONSPERSECOND));
-															#line 4840 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 4840 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont5(loopDepth);
 
 		return loopDepth;
@@ -4980,44 +4980,44 @@ public:
 		fdb_probe_actor_exit("cleanupLogMutations", reinterpret_cast<unsigned long>(this), 4);
 
 	}
-															#line 954 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 954 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Database cx;
-															#line 954 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 954 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Value destUidValue;
-															#line 954 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 954 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	bool deleteData;
-															#line 955 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 955 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Key backupLatestVersionsPath;
-															#line 957 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 957 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Reference<ReadYourWritesTransaction> tr;
-															#line 958 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 958 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Optional<Key> removingLogUid;
-															#line 959 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 959 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	std::set<Key> loggedLogUids;
-															#line 966 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 966 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	RangeResult backupVersions;
-															#line 968 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 968 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Version readVer;
-															#line 970 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 970 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Version minVersion;
-															#line 971 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 971 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Key minVersionLogUid;
-															#line 973 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 973 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	int backupIdx;
-															#line 975 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 975 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Version currVersion;
-															#line 977 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 977 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Key currLogUid;
-															#line 985 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 985 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Future<Optional<Value>> foundDRKey;
-															#line 989 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 989 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Future<Optional<Value>> foundBackupKey;
-															#line 5015 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 5015 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 };
 // This generated class is to be used only via cleanupLogMutations()
-															#line 954 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 954 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 class CleanupLogMutationsActor final : public Actor<Void>, public ActorCallback< CleanupLogMutationsActor, 0, RangeResult >, public ActorCallback< CleanupLogMutationsActor, 1, Void >, public ActorCallback< CleanupLogMutationsActor, 2, Void >, public ActorCallback< CleanupLogMutationsActor, 3, Void >, public ActorCallback< CleanupLogMutationsActor, 4, Void >, public FastAllocated<CleanupLogMutationsActor>, public CleanupLogMutationsActorState<CleanupLogMutationsActor> {
-															#line 5020 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 5020 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 public:
 	using FastAllocated<CleanupLogMutationsActor>::operator new;
 	using FastAllocated<CleanupLogMutationsActor>::operator delete;
@@ -5030,9 +5030,9 @@ friend struct ActorCallback< CleanupLogMutationsActor, 1, Void >;
 friend struct ActorCallback< CleanupLogMutationsActor, 2, Void >;
 friend struct ActorCallback< CleanupLogMutationsActor, 3, Void >;
 friend struct ActorCallback< CleanupLogMutationsActor, 4, Void >;
-															#line 954 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 954 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	CleanupLogMutationsActor(Database const& cx,Value const& destUidValue,bool const& deleteData) 
-															#line 5035 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 5035 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		 : Actor<Void>(),
 		   CleanupLogMutationsActorState<CleanupLogMutationsActor>(cx, destUidValue, deleteData)
 	{
@@ -5060,34 +5060,34 @@ friend struct ActorCallback< CleanupLogMutationsActor, 4, Void >;
 	}
 };
 }
-															#line 954 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 954 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 [[nodiscard]] Future<Void> cleanupLogMutations( Database const& cx, Value const& destUidValue, bool const& deleteData ) {
-															#line 954 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 954 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	return Future<Void>(new CleanupLogMutationsActor(cx, destUidValue, deleteData));
-															#line 5067 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 5067 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 }
 
-#line 1045 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+#line 1045 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 
-															#line 5072 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 5072 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 namespace {
 // This generated class is to be used only via cleanupBackup()
-															#line 1046 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1046 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 template <class CleanupBackupActor>
-															#line 1046 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1046 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 class CleanupBackupActorState {
-															#line 5079 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 5079 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 public:
-															#line 1046 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1046 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	CleanupBackupActorState(Database const& cx,DeleteData const& deleteData) 
-															#line 1046 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
-															#line 1046 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1046 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1046 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		 : cx(cx),
-															#line 1046 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1046 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   deleteData(deleteData),
-															#line 1047 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1047 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		   tr(new ReadYourWritesTransaction(cx))
-															#line 5090 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 5090 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 	{
 		fdb_probe_actor_create("cleanupBackup", reinterpret_cast<unsigned long>(this));
 
@@ -5100,9 +5100,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 1048 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1048 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			;
-															#line 5105 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 5105 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -5131,20 +5131,20 @@ public:
 	int a_body1loopBody1(int loopDepth) 
 	{
 		try {
-															#line 1050 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1050 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			tr->setOption(FDBTransactionOptions::LOCK_AWARE);
-															#line 1051 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1051 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			tr->setOption(FDBTransactionOptions::ACCESS_SYSTEM_KEYS);
-															#line 1053 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1053 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			StrictFuture<RangeResult> __when_expr_0 = tr->getRange(KeyRangeRef(destUidLookupPrefix, strinc(destUidLookupPrefix)), CLIENT_KNOBS->TOO_MANY);
-															#line 1053 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1053 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			if (static_cast<CleanupBackupActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 5142 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 5142 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1loopBody1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<CleanupBackupActor*>(this)->actor_wait_state = 1;
-															#line 1053 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1053 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< CleanupBackupActor, 0, RangeResult >*>(static_cast<CleanupBackupActor*>(this)));
-															#line 5147 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 5147 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -5164,16 +5164,16 @@ public:
 	int a_body1loopBody1Catch1(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 1061 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1061 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			StrictFuture<Void> __when_expr_2 = tr->onError(e);
-															#line 1061 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1061 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			if (static_cast<CleanupBackupActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 5171 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 5171 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1Catch1when1(__when_expr_2.get(), loopDepth); };
 			static_cast<CleanupBackupActor*>(this)->actor_wait_state = 3;
-															#line 1061 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1061 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< CleanupBackupActor, 2, Void >*>(static_cast<CleanupBackupActor*>(this)));
-															#line 5176 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 5176 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -5186,18 +5186,18 @@ public:
 	}
 	int a_body1loopBody1cont2(int loopDepth) 
 	{
-															#line 1056 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1056 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		RangeForbody1loopBody1cont2Iterator0 = std::begin(destUids);
-															#line 5191 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 5191 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont2loopHead1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1when1(RangeResult const& __destUids,int loopDepth) 
 	{
-															#line 1053 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1053 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		destUids = __destUids;
-															#line 5200 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 5200 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont2(loopDepth);
 
 		return loopDepth;
@@ -5262,9 +5262,9 @@ public:
 	}
 	int a_body1loopBody1cont3(int loopDepth) 
 	{
-															#line 1059 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1059 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		if (!static_cast<CleanupBackupActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~CleanupBackupActorState(); static_cast<CleanupBackupActor*>(this)->destroy(); return 0; }
-															#line 5267 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 5267 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		new (&static_cast<CleanupBackupActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~CleanupBackupActorState();
 		static_cast<CleanupBackupActor*>(this)->finishSendAndDelPromiseRef();
@@ -5281,26 +5281,26 @@ public:
 	}
 	int a_body1loopBody1cont2loopBody1(int loopDepth) 
 	{
-															#line 1056 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1056 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		if (!(RangeForbody1loopBody1cont2Iterator0 != std::end(destUids)))
-															#line 5286 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 5286 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		{
 			return a_body1loopBody1cont2break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 1056 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1056 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		auto destUid = *RangeForbody1loopBody1cont2Iterator0;
-															#line 5292 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 5292 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		{
-															#line 1057 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1057 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			StrictFuture<Void> __when_expr_1 = cleanupLogMutations(cx, destUid.value, deleteData);
-															#line 1057 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1057 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			if (static_cast<CleanupBackupActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 5298 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 5298 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1loopBody1Catch1(__when_expr_1.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1cont2loopBody1when1(__when_expr_1.get(), loopDepth); };
 			static_cast<CleanupBackupActor*>(this)->actor_wait_state = 2;
-															#line 1057 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1057 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 			__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< CleanupBackupActor, 1, Void >*>(static_cast<CleanupBackupActor*>(this)));
-															#line 5303 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 5303 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 			loopDepth = 0;
 		}
 
@@ -5321,9 +5321,9 @@ public:
 	}
 	int a_body1loopBody1cont2loopBody1cont1(int loopDepth) 
 	{
-															#line 1056 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1056 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 		++RangeForbody1loopBody1cont2Iterator0;
-															#line 5326 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 5326 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		if (loopDepth == 0) return a_body1loopBody1cont2loopHead1(0);
 
 		return loopDepth;
@@ -5478,22 +5478,22 @@ public:
 		fdb_probe_actor_exit("cleanupBackup", reinterpret_cast<unsigned long>(this), 2);
 
 	}
-															#line 1046 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1046 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Database cx;
-															#line 1046 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1046 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	DeleteData deleteData;
-															#line 1047 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1047 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	Reference<ReadYourWritesTransaction> tr;
-															#line 1053 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1053 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	RangeResult destUids;
-															#line 1056 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1056 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	decltype(std::begin(std::declval<RangeResult>())) RangeForbody1loopBody1cont2Iterator0;
-															#line 5491 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 5491 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 };
 // This generated class is to be used only via cleanupBackup()
-															#line 1046 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1046 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 class CleanupBackupActor final : public Actor<Void>, public ActorCallback< CleanupBackupActor, 0, RangeResult >, public ActorCallback< CleanupBackupActor, 1, Void >, public ActorCallback< CleanupBackupActor, 2, Void >, public FastAllocated<CleanupBackupActor>, public CleanupBackupActorState<CleanupBackupActor> {
-															#line 5496 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 5496 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 public:
 	using FastAllocated<CleanupBackupActor>::operator new;
 	using FastAllocated<CleanupBackupActor>::operator delete;
@@ -5504,9 +5504,9 @@ public:
 friend struct ActorCallback< CleanupBackupActor, 0, RangeResult >;
 friend struct ActorCallback< CleanupBackupActor, 1, Void >;
 friend struct ActorCallback< CleanupBackupActor, 2, Void >;
-															#line 1046 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1046 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	CleanupBackupActor(Database const& cx,DeleteData const& deleteData) 
-															#line 5509 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 5509 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 		 : Actor<Void>(),
 		   CleanupBackupActorState<CleanupBackupActor>(cx, deleteData)
 	{
@@ -5532,14 +5532,14 @@ friend struct ActorCallback< CleanupBackupActor, 2, Void >;
 	}
 };
 }
-															#line 1046 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1046 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 [[nodiscard]] Future<Void> cleanupBackup( Database const& cx, DeleteData const& deleteData ) {
-															#line 1046 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+															#line 1046 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 	return Future<Void>(new CleanupBackupActor(cx, deleteData));
-															#line 5539 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.g.cpp"
+															#line 5539 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.g.cpp"
 }
 
-#line 1065 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgentBase.actor.cpp"
+#line 1065 "/usr/src/libfdb_c/fdbclient/BackupAgentBase.actor.cpp"
 
 // Convert the status text to an enumerated value
 BackupAgentBase::EnumState BackupAgentBase::getState(std::string const& stateText) {

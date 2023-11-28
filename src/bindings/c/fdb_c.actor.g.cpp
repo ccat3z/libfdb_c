@@ -112,20 +112,20 @@ struct KeysHolder {
 };
 
 static std::unordered_map<std::string, ThreadUnsafeRWLock> locks;
-															#line 115 "/home/ccat3z/Documents/moqi/foundationdb-client/src/bindings/c/fdb_c.actor.g.cpp"
+															#line 115 "/usr/src/libfdb_c/bindings/c/fdb_c.actor.g.cpp"
 // This generated class is to be used only via acquire_locks()
 															#line 113 "/home/ccat3z/Documents/moqi/foundationdb-client/extractor/workdir/patches/fdb_c.actor.cpp"
 template <class Acquire_locksActor>
 															#line 113 "/home/ccat3z/Documents/moqi/foundationdb-client/extractor/workdir/patches/fdb_c.actor.cpp"
 class Acquire_locksActorState {
-															#line 121 "/home/ccat3z/Documents/moqi/foundationdb-client/src/bindings/c/fdb_c.actor.g.cpp"
+															#line 121 "/usr/src/libfdb_c/bindings/c/fdb_c.actor.g.cpp"
 public:
 															#line 113 "/home/ccat3z/Documents/moqi/foundationdb-client/extractor/workdir/patches/fdb_c.actor.cpp"
 	Acquire_locksActorState(KeysHolder* const& holder) 
 															#line 113 "/home/ccat3z/Documents/moqi/foundationdb-client/extractor/workdir/patches/fdb_c.actor.cpp"
 															#line 113 "/home/ccat3z/Documents/moqi/foundationdb-client/extractor/workdir/patches/fdb_c.actor.cpp"
 		 : holder(holder)
-															#line 128 "/home/ccat3z/Documents/moqi/foundationdb-client/src/bindings/c/fdb_c.actor.g.cpp"
+															#line 128 "/usr/src/libfdb_c/bindings/c/fdb_c.actor.g.cpp"
 	{
 
 	}
@@ -138,11 +138,11 @@ public:
 		try {
 															#line 114 "/home/ccat3z/Documents/moqi/foundationdb-client/extractor/workdir/patches/fdb_c.actor.cpp"
 			if (holder->locked)
-															#line 141 "/home/ccat3z/Documents/moqi/foundationdb-client/src/bindings/c/fdb_c.actor.g.cpp"
+															#line 141 "/usr/src/libfdb_c/bindings/c/fdb_c.actor.g.cpp"
 			{
 															#line 115 "/home/ccat3z/Documents/moqi/foundationdb-client/extractor/workdir/patches/fdb_c.actor.cpp"
 				if (!static_cast<Acquire_locksActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~Acquire_locksActorState(); static_cast<Acquire_locksActor*>(this)->destroy(); return 0; }
-															#line 145 "/home/ccat3z/Documents/moqi/foundationdb-client/src/bindings/c/fdb_c.actor.g.cpp"
+															#line 145 "/usr/src/libfdb_c/bindings/c/fdb_c.actor.g.cpp"
 				new (&static_cast<Acquire_locksActor*>(this)->SAV< Void >::value()) Void(Void());
 				this->~Acquire_locksActorState();
 				static_cast<Acquire_locksActor*>(this)->finishSendAndDelPromiseRef();
@@ -154,19 +154,19 @@ public:
 			for( auto& key : holder->r_keys ) {
 															#line 119 "/home/ccat3z/Documents/moqi/foundationdb-client/extractor/workdir/patches/fdb_c.actor.cpp"
 				futures.emplace_back(locks[key].lock_shared());
-															#line 157 "/home/ccat3z/Documents/moqi/foundationdb-client/src/bindings/c/fdb_c.actor.g.cpp"
+															#line 157 "/usr/src/libfdb_c/bindings/c/fdb_c.actor.g.cpp"
 			}
 															#line 121 "/home/ccat3z/Documents/moqi/foundationdb-client/extractor/workdir/patches/fdb_c.actor.cpp"
 			for( auto& key : holder->w_keys ) {
 															#line 122 "/home/ccat3z/Documents/moqi/foundationdb-client/extractor/workdir/patches/fdb_c.actor.cpp"
 				futures.emplace_back(locks[key].lock());
-															#line 163 "/home/ccat3z/Documents/moqi/foundationdb-client/src/bindings/c/fdb_c.actor.g.cpp"
+															#line 163 "/usr/src/libfdb_c/bindings/c/fdb_c.actor.g.cpp"
 			}
 															#line 125 "/home/ccat3z/Documents/moqi/foundationdb-client/extractor/workdir/patches/fdb_c.actor.cpp"
 			i = 0;
 															#line 126 "/home/ccat3z/Documents/moqi/foundationdb-client/extractor/workdir/patches/fdb_c.actor.cpp"
 			;
-															#line 169 "/home/ccat3z/Documents/moqi/foundationdb-client/src/bindings/c/fdb_c.actor.g.cpp"
+															#line 169 "/usr/src/libfdb_c/bindings/c/fdb_c.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -191,7 +191,7 @@ public:
 		holder->locked = true;
 															#line 137 "/home/ccat3z/Documents/moqi/foundationdb-client/extractor/workdir/patches/fdb_c.actor.cpp"
 		if (!static_cast<Acquire_locksActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~Acquire_locksActorState(); static_cast<Acquire_locksActor*>(this)->destroy(); return 0; }
-															#line 194 "/home/ccat3z/Documents/moqi/foundationdb-client/src/bindings/c/fdb_c.actor.g.cpp"
+															#line 194 "/usr/src/libfdb_c/bindings/c/fdb_c.actor.g.cpp"
 		new (&static_cast<Acquire_locksActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~Acquire_locksActorState();
 		static_cast<Acquire_locksActor*>(this)->finishSendAndDelPromiseRef();
@@ -210,7 +210,7 @@ public:
 	{
 															#line 126 "/home/ccat3z/Documents/moqi/foundationdb-client/extractor/workdir/patches/fdb_c.actor.cpp"
 		if (!(i < futures.size()))
-															#line 213 "/home/ccat3z/Documents/moqi/foundationdb-client/src/bindings/c/fdb_c.actor.g.cpp"
+															#line 213 "/usr/src/libfdb_c/bindings/c/fdb_c.actor.g.cpp"
 		{
 			return a_body1break1(loopDepth==0?0:loopDepth-1); // break
 		}
@@ -218,12 +218,12 @@ public:
 		StrictFuture<Void> __when_expr_0 = futures[i];
 															#line 127 "/home/ccat3z/Documents/moqi/foundationdb-client/extractor/workdir/patches/fdb_c.actor.cpp"
 		if (static_cast<Acquire_locksActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 221 "/home/ccat3z/Documents/moqi/foundationdb-client/src/bindings/c/fdb_c.actor.g.cpp"
+															#line 221 "/usr/src/libfdb_c/bindings/c/fdb_c.actor.g.cpp"
 		if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 		static_cast<Acquire_locksActor*>(this)->actor_wait_state = 1;
 															#line 127 "/home/ccat3z/Documents/moqi/foundationdb-client/extractor/workdir/patches/fdb_c.actor.cpp"
 		__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< Acquire_locksActor, 0, Void >*>(static_cast<Acquire_locksActor*>(this)));
-															#line 226 "/home/ccat3z/Documents/moqi/foundationdb-client/src/bindings/c/fdb_c.actor.g.cpp"
+															#line 226 "/usr/src/libfdb_c/bindings/c/fdb_c.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -245,7 +245,7 @@ public:
 	{
 															#line 126 "/home/ccat3z/Documents/moqi/foundationdb-client/extractor/workdir/patches/fdb_c.actor.cpp"
 		++i;
-															#line 248 "/home/ccat3z/Documents/moqi/foundationdb-client/src/bindings/c/fdb_c.actor.g.cpp"
+															#line 248 "/usr/src/libfdb_c/bindings/c/fdb_c.actor.g.cpp"
 		if (loopDepth == 0) return a_body1loopHead1(0);
 
 		return loopDepth;
@@ -254,7 +254,7 @@ public:
 	{
 															#line 126 "/home/ccat3z/Documents/moqi/foundationdb-client/extractor/workdir/patches/fdb_c.actor.cpp"
 		++i;
-															#line 257 "/home/ccat3z/Documents/moqi/foundationdb-client/src/bindings/c/fdb_c.actor.g.cpp"
+															#line 257 "/usr/src/libfdb_c/bindings/c/fdb_c.actor.g.cpp"
 		if (loopDepth == 0) return a_body1loopHead1(0);
 
 		return loopDepth;
@@ -322,12 +322,12 @@ public:
 	std::vector<Future<Void>> futures;
 															#line 125 "/home/ccat3z/Documents/moqi/foundationdb-client/extractor/workdir/patches/fdb_c.actor.cpp"
 	int i;
-															#line 325 "/home/ccat3z/Documents/moqi/foundationdb-client/src/bindings/c/fdb_c.actor.g.cpp"
+															#line 325 "/usr/src/libfdb_c/bindings/c/fdb_c.actor.g.cpp"
 };
 // This generated class is to be used only via acquire_locks()
 															#line 113 "/home/ccat3z/Documents/moqi/foundationdb-client/extractor/workdir/patches/fdb_c.actor.cpp"
 class Acquire_locksActor final : public Actor<Void>, public ActorCallback< Acquire_locksActor, 0, Void >, public FastAllocated<Acquire_locksActor>, public Acquire_locksActorState<Acquire_locksActor> {
-															#line 330 "/home/ccat3z/Documents/moqi/foundationdb-client/src/bindings/c/fdb_c.actor.g.cpp"
+															#line 330 "/usr/src/libfdb_c/bindings/c/fdb_c.actor.g.cpp"
 public:
 	using FastAllocated<Acquire_locksActor>::operator new;
 	using FastAllocated<Acquire_locksActor>::operator delete;
@@ -338,7 +338,7 @@ public:
 friend struct ActorCallback< Acquire_locksActor, 0, Void >;
 															#line 113 "/home/ccat3z/Documents/moqi/foundationdb-client/extractor/workdir/patches/fdb_c.actor.cpp"
 	Acquire_locksActor(KeysHolder* const& holder) 
-															#line 341 "/home/ccat3z/Documents/moqi/foundationdb-client/src/bindings/c/fdb_c.actor.g.cpp"
+															#line 341 "/usr/src/libfdb_c/bindings/c/fdb_c.actor.g.cpp"
 		 : Actor<Void>(),
 		   Acquire_locksActorState<Acquire_locksActor>(holder)
 	{
@@ -363,7 +363,7 @@ friend struct ActorCallback< Acquire_locksActor, 0, Void >;
 [[nodiscard]] Future<Void> acquire_locks( KeysHolder* const& holder ) {
 															#line 113 "/home/ccat3z/Documents/moqi/foundationdb-client/extractor/workdir/patches/fdb_c.actor.cpp"
 	return Future<Void>(new Acquire_locksActor(holder));
-															#line 366 "/home/ccat3z/Documents/moqi/foundationdb-client/src/bindings/c/fdb_c.actor.g.cpp"
+															#line 366 "/usr/src/libfdb_c/bindings/c/fdb_c.actor.g.cpp"
 }
 
 #line 139 "/home/ccat3z/Documents/moqi/foundationdb-client/extractor/workdir/patches/fdb_c.actor.cpp"

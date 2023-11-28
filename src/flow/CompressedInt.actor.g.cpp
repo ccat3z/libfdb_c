@@ -1,5 +1,5 @@
 #define POST_ACTOR_COMPILER 1
-#line 1 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/CompressedInt.actor.cpp"
+#line 1 "/usr/src/libfdb_c/flow/CompressedInt.actor.cpp"
 /*
  * CompressedInt.actor.cpp
  *
@@ -87,21 +87,21 @@ void testCompressedInt(IntType n, StringRef rep = StringRef()) {
 	}
 }
 
-															#line 90 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/CompressedInt.actor.g.cpp"
+															#line 90 "/usr/src/libfdb_c/flow/CompressedInt.actor.g.cpp"
 namespace {
 // This generated class is to be used only via flowTestCase88()
-															#line 88 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/CompressedInt.actor.cpp"
+															#line 88 "/usr/src/libfdb_c/flow/CompressedInt.actor.cpp"
 template <class FlowTestCase88Actor>
-															#line 88 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/CompressedInt.actor.cpp"
+															#line 88 "/usr/src/libfdb_c/flow/CompressedInt.actor.cpp"
 class FlowTestCase88ActorState {
-															#line 97 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/CompressedInt.actor.g.cpp"
+															#line 97 "/usr/src/libfdb_c/flow/CompressedInt.actor.g.cpp"
 public:
-															#line 88 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/CompressedInt.actor.cpp"
+															#line 88 "/usr/src/libfdb_c/flow/CompressedInt.actor.cpp"
 	FlowTestCase88ActorState(UnitTestParameters const& params) 
-															#line 88 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/CompressedInt.actor.cpp"
-															#line 88 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/CompressedInt.actor.cpp"
+															#line 88 "/usr/src/libfdb_c/flow/CompressedInt.actor.cpp"
+															#line 88 "/usr/src/libfdb_c/flow/CompressedInt.actor.cpp"
 		 : params(params)
-															#line 104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/CompressedInt.actor.g.cpp"
+															#line 104 "/usr/src/libfdb_c/flow/CompressedInt.actor.g.cpp"
 	{
 		fdb_probe_actor_create("flowTestCase88", reinterpret_cast<unsigned long>(this));
 
@@ -114,43 +114,43 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 89 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/CompressedInt.actor.cpp"
+															#line 89 "/usr/src/libfdb_c/flow/CompressedInt.actor.cpp"
 			testCompressedInt<int>(-2, LiteralStringRef("\x7e"));
-															#line 90 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/CompressedInt.actor.cpp"
+															#line 90 "/usr/src/libfdb_c/flow/CompressedInt.actor.cpp"
 			testCompressedInt<int>(-1, LiteralStringRef("\x7f"));
-															#line 91 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/CompressedInt.actor.cpp"
+															#line 91 "/usr/src/libfdb_c/flow/CompressedInt.actor.cpp"
 			testCompressedInt<int>(0, LiteralStringRef("\x80"));
-															#line 92 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/CompressedInt.actor.cpp"
+															#line 92 "/usr/src/libfdb_c/flow/CompressedInt.actor.cpp"
 			testCompressedInt<int>(1, LiteralStringRef("\x81"));
-															#line 93 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/CompressedInt.actor.cpp"
+															#line 93 "/usr/src/libfdb_c/flow/CompressedInt.actor.cpp"
 			testCompressedInt<int>(2, LiteralStringRef("\x82"));
-															#line 94 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/CompressedInt.actor.cpp"
+															#line 94 "/usr/src/libfdb_c/flow/CompressedInt.actor.cpp"
 			testCompressedInt<int64_t>(0x4000000000000000, LiteralStringRef("\xFF\xC0\x40\x00\x00\x00\x00\x00\x00\x00"));
-															#line 96 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/CompressedInt.actor.cpp"
+															#line 96 "/usr/src/libfdb_c/flow/CompressedInt.actor.cpp"
 			int64_t n = 0;
-															#line 97 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/CompressedInt.actor.cpp"
+															#line 97 "/usr/src/libfdb_c/flow/CompressedInt.actor.cpp"
 			for(int i = 0;i < 10000000;++i) {
-															#line 98 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/CompressedInt.actor.cpp"
+															#line 98 "/usr/src/libfdb_c/flow/CompressedInt.actor.cpp"
 				n <<= 1;
-															#line 99 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/CompressedInt.actor.cpp"
+															#line 99 "/usr/src/libfdb_c/flow/CompressedInt.actor.cpp"
 				if (deterministicRandom()->coinflip())
-															#line 137 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/CompressedInt.actor.g.cpp"
+															#line 137 "/usr/src/libfdb_c/flow/CompressedInt.actor.g.cpp"
 				{
-															#line 100 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/CompressedInt.actor.cpp"
+															#line 100 "/usr/src/libfdb_c/flow/CompressedInt.actor.cpp"
 					n |= 1;
-															#line 141 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/CompressedInt.actor.g.cpp"
+															#line 141 "/usr/src/libfdb_c/flow/CompressedInt.actor.g.cpp"
 				}
-															#line 101 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/CompressedInt.actor.cpp"
+															#line 101 "/usr/src/libfdb_c/flow/CompressedInt.actor.cpp"
 				testCompressedInt<int64_t>(n);
-															#line 102 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/CompressedInt.actor.cpp"
+															#line 102 "/usr/src/libfdb_c/flow/CompressedInt.actor.cpp"
 				testCompressedInt<int32_t>(n);
-															#line 103 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/CompressedInt.actor.cpp"
+															#line 103 "/usr/src/libfdb_c/flow/CompressedInt.actor.cpp"
 				testCompressedInt<int16_t>(n);
-															#line 149 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/CompressedInt.actor.g.cpp"
+															#line 149 "/usr/src/libfdb_c/flow/CompressedInt.actor.g.cpp"
 			}
-															#line 105 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/CompressedInt.actor.cpp"
+															#line 105 "/usr/src/libfdb_c/flow/CompressedInt.actor.cpp"
 			if (!static_cast<FlowTestCase88Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~FlowTestCase88ActorState(); static_cast<FlowTestCase88Actor*>(this)->destroy(); return 0; }
-															#line 153 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/CompressedInt.actor.g.cpp"
+															#line 153 "/usr/src/libfdb_c/flow/CompressedInt.actor.g.cpp"
 			new (&static_cast<FlowTestCase88Actor*>(this)->SAV< Void >::value()) Void(Void());
 			this->~FlowTestCase88ActorState();
 			static_cast<FlowTestCase88Actor*>(this)->finishSendAndDelPromiseRef();
@@ -172,14 +172,14 @@ public:
 
 		return loopDepth;
 	}
-															#line 88 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/CompressedInt.actor.cpp"
+															#line 88 "/usr/src/libfdb_c/flow/CompressedInt.actor.cpp"
 	UnitTestParameters params;
-															#line 177 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/CompressedInt.actor.g.cpp"
+															#line 177 "/usr/src/libfdb_c/flow/CompressedInt.actor.g.cpp"
 };
 // This generated class is to be used only via flowTestCase88()
-															#line 88 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/CompressedInt.actor.cpp"
+															#line 88 "/usr/src/libfdb_c/flow/CompressedInt.actor.cpp"
 class FlowTestCase88Actor final : public Actor<Void>, public FastAllocated<FlowTestCase88Actor>, public FlowTestCase88ActorState<FlowTestCase88Actor> {
-															#line 182 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/CompressedInt.actor.g.cpp"
+															#line 182 "/usr/src/libfdb_c/flow/CompressedInt.actor.g.cpp"
 public:
 	using FastAllocated<FlowTestCase88Actor>::operator new;
 	using FastAllocated<FlowTestCase88Actor>::operator delete;
@@ -187,9 +187,9 @@ public:
 #pragma clang diagnostic ignored "-Wdelete-non-virtual-dtor"
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
-															#line 88 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/CompressedInt.actor.cpp"
+															#line 88 "/usr/src/libfdb_c/flow/CompressedInt.actor.cpp"
 	FlowTestCase88Actor(UnitTestParameters const& params) 
-															#line 192 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/CompressedInt.actor.g.cpp"
+															#line 192 "/usr/src/libfdb_c/flow/CompressedInt.actor.g.cpp"
 		 : Actor<Void>(),
 		   FlowTestCase88ActorState<FlowTestCase88Actor>(params)
 	{
@@ -212,12 +212,12 @@ public:
 	}
 };
 }
-															#line 88 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/CompressedInt.actor.cpp"
+															#line 88 "/usr/src/libfdb_c/flow/CompressedInt.actor.cpp"
 static Future<Void> flowTestCase88( UnitTestParameters const& params ) {
-															#line 88 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/CompressedInt.actor.cpp"
+															#line 88 "/usr/src/libfdb_c/flow/CompressedInt.actor.cpp"
 	return Future<Void>(new FlowTestCase88Actor(params));
-															#line 219 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/CompressedInt.actor.g.cpp"
+															#line 219 "/usr/src/libfdb_c/flow/CompressedInt.actor.g.cpp"
 }
 ACTOR_TEST_CASE(flowTestCase88, "/flow/compressed_ints")
 
-#line 107 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/CompressedInt.actor.cpp"
+#line 107 "/usr/src/libfdb_c/flow/CompressedInt.actor.cpp"

@@ -1,5 +1,5 @@
 #define POST_ACTOR_COMPILER 1
-#line 1 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+#line 1 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 /*
  * AsyncFileEncrypted.actor.cpp
  *
@@ -47,26 +47,26 @@ public:
 	}
 
 	// Read a single block of size ENCRYPTION_BLOCK_SIZE bytes, and decrypt.
-																#line 50 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+																#line 50 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 // This generated class is to be used only via readBlock()
-															#line 48 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 48 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 template <class ReadBlockActor>
-															#line 48 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 48 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 class ReadBlockActorState {
-															#line 56 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 56 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 public:
-															#line 48 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 48 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 	ReadBlockActorState(AsyncFileEncrypted* const& self,uint32_t const& block) 
-															#line 48 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
-															#line 48 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 48 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 48 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		 : self(self),
-															#line 48 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 48 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		   block(block),
-															#line 49 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 49 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		   arena(),
-															#line 50 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 50 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		   encrypted(new (arena) unsigned char[FLOW_KNOBS->ENCRYPTION_BLOCK_SIZE])
-															#line 69 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 69 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 	{
 		fdb_probe_actor_create("readBlock", reinterpret_cast<unsigned long>(this));
 
@@ -79,16 +79,16 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 51 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 51 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 			StrictFuture<int> __when_expr_0 = uncancellable(holdWhile(arena, self->file->read(encrypted, FLOW_KNOBS->ENCRYPTION_BLOCK_SIZE, FLOW_KNOBS->ENCRYPTION_BLOCK_SIZE * block)));
-															#line 51 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 51 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 			if (static_cast<ReadBlockActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 86 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 86 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<ReadBlockActor*>(this)->actor_wait_state = 1;
-															#line 51 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 51 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ReadBlockActor, 0, int >*>(static_cast<ReadBlockActor*>(this)));
-															#line 91 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 91 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -109,15 +109,15 @@ public:
 	}
 	int a_body1cont1(int const& bytes,int loopDepth) 
 	{
-															#line 55 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 55 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		StreamCipherKey const* cipherKey = StreamCipherKey::getGlobalCipherKey();
-															#line 56 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 56 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		DecryptionStreamCipher decryptor(cipherKey, self->getIV(block));
-															#line 57 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 57 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		auto decrypted = decryptor.decrypt(encrypted, bytes, arena);
-															#line 58 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 58 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		if (!static_cast<ReadBlockActor*>(this)->SAV<Standalone<StringRef>>::futures) { (void)(Standalone<StringRef>(decrypted, arena)); this->~ReadBlockActorState(); static_cast<ReadBlockActor*>(this)->destroy(); return 0; }
-															#line 120 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 120 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 		new (&static_cast<ReadBlockActor*>(this)->SAV< Standalone<StringRef> >::value()) Standalone<StringRef>(Standalone<StringRef>(decrypted, arena));
 		this->~ReadBlockActorState();
 		static_cast<ReadBlockActor*>(this)->finishSendAndDelPromiseRef();
@@ -127,15 +127,15 @@ public:
 	}
 	int a_body1cont1(int && bytes,int loopDepth) 
 	{
-															#line 55 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 55 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		StreamCipherKey const* cipherKey = StreamCipherKey::getGlobalCipherKey();
-															#line 56 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 56 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		DecryptionStreamCipher decryptor(cipherKey, self->getIV(block));
-															#line 57 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 57 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		auto decrypted = decryptor.decrypt(encrypted, bytes, arena);
-															#line 58 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 58 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		if (!static_cast<ReadBlockActor*>(this)->SAV<Standalone<StringRef>>::futures) { (void)(Standalone<StringRef>(decrypted, arena)); this->~ReadBlockActorState(); static_cast<ReadBlockActor*>(this)->destroy(); return 0; }
-															#line 138 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 138 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 		new (&static_cast<ReadBlockActor*>(this)->SAV< Standalone<StringRef> >::value()) Standalone<StringRef>(Standalone<StringRef>(decrypted, arena));
 		this->~ReadBlockActorState();
 		static_cast<ReadBlockActor*>(this)->finishSendAndDelPromiseRef();
@@ -206,20 +206,20 @@ public:
 		fdb_probe_actor_exit("readBlock", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 48 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 48 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 	AsyncFileEncrypted* self;
-															#line 48 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 48 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 	uint32_t block;
-															#line 49 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 49 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 	Arena arena;
-															#line 50 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 50 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 	unsigned char* encrypted;
-															#line 217 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 217 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 };
 // This generated class is to be used only via readBlock()
-															#line 48 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 48 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 class ReadBlockActor final : public Actor<Standalone<StringRef>>, public ActorCallback< ReadBlockActor, 0, int >, public FastAllocated<ReadBlockActor>, public ReadBlockActorState<ReadBlockActor> {
-															#line 222 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 222 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 public:
 	using FastAllocated<ReadBlockActor>::operator new;
 	using FastAllocated<ReadBlockActor>::operator delete;
@@ -228,9 +228,9 @@ public:
 	void destroy() override { ((Actor<Standalone<StringRef>>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< ReadBlockActor, 0, int >;
-															#line 48 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 48 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 	ReadBlockActor(AsyncFileEncrypted* const& self,uint32_t const& block) 
-															#line 233 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 233 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 		 : Actor<Standalone<StringRef>>(),
 		   ReadBlockActorState<ReadBlockActor>(self, block)
 	{
@@ -253,45 +253,45 @@ friend struct ActorCallback< ReadBlockActor, 0, int >;
 
 	}
 };
-															#line 48 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 48 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 [[nodiscard]] static Future<Standalone<StringRef>> readBlock( AsyncFileEncrypted* const& self, uint32_t const& block ) {
-															#line 48 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 48 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 	return Future<Standalone<StringRef>>(new ReadBlockActor(self, block));
-															#line 260 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 260 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 }
 
-#line 60 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+#line 60 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 
-																#line 265 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+																#line 265 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 // This generated class is to be used only via read()
-															#line 61 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 61 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 template <class ReadActor>
-															#line 61 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 61 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 class ReadActorState {
-															#line 271 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 271 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 public:
-															#line 61 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 61 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 	ReadActorState(Reference<AsyncFileEncrypted> const& self,void* const& data,int const& length,int64_t const& offset) 
-															#line 61 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
-															#line 61 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 61 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 61 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		 : self(self),
-															#line 61 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 61 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		   data(data),
-															#line 61 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 61 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		   length(length),
-															#line 61 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 61 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		   offset(offset),
-															#line 62 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 62 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		   firstBlock(offset / FLOW_KNOBS->ENCRYPTION_BLOCK_SIZE),
-															#line 63 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 63 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		   lastBlock((offset + length - 1) / FLOW_KNOBS->ENCRYPTION_BLOCK_SIZE),
-															#line 64 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 64 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		   block(),
-															#line 65 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 65 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		   output(reinterpret_cast<unsigned char*>(data)),
-															#line 66 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 66 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		   bytesRead(0)
-															#line 294 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 294 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 	{
 		fdb_probe_actor_create("read", reinterpret_cast<unsigned long>(this));
 
@@ -304,11 +304,11 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 67 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 67 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 			ASSERT(self->mode == AsyncFileEncrypted::Mode::READ_ONLY);
-															#line 68 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 68 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 			block = firstBlock;
-															#line 311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 311 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -329,9 +329,9 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 98 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 98 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		if (!static_cast<ReadActor*>(this)->SAV<int>::futures) { (void)(bytesRead); this->~ReadActorState(); static_cast<ReadActor*>(this)->destroy(); return 0; }
-															#line 334 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 334 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 		new (&static_cast<ReadActor*>(this)->SAV< int >::value()) int(std::move(bytesRead)); // state_var_RVO
 		this->~ReadActorState();
 		static_cast<ReadActor*>(this)->finishSendAndDelPromiseRef();
@@ -348,37 +348,37 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 68 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 68 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		if (!(block <= lastBlock))
-															#line 353 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 353 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 		{
 			return a_body1break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 69 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 69 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		plaintext = Standalone<StringRef>();
-															#line 71 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 71 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		auto cachedBlock = self->readBuffers.get(block);
-															#line 72 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 72 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		if (cachedBlock.present())
-															#line 363 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 363 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 		{
-															#line 73 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 73 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 			plaintext = cachedBlock.get();
-															#line 367 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 367 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 			loopDepth = a_body1loopBody1cont1(loopDepth);
 		}
 		else
 		{
-															#line 75 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 75 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 			StrictFuture<Void> __when_expr_0 = store(plaintext, readBlock(self.getPtr(), block));
-															#line 75 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 75 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 			if (static_cast<ReadActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 376 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 376 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<ReadActor*>(this)->actor_wait_state = 1;
-															#line 75 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 75 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ReadActor, 0, Void >*>(static_cast<ReadActor*>(this)));
-															#line 381 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 381 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 			loopDepth = 0;
 		}
 
@@ -399,53 +399,53 @@ public:
 	}
 	int a_body1loopBody1cont1(int loopDepth) 
 	{
-															#line 78 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 78 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		auto start = (block == firstBlock) ? plaintext.begin() + (offset % FLOW_KNOBS->ENCRYPTION_BLOCK_SIZE) : plaintext.begin();
-															#line 80 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 80 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		auto end = (block == lastBlock) ? plaintext.begin() + ((offset + length) % FLOW_KNOBS->ENCRYPTION_BLOCK_SIZE) : plaintext.end();
-															#line 83 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 83 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		if ((offset + length) % FLOW_KNOBS->ENCRYPTION_BLOCK_SIZE == 0)
-															#line 408 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 408 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 		{
-															#line 84 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 84 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 			end = plaintext.end();
-															#line 412 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 412 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 		}
-															#line 88 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 88 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		end = std::min(end, plaintext.end());
-															#line 90 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 90 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		if (start == end || start >= plaintext.end())
-															#line 418 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 418 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 		{
 			return a_body1break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 94 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 94 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		std::copy(start, end, output);
-															#line 95 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 95 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		output += (end - start);
-															#line 96 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 96 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		bytesRead += (end - start);
-															#line 68 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 68 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		++block;
-															#line 430 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 430 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 		if (loopDepth == 0) return a_body1loopHead1(0);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont4(Void const& _,int loopDepth) 
 	{
-															#line 76 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 76 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		self->readBuffers.insert(block, plaintext);
-															#line 439 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 439 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont4(Void && _,int loopDepth) 
 	{
-															#line 76 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 76 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		self->readBuffers.insert(block, plaintext);
-															#line 448 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 448 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont1(loopDepth);
 
 		return loopDepth;
@@ -513,32 +513,32 @@ public:
 		fdb_probe_actor_exit("read", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 61 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 61 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 	Reference<AsyncFileEncrypted> self;
-															#line 61 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 61 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 	void* data;
-															#line 61 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 61 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 	int length;
-															#line 61 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 61 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 	int64_t offset;
-															#line 62 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 62 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 	const uint32_t firstBlock;
-															#line 63 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 63 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 	const uint32_t lastBlock;
-															#line 64 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 64 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 	uint32_t block;
-															#line 65 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 65 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 	unsigned char* output;
-															#line 66 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 66 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 	int bytesRead;
-															#line 69 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 69 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 	Standalone<StringRef> plaintext;
-															#line 536 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 536 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 };
 // This generated class is to be used only via read()
-															#line 61 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 61 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 class ReadActor final : public Actor<int>, public ActorCallback< ReadActor, 0, Void >, public FastAllocated<ReadActor>, public ReadActorState<ReadActor> {
-															#line 541 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 541 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 public:
 	using FastAllocated<ReadActor>::operator new;
 	using FastAllocated<ReadActor>::operator delete;
@@ -547,9 +547,9 @@ public:
 	void destroy() override { ((Actor<int>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< ReadActor, 0, Void >;
-															#line 61 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 61 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 	ReadActor(Reference<AsyncFileEncrypted> const& self,void* const& data,int const& length,int64_t const& offset) 
-															#line 552 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 552 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 		 : Actor<int>(),
 		   ReadActorState<ReadActor>(self, data, length, offset)
 	{
@@ -572,35 +572,35 @@ friend struct ActorCallback< ReadActor, 0, Void >;
 
 	}
 };
-															#line 61 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 61 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 [[nodiscard]] static Future<int> read( Reference<AsyncFileEncrypted> const& self, void* const& data, int const& length, int64_t const& offset ) {
-															#line 61 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 61 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 	return Future<int>(new ReadActor(self, data, length, offset));
-															#line 579 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 579 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 }
 
-#line 100 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+#line 100 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 
-																#line 584 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+																#line 584 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 // This generated class is to be used only via write()
-															#line 101 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 101 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 template <class WriteActor>
-															#line 101 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 101 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 class WriteActorState {
-															#line 590 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 590 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 public:
-															#line 101 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 101 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 	WriteActorState(Reference<AsyncFileEncrypted> const& self,void const* const& data,int const& length,int64_t const& offset) 
-															#line 101 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
-															#line 101 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 101 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 101 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		 : self(self),
-															#line 101 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 101 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		   data(data),
-															#line 101 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 101 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		   length(length),
-															#line 101 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 101 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		   offset(offset)
-															#line 603 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 603 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 	{
 		fdb_probe_actor_create("write", reinterpret_cast<unsigned long>(this));
 
@@ -613,15 +613,15 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 102 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 102 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 			ASSERT(self->mode == AsyncFileEncrypted::Mode::APPEND_ONLY);
-															#line 104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 104 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 			ASSERT_EQ(offset, self->currentBlock * FLOW_KNOBS->ENCRYPTION_BLOCK_SIZE + self->offsetInBlock);
-															#line 105 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 105 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 			input = reinterpret_cast<unsigned char const*>(data);
-															#line 106 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 106 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 			;
-															#line 624 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 624 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -642,9 +642,9 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 124 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 124 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		if (!static_cast<WriteActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~WriteActorState(); static_cast<WriteActor*>(this)->destroy(); return 0; }
-															#line 647 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 647 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 		new (&static_cast<WriteActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~WriteActorState();
 		static_cast<WriteActor*>(this)->finishSendAndDelPromiseRef();
@@ -661,42 +661,42 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 106 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 106 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		if (!(length > 0))
-															#line 666 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 666 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 		{
 			return a_body1break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 107 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 107 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		const auto chunkSize = std::min(length, FLOW_KNOBS->ENCRYPTION_BLOCK_SIZE - self->offsetInBlock);
-															#line 108 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 108 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		Arena arena;
-															#line 109 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 109 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		auto encrypted = self->encryptor->encrypt(input, chunkSize, arena);
-															#line 110 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 110 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		std::copy(encrypted.begin(), encrypted.end(), &self->writeBuffer[self->offsetInBlock]);
-															#line 111 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 111 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		offset += encrypted.size();
-															#line 112 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 112 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		self->offsetInBlock += chunkSize;
-															#line 113 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 113 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		length -= chunkSize;
-															#line 114 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 114 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		input += chunkSize;
-															#line 115 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 115 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		if (self->offsetInBlock == FLOW_KNOBS->ENCRYPTION_BLOCK_SIZE)
-															#line 688 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 688 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 		{
-															#line 116 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 116 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 			StrictFuture<Void> __when_expr_0 = self->writeLastBlockToFile();
-															#line 116 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 116 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 			if (static_cast<WriteActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 694 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 694 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<WriteActor*>(this)->actor_wait_state = 1;
-															#line 116 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 116 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< WriteActor, 0, Void >*>(static_cast<WriteActor*>(this)));
-															#line 699 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 699 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 			loopDepth = 0;
 		}
 		else
@@ -727,30 +727,30 @@ public:
 	}
 	int a_body1loopBody1cont3(Void const& _,int loopDepth) 
 	{
-															#line 117 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 117 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		self->offsetInBlock = 0;
-															#line 118 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 118 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		ASSERT_LT(self->currentBlock, std::numeric_limits<uint32_t>::max());
-															#line 119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 119 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		++self->currentBlock;
-															#line 120 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 120 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		self->encryptor = std::make_unique<EncryptionStreamCipher>(StreamCipherKey::getGlobalCipherKey(), self->getIV(self->currentBlock));
-															#line 738 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 738 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont3(Void && _,int loopDepth) 
 	{
-															#line 117 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 117 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		self->offsetInBlock = 0;
-															#line 118 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 118 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		ASSERT_LT(self->currentBlock, std::numeric_limits<uint32_t>::max());
-															#line 119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 119 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		++self->currentBlock;
-															#line 120 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 120 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		self->encryptor = std::make_unique<EncryptionStreamCipher>(StreamCipherKey::getGlobalCipherKey(), self->getIV(self->currentBlock));
-															#line 753 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 753 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont1(loopDepth);
 
 		return loopDepth;
@@ -818,22 +818,22 @@ public:
 		fdb_probe_actor_exit("write", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 101 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 101 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 	Reference<AsyncFileEncrypted> self;
-															#line 101 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 101 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 	void const* data;
-															#line 101 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 101 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 	int length;
-															#line 101 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 101 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 	int64_t offset;
-															#line 105 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 105 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 	unsigned char const* input;
-															#line 831 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 831 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 };
 // This generated class is to be used only via write()
-															#line 101 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 101 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 class WriteActor final : public Actor<Void>, public ActorCallback< WriteActor, 0, Void >, public FastAllocated<WriteActor>, public WriteActorState<WriteActor> {
-															#line 836 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 836 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 public:
 	using FastAllocated<WriteActor>::operator new;
 	using FastAllocated<WriteActor>::operator delete;
@@ -842,9 +842,9 @@ public:
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< WriteActor, 0, Void >;
-															#line 101 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 101 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 	WriteActor(Reference<AsyncFileEncrypted> const& self,void const* const& data,int const& length,int64_t const& offset) 
-															#line 847 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 847 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 		 : Actor<Void>(),
 		   WriteActorState<WriteActor>(self, data, length, offset)
 	{
@@ -867,29 +867,29 @@ friend struct ActorCallback< WriteActor, 0, Void >;
 
 	}
 };
-															#line 101 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 101 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 [[nodiscard]] static Future<Void> write( Reference<AsyncFileEncrypted> const& self, void const* const& data, int const& length, int64_t const& offset ) {
-															#line 101 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 101 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 	return Future<Void>(new WriteActor(self, data, length, offset));
-															#line 874 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 874 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 }
 
-#line 126 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+#line 126 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 
-																#line 879 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+																#line 879 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 // This generated class is to be used only via sync()
-															#line 127 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 127 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 template <class SyncActor>
-															#line 127 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 127 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 class SyncActorState {
-															#line 885 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 885 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 public:
-															#line 127 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 127 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 	SyncActorState(Reference<AsyncFileEncrypted> const& self) 
-															#line 127 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
-															#line 127 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 127 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 127 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		 : self(self)
-															#line 892 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 892 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 	{
 		fdb_probe_actor_create("sync", reinterpret_cast<unsigned long>(this));
 
@@ -902,18 +902,18 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 128 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 128 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 			ASSERT(self->mode == AsyncFileEncrypted::Mode::APPEND_ONLY);
-															#line 129 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 129 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 			StrictFuture<Void> __when_expr_0 = self->writeLastBlockToFile();
-															#line 129 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 129 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 			if (static_cast<SyncActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 911 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 911 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<SyncActor*>(this)->actor_wait_state = 1;
-															#line 129 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 129 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< SyncActor, 0, Void >*>(static_cast<SyncActor*>(this)));
-															#line 916 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 916 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -934,32 +934,32 @@ public:
 	}
 	int a_body1cont1(Void const& _,int loopDepth) 
 	{
-															#line 130 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 130 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = self->file->sync();
-															#line 130 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 130 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		if (static_cast<SyncActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 941 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 941 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<SyncActor*>(this)->actor_wait_state = 2;
-															#line 130 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 130 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< SyncActor, 1, Void >*>(static_cast<SyncActor*>(this)));
-															#line 946 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 946 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont1(Void && _,int loopDepth) 
 	{
-															#line 130 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 130 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = self->file->sync();
-															#line 130 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 130 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		if (static_cast<SyncActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 957 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 957 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<SyncActor*>(this)->actor_wait_state = 2;
-															#line 130 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 130 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< SyncActor, 1, Void >*>(static_cast<SyncActor*>(this)));
-															#line 962 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 962 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -1029,9 +1029,9 @@ public:
 	}
 	int a_body1cont2(Void const& _,int loopDepth) 
 	{
-															#line 131 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 131 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		if (!static_cast<SyncActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~SyncActorState(); static_cast<SyncActor*>(this)->destroy(); return 0; }
-															#line 1034 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 1034 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 		new (&static_cast<SyncActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~SyncActorState();
 		static_cast<SyncActor*>(this)->finishSendAndDelPromiseRef();
@@ -1041,9 +1041,9 @@ public:
 	}
 	int a_body1cont2(Void && _,int loopDepth) 
 	{
-															#line 131 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 131 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		if (!static_cast<SyncActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~SyncActorState(); static_cast<SyncActor*>(this)->destroy(); return 0; }
-															#line 1046 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 1046 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 		new (&static_cast<SyncActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~SyncActorState();
 		static_cast<SyncActor*>(this)->finishSendAndDelPromiseRef();
@@ -1114,14 +1114,14 @@ public:
 		fdb_probe_actor_exit("sync", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 127 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 127 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 	Reference<AsyncFileEncrypted> self;
-															#line 1119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 1119 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 };
 // This generated class is to be used only via sync()
-															#line 127 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 127 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 class SyncActor final : public Actor<Void>, public ActorCallback< SyncActor, 0, Void >, public ActorCallback< SyncActor, 1, Void >, public FastAllocated<SyncActor>, public SyncActorState<SyncActor> {
-															#line 1124 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 1124 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 public:
 	using FastAllocated<SyncActor>::operator new;
 	using FastAllocated<SyncActor>::operator delete;
@@ -1131,9 +1131,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< SyncActor, 0, Void >;
 friend struct ActorCallback< SyncActor, 1, Void >;
-															#line 127 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 127 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 	SyncActor(Reference<AsyncFileEncrypted> const& self) 
-															#line 1136 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 1136 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 		 : Actor<Void>(),
 		   SyncActorState<SyncActor>(self)
 	{
@@ -1157,33 +1157,33 @@ friend struct ActorCallback< SyncActor, 1, Void >;
 
 	}
 };
-															#line 127 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 127 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 [[nodiscard]] static Future<Void> sync( Reference<AsyncFileEncrypted> const& self ) {
-															#line 127 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 127 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 	return Future<Void>(new SyncActor(self));
-															#line 1164 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 1164 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 }
 
-#line 133 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+#line 133 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 
-																#line 1169 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+																#line 1169 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 // This generated class is to be used only via zeroRange()
-															#line 134 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 134 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 template <class ZeroRangeActor>
-															#line 134 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 134 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 class ZeroRangeActorState {
-															#line 1175 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 1175 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 public:
-															#line 134 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 134 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 	ZeroRangeActorState(AsyncFileEncrypted* const& self,int64_t const& offset,int64_t const& length) 
-															#line 134 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
-															#line 134 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 134 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 134 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		 : self(self),
-															#line 134 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 134 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		   offset(offset),
-															#line 134 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 134 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		   length(length)
-															#line 1186 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 1186 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 	{
 		fdb_probe_actor_create("zeroRange", reinterpret_cast<unsigned long>(this));
 
@@ -1196,24 +1196,24 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 135 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 135 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 			ASSERT(self->mode == AsyncFileEncrypted::Mode::APPEND_ONLY);
-															#line 137 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 137 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 			Arena arena;
-															#line 138 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 138 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 			auto zeroes = new (arena) unsigned char[length];
-															#line 139 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 139 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 			memset(zeroes, 0, length);
-															#line 140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 140 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 			StrictFuture<Void> __when_expr_0 = uncancellable(holdWhile(arena, self->write(zeroes, length, offset)));
-															#line 140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 140 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 			if (static_cast<ZeroRangeActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 1211 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 1211 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<ZeroRangeActor*>(this)->actor_wait_state = 1;
-															#line 140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 140 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ZeroRangeActor, 0, Void >*>(static_cast<ZeroRangeActor*>(this)));
-															#line 1216 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 1216 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -1234,9 +1234,9 @@ public:
 	}
 	int a_body1cont1(Void const& _,int loopDepth) 
 	{
-															#line 141 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 141 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		if (!static_cast<ZeroRangeActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~ZeroRangeActorState(); static_cast<ZeroRangeActor*>(this)->destroy(); return 0; }
-															#line 1239 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 1239 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 		new (&static_cast<ZeroRangeActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~ZeroRangeActorState();
 		static_cast<ZeroRangeActor*>(this)->finishSendAndDelPromiseRef();
@@ -1246,9 +1246,9 @@ public:
 	}
 	int a_body1cont1(Void && _,int loopDepth) 
 	{
-															#line 141 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 141 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		if (!static_cast<ZeroRangeActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~ZeroRangeActorState(); static_cast<ZeroRangeActor*>(this)->destroy(); return 0; }
-															#line 1251 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 1251 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 		new (&static_cast<ZeroRangeActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~ZeroRangeActorState();
 		static_cast<ZeroRangeActor*>(this)->finishSendAndDelPromiseRef();
@@ -1319,18 +1319,18 @@ public:
 		fdb_probe_actor_exit("zeroRange", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 134 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 134 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 	AsyncFileEncrypted* self;
-															#line 134 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 134 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 	int64_t offset;
-															#line 134 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 134 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 	int64_t length;
-															#line 1328 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 1328 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 };
 // This generated class is to be used only via zeroRange()
-															#line 134 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 134 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 class ZeroRangeActor final : public Actor<Void>, public ActorCallback< ZeroRangeActor, 0, Void >, public FastAllocated<ZeroRangeActor>, public ZeroRangeActorState<ZeroRangeActor> {
-															#line 1333 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 1333 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 public:
 	using FastAllocated<ZeroRangeActor>::operator new;
 	using FastAllocated<ZeroRangeActor>::operator delete;
@@ -1339,9 +1339,9 @@ public:
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< ZeroRangeActor, 0, Void >;
-															#line 134 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 134 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 	ZeroRangeActor(AsyncFileEncrypted* const& self,int64_t const& offset,int64_t const& length) 
-															#line 1344 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 1344 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 		 : Actor<Void>(),
 		   ZeroRangeActorState<ZeroRangeActor>(self, offset, length)
 	{
@@ -1364,14 +1364,14 @@ friend struct ActorCallback< ZeroRangeActor, 0, Void >;
 
 	}
 };
-															#line 134 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 134 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 [[nodiscard]] static Future<Void> zeroRange( AsyncFileEncrypted* const& self, int64_t const& offset, int64_t const& length ) {
-															#line 134 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 134 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 	return Future<Void>(new ZeroRangeActor(self, offset, length));
-															#line 1371 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 1371 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 }
 
-#line 143 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+#line 143 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 };
 
 AsyncFileEncrypted::AsyncFileEncrypted(Reference<IAsyncFile> file, Mode mode)
@@ -1493,25 +1493,25 @@ Optional<Standalone<StringRef>> AsyncFileEncrypted::RandomCache::get(uint32_t bl
 // This test writes random data into an encrypted file in random increments,
 // then reads this data back from the file in random increments, then confirms that
 // the bytes read match the bytes written.
-															#line 1496 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 1496 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 namespace {
 // This generated class is to be used only via flowTestCase264()
-															#line 264 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 264 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 template <class FlowTestCase264Actor>
-															#line 264 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 264 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 class FlowTestCase264ActorState {
-															#line 1503 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 1503 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 public:
-															#line 264 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 264 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 	FlowTestCase264ActorState(UnitTestParameters const& params) 
-															#line 264 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
-															#line 264 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 264 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 264 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		 : params(params),
-															#line 265 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 265 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		   bytes(FLOW_KNOBS->ENCRYPTION_BLOCK_SIZE * deterministicRandom()->randomInt(0, 1000)),
-															#line 266 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 266 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		   writeBuffer(bytes, 0)
-															#line 1514 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 1514 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 	{
 		fdb_probe_actor_create("flowTestCase264", reinterpret_cast<unsigned long>(this));
 
@@ -1524,26 +1524,26 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 267 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 267 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 			generateRandomData(&writeBuffer.front(), bytes);
-															#line 268 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 268 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 			readBuffer = std::vector<unsigned char>(bytes, 0);
-															#line 269 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 269 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 			ASSERT(g_network->isSimulated());
-															#line 270 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 270 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 			StreamCipherKey::initializeGlobalRandomTestKey();
-															#line 271 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 271 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 			int flags = IAsyncFile::OPEN_READWRITE | IAsyncFile::OPEN_CREATE | IAsyncFile::OPEN_ATOMIC_WRITE_AND_CREATE | IAsyncFile::OPEN_UNBUFFERED | IAsyncFile::OPEN_ENCRYPTED | IAsyncFile::OPEN_UNCACHED | IAsyncFile::OPEN_NO_AIO;
-															#line 274 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 274 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 			StrictFuture<Reference<IAsyncFile>> __when_expr_0 = IAsyncFileSystem::filesystem()->open(joinPath(params.getDataDir(), "test-encrypted-file"), flags, 0600);
-															#line 274 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 274 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 			if (static_cast<FlowTestCase264Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 1541 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 1541 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<FlowTestCase264Actor*>(this)->actor_wait_state = 1;
-															#line 274 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 274 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase264Actor, 0, Reference<IAsyncFile> >*>(static_cast<FlowTestCase264Actor*>(this)));
-															#line 1546 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 1546 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -1564,22 +1564,22 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 276 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 276 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		bytesWritten = 0;
-															#line 277 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 277 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		chunkSize = int();
-															#line 278 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 278 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		;
-															#line 1573 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 1573 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 		loopDepth = a_body1cont1loopHead1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1when1(Reference<IAsyncFile> const& __file,int loopDepth) 
 	{
-															#line 274 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 274 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		file = __file;
-															#line 1582 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 1582 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 		loopDepth = a_body1cont1(loopDepth);
 
 		return loopDepth;
@@ -1644,16 +1644,16 @@ public:
 	}
 	int a_body1cont2(int loopDepth) 
 	{
-															#line 283 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 283 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		StrictFuture<Void> __when_expr_2 = file->sync();
-															#line 283 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 283 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		if (static_cast<FlowTestCase264Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 1651 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 1651 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1cont2when1(__when_expr_2.get(), loopDepth); };
 		static_cast<FlowTestCase264Actor*>(this)->actor_wait_state = 3;
-															#line 283 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 283 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase264Actor, 2, Void >*>(static_cast<FlowTestCase264Actor*>(this)));
-															#line 1656 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 1656 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -1667,24 +1667,24 @@ public:
 	}
 	int a_body1cont1loopBody1(int loopDepth) 
 	{
-															#line 278 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 278 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		if (!(bytesWritten < bytes))
-															#line 1672 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 1672 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 		{
 			return a_body1cont1break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 279 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 279 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		chunkSize = std::min(deterministicRandom()->randomInt(0, 100), bytes - bytesWritten);
-															#line 280 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 280 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = file->write(&writeBuffer[bytesWritten], chunkSize, bytesWritten);
-															#line 280 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 280 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		if (static_cast<FlowTestCase264Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 1682 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 1682 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), std::max(0, loopDepth - 1)); else return a_body1cont1loopBody1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<FlowTestCase264Actor*>(this)->actor_wait_state = 2;
-															#line 280 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 280 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase264Actor, 1, Void >*>(static_cast<FlowTestCase264Actor*>(this)));
-															#line 1687 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 1687 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -1704,18 +1704,18 @@ public:
 	}
 	int a_body1cont1loopBody1cont1(Void const& _,int loopDepth) 
 	{
-															#line 281 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 281 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		bytesWritten += chunkSize;
-															#line 1709 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 1709 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 		if (loopDepth == 0) return a_body1cont1loopHead1(0);
 
 		return loopDepth;
 	}
 	int a_body1cont1loopBody1cont1(Void && _,int loopDepth) 
 	{
-															#line 281 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 281 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		bytesWritten += chunkSize;
-															#line 1718 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 1718 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 		if (loopDepth == 0) return a_body1cont1loopHead1(0);
 
 		return loopDepth;
@@ -1785,22 +1785,22 @@ public:
 	}
 	int a_body1cont3(Void const& _,int loopDepth) 
 	{
-															#line 284 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 284 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		bytesRead = 0;
-															#line 285 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 285 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		;
-															#line 1792 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 1792 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 		loopDepth = a_body1cont3loopHead1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1cont3(Void && _,int loopDepth) 
 	{
-															#line 284 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 284 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		bytesRead = 0;
-															#line 285 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 285 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		;
-															#line 1803 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 1803 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 		loopDepth = a_body1cont3loopHead1(loopDepth);
 
 		return loopDepth;
@@ -1870,11 +1870,11 @@ public:
 	}
 	int a_body1cont4(int loopDepth) 
 	{
-															#line 291 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 291 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		ASSERT(writeBuffer == readBuffer);
-															#line 292 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 292 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		if (!static_cast<FlowTestCase264Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~FlowTestCase264ActorState(); static_cast<FlowTestCase264Actor*>(this)->destroy(); return 0; }
-															#line 1877 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 1877 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 		new (&static_cast<FlowTestCase264Actor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~FlowTestCase264ActorState();
 		static_cast<FlowTestCase264Actor*>(this)->finishSendAndDelPromiseRef();
@@ -1891,24 +1891,24 @@ public:
 	}
 	int a_body1cont3loopBody1(int loopDepth) 
 	{
-															#line 285 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 285 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		if (!(bytesRead < bytes))
-															#line 1896 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 1896 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 		{
 			return a_body1cont3break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 286 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 286 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		chunkSize = std::min(deterministicRandom()->randomInt(0, 100), bytes - bytesRead);
-															#line 287 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 287 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		StrictFuture<int> __when_expr_3 = file->read(&readBuffer[bytesRead], chunkSize, bytesRead);
-															#line 287 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 287 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		if (static_cast<FlowTestCase264Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 1906 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 1906 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 		if (__when_expr_3.isReady()) { if (__when_expr_3.isError()) return a_body1Catch1(__when_expr_3.getError(), std::max(0, loopDepth - 1)); else return a_body1cont3loopBody1when1(__when_expr_3.get(), loopDepth); };
 		static_cast<FlowTestCase264Actor*>(this)->actor_wait_state = 4;
-															#line 287 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 287 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		__when_expr_3.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase264Actor, 3, int >*>(static_cast<FlowTestCase264Actor*>(this)));
-															#line 1911 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 1911 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -1928,22 +1928,22 @@ public:
 	}
 	int a_body1cont3loopBody1cont1(int const& bytesReadInChunk,int loopDepth) 
 	{
-															#line 288 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 288 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		ASSERT_EQ(bytesReadInChunk, chunkSize);
-															#line 289 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 289 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		bytesRead += bytesReadInChunk;
-															#line 1935 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 1935 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 		if (loopDepth == 0) return a_body1cont3loopHead1(0);
 
 		return loopDepth;
 	}
 	int a_body1cont3loopBody1cont1(int && bytesReadInChunk,int loopDepth) 
 	{
-															#line 288 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 288 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		ASSERT_EQ(bytesReadInChunk, chunkSize);
-															#line 289 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 289 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 		bytesRead += bytesReadInChunk;
-															#line 1946 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 1946 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 		if (loopDepth == 0) return a_body1cont3loopHead1(0);
 
 		return loopDepth;
@@ -2011,28 +2011,28 @@ public:
 		fdb_probe_actor_exit("flowTestCase264", reinterpret_cast<unsigned long>(this), 3);
 
 	}
-															#line 264 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 264 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 	UnitTestParameters params;
-															#line 265 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 265 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 	const int bytes;
-															#line 266 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 266 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 	std::vector<unsigned char> writeBuffer;
-															#line 268 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 268 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 	std::vector<unsigned char> readBuffer;
-															#line 274 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 274 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 	Reference<IAsyncFile> file;
-															#line 276 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 276 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 	int bytesWritten;
-															#line 277 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 277 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 	int chunkSize;
-															#line 284 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 284 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 	int bytesRead;
-															#line 2030 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 2030 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 };
 // This generated class is to be used only via flowTestCase264()
-															#line 264 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 264 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 class FlowTestCase264Actor final : public Actor<Void>, public ActorCallback< FlowTestCase264Actor, 0, Reference<IAsyncFile> >, public ActorCallback< FlowTestCase264Actor, 1, Void >, public ActorCallback< FlowTestCase264Actor, 2, Void >, public ActorCallback< FlowTestCase264Actor, 3, int >, public FastAllocated<FlowTestCase264Actor>, public FlowTestCase264ActorState<FlowTestCase264Actor> {
-															#line 2035 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 2035 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 public:
 	using FastAllocated<FlowTestCase264Actor>::operator new;
 	using FastAllocated<FlowTestCase264Actor>::operator delete;
@@ -2044,9 +2044,9 @@ friend struct ActorCallback< FlowTestCase264Actor, 0, Reference<IAsyncFile> >;
 friend struct ActorCallback< FlowTestCase264Actor, 1, Void >;
 friend struct ActorCallback< FlowTestCase264Actor, 2, Void >;
 friend struct ActorCallback< FlowTestCase264Actor, 3, int >;
-															#line 264 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 264 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 	FlowTestCase264Actor(UnitTestParameters const& params) 
-															#line 2049 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 2049 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 		 : Actor<Void>(),
 		   FlowTestCase264ActorState<FlowTestCase264Actor>(params)
 	{
@@ -2073,12 +2073,12 @@ friend struct ActorCallback< FlowTestCase264Actor, 3, int >;
 	}
 };
 }
-															#line 264 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 264 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 static Future<Void> flowTestCase264( UnitTestParameters const& params ) {
-															#line 264 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+															#line 264 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"
 	return Future<Void>(new FlowTestCase264Actor(params));
-															#line 2080 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
+															#line 2080 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.g.cpp"
 }
 ACTOR_TEST_CASE(flowTestCase264, "fdbrpc/AsyncFileEncrypted")
 
-#line 294 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileEncrypted.actor.cpp"
+#line 294 "/usr/src/libfdb_c/fdbrpc/AsyncFileEncrypted.actor.cpp"

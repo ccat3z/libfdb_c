@@ -1,5 +1,5 @@
 #define POST_ACTOR_COMPILER 1
-#line 1 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.cpp"
+#line 1 "/usr/src/libfdb_c/fdbrpc/Stats.actor.cpp"
 /*
  * Stats.actor.cpp
  *
@@ -90,31 +90,31 @@ void CounterCollection::logToTraceEvent(TraceEvent& te) const {
 	}
 }
 
-															#line 93 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.g.cpp"
+															#line 93 "/usr/src/libfdb_c/fdbrpc/Stats.actor.g.cpp"
 namespace {
 // This generated class is to be used only via traceCounters()
-															#line 91 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.cpp"
+															#line 91 "/usr/src/libfdb_c/fdbrpc/Stats.actor.cpp"
 template <class TraceCountersActor>
-															#line 91 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.cpp"
+															#line 91 "/usr/src/libfdb_c/fdbrpc/Stats.actor.cpp"
 class TraceCountersActorState {
-															#line 100 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.g.cpp"
+															#line 100 "/usr/src/libfdb_c/fdbrpc/Stats.actor.g.cpp"
 public:
-															#line 91 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.cpp"
+															#line 91 "/usr/src/libfdb_c/fdbrpc/Stats.actor.cpp"
 	TraceCountersActorState(std::string const& traceEventName,UID const& traceEventID,double const& interval,CounterCollection* const& counters,std::string const& trackLatestName,std::function<void(TraceEvent&)> const& decorator) 
-															#line 91 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.cpp"
-															#line 91 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.cpp"
+															#line 91 "/usr/src/libfdb_c/fdbrpc/Stats.actor.cpp"
+															#line 91 "/usr/src/libfdb_c/fdbrpc/Stats.actor.cpp"
 		 : traceEventName(traceEventName),
-															#line 91 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.cpp"
+															#line 91 "/usr/src/libfdb_c/fdbrpc/Stats.actor.cpp"
 		   traceEventID(traceEventID),
-															#line 91 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.cpp"
+															#line 91 "/usr/src/libfdb_c/fdbrpc/Stats.actor.cpp"
 		   interval(interval),
-															#line 91 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.cpp"
+															#line 91 "/usr/src/libfdb_c/fdbrpc/Stats.actor.cpp"
 		   counters(counters),
-															#line 91 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.cpp"
+															#line 91 "/usr/src/libfdb_c/fdbrpc/Stats.actor.cpp"
 		   trackLatestName(trackLatestName),
-															#line 91 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.cpp"
+															#line 91 "/usr/src/libfdb_c/fdbrpc/Stats.actor.cpp"
 		   decorator(decorator)
-															#line 117 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.g.cpp"
+															#line 117 "/usr/src/libfdb_c/fdbrpc/Stats.actor.g.cpp"
 	{
 		fdb_probe_actor_create("traceCounters", reinterpret_cast<unsigned long>(this));
 
@@ -127,16 +127,16 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 97 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.cpp"
+															#line 97 "/usr/src/libfdb_c/fdbrpc/Stats.actor.cpp"
 			StrictFuture<Void> __when_expr_0 = delay(0);
-															#line 97 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.cpp"
+															#line 97 "/usr/src/libfdb_c/fdbrpc/Stats.actor.cpp"
 			if (static_cast<TraceCountersActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 134 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.g.cpp"
+															#line 134 "/usr/src/libfdb_c/fdbrpc/Stats.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<TraceCountersActor*>(this)->actor_wait_state = 1;
-															#line 97 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.cpp"
+															#line 97 "/usr/src/libfdb_c/fdbrpc/Stats.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< TraceCountersActor, 0, Void >*>(static_cast<TraceCountersActor*>(this)));
-															#line 139 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.g.cpp"
+															#line 139 "/usr/src/libfdb_c/fdbrpc/Stats.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -157,54 +157,54 @@ public:
 	}
 	int a_body1cont1(Void const& _,int loopDepth) 
 	{
-															#line 99 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.cpp"
+															#line 99 "/usr/src/libfdb_c/fdbrpc/Stats.actor.cpp"
 		for( ICounter* c : counters->counters ) {
-															#line 100 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.cpp"
+															#line 100 "/usr/src/libfdb_c/fdbrpc/Stats.actor.cpp"
 			c->resetInterval();
-															#line 164 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.g.cpp"
+															#line 164 "/usr/src/libfdb_c/fdbrpc/Stats.actor.g.cpp"
 		}
-															#line 102 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.cpp"
+															#line 102 "/usr/src/libfdb_c/fdbrpc/Stats.actor.cpp"
 		traceEventHolder = Reference<EventCacheHolder>();
-															#line 103 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.cpp"
+															#line 103 "/usr/src/libfdb_c/fdbrpc/Stats.actor.cpp"
 		if (!trackLatestName.empty())
-															#line 170 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.g.cpp"
+															#line 170 "/usr/src/libfdb_c/fdbrpc/Stats.actor.g.cpp"
 		{
-															#line 104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.cpp"
+															#line 104 "/usr/src/libfdb_c/fdbrpc/Stats.actor.cpp"
 			traceEventHolder = makeReference<EventCacheHolder>(trackLatestName);
-															#line 174 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.g.cpp"
+															#line 174 "/usr/src/libfdb_c/fdbrpc/Stats.actor.g.cpp"
 		}
-															#line 107 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.cpp"
+															#line 107 "/usr/src/libfdb_c/fdbrpc/Stats.actor.cpp"
 		last_interval = now();
-															#line 109 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.cpp"
+															#line 109 "/usr/src/libfdb_c/fdbrpc/Stats.actor.cpp"
 		;
-															#line 180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.g.cpp"
+															#line 180 "/usr/src/libfdb_c/fdbrpc/Stats.actor.g.cpp"
 		loopDepth = a_body1cont1loopHead1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1cont1(Void && _,int loopDepth) 
 	{
-															#line 99 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.cpp"
+															#line 99 "/usr/src/libfdb_c/fdbrpc/Stats.actor.cpp"
 		for( ICounter* c : counters->counters ) {
-															#line 100 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.cpp"
+															#line 100 "/usr/src/libfdb_c/fdbrpc/Stats.actor.cpp"
 			c->resetInterval();
-															#line 191 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.g.cpp"
+															#line 191 "/usr/src/libfdb_c/fdbrpc/Stats.actor.g.cpp"
 		}
-															#line 102 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.cpp"
+															#line 102 "/usr/src/libfdb_c/fdbrpc/Stats.actor.cpp"
 		traceEventHolder = Reference<EventCacheHolder>();
-															#line 103 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.cpp"
+															#line 103 "/usr/src/libfdb_c/fdbrpc/Stats.actor.cpp"
 		if (!trackLatestName.empty())
-															#line 197 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.g.cpp"
+															#line 197 "/usr/src/libfdb_c/fdbrpc/Stats.actor.g.cpp"
 		{
-															#line 104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.cpp"
+															#line 104 "/usr/src/libfdb_c/fdbrpc/Stats.actor.cpp"
 			traceEventHolder = makeReference<EventCacheHolder>(trackLatestName);
-															#line 201 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.g.cpp"
+															#line 201 "/usr/src/libfdb_c/fdbrpc/Stats.actor.g.cpp"
 		}
-															#line 107 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.cpp"
+															#line 107 "/usr/src/libfdb_c/fdbrpc/Stats.actor.cpp"
 		last_interval = now();
-															#line 109 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.cpp"
+															#line 109 "/usr/src/libfdb_c/fdbrpc/Stats.actor.cpp"
 		;
-															#line 207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.g.cpp"
+															#line 207 "/usr/src/libfdb_c/fdbrpc/Stats.actor.g.cpp"
 		loopDepth = a_body1cont1loopHead1(loopDepth);
 
 		return loopDepth;
@@ -281,34 +281,34 @@ public:
 	}
 	int a_body1cont1loopBody1(int loopDepth) 
 	{
-															#line 110 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.cpp"
+															#line 110 "/usr/src/libfdb_c/fdbrpc/Stats.actor.cpp"
 		TraceEvent te(traceEventName.c_str(), traceEventID);
-															#line 111 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.cpp"
+															#line 111 "/usr/src/libfdb_c/fdbrpc/Stats.actor.cpp"
 		te.detail("Elapsed", now() - last_interval);
-															#line 113 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.cpp"
+															#line 113 "/usr/src/libfdb_c/fdbrpc/Stats.actor.cpp"
 		counters->logToTraceEvent(te);
-															#line 114 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.cpp"
+															#line 114 "/usr/src/libfdb_c/fdbrpc/Stats.actor.cpp"
 		decorator(te);
-															#line 116 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.cpp"
+															#line 116 "/usr/src/libfdb_c/fdbrpc/Stats.actor.cpp"
 		if (!trackLatestName.empty())
-															#line 294 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.g.cpp"
+															#line 294 "/usr/src/libfdb_c/fdbrpc/Stats.actor.g.cpp"
 		{
-															#line 117 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.cpp"
+															#line 117 "/usr/src/libfdb_c/fdbrpc/Stats.actor.cpp"
 			te.trackLatest(traceEventHolder->trackingKey);
-															#line 298 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.g.cpp"
+															#line 298 "/usr/src/libfdb_c/fdbrpc/Stats.actor.g.cpp"
 		}
-															#line 120 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.cpp"
+															#line 120 "/usr/src/libfdb_c/fdbrpc/Stats.actor.cpp"
 		last_interval = now();
-															#line 121 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.cpp"
+															#line 121 "/usr/src/libfdb_c/fdbrpc/Stats.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = delay(interval, TaskPriority::FlushTrace);
-															#line 121 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.cpp"
+															#line 121 "/usr/src/libfdb_c/fdbrpc/Stats.actor.cpp"
 		if (static_cast<TraceCountersActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 306 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.g.cpp"
+															#line 306 "/usr/src/libfdb_c/fdbrpc/Stats.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), std::max(0, loopDepth - 1)); else return a_body1cont1loopBody1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<TraceCountersActor*>(this)->actor_wait_state = 2;
-															#line 121 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.cpp"
+															#line 121 "/usr/src/libfdb_c/fdbrpc/Stats.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< TraceCountersActor, 1, Void >*>(static_cast<TraceCountersActor*>(this)));
-															#line 311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.g.cpp"
+															#line 311 "/usr/src/libfdb_c/fdbrpc/Stats.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -388,28 +388,28 @@ public:
 		fdb_probe_actor_exit("traceCounters", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 91 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.cpp"
+															#line 91 "/usr/src/libfdb_c/fdbrpc/Stats.actor.cpp"
 	std::string traceEventName;
-															#line 91 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.cpp"
+															#line 91 "/usr/src/libfdb_c/fdbrpc/Stats.actor.cpp"
 	UID traceEventID;
-															#line 91 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.cpp"
+															#line 91 "/usr/src/libfdb_c/fdbrpc/Stats.actor.cpp"
 	double interval;
-															#line 91 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.cpp"
+															#line 91 "/usr/src/libfdb_c/fdbrpc/Stats.actor.cpp"
 	CounterCollection* counters;
-															#line 91 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.cpp"
+															#line 91 "/usr/src/libfdb_c/fdbrpc/Stats.actor.cpp"
 	std::string trackLatestName;
-															#line 91 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.cpp"
+															#line 91 "/usr/src/libfdb_c/fdbrpc/Stats.actor.cpp"
 	std::function<void(TraceEvent&)> decorator;
-															#line 102 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.cpp"
+															#line 102 "/usr/src/libfdb_c/fdbrpc/Stats.actor.cpp"
 	Reference<EventCacheHolder> traceEventHolder;
-															#line 107 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.cpp"
+															#line 107 "/usr/src/libfdb_c/fdbrpc/Stats.actor.cpp"
 	double last_interval;
-															#line 407 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.g.cpp"
+															#line 407 "/usr/src/libfdb_c/fdbrpc/Stats.actor.g.cpp"
 };
 // This generated class is to be used only via traceCounters()
-															#line 91 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.cpp"
+															#line 91 "/usr/src/libfdb_c/fdbrpc/Stats.actor.cpp"
 class TraceCountersActor final : public Actor<Void>, public ActorCallback< TraceCountersActor, 0, Void >, public ActorCallback< TraceCountersActor, 1, Void >, public FastAllocated<TraceCountersActor>, public TraceCountersActorState<TraceCountersActor> {
-															#line 412 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.g.cpp"
+															#line 412 "/usr/src/libfdb_c/fdbrpc/Stats.actor.g.cpp"
 public:
 	using FastAllocated<TraceCountersActor>::operator new;
 	using FastAllocated<TraceCountersActor>::operator delete;
@@ -419,9 +419,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< TraceCountersActor, 0, Void >;
 friend struct ActorCallback< TraceCountersActor, 1, Void >;
-															#line 91 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.cpp"
+															#line 91 "/usr/src/libfdb_c/fdbrpc/Stats.actor.cpp"
 	TraceCountersActor(std::string const& traceEventName,UID const& traceEventID,double const& interval,CounterCollection* const& counters,std::string const& trackLatestName,std::function<void(TraceEvent&)> const& decorator) 
-															#line 424 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.g.cpp"
+															#line 424 "/usr/src/libfdb_c/fdbrpc/Stats.actor.g.cpp"
 		 : Actor<Void>(),
 		   TraceCountersActorState<TraceCountersActor>(traceEventName, traceEventID, interval, counters, trackLatestName, decorator)
 	{
@@ -446,11 +446,11 @@ friend struct ActorCallback< TraceCountersActor, 1, Void >;
 	}
 };
 }
-															#line 91 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.cpp"
+															#line 91 "/usr/src/libfdb_c/fdbrpc/Stats.actor.cpp"
 [[nodiscard]] Future<Void> traceCounters( std::string const& traceEventName, UID const& traceEventID, double const& interval, CounterCollection* const& counters, std::string const& trackLatestName, std::function<void(TraceEvent&)> const& decorator ) {
-															#line 91 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.cpp"
+															#line 91 "/usr/src/libfdb_c/fdbrpc/Stats.actor.cpp"
 	return Future<Void>(new TraceCountersActor(traceEventName, traceEventID, interval, counters, trackLatestName, decorator));
-															#line 453 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.g.cpp"
+															#line 453 "/usr/src/libfdb_c/fdbrpc/Stats.actor.g.cpp"
 }
 
-#line 124 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/Stats.actor.cpp"
+#line 124 "/usr/src/libfdb_c/fdbrpc/Stats.actor.cpp"

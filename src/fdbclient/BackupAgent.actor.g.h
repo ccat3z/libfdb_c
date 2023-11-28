@@ -1,5 +1,5 @@
 #define POST_ACTOR_COMPILER 1
-#line 1 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgent.actor.h"
+#line 1 "/usr/src/libfdb_c/fdbclient/BackupAgent.actor.h"
 /*
  * BackupAgent.actor.h
  *
@@ -550,22 +550,22 @@ std::pair<Version, uint32_t> decodeBKMutationLogKey(Key key);
 Future<Void> logError(Database cx, Key keyErrors, const std::string& message);
 Future<Void> logError(Reference<ReadYourWritesTransaction> tr, Key keyErrors, const std::string& message);
 Future<Void> checkVersion(Reference<ReadYourWritesTransaction> const& tr);
-															#line 553 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgent.actor.g.h"
+															#line 553 "/usr/src/libfdb_c/fdbclient/BackupAgent.actor.g.h"
 [[nodiscard]] Future<Void> readCommitted( Database const& cx, PromiseStream<RangeResultWithVersion> const& results, Reference<FlowLock> const& lock, KeyRangeRef const& range, Terminator const& terminator = Terminator::True, AccessSystemKeys const& systemAccess = AccessSystemKeys::False, LockAware const& lockAware = LockAware::False );
 
-#line 558 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgent.actor.h"
-															#line 557 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgent.actor.g.h"
+#line 558 "/usr/src/libfdb_c/fdbclient/BackupAgent.actor.h"
+															#line 557 "/usr/src/libfdb_c/fdbclient/BackupAgent.actor.g.h"
 [[nodiscard]] Future<Void> readCommitted( Database const& cx, PromiseStream<RCGroup> const& results, Future<Void> const& active, Reference<FlowLock> const& lock, KeyRangeRef const& range, std::function<std::pair<uint64_t, uint32_t>(Key key)> const& groupBy, Terminator const& terminator = Terminator::True, AccessSystemKeys const& systemAccess = AccessSystemKeys::False, LockAware const& lockAware = LockAware::False );
 
-#line 567 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgent.actor.h"
-															#line 561 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgent.actor.g.h"
+#line 567 "/usr/src/libfdb_c/fdbclient/BackupAgent.actor.h"
+															#line 561 "/usr/src/libfdb_c/fdbclient/BackupAgent.actor.g.h"
 [[nodiscard]] Future<Void> applyMutations( Database const& cx, Key const& uid, Key const& addPrefix, Key const& removePrefix, Version const& beginVersion, Version* const& endVersion, RequestStream<CommitTransactionRequest> const& commit, NotifiedVersion* const& committedVersion, Reference<KeyRangeMap<Version>> const& keyVersion );
 
-#line 576 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgent.actor.h"
-															#line 565 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgent.actor.g.h"
+#line 576 "/usr/src/libfdb_c/fdbclient/BackupAgent.actor.h"
+															#line 565 "/usr/src/libfdb_c/fdbclient/BackupAgent.actor.g.h"
 [[nodiscard]] Future<Void> cleanupBackup( Database const& cx, DeleteData const& deleteData );
 
-#line 577 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgent.actor.h"
+#line 577 "/usr/src/libfdb_c/fdbclient/BackupAgent.actor.h"
 
 using EBackupState = BackupAgentBase::EnumState;
 template <>
@@ -608,11 +608,11 @@ public:
 typedef KeyBackedMap<std::string, UidAndAbortedFlagT> TagMap;
 // Map of tagName to {UID, aborted_flag} located in the fileRestorePrefixRange keyspace.
 class TagUidMap : public KeyBackedMap<std::string, UidAndAbortedFlagT> {
-																#line 611 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgent.actor.g.h"
+																#line 611 "/usr/src/libfdb_c/fdbclient/BackupAgent.actor.g.h"
 [[nodiscard]] static Future<std::vector<KeyBackedTag>> getAll_impl( TagUidMap* const& tagsMap, Reference<ReadYourWritesTransaction> const& tr, Snapshot const& snapshot );
 template <class> friend class TagUidMap_GetAll_implActorState;
 
-#line 622 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgent.actor.h"
+#line 622 "/usr/src/libfdb_c/fdbclient/BackupAgent.actor.h"
 
 public:
 	TagUidMap(const StringRef& prefix) : TagMap(LiteralStringRef("tag->uid/").withPrefix(prefix)), prefix(prefix) {}
@@ -1000,18 +1000,18 @@ struct StringRefReader {
 namespace fileBackup {
 Standalone<VectorRef<KeyValueRef>> decodeRangeFileBlock(const Standalone<StringRef>& buf);
 
-															#line 1003 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgent.actor.g.h"
+															#line 1003 "/usr/src/libfdb_c/fdbclient/BackupAgent.actor.g.h"
 [[nodiscard]] Future<Standalone<VectorRef<KeyValueRef>>> decodeRangeFileBlock( Reference<IAsyncFile> const& file, int64_t const& offset, int const& len );
 
-#line 1012 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgent.actor.h"
+#line 1012 "/usr/src/libfdb_c/fdbclient/BackupAgent.actor.h"
 
 Standalone<VectorRef<KeyValueRef>> decodeMutationLogFileBlock(const Standalone<StringRef>& buf);
 
 // Reads a mutation log block from file and parses into batch mutation blocks for further parsing.
-															#line 1011 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgent.actor.g.h"
+															#line 1011 "/usr/src/libfdb_c/fdbclient/BackupAgent.actor.g.h"
 [[nodiscard]] Future<Standalone<VectorRef<KeyValueRef>>> decodeMutationLogFileBlock( Reference<IAsyncFile> const& file, int64_t const& offset, int const& len );
 
-#line 1019 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgent.actor.h"
+#line 1019 "/usr/src/libfdb_c/fdbclient/BackupAgent.actor.h"
 
 // Return a block of contiguous padding bytes "\0xff" for backup files, growing if needed.
 Value makePadding(int size);
@@ -1021,10 +1021,10 @@ Value makePadding(int size);
 // For testing addPrefix feature in fast restore.
 // Transform db content in restoreRanges by removePrefix and then addPrefix.
 // Assume: DB is locked
-															#line 1024 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgent.actor.g.h"
+															#line 1024 "/usr/src/libfdb_c/fdbclient/BackupAgent.actor.g.h"
 [[nodiscard]] Future<Void> transformRestoredDatabase( Database const& cx, Standalone<VectorRef<KeyRangeRef>> const& backupRanges, Key const& addPrefix, Key const& removePrefix );
 
-#line 1032 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupAgent.actor.h"
+#line 1032 "/usr/src/libfdb_c/fdbclient/BackupAgent.actor.h"
 
 void simulateBlobFailure();
 

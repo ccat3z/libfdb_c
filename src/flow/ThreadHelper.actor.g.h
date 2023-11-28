@@ -1,5 +1,5 @@
 #define POST_ACTOR_COMPILER 1
-#line 1 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+#line 1 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 /*
  * ThreadHelper.actor.h
  *
@@ -40,22 +40,22 @@
 // Helper actor. Do not use directly!
 namespace internal_thread_helper {
 
-															#line 43 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 43 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 // This generated class is to be used only via doOnMainThreadVoid()
-															#line 41 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 41 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 template <class F, class DoOnMainThreadVoidActor>
-															#line 41 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 41 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 class DoOnMainThreadVoidActorState {
-															#line 49 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 49 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 public:
-															#line 41 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 41 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 	DoOnMainThreadVoidActorState(Future<Void> const& signal,F const& f) 
-															#line 41 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
-															#line 41 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 41 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
+															#line 41 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 		 : signal(signal),
-															#line 41 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 41 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 		   f(f)
-															#line 58 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 58 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 	{
 		fdb_probe_actor_create("doOnMainThreadVoid", reinterpret_cast<unsigned long>(this));
 
@@ -68,15 +68,15 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 43 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 43 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 			StrictFuture<Void> __when_expr_0 = signal;
-															#line 43 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 43 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
-															#line 75 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 75 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 			static_cast<DoOnMainThreadVoidActor*>(this)->actor_wait_state = 1;
-															#line 43 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 43 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< DoOnMainThreadVoidActor, 0, Void >*>(static_cast<DoOnMainThreadVoidActor*>(this)));
-															#line 79 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 79 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -97,9 +97,9 @@ public:
 	int a_body1cont1(Void const& _,int loopDepth) 
 	{
 		try {
-															#line 45 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 45 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 			f();
-															#line 102 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 102 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 			loopDepth = a_body1cont4(loopDepth);
 		}
 		catch (Error& error) {
@@ -113,9 +113,9 @@ public:
 	int a_body1cont1(Void && _,int loopDepth) 
 	{
 		try {
-															#line 45 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 45 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 			f();
-															#line 118 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 118 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 			loopDepth = a_body1cont4(loopDepth);
 		}
 		catch (Error& error) {
@@ -223,25 +223,25 @@ public:
 	}
 	int a_body1cont5(int loopDepth) 
 	{
-															#line 41 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 41 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 		delete static_cast<DoOnMainThreadVoidActor*>(this);
-															#line 228 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 228 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 		return 0;
 
 		return loopDepth;
 	}
-															#line 41 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 41 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 	Future<Void> signal;
-															#line 41 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 41 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 	F f;
-															#line 237 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 237 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 };
 // This generated class is to be used only via doOnMainThreadVoid()
-															#line 41 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 41 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 template <class F>
-															#line 41 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 41 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 class DoOnMainThreadVoidActor final : public Actor<void>, public ActorCallback< DoOnMainThreadVoidActor<F>, 0, Void >, public FastAllocated<DoOnMainThreadVoidActor<F>>, public DoOnMainThreadVoidActorState<F, DoOnMainThreadVoidActor<F>> {
-															#line 244 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 244 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 public:
 	using FastAllocated<DoOnMainThreadVoidActor<F>>::operator new;
 	using FastAllocated<DoOnMainThreadVoidActor<F>>::operator delete;
@@ -250,9 +250,9 @@ public:
 	void destroy() {{ ((Actor<void>*)this)->~Actor(); operator delete(this); }}
 #pragma clang diagnostic pop
 friend struct ActorCallback< DoOnMainThreadVoidActor<F>, 0, Void >;
-															#line 41 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 41 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 	DoOnMainThreadVoidActor(Future<Void> const& signal,F const& f) 
-															#line 255 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 255 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 		 : Actor<void>(),
 		   DoOnMainThreadVoidActorState<F, DoOnMainThreadVoidActor<F>>(signal, f)
 	{
@@ -266,37 +266,37 @@ friend struct ActorCallback< DoOnMainThreadVoidActor<F>, 0, Void >;
 
 	}
 };
-															#line 41 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 41 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 template <class F>
-															#line 41 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 41 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 void doOnMainThreadVoid( Future<Void> const& signal, F const& f ) {
-															#line 41 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 41 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 	new DoOnMainThreadVoidActor<F>(signal, f);
-															#line 275 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 275 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 }
 
-#line 49 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+#line 49 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 
-															#line 280 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 280 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 // This generated class is to be used only via doOnMainThreadVoid()
-															#line 50 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 50 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 template <class F, class T, class DoOnMainThreadVoidActor1>
-															#line 50 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 50 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 class DoOnMainThreadVoidActor1State {
-															#line 286 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 286 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 public:
-															#line 50 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 50 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 	DoOnMainThreadVoidActor1State(Future<Void> const& signal,F const& f,T* const& t,Error T::* const& member) 
-															#line 50 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
-															#line 50 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 50 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
+															#line 50 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 		 : signal(signal),
-															#line 50 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 50 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 		   f(f),
-															#line 50 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 50 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 		   t(t),
-															#line 50 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 50 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 		   member(member)
-															#line 299 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 299 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 	{
 		fdb_probe_actor_create("doOnMainThreadVoid", reinterpret_cast<unsigned long>(this));
 
@@ -309,15 +309,15 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 52 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 52 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 			StrictFuture<Void> __when_expr_0 = signal;
-															#line 52 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 52 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
-															#line 316 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 316 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 			static_cast<DoOnMainThreadVoidActor1*>(this)->actor_wait_state = 1;
-															#line 52 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 52 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< DoOnMainThreadVoidActor1, 0, Void >*>(static_cast<DoOnMainThreadVoidActor1*>(this)));
-															#line 320 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 320 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -337,19 +337,19 @@ public:
 	}
 	int a_body1cont1(Void const& _,int loopDepth) 
 	{
-															#line 53 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 53 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 		if (t && (t->*member).code() != invalid_error_code)
-															#line 342 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 342 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 		{
-															#line 54 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 54 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 			delete static_cast<DoOnMainThreadVoidActor1*>(this);
-															#line 346 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 346 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 			return 0;
 		}
 		try {
-															#line 56 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 56 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 			f();
-															#line 352 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 352 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 			loopDepth = a_body1cont5(loopDepth);
 		}
 		catch (Error& error) {
@@ -362,19 +362,19 @@ public:
 	}
 	int a_body1cont1(Void && _,int loopDepth) 
 	{
-															#line 53 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 53 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 		if (t && (t->*member).code() != invalid_error_code)
-															#line 367 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 367 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 		{
-															#line 54 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 54 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 			delete static_cast<DoOnMainThreadVoidActor1*>(this);
-															#line 371 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 371 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 			return 0;
 		}
 		try {
-															#line 56 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 56 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 			f();
-															#line 377 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 377 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 			loopDepth = a_body1cont5(loopDepth);
 		}
 		catch (Error& error) {
@@ -457,13 +457,13 @@ public:
 	int a_body1cont1Catch1(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 58 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 58 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 			if (t)
-															#line 462 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 462 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 			{
-															#line 59 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 59 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 				t->*member = e;
-															#line 466 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 466 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 			}
 			loopDepth = a_body1cont2(loopDepth);
 		}
@@ -490,29 +490,29 @@ public:
 	}
 	int a_body1cont6(int loopDepth) 
 	{
-															#line 50 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 50 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 		delete static_cast<DoOnMainThreadVoidActor1*>(this);
-															#line 495 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 495 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 		return 0;
 
 		return loopDepth;
 	}
-															#line 50 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 50 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 	Future<Void> signal;
-															#line 50 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 50 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 	F f;
-															#line 50 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 50 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 	T* t;
-															#line 50 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 50 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 	Error T::* member;
-															#line 508 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 508 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 };
 // This generated class is to be used only via doOnMainThreadVoid()
-															#line 50 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 50 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 template <class F, class T>
-															#line 50 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 50 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 class DoOnMainThreadVoidActor1 final : public Actor<void>, public ActorCallback< DoOnMainThreadVoidActor1<F, T>, 0, Void >, public FastAllocated<DoOnMainThreadVoidActor1<F, T>>, public DoOnMainThreadVoidActor1State<F, T, DoOnMainThreadVoidActor1<F, T>> {
-															#line 515 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 515 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 public:
 	using FastAllocated<DoOnMainThreadVoidActor1<F, T>>::operator new;
 	using FastAllocated<DoOnMainThreadVoidActor1<F, T>>::operator delete;
@@ -521,9 +521,9 @@ public:
 	void destroy() {{ ((Actor<void>*)this)->~Actor(); operator delete(this); }}
 #pragma clang diagnostic pop
 friend struct ActorCallback< DoOnMainThreadVoidActor1<F, T>, 0, Void >;
-															#line 50 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 50 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 	DoOnMainThreadVoidActor1(Future<Void> const& signal,F const& f,T* const& t,Error T::* const& member) 
-															#line 526 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 526 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 		 : Actor<void>(),
 		   DoOnMainThreadVoidActor1State<F, T, DoOnMainThreadVoidActor1<F, T>>(signal, f, t, member)
 	{
@@ -537,16 +537,16 @@ friend struct ActorCallback< DoOnMainThreadVoidActor1<F, T>, 0, Void >;
 
 	}
 };
-															#line 50 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 50 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 template <class F, class T>
-															#line 50 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 50 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 void doOnMainThreadVoid( Future<Void> const& signal, F const& f, T* const& t, Error T::* const& member ) {
-															#line 50 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 50 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 	new DoOnMainThreadVoidActor1<F, T>(signal, f, t, member);
-															#line 546 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 546 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 }
 
-#line 62 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+#line 62 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 
 } // namespace internal_thread_helper
 
@@ -1195,21 +1195,21 @@ private:
 // If the underlying "threadFuture" is cancelled, this actor will get actor_cancelled.
 // If instead, this actor is cancelled, we will also cancel the underlying "threadFuture"
 // Note: we are required to have unique ownership of the "threadFuture"
-															#line 1198 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 1198 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 namespace {
 // This generated class is to be used only via safeThreadFutureToFutureImpl()
-															#line 710 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 710 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 template <class T, class SafeThreadFutureToFutureImplActor>
-															#line 710 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 710 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 class SafeThreadFutureToFutureImplActorState {
-															#line 1205 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 1205 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 public:
-															#line 710 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 710 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 	SafeThreadFutureToFutureImplActorState(ThreadFuture<T> const& threadFuture) 
-															#line 710 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
-															#line 710 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 710 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
+															#line 710 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 		 : threadFuture(threadFuture)
-															#line 1212 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 1212 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 	{
 		fdb_probe_actor_create("safeThreadFutureToFutureImpl", reinterpret_cast<unsigned long>(this));
 
@@ -1222,28 +1222,28 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 712 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 712 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 			Promise<Void> ready;
-															#line 713 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 713 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 			Future<Void> onReady = ready.getFuture();
-															#line 714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 714 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 			UtilCallback<T>* callback = new UtilCallback<T>(threadFuture, ready.extractRawPointer());
-															#line 715 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 715 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 			int unused = 0;
-															#line 716 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 716 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 			threadFuture.callOrSetAsCallback(callback, unused, 0);
-															#line 1235 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 1235 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 			try {
-															#line 718 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 718 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 				StrictFuture<Void> __when_expr_0 = onReady;
-															#line 718 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 718 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 				if (static_cast<SafeThreadFutureToFutureImplActor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), loopDepth);
-															#line 1241 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 1241 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 				if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch2(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 				static_cast<SafeThreadFutureToFutureImplActor*>(this)->actor_wait_state = 1;
-															#line 718 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 718 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 				__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< SafeThreadFutureToFutureImplActor, 0, Void >*>(static_cast<SafeThreadFutureToFutureImplActor*>(this)));
-															#line 1246 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 1246 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 				loopDepth = 0;
 			}
 			catch (Error& error) {
@@ -1270,19 +1270,19 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 729 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 729 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 		ASSERT(threadFuture.isReady());
-															#line 730 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 730 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 		if (threadFuture.isError())
-															#line 1277 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 1277 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 		{
-															#line 731 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 731 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 			return a_body1Catch1(threadFuture.getError(), loopDepth);
-															#line 1281 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 1281 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 		}
-															#line 732 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 732 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 		if (!static_cast<SafeThreadFutureToFutureImplActor*>(this)->SAV<T>::futures) { (void)(threadFuture.get()); this->~SafeThreadFutureToFutureImplActorState(); static_cast<SafeThreadFutureToFutureImplActor*>(this)->destroy(); return 0; }
-															#line 1285 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 1285 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 		new (&static_cast<SafeThreadFutureToFutureImplActor*>(this)->SAV< T >::value()) T(threadFuture.get());
 		this->~SafeThreadFutureToFutureImplActorState();
 		static_cast<SafeThreadFutureToFutureImplActor*>(this)->finishSendAndDelPromiseRef();
@@ -1293,19 +1293,19 @@ public:
 	int a_body1Catch2(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 721 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 721 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 			ASSERT(e.code() == error_code_operation_cancelled || e.code() == error_code_broken_promise);
-															#line 723 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 723 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 			if (e.code() == error_code_operation_cancelled)
-															#line 1300 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 1300 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 			{
-															#line 724 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 724 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 				threadFuture.cancel();
-															#line 1304 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 1304 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 			}
-															#line 726 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 726 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 			return a_body1Catch1(e, loopDepth);
-															#line 1308 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 1308 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 		}
 		catch (Error& error) {
 			loopDepth = a_body1Catch1(error, loopDepth);
@@ -1403,16 +1403,16 @@ public:
 
 		return loopDepth;
 	}
-															#line 710 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 710 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 	ThreadFuture<T> threadFuture;
-															#line 1408 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 1408 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 };
 // This generated class is to be used only via safeThreadFutureToFutureImpl()
-															#line 710 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 710 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 template <class T>
-															#line 710 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 710 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 class SafeThreadFutureToFutureImplActor final : public Actor<T>, public ActorCallback< SafeThreadFutureToFutureImplActor<T>, 0, Void >, public FastAllocated<SafeThreadFutureToFutureImplActor<T>>, public SafeThreadFutureToFutureImplActorState<T, SafeThreadFutureToFutureImplActor<T>> {
-															#line 1415 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 1415 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 public:
 	using FastAllocated<SafeThreadFutureToFutureImplActor<T>>::operator new;
 	using FastAllocated<SafeThreadFutureToFutureImplActor<T>>::operator delete;
@@ -1421,9 +1421,9 @@ public:
 	void destroy() override { ((Actor<T>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< SafeThreadFutureToFutureImplActor<T>, 0, Void >;
-															#line 710 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 710 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 	SafeThreadFutureToFutureImplActor(ThreadFuture<T> const& threadFuture) 
-															#line 1426 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 1426 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 		 : Actor<T>(),
 		   SafeThreadFutureToFutureImplActorState<T, SafeThreadFutureToFutureImplActor<T>>(threadFuture)
 	{
@@ -1447,16 +1447,16 @@ friend struct ActorCallback< SafeThreadFutureToFutureImplActor<T>, 0, Void >;
 	}
 };
 }
-															#line 710 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 710 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 template <class T>
-															#line 710 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 710 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 [[nodiscard]] Future<T> safeThreadFutureToFutureImpl( ThreadFuture<T> const& threadFuture ) {
-															#line 710 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 710 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 	return Future<T>(new SafeThreadFutureToFutureImplActor<T>(threadFuture));
-															#line 1456 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 1456 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 }
 
-#line 734 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+#line 734 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 
 // The allow anonymous_future type is used to prevent misuse of ThreadFutures.
 // For Standalone types, the memory in some cases is actually stored in the ThreadFuture object,
@@ -1503,24 +1503,24 @@ typename std::enable_if<!allow_anonymous_future<T>::value, Future<T>>::type safe
 // Helper actor. Do not use directly!
 namespace internal_thread_helper {
 
-															#line 1506 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 1506 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 // This generated class is to be used only via doOnMainThread()
-															#line 780 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 780 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 template <class R, class F, class DoOnMainThreadActor>
-															#line 780 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 780 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 class DoOnMainThreadActorState {
-															#line 1512 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 1512 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 public:
-															#line 780 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 780 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 	DoOnMainThreadActorState(Future<Void> const& signal,F const& f,ThreadSingleAssignmentVar<R>* const& result) 
-															#line 780 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
-															#line 780 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 780 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
+															#line 780 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 		 : signal(signal),
-															#line 780 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 780 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 		   f(f),
-															#line 780 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 780 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 		   result(result)
-															#line 1523 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 1523 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 	{
 		fdb_probe_actor_create("doOnMainThread", reinterpret_cast<unsigned long>(this));
 
@@ -1534,16 +1534,16 @@ public:
 	{
 		try {
 			try {
-															#line 783 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 783 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 				StrictFuture<Void> __when_expr_0 = signal;
-															#line 783 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 783 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 				if (static_cast<DoOnMainThreadActor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), loopDepth);
-															#line 1541 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 1541 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 				if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch2(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 				static_cast<DoOnMainThreadActor*>(this)->actor_wait_state = 1;
-															#line 783 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 783 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 				__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< DoOnMainThreadActor, 0, Void >*>(static_cast<DoOnMainThreadActor*>(this)));
-															#line 1546 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 1546 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 				loopDepth = 0;
 			}
 			catch (Error& error) {
@@ -1570,11 +1570,11 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 793 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 793 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 		ThreadFuture<R> destroyResultAfterReturning( result);
-															#line 795 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 795 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 		if (!static_cast<DoOnMainThreadActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~DoOnMainThreadActorState(); static_cast<DoOnMainThreadActor*>(this)->destroy(); return 0; }
-															#line 1577 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 1577 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 		new (&static_cast<DoOnMainThreadActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~DoOnMainThreadActorState();
 		static_cast<DoOnMainThreadActor*>(this)->finishSendAndDelPromiseRef();
@@ -1585,17 +1585,17 @@ public:
 	int a_body1Catch2(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 787 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 787 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 			if (!result->canBeSet())
-															#line 1590 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 1590 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 			{
-															#line 788 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 788 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 				TraceEvent(SevError, "OnMainThreadSetTwice").errorUnsuppressed(e);
-															#line 1594 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 1594 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 			}
-															#line 790 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 790 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 			result->sendError(e);
-															#line 1598 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 1598 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 			loopDepth = a_body1cont1(loopDepth);
 		}
 		catch (Error& error) {
@@ -1608,32 +1608,32 @@ public:
 	}
 	int a_body1cont2(Void const& _,int loopDepth) 
 	{
-															#line 784 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 784 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 		StrictFuture<R> __when_expr_1 = f();
-															#line 784 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 784 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 		if (static_cast<DoOnMainThreadActor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), loopDepth);
-															#line 1615 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 1615 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch2(__when_expr_1.getError(), loopDepth); else return a_body1cont2when1(__when_expr_1.get(), loopDepth); };
 		static_cast<DoOnMainThreadActor*>(this)->actor_wait_state = 2;
-															#line 784 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 784 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< DoOnMainThreadActor, 1, R >*>(static_cast<DoOnMainThreadActor*>(this)));
-															#line 1620 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 1620 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont2(Void && _,int loopDepth) 
 	{
-															#line 784 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 784 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 		StrictFuture<R> __when_expr_1 = f();
-															#line 784 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 784 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 		if (static_cast<DoOnMainThreadActor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), loopDepth);
-															#line 1631 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 1631 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch2(__when_expr_1.getError(), loopDepth); else return a_body1cont2when1(__when_expr_1.get(), loopDepth); };
 		static_cast<DoOnMainThreadActor*>(this)->actor_wait_state = 2;
-															#line 784 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 784 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< DoOnMainThreadActor, 1, R >*>(static_cast<DoOnMainThreadActor*>(this)));
-															#line 1636 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 1636 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -1703,18 +1703,18 @@ public:
 	}
 	int a_body1cont3(R const& r,int loopDepth) 
 	{
-															#line 785 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 785 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 		result->send(r);
-															#line 1708 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 1708 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 		loopDepth = a_body1cont5(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1cont3(R && r,int loopDepth) 
 	{
-															#line 785 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 785 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 		result->send(r);
-															#line 1717 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 1717 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 		loopDepth = a_body1cont5(loopDepth);
 
 		return loopDepth;
@@ -1795,20 +1795,20 @@ public:
 
 		return loopDepth;
 	}
-															#line 780 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 780 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 	Future<Void> signal;
-															#line 780 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 780 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 	F f;
-															#line 780 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 780 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 	ThreadSingleAssignmentVar<R>* result;
-															#line 1804 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 1804 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 };
 // This generated class is to be used only via doOnMainThread()
-															#line 780 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 780 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 template <class R, class F>
-															#line 780 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 780 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 class DoOnMainThreadActor final : public Actor<Void>, public ActorCallback< DoOnMainThreadActor<R, F>, 0, Void >, public ActorCallback< DoOnMainThreadActor<R, F>, 1, R >, public FastAllocated<DoOnMainThreadActor<R, F>>, public DoOnMainThreadActorState<R, F, DoOnMainThreadActor<R, F>> {
-															#line 1811 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 1811 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 public:
 	using FastAllocated<DoOnMainThreadActor<R, F>>::operator new;
 	using FastAllocated<DoOnMainThreadActor<R, F>>::operator delete;
@@ -1818,9 +1818,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< DoOnMainThreadActor<R, F>, 0, Void >;
 friend struct ActorCallback< DoOnMainThreadActor<R, F>, 1, R >;
-															#line 780 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 780 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 	DoOnMainThreadActor(Future<Void> const& signal,F const& f,ThreadSingleAssignmentVar<R>* const& result) 
-															#line 1823 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 1823 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 		 : Actor<Void>(),
 		   DoOnMainThreadActorState<R, F, DoOnMainThreadActor<R, F>>(signal, f, result)
 	{
@@ -1844,16 +1844,16 @@ friend struct ActorCallback< DoOnMainThreadActor<R, F>, 1, R >;
 
 	}
 };
-															#line 780 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 780 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 template <class R, class F>
-															#line 780 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 780 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 [[nodiscard]] Future<Void> doOnMainThread( Future<Void> const& signal, F const& f, ThreadSingleAssignmentVar<R>* const& result ) {
-															#line 780 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+															#line 780 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 	return Future<Void>(new DoOnMainThreadActor<R, F>(signal, f, result));
-															#line 1853 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.g.h"
+															#line 1853 "/usr/src/libfdb_c/flow/ThreadHelper.actor.g.h"
 }
 
-#line 797 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/ThreadHelper.actor.h"
+#line 797 "/usr/src/libfdb_c/flow/ThreadHelper.actor.h"
 
 } // namespace internal_thread_helper
 

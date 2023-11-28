@@ -1,5 +1,5 @@
 #define POST_ACTOR_COMPILER 1
-#line 1 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.h"
+#line 1 "/usr/src/libfdb_c/flow/Platform.actor.h"
 /*
  * Platform.actor.h
  *
@@ -46,10 +46,10 @@ Future<std::vector<std::string>> listFilesAsync(std::string const& directory, st
 // returns directory names relative to directory
 Future<std::vector<std::string>> listDirectoriesAsync(std::string const& directory);
 
-															#line 49 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.g.h"
+															#line 49 "/usr/src/libfdb_c/flow/Platform.actor.g.h"
 [[nodiscard]] Future<Void> findFilesRecursivelyAsync( std::string const& path, std::vector<std::string>* const& out );
 
-#line 48 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Platform.actor.h"
+#line 48 "/usr/src/libfdb_c/flow/Platform.actor.h"
 } // namespace platform
 
 #include "flow/unactorcompiler.h"

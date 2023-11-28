@@ -1,5 +1,5 @@
 #define POST_ACTOR_COMPILER 1
-#line 1 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/networksender.actor.h"
+#line 1 "/usr/src/libfdb_c/fdbrpc/networksender.actor.h"
 /*
  * networksender.actor.h
  *
@@ -33,23 +33,23 @@
 #include "flow/actorcompiler.h" // This must be the last #include.
 
 // This actor is used by FlowTransport to serialize the response to a ReplyPromise across the network
-															#line 36 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/networksender.actor.g.h"
+															#line 36 "/usr/src/libfdb_c/fdbrpc/networksender.actor.g.h"
 namespace {
 // This generated class is to be used only via networkSender()
-															#line 34 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/networksender.actor.h"
+															#line 34 "/usr/src/libfdb_c/fdbrpc/networksender.actor.h"
 template <class T, class NetworkSenderActor>
-															#line 34 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/networksender.actor.h"
+															#line 34 "/usr/src/libfdb_c/fdbrpc/networksender.actor.h"
 class NetworkSenderActorState {
-															#line 43 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/networksender.actor.g.h"
+															#line 43 "/usr/src/libfdb_c/fdbrpc/networksender.actor.g.h"
 public:
-															#line 34 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/networksender.actor.h"
+															#line 34 "/usr/src/libfdb_c/fdbrpc/networksender.actor.h"
 	NetworkSenderActorState(Future<T> const& input,Endpoint const& endpoint) 
-															#line 34 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/networksender.actor.h"
-															#line 34 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/networksender.actor.h"
+															#line 34 "/usr/src/libfdb_c/fdbrpc/networksender.actor.h"
+															#line 34 "/usr/src/libfdb_c/fdbrpc/networksender.actor.h"
 		 : input(input),
-															#line 34 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/networksender.actor.h"
+															#line 34 "/usr/src/libfdb_c/fdbrpc/networksender.actor.h"
 		   endpoint(endpoint)
-															#line 52 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/networksender.actor.g.h"
+															#line 52 "/usr/src/libfdb_c/fdbrpc/networksender.actor.g.h"
 	{
 		fdb_probe_actor_create("networkSender", reinterpret_cast<unsigned long>(this));
 
@@ -63,15 +63,15 @@ public:
 	{
 		try {
 			try {
-															#line 37 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/networksender.actor.h"
+															#line 37 "/usr/src/libfdb_c/fdbrpc/networksender.actor.h"
 				StrictFuture<T> __when_expr_0 = input;
-															#line 37 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/networksender.actor.h"
+															#line 37 "/usr/src/libfdb_c/fdbrpc/networksender.actor.h"
 				if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch2(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
-															#line 70 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/networksender.actor.g.h"
+															#line 70 "/usr/src/libfdb_c/fdbrpc/networksender.actor.g.h"
 				static_cast<NetworkSenderActor*>(this)->actor_wait_state = 1;
-															#line 37 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/networksender.actor.h"
+															#line 37 "/usr/src/libfdb_c/fdbrpc/networksender.actor.h"
 				__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< NetworkSenderActor, 0, T >*>(static_cast<NetworkSenderActor*>(this)));
-															#line 74 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/networksender.actor.g.h"
+															#line 74 "/usr/src/libfdb_c/fdbrpc/networksender.actor.g.h"
 				loopDepth = 0;
 			}
 			catch (Error& error) {
@@ -104,20 +104,20 @@ public:
 	int a_body1Catch2(const Error& err,int loopDepth=0) 
 	{
 		try {
-															#line 41 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/networksender.actor.h"
+															#line 41 "/usr/src/libfdb_c/fdbrpc/networksender.actor.h"
 			if (err.code() == error_code_never_reply)
-															#line 109 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/networksender.actor.g.h"
+															#line 109 "/usr/src/libfdb_c/fdbrpc/networksender.actor.g.h"
 			{
-															#line 42 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/networksender.actor.h"
+															#line 42 "/usr/src/libfdb_c/fdbrpc/networksender.actor.h"
 				delete static_cast<NetworkSenderActor*>(this);
-															#line 113 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/networksender.actor.g.h"
+															#line 113 "/usr/src/libfdb_c/fdbrpc/networksender.actor.g.h"
 				return 0;
 			}
-															#line 44 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/networksender.actor.h"
+															#line 44 "/usr/src/libfdb_c/fdbrpc/networksender.actor.h"
 			ASSERT(err.code() != error_code_actor_cancelled);
-															#line 45 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/networksender.actor.h"
+															#line 45 "/usr/src/libfdb_c/fdbrpc/networksender.actor.h"
 			FlowTransport::transport().sendUnreliable(SerializeSource<ErrorOr<EnsureTable<T>>>(err), endpoint, false);
-															#line 120 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/networksender.actor.g.h"
+															#line 120 "/usr/src/libfdb_c/fdbrpc/networksender.actor.g.h"
 			loopDepth = a_body1cont1(loopDepth);
 		}
 		catch (Error& error) {
@@ -130,18 +130,18 @@ public:
 	}
 	int a_body1cont2(T const& value,int loopDepth) 
 	{
-															#line 38 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/networksender.actor.h"
+															#line 38 "/usr/src/libfdb_c/fdbrpc/networksender.actor.h"
 		FlowTransport::transport().sendUnreliable(SerializeSource<ErrorOr<EnsureTable<T>>>(value), endpoint, false);
-															#line 135 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/networksender.actor.g.h"
+															#line 135 "/usr/src/libfdb_c/fdbrpc/networksender.actor.g.h"
 		loopDepth = a_body1cont4(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1cont2(T && value,int loopDepth) 
 	{
-															#line 38 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/networksender.actor.h"
+															#line 38 "/usr/src/libfdb_c/fdbrpc/networksender.actor.h"
 		FlowTransport::transport().sendUnreliable(SerializeSource<ErrorOr<EnsureTable<T>>>(value), endpoint, false);
-															#line 144 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/networksender.actor.g.h"
+															#line 144 "/usr/src/libfdb_c/fdbrpc/networksender.actor.g.h"
 		loopDepth = a_body1cont4(loopDepth);
 
 		return loopDepth;
@@ -224,25 +224,25 @@ public:
 	}
 	int a_body1cont5(int loopDepth) 
 	{
-															#line 34 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/networksender.actor.h"
+															#line 34 "/usr/src/libfdb_c/fdbrpc/networksender.actor.h"
 		delete static_cast<NetworkSenderActor*>(this);
-															#line 229 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/networksender.actor.g.h"
+															#line 229 "/usr/src/libfdb_c/fdbrpc/networksender.actor.g.h"
 		return 0;
 
 		return loopDepth;
 	}
-															#line 34 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/networksender.actor.h"
+															#line 34 "/usr/src/libfdb_c/fdbrpc/networksender.actor.h"
 	Future<T> input;
-															#line 34 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/networksender.actor.h"
+															#line 34 "/usr/src/libfdb_c/fdbrpc/networksender.actor.h"
 	Endpoint endpoint;
-															#line 238 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/networksender.actor.g.h"
+															#line 238 "/usr/src/libfdb_c/fdbrpc/networksender.actor.g.h"
 };
 // This generated class is to be used only via networkSender()
-															#line 34 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/networksender.actor.h"
+															#line 34 "/usr/src/libfdb_c/fdbrpc/networksender.actor.h"
 template <class T>
-															#line 34 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/networksender.actor.h"
+															#line 34 "/usr/src/libfdb_c/fdbrpc/networksender.actor.h"
 class NetworkSenderActor final : public Actor<void>, public ActorCallback< NetworkSenderActor<T>, 0, T >, public FastAllocated<NetworkSenderActor<T>>, public NetworkSenderActorState<T, NetworkSenderActor<T>> {
-															#line 245 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/networksender.actor.g.h"
+															#line 245 "/usr/src/libfdb_c/fdbrpc/networksender.actor.g.h"
 public:
 	using FastAllocated<NetworkSenderActor<T>>::operator new;
 	using FastAllocated<NetworkSenderActor<T>>::operator delete;
@@ -251,9 +251,9 @@ public:
 	void destroy() {{ ((Actor<void>*)this)->~Actor(); operator delete(this); }}
 #pragma clang diagnostic pop
 friend struct ActorCallback< NetworkSenderActor<T>, 0, T >;
-															#line 34 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/networksender.actor.h"
+															#line 34 "/usr/src/libfdb_c/fdbrpc/networksender.actor.h"
 	NetworkSenderActor(Future<T> const& input,Endpoint const& endpoint) 
-															#line 256 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/networksender.actor.g.h"
+															#line 256 "/usr/src/libfdb_c/fdbrpc/networksender.actor.g.h"
 		 : Actor<void>(),
 		   NetworkSenderActorState<T, NetworkSenderActor<T>>(input, endpoint)
 	{
@@ -268,16 +268,16 @@ friend struct ActorCallback< NetworkSenderActor<T>, 0, T >;
 	}
 };
 }
-															#line 34 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/networksender.actor.h"
+															#line 34 "/usr/src/libfdb_c/fdbrpc/networksender.actor.h"
 template <class T>
-															#line 34 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/networksender.actor.h"
+															#line 34 "/usr/src/libfdb_c/fdbrpc/networksender.actor.h"
 void networkSender( Future<T> const& input, Endpoint const& endpoint ) {
-															#line 34 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/networksender.actor.h"
+															#line 34 "/usr/src/libfdb_c/fdbrpc/networksender.actor.h"
 	new NetworkSenderActor<T>(input, endpoint);
-															#line 277 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/networksender.actor.g.h"
+															#line 277 "/usr/src/libfdb_c/fdbrpc/networksender.actor.g.h"
 }
 
-#line 48 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/networksender.actor.h"
+#line 48 "/usr/src/libfdb_c/fdbrpc/networksender.actor.h"
 #include "flow/unactorcompiler.h"
 
 #endif

@@ -1,5 +1,5 @@
 #define POST_ACTOR_COMPILER 1
-#line 1 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+#line 1 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 /*
  * TagThrottle.actor.h
  *
@@ -253,22 +253,22 @@ namespace ThrottleApi {
 // The template functions can be called with Native API like DatabaseContext, Transaction/ReadYourWritesTransaction
 // or using IClientAPI like IDatabase, ITransaction
 
-															#line 256 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 256 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 // This generated class is to be used only via getValidAutoEnabled()
-															#line 254 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 254 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 template <class Tr, class GetValidAutoEnabledActor>
-															#line 254 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 254 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 class GetValidAutoEnabledActorState {
-															#line 262 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 262 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 public:
-															#line 254 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 254 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	GetValidAutoEnabledActorState(Reference<Tr> const& tr) 
-															#line 254 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
-															#line 254 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 254 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
+															#line 254 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		 : tr(tr),
-															#line 256 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 256 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		   result()
-															#line 271 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 271 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 	{
 		fdb_probe_actor_create("getValidAutoEnabled", reinterpret_cast<unsigned long>(this));
 
@@ -281,9 +281,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 257 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 257 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			;
-															#line 286 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 286 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -311,80 +311,80 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 259 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 259 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		valueF = tr->get(tagThrottleAutoEnabledKey);
-															#line 260 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 260 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		StrictFuture<Optional<Value>> __when_expr_0 = safeThreadFutureToFuture(valueF);
-															#line 260 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 260 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		if (static_cast<GetValidAutoEnabledActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 320 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 320 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 		static_cast<GetValidAutoEnabledActor*>(this)->actor_wait_state = 1;
-															#line 260 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 260 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< GetValidAutoEnabledActor, 0, Optional<Value> >*>(static_cast<GetValidAutoEnabledActor*>(this)));
-															#line 325 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 325 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont1(Optional<Value> const& value,int loopDepth) 
 	{
-															#line 261 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 261 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		if (!value.present())
-															#line 334 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 334 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		{
-															#line 262 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 262 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			tr->reset();
-															#line 263 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 263 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			StrictFuture<Void> __when_expr_1 = delay(CLIENT_KNOBS->DEFAULT_BACKOFF);
-															#line 263 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 263 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			if (static_cast<GetValidAutoEnabledActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 342 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 342 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1cont1when1(__when_expr_1.get(), loopDepth); };
 			static_cast<GetValidAutoEnabledActor*>(this)->actor_wait_state = 2;
-															#line 263 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 263 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< GetValidAutoEnabledActor, 1, Void >*>(static_cast<GetValidAutoEnabledActor*>(this)));
-															#line 347 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 347 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			loopDepth = 0;
 		}
 		else
 		{
-															#line 265 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 265 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			if (value.get() == LiteralStringRef("1"))
-															#line 354 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 354 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			{
-															#line 266 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 266 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 				result = true;
-															#line 358 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 358 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 				loopDepth = a_body1loopBody1cont5(loopDepth);
 			}
 			else
 			{
-															#line 267 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 267 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 				if (value.get() == LiteralStringRef("0"))
-															#line 365 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 365 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 				{
-															#line 268 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 268 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 					result = false;
-															#line 369 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 369 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 					loopDepth = a_body1loopBody1cont7(loopDepth);
 				}
 				else
 				{
-															#line 270 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 270 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 					TraceEvent(SevWarnAlways, "InvalidAutoTagThrottlingValue").detail("Value", value.get());
-															#line 271 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 271 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 					tr->reset();
-															#line 272 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 272 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 					StrictFuture<Void> __when_expr_2 = delay(CLIENT_KNOBS->DEFAULT_BACKOFF);
-															#line 272 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 272 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 					if (static_cast<GetValidAutoEnabledActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 382 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 382 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 					if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1cont1when2(__when_expr_2.get(), loopDepth); };
 					static_cast<GetValidAutoEnabledActor*>(this)->actor_wait_state = 3;
-															#line 272 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 272 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 					__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< GetValidAutoEnabledActor, 2, Void >*>(static_cast<GetValidAutoEnabledActor*>(this)));
-															#line 387 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 387 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 					loopDepth = 0;
 				}
 			}
@@ -394,62 +394,62 @@ public:
 	}
 	int a_body1loopBody1cont1(Optional<Value> && value,int loopDepth) 
 	{
-															#line 261 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 261 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		if (!value.present())
-															#line 399 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 399 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		{
-															#line 262 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 262 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			tr->reset();
-															#line 263 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 263 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			StrictFuture<Void> __when_expr_1 = delay(CLIENT_KNOBS->DEFAULT_BACKOFF);
-															#line 263 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 263 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			if (static_cast<GetValidAutoEnabledActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 407 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 407 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1cont1when1(__when_expr_1.get(), loopDepth); };
 			static_cast<GetValidAutoEnabledActor*>(this)->actor_wait_state = 2;
-															#line 263 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 263 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< GetValidAutoEnabledActor, 1, Void >*>(static_cast<GetValidAutoEnabledActor*>(this)));
-															#line 412 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 412 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			loopDepth = 0;
 		}
 		else
 		{
-															#line 265 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 265 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			if (value.get() == LiteralStringRef("1"))
-															#line 419 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 419 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			{
-															#line 266 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 266 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 				result = true;
-															#line 423 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 423 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 				loopDepth = a_body1loopBody1cont5(loopDepth);
 			}
 			else
 			{
-															#line 267 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 267 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 				if (value.get() == LiteralStringRef("0"))
-															#line 430 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 430 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 				{
-															#line 268 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 268 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 					result = false;
-															#line 434 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 434 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 					loopDepth = a_body1loopBody1cont7(loopDepth);
 				}
 				else
 				{
-															#line 270 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 270 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 					TraceEvent(SevWarnAlways, "InvalidAutoTagThrottlingValue").detail("Value", value.get());
-															#line 271 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 271 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 					tr->reset();
-															#line 272 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 272 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 					StrictFuture<Void> __when_expr_2 = delay(CLIENT_KNOBS->DEFAULT_BACKOFF);
-															#line 272 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 272 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 					if (static_cast<GetValidAutoEnabledActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 447 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 447 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 					if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1cont1when2(__when_expr_2.get(), loopDepth); };
 					static_cast<GetValidAutoEnabledActor*>(this)->actor_wait_state = 3;
-															#line 272 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 272 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 					__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< GetValidAutoEnabledActor, 2, Void >*>(static_cast<GetValidAutoEnabledActor*>(this)));
-															#line 452 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 452 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 					loopDepth = 0;
 				}
 			}
@@ -522,9 +522,9 @@ public:
 	}
 	int a_body1loopBody1cont2(int loopDepth) 
 	{
-															#line 275 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 275 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		if (!static_cast<GetValidAutoEnabledActor*>(this)->SAV<bool>::futures) { (void)(result); this->~GetValidAutoEnabledActorState(); static_cast<GetValidAutoEnabledActor*>(this)->destroy(); return 0; }
-															#line 527 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 527 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		new (&static_cast<GetValidAutoEnabledActor*>(this)->SAV< bool >::value()) bool(std::move(result)); // state_var_RVO
 		this->~GetValidAutoEnabledActorState();
 		static_cast<GetValidAutoEnabledActor*>(this)->finishSendAndDelPromiseRef();
@@ -694,20 +694,20 @@ public:
 		fdb_probe_actor_exit("getValidAutoEnabled", reinterpret_cast<unsigned long>(this), 2);
 
 	}
-															#line 254 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 254 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	Reference<Tr> tr;
-															#line 256 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 256 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	bool result;
-															#line 259 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 259 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	typename Tr::template FutureT<Optional<Value>> valueF;
-															#line 703 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 703 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 };
 // This generated class is to be used only via getValidAutoEnabled()
-															#line 254 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 254 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 template <class Tr>
-															#line 254 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 254 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 class GetValidAutoEnabledActor final : public Actor<bool>, public ActorCallback< GetValidAutoEnabledActor<Tr>, 0, Optional<Value> >, public ActorCallback< GetValidAutoEnabledActor<Tr>, 1, Void >, public ActorCallback< GetValidAutoEnabledActor<Tr>, 2, Void >, public FastAllocated<GetValidAutoEnabledActor<Tr>>, public GetValidAutoEnabledActorState<Tr, GetValidAutoEnabledActor<Tr>> {
-															#line 710 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 710 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 public:
 	using FastAllocated<GetValidAutoEnabledActor<Tr>>::operator new;
 	using FastAllocated<GetValidAutoEnabledActor<Tr>>::operator delete;
@@ -718,9 +718,9 @@ public:
 friend struct ActorCallback< GetValidAutoEnabledActor<Tr>, 0, Optional<Value> >;
 friend struct ActorCallback< GetValidAutoEnabledActor<Tr>, 1, Void >;
 friend struct ActorCallback< GetValidAutoEnabledActor<Tr>, 2, Void >;
-															#line 254 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 254 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	GetValidAutoEnabledActor(Reference<Tr> const& tr) 
-															#line 723 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 723 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		 : Actor<bool>(),
 		   GetValidAutoEnabledActorState<Tr, GetValidAutoEnabledActor<Tr>>(tr)
 	{
@@ -745,35 +745,35 @@ friend struct ActorCallback< GetValidAutoEnabledActor<Tr>, 2, Void >;
 
 	}
 };
-															#line 254 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 254 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 template <class Tr>
-															#line 254 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 254 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 [[nodiscard]] Future<bool> getValidAutoEnabled( Reference<Tr> const& tr ) {
-															#line 254 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 254 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	return Future<bool>(new GetValidAutoEnabledActor<Tr>(tr));
-															#line 754 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 754 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 }
 
-#line 278 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+#line 278 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 
-															#line 759 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 759 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 // This generated class is to be used only via getRecommendedTags()
-															#line 279 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 279 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 template <class DB, class GetRecommendedTagsActor>
-															#line 279 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 279 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 class GetRecommendedTagsActorState {
-															#line 765 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 765 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 public:
-															#line 279 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 279 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	GetRecommendedTagsActorState(Reference<DB> const& db,int const& limit) 
-															#line 279 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
-															#line 279 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 279 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
+															#line 279 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		 : db(db),
-															#line 279 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 279 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		   limit(limit),
-															#line 281 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 281 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		   tr(db->createTransaction())
-															#line 776 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 776 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 	{
 		fdb_probe_actor_create("getRecommendedTags", reinterpret_cast<unsigned long>(this));
 
@@ -786,9 +786,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 282 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 282 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			;
-															#line 791 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 791 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -816,20 +816,20 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 283 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 283 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		tr->setOption(FDBTransactionOptions::READ_SYSTEM_KEYS);
-															#line 821 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 821 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		try {
-															#line 285 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 285 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			StrictFuture<bool> __when_expr_0 = getValidAutoEnabled(tr);
-															#line 285 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 285 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			if (static_cast<GetRecommendedTagsActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 827 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 827 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1loopBody1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<GetRecommendedTagsActor*>(this)->actor_wait_state = 1;
-															#line 285 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 285 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< GetRecommendedTagsActor, 0, bool >*>(static_cast<GetRecommendedTagsActor*>(this)));
-															#line 832 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 832 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -849,16 +849,16 @@ public:
 	int a_body1loopBody1Catch1(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 299 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 299 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			StrictFuture<Void> __when_expr_2 = safeThreadFutureToFuture(tr->onError(e));
-															#line 299 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 299 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			if (static_cast<GetRecommendedTagsActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 856 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 856 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1Catch1when1(__when_expr_2.get(), loopDepth); };
 			static_cast<GetRecommendedTagsActor*>(this)->actor_wait_state = 3;
-															#line 299 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 299 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< GetRecommendedTagsActor, 2, Void >*>(static_cast<GetRecommendedTagsActor*>(this)));
-															#line 861 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 861 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -871,60 +871,60 @@ public:
 	}
 	int a_body1loopBody1cont2(bool const& enableAuto,int loopDepth) 
 	{
-															#line 286 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 286 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		if (enableAuto)
-															#line 876 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 876 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		{
-															#line 287 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 287 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			if (!static_cast<GetRecommendedTagsActor*>(this)->SAV<std::vector<TagThrottleInfo>>::futures) { (void)(std::vector<TagThrottleInfo>()); this->~GetRecommendedTagsActorState(); static_cast<GetRecommendedTagsActor*>(this)->destroy(); return 0; }
-															#line 880 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 880 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			new (&static_cast<GetRecommendedTagsActor*>(this)->SAV< std::vector<TagThrottleInfo> >::value()) std::vector<TagThrottleInfo>(std::vector<TagThrottleInfo>());
 			this->~GetRecommendedTagsActorState();
 			static_cast<GetRecommendedTagsActor*>(this)->finishSendAndDelPromiseRef();
 			return 0;
 		}
-															#line 289 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 289 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		f = tr->getRange(KeyRangeRef(tagThrottleAutoKeysPrefix, tagThrottleKeys.end), limit);
-															#line 291 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 291 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		StrictFuture<RangeResult> __when_expr_1 = safeThreadFutureToFuture(f);
-															#line 291 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 291 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		if (static_cast<GetRecommendedTagsActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 892 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 892 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1loopBody1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1loopBody1cont2when1(__when_expr_1.get(), loopDepth); };
 		static_cast<GetRecommendedTagsActor*>(this)->actor_wait_state = 2;
-															#line 291 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 291 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< GetRecommendedTagsActor, 1, RangeResult >*>(static_cast<GetRecommendedTagsActor*>(this)));
-															#line 897 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 897 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont2(bool && enableAuto,int loopDepth) 
 	{
-															#line 286 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 286 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		if (enableAuto)
-															#line 906 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 906 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		{
-															#line 287 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 287 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			if (!static_cast<GetRecommendedTagsActor*>(this)->SAV<std::vector<TagThrottleInfo>>::futures) { (void)(std::vector<TagThrottleInfo>()); this->~GetRecommendedTagsActorState(); static_cast<GetRecommendedTagsActor*>(this)->destroy(); return 0; }
-															#line 910 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 910 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			new (&static_cast<GetRecommendedTagsActor*>(this)->SAV< std::vector<TagThrottleInfo> >::value()) std::vector<TagThrottleInfo>(std::vector<TagThrottleInfo>());
 			this->~GetRecommendedTagsActorState();
 			static_cast<GetRecommendedTagsActor*>(this)->finishSendAndDelPromiseRef();
 			return 0;
 		}
-															#line 289 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 289 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		f = tr->getRange(KeyRangeRef(tagThrottleAutoKeysPrefix, tagThrottleKeys.end), limit);
-															#line 291 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 291 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		StrictFuture<RangeResult> __when_expr_1 = safeThreadFutureToFuture(f);
-															#line 291 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 291 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		if (static_cast<GetRecommendedTagsActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 922 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 922 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1loopBody1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1loopBody1cont2when1(__when_expr_1.get(), loopDepth); };
 		static_cast<GetRecommendedTagsActor*>(this)->actor_wait_state = 2;
-															#line 291 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 291 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< GetRecommendedTagsActor, 1, RangeResult >*>(static_cast<GetRecommendedTagsActor*>(this)));
-															#line 927 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 927 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -994,17 +994,17 @@ public:
 	}
 	int a_body1loopBody1cont3(RangeResult const& throttles,int loopDepth) 
 	{
-															#line 292 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 292 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		std::vector<TagThrottleInfo> results;
-															#line 293 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 293 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		for( auto throttle : throttles ) {
-															#line 294 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 294 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			results.push_back(TagThrottleInfo(TagThrottleKey::fromKey(throttle.key), TagThrottleValue::fromValue(throttle.value)));
-															#line 1003 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 1003 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		}
-															#line 297 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 297 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		if (!static_cast<GetRecommendedTagsActor*>(this)->SAV<std::vector<TagThrottleInfo>>::futures) { (void)(results); this->~GetRecommendedTagsActorState(); static_cast<GetRecommendedTagsActor*>(this)->destroy(); return 0; }
-															#line 1007 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 1007 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		new (&static_cast<GetRecommendedTagsActor*>(this)->SAV< std::vector<TagThrottleInfo> >::value()) std::vector<TagThrottleInfo>(results);
 		this->~GetRecommendedTagsActorState();
 		static_cast<GetRecommendedTagsActor*>(this)->finishSendAndDelPromiseRef();
@@ -1014,17 +1014,17 @@ public:
 	}
 	int a_body1loopBody1cont3(RangeResult && throttles,int loopDepth) 
 	{
-															#line 292 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 292 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		std::vector<TagThrottleInfo> results;
-															#line 293 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 293 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		for( auto throttle : throttles ) {
-															#line 294 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 294 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			results.push_back(TagThrottleInfo(TagThrottleKey::fromKey(throttle.key), TagThrottleValue::fromValue(throttle.value)));
-															#line 1023 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 1023 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		}
-															#line 297 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 297 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		if (!static_cast<GetRecommendedTagsActor*>(this)->SAV<std::vector<TagThrottleInfo>>::futures) { (void)(results); this->~GetRecommendedTagsActorState(); static_cast<GetRecommendedTagsActor*>(this)->destroy(); return 0; }
-															#line 1027 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 1027 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		new (&static_cast<GetRecommendedTagsActor*>(this)->SAV< std::vector<TagThrottleInfo> >::value()) std::vector<TagThrottleInfo>(results);
 		this->~GetRecommendedTagsActorState();
 		static_cast<GetRecommendedTagsActor*>(this)->finishSendAndDelPromiseRef();
@@ -1170,22 +1170,22 @@ public:
 		fdb_probe_actor_exit("getRecommendedTags", reinterpret_cast<unsigned long>(this), 2);
 
 	}
-															#line 279 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 279 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	Reference<DB> db;
-															#line 279 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 279 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	int limit;
-															#line 281 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 281 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	Reference<typename DB::TransactionT> tr;
-															#line 289 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 289 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	typename DB::TransactionT::template FutureT<RangeResult> f;
-															#line 1181 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 1181 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 };
 // This generated class is to be used only via getRecommendedTags()
-															#line 279 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 279 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 template <class DB>
-															#line 279 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 279 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 class GetRecommendedTagsActor final : public Actor<std::vector<TagThrottleInfo>>, public ActorCallback< GetRecommendedTagsActor<DB>, 0, bool >, public ActorCallback< GetRecommendedTagsActor<DB>, 1, RangeResult >, public ActorCallback< GetRecommendedTagsActor<DB>, 2, Void >, public FastAllocated<GetRecommendedTagsActor<DB>>, public GetRecommendedTagsActorState<DB, GetRecommendedTagsActor<DB>> {
-															#line 1188 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 1188 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 public:
 	using FastAllocated<GetRecommendedTagsActor<DB>>::operator new;
 	using FastAllocated<GetRecommendedTagsActor<DB>>::operator delete;
@@ -1196,9 +1196,9 @@ public:
 friend struct ActorCallback< GetRecommendedTagsActor<DB>, 0, bool >;
 friend struct ActorCallback< GetRecommendedTagsActor<DB>, 1, RangeResult >;
 friend struct ActorCallback< GetRecommendedTagsActor<DB>, 2, Void >;
-															#line 279 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 279 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	GetRecommendedTagsActor(Reference<DB> const& db,int const& limit) 
-															#line 1201 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 1201 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		 : Actor<std::vector<TagThrottleInfo>>(),
 		   GetRecommendedTagsActorState<DB, GetRecommendedTagsActor<DB>>(db, limit)
 	{
@@ -1223,39 +1223,39 @@ friend struct ActorCallback< GetRecommendedTagsActor<DB>, 2, Void >;
 
 	}
 };
-															#line 279 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 279 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 template <class DB>
-															#line 279 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 279 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 [[nodiscard]] Future<std::vector<TagThrottleInfo>> getRecommendedTags( Reference<DB> const& db, int const& limit ) {
-															#line 279 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 279 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	return Future<std::vector<TagThrottleInfo>>(new GetRecommendedTagsActor<DB>(db, limit));
-															#line 1232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 1232 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 }
 
-#line 303 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+#line 303 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 
-															#line 1237 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 1237 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 // This generated class is to be used only via getThrottledTags()
-															#line 304 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 304 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 template <class DB, class GetThrottledTagsActor>
-															#line 304 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 304 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 class GetThrottledTagsActorState {
-															#line 1243 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 1243 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 public:
-															#line 304 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 304 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	GetThrottledTagsActorState(Reference<DB> const& db,int const& limit,ContainsRecommended const& containsRecommended = ContainsRecommended::False) 
-															#line 304 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
-															#line 304 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 304 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
+															#line 304 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		 : db(db),
-															#line 304 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 304 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		   limit(limit),
-															#line 304 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 304 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		   containsRecommended(containsRecommended),
-															#line 307 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 307 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		   tr(db->createTransaction()),
-															#line 308 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 308 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		   reportAuto(containsRecommended)
-															#line 1258 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 1258 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 	{
 		fdb_probe_actor_create("getThrottledTags", reinterpret_cast<unsigned long>(this));
 
@@ -1268,9 +1268,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 309 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 309 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			;
-															#line 1273 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 1273 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -1298,24 +1298,24 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 310 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 310 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		tr->setOption(FDBTransactionOptions::READ_SYSTEM_KEYS);
-															#line 1303 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 1303 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		try {
-															#line 312 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 312 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			if (!containsRecommended)
-															#line 1307 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 1307 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			{
-															#line 313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 313 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 				StrictFuture<Void> __when_expr_0 = store(reportAuto, getValidAutoEnabled(tr));
-															#line 313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 313 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 				if (static_cast<GetThrottledTagsActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 1313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 1313 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 				if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1loopBody1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 				static_cast<GetThrottledTagsActor*>(this)->actor_wait_state = 1;
-															#line 313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 313 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 				__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< GetThrottledTagsActor, 0, Void >*>(static_cast<GetThrottledTagsActor*>(this)));
-															#line 1318 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 1318 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 				loopDepth = 0;
 			}
 			else
@@ -1340,16 +1340,16 @@ public:
 	int a_body1loopBody1Catch1(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 325 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 325 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			StrictFuture<Void> __when_expr_2 = safeThreadFutureToFuture(tr->onError(e));
-															#line 325 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 325 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			if (static_cast<GetThrottledTagsActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 1347 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 1347 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1Catch1when1(__when_expr_2.get(), loopDepth); };
 			static_cast<GetThrottledTagsActor*>(this)->actor_wait_state = 3;
-															#line 325 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 325 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< GetThrottledTagsActor, 2, Void >*>(static_cast<GetThrottledTagsActor*>(this)));
-															#line 1352 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 1352 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -1362,18 +1362,18 @@ public:
 	}
 	int a_body1loopBody1cont2(int loopDepth) 
 	{
-															#line 315 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 315 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		f = tr->getRange( reportAuto ? tagThrottleKeys : KeyRangeRef(tagThrottleKeysPrefix, tagThrottleAutoKeysPrefix), limit);
-															#line 317 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 317 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		StrictFuture<RangeResult> __when_expr_1 = safeThreadFutureToFuture(f);
-															#line 317 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 317 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		if (static_cast<GetThrottledTagsActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 1371 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 1371 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1loopBody1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1loopBody1cont2when1(__when_expr_1.get(), loopDepth); };
 		static_cast<GetThrottledTagsActor*>(this)->actor_wait_state = 2;
-															#line 317 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 317 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< GetThrottledTagsActor, 1, RangeResult >*>(static_cast<GetThrottledTagsActor*>(this)));
-															#line 1376 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 1376 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -1455,17 +1455,17 @@ public:
 	}
 	int a_body1loopBody1cont4(RangeResult const& throttles,int loopDepth) 
 	{
-															#line 318 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 318 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		std::vector<TagThrottleInfo> results;
-															#line 319 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 319 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		for( auto throttle : throttles ) {
-															#line 320 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 320 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			results.push_back(TagThrottleInfo(TagThrottleKey::fromKey(throttle.key), TagThrottleValue::fromValue(throttle.value)));
-															#line 1464 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 1464 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		}
-															#line 323 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 323 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		if (!static_cast<GetThrottledTagsActor*>(this)->SAV<std::vector<TagThrottleInfo>>::futures) { (void)(results); this->~GetThrottledTagsActorState(); static_cast<GetThrottledTagsActor*>(this)->destroy(); return 0; }
-															#line 1468 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 1468 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		new (&static_cast<GetThrottledTagsActor*>(this)->SAV< std::vector<TagThrottleInfo> >::value()) std::vector<TagThrottleInfo>(results);
 		this->~GetThrottledTagsActorState();
 		static_cast<GetThrottledTagsActor*>(this)->finishSendAndDelPromiseRef();
@@ -1475,17 +1475,17 @@ public:
 	}
 	int a_body1loopBody1cont4(RangeResult && throttles,int loopDepth) 
 	{
-															#line 318 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 318 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		std::vector<TagThrottleInfo> results;
-															#line 319 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 319 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		for( auto throttle : throttles ) {
-															#line 320 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 320 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			results.push_back(TagThrottleInfo(TagThrottleKey::fromKey(throttle.key), TagThrottleValue::fromValue(throttle.value)));
-															#line 1484 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 1484 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		}
-															#line 323 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 323 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		if (!static_cast<GetThrottledTagsActor*>(this)->SAV<std::vector<TagThrottleInfo>>::futures) { (void)(results); this->~GetThrottledTagsActorState(); static_cast<GetThrottledTagsActor*>(this)->destroy(); return 0; }
-															#line 1488 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 1488 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		new (&static_cast<GetThrottledTagsActor*>(this)->SAV< std::vector<TagThrottleInfo> >::value()) std::vector<TagThrottleInfo>(results);
 		this->~GetThrottledTagsActorState();
 		static_cast<GetThrottledTagsActor*>(this)->finishSendAndDelPromiseRef();
@@ -1631,26 +1631,26 @@ public:
 		fdb_probe_actor_exit("getThrottledTags", reinterpret_cast<unsigned long>(this), 2);
 
 	}
-															#line 304 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 304 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	Reference<DB> db;
-															#line 304 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 304 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	int limit;
-															#line 304 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 304 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	ContainsRecommended containsRecommended;
-															#line 307 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 307 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	Reference<typename DB::TransactionT> tr;
-															#line 308 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 308 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	bool reportAuto;
-															#line 315 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 315 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	typename DB::TransactionT::template FutureT<RangeResult> f;
-															#line 1646 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 1646 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 };
 // This generated class is to be used only via getThrottledTags()
-															#line 304 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 304 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 template <class DB>
-															#line 304 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 304 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 class GetThrottledTagsActor final : public Actor<std::vector<TagThrottleInfo>>, public ActorCallback< GetThrottledTagsActor<DB>, 0, Void >, public ActorCallback< GetThrottledTagsActor<DB>, 1, RangeResult >, public ActorCallback< GetThrottledTagsActor<DB>, 2, Void >, public FastAllocated<GetThrottledTagsActor<DB>>, public GetThrottledTagsActorState<DB, GetThrottledTagsActor<DB>> {
-															#line 1653 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 1653 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 public:
 	using FastAllocated<GetThrottledTagsActor<DB>>::operator new;
 	using FastAllocated<GetThrottledTagsActor<DB>>::operator delete;
@@ -1661,9 +1661,9 @@ public:
 friend struct ActorCallback< GetThrottledTagsActor<DB>, 0, Void >;
 friend struct ActorCallback< GetThrottledTagsActor<DB>, 1, RangeResult >;
 friend struct ActorCallback< GetThrottledTagsActor<DB>, 2, Void >;
-															#line 304 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 304 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	GetThrottledTagsActor(Reference<DB> const& db,int const& limit,ContainsRecommended const& containsRecommended = ContainsRecommended::False) 
-															#line 1666 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 1666 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		 : Actor<std::vector<TagThrottleInfo>>(),
 		   GetThrottledTagsActorState<DB, GetThrottledTagsActor<DB>>(db, limit, containsRecommended)
 	{
@@ -1688,16 +1688,16 @@ friend struct ActorCallback< GetThrottledTagsActor<DB>, 2, Void >;
 
 	}
 };
-															#line 304 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 304 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 template <class DB>
-															#line 304 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 304 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 [[nodiscard]] Future<std::vector<TagThrottleInfo>> getThrottledTags( Reference<DB> const& db, int const& limit, ContainsRecommended const& containsRecommended = ContainsRecommended::False ) {
-															#line 304 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 304 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	return Future<std::vector<TagThrottleInfo>>(new GetThrottledTagsActor<DB>(db, limit, containsRecommended));
-															#line 1697 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 1697 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 }
 
-#line 329 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+#line 329 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 
 template <class Tr>
 void signalThrottleChange(Reference<Tr> tr) {
@@ -1705,26 +1705,26 @@ void signalThrottleChange(Reference<Tr> tr) {
 	    tagThrottleSignalKey, LiteralStringRef("XXXXXXXXXX\x00\x00\x00\x00"), MutationRef::SetVersionstampedValue);
 }
 
-															#line 1708 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 1708 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 // This generated class is to be used only via updateThrottleCount()
-															#line 336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 336 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 template <class Tr, class UpdateThrottleCountActor>
-															#line 336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 336 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 class UpdateThrottleCountActorState {
-															#line 1714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 1714 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 public:
-															#line 336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 336 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	UpdateThrottleCountActorState(Reference<Tr> const& tr,int64_t const& delta) 
-															#line 336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
-															#line 336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 336 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
+															#line 336 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		 : tr(tr),
-															#line 336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 336 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		   delta(delta),
-															#line 338 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 338 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		   countVal(tr->get(tagThrottleCountKey)),
-															#line 339 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 339 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		   limitVal(tr->get(tagThrottleLimitKey))
-															#line 1727 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 1727 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 	{
 		fdb_probe_actor_create("updateThrottleCount", reinterpret_cast<unsigned long>(this));
 
@@ -1737,16 +1737,16 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 341 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 341 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			StrictFuture<Void> __when_expr_0 = success(safeThreadFutureToFuture(countVal)) && success(safeThreadFutureToFuture(limitVal));
-															#line 341 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 341 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			if (static_cast<UpdateThrottleCountActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 1744 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 1744 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<UpdateThrottleCountActor*>(this)->actor_wait_state = 1;
-															#line 341 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 341 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< UpdateThrottleCountActor, 0, Void >*>(static_cast<UpdateThrottleCountActor*>(this)));
-															#line 1749 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 1749 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -1767,49 +1767,49 @@ public:
 	}
 	int a_body1cont1(Void const& _,int loopDepth) 
 	{
-															#line 343 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 343 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		int64_t count = 0;
-															#line 344 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 344 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		int64_t limit = 0;
-															#line 346 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 346 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		if (countVal.get().present())
-															#line 1776 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 1776 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		{
-															#line 347 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 347 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			BinaryReader reader(countVal.get().get(), Unversioned());
-															#line 348 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 348 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			reader >> count;
-															#line 1782 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 1782 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		}
-															#line 351 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 351 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		if (limitVal.get().present())
-															#line 1786 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 1786 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		{
-															#line 352 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 352 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			BinaryReader reader(limitVal.get().get(), Unversioned());
-															#line 353 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 353 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			reader >> limit;
-															#line 1792 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 1792 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		}
-															#line 356 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 356 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		count += delta;
-															#line 358 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 358 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		if (count > limit)
-															#line 1798 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 1798 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		{
-															#line 359 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 359 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			return a_body1Catch1(too_many_tag_throttles(), loopDepth);
-															#line 1802 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 1802 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		}
-															#line 362 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 362 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		BinaryWriter writer(Unversioned());
-															#line 363 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 363 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		writer << count;
-															#line 365 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 365 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		tr->set(tagThrottleCountKey, writer.toValue());
-															#line 366 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 366 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		if (!static_cast<UpdateThrottleCountActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~UpdateThrottleCountActorState(); static_cast<UpdateThrottleCountActor*>(this)->destroy(); return 0; }
-															#line 1812 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 1812 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		new (&static_cast<UpdateThrottleCountActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~UpdateThrottleCountActorState();
 		static_cast<UpdateThrottleCountActor*>(this)->finishSendAndDelPromiseRef();
@@ -1819,49 +1819,49 @@ public:
 	}
 	int a_body1cont1(Void && _,int loopDepth) 
 	{
-															#line 343 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 343 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		int64_t count = 0;
-															#line 344 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 344 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		int64_t limit = 0;
-															#line 346 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 346 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		if (countVal.get().present())
-															#line 1828 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 1828 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		{
-															#line 347 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 347 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			BinaryReader reader(countVal.get().get(), Unversioned());
-															#line 348 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 348 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			reader >> count;
-															#line 1834 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 1834 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		}
-															#line 351 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 351 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		if (limitVal.get().present())
-															#line 1838 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 1838 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		{
-															#line 352 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 352 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			BinaryReader reader(limitVal.get().get(), Unversioned());
-															#line 353 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 353 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			reader >> limit;
-															#line 1844 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 1844 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		}
-															#line 356 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 356 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		count += delta;
-															#line 358 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 358 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		if (count > limit)
-															#line 1850 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 1850 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		{
-															#line 359 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 359 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			return a_body1Catch1(too_many_tag_throttles(), loopDepth);
-															#line 1854 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 1854 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		}
-															#line 362 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 362 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		BinaryWriter writer(Unversioned());
-															#line 363 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 363 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		writer << count;
-															#line 365 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 365 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		tr->set(tagThrottleCountKey, writer.toValue());
-															#line 366 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 366 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		if (!static_cast<UpdateThrottleCountActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~UpdateThrottleCountActorState(); static_cast<UpdateThrottleCountActor*>(this)->destroy(); return 0; }
-															#line 1864 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 1864 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		new (&static_cast<UpdateThrottleCountActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~UpdateThrottleCountActorState();
 		static_cast<UpdateThrottleCountActor*>(this)->finishSendAndDelPromiseRef();
@@ -1932,22 +1932,22 @@ public:
 		fdb_probe_actor_exit("updateThrottleCount", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 336 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	Reference<Tr> tr;
-															#line 336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 336 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	int64_t delta;
-															#line 338 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 338 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	typename Tr::template FutureT<Optional<Value>> countVal;
-															#line 339 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 339 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	typename Tr::template FutureT<Optional<Value>> limitVal;
-															#line 1943 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 1943 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 };
 // This generated class is to be used only via updateThrottleCount()
-															#line 336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 336 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 template <class Tr>
-															#line 336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 336 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 class UpdateThrottleCountActor final : public Actor<Void>, public ActorCallback< UpdateThrottleCountActor<Tr>, 0, Void >, public FastAllocated<UpdateThrottleCountActor<Tr>>, public UpdateThrottleCountActorState<Tr, UpdateThrottleCountActor<Tr>> {
-															#line 1950 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 1950 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 public:
 	using FastAllocated<UpdateThrottleCountActor<Tr>>::operator new;
 	using FastAllocated<UpdateThrottleCountActor<Tr>>::operator delete;
@@ -1956,9 +1956,9 @@ public:
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< UpdateThrottleCountActor<Tr>, 0, Void >;
-															#line 336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 336 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	UpdateThrottleCountActor(Reference<Tr> const& tr,int64_t const& delta) 
-															#line 1961 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 1961 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		 : Actor<Void>(),
 		   UpdateThrottleCountActorState<Tr, UpdateThrottleCountActor<Tr>>(tr, delta)
 	{
@@ -1981,47 +1981,47 @@ friend struct ActorCallback< UpdateThrottleCountActor<Tr>, 0, Void >;
 
 	}
 };
-															#line 336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 336 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 template <class Tr>
-															#line 336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 336 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 [[nodiscard]] Future<Void> updateThrottleCount( Reference<Tr> const& tr, int64_t const& delta ) {
-															#line 336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 336 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	return Future<Void>(new UpdateThrottleCountActor<Tr>(tr, delta));
-															#line 1990 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 1990 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 }
 
-#line 368 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+#line 368 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 
-															#line 1995 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 1995 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 // This generated class is to be used only via unthrottleMatchingThrottles()
-															#line 369 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 369 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 template <class DB, class UnthrottleMatchingThrottlesActor>
-															#line 369 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 369 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 class UnthrottleMatchingThrottlesActorState {
-															#line 2001 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2001 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 public:
-															#line 369 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 369 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	UnthrottleMatchingThrottlesActorState(Reference<DB> const& db,KeyRef const& beginKey,KeyRef const& endKey,Optional<TransactionPriority> const& priority,bool const& onlyExpiredThrottles) 
-															#line 369 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
-															#line 369 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 369 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
+															#line 369 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		 : db(db),
-															#line 369 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 369 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		   beginKey(beginKey),
-															#line 369 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 369 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		   endKey(endKey),
-															#line 369 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 369 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		   priority(priority),
-															#line 369 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 369 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		   onlyExpiredThrottles(onlyExpiredThrottles),
-															#line 375 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 375 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		   tr(db->createTransaction()),
-															#line 377 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 377 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		   begin(firstGreaterOrEqual(beginKey)),
-															#line 378 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 378 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		   end(firstGreaterOrEqual(endKey)),
-															#line 380 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 380 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		   removed(false)
-															#line 2024 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2024 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 	{
 		fdb_probe_actor_create("unthrottleMatchingThrottles", reinterpret_cast<unsigned long>(this));
 
@@ -2034,9 +2034,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 382 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 382 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			;
-															#line 2039 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2039 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -2064,22 +2064,22 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 383 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 383 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		tr->setOption(FDBTransactionOptions::ACCESS_SYSTEM_KEYS);
-															#line 2069 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2069 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		try {
-															#line 386 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 386 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			f = tr->getRange(begin, end, 1000);
-															#line 387 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 387 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			StrictFuture<RangeResult> __when_expr_0 = safeThreadFutureToFuture(f);
-															#line 387 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 387 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			if (static_cast<UnthrottleMatchingThrottlesActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 2077 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2077 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1loopBody1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<UnthrottleMatchingThrottlesActor*>(this)->actor_wait_state = 1;
-															#line 387 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 387 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< UnthrottleMatchingThrottlesActor, 0, RangeResult >*>(static_cast<UnthrottleMatchingThrottlesActor*>(this)));
-															#line 2082 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2082 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -2099,16 +2099,16 @@ public:
 	int a_body1loopBody1Catch1(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 429 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 429 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			StrictFuture<Void> __when_expr_3 = safeThreadFutureToFuture(tr->onError(e));
-															#line 429 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 429 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			if (static_cast<UnthrottleMatchingThrottlesActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 2106 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2106 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			if (__when_expr_3.isReady()) { if (__when_expr_3.isError()) return a_body1Catch1(__when_expr_3.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1Catch1when1(__when_expr_3.get(), loopDepth); };
 			static_cast<UnthrottleMatchingThrottlesActor*>(this)->actor_wait_state = 4;
-															#line 429 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 429 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			__when_expr_3.addCallbackAndClear(static_cast<ActorCallback< UnthrottleMatchingThrottlesActor, 3, Void >*>(static_cast<UnthrottleMatchingThrottlesActor*>(this)));
-															#line 2111 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2111 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -2121,63 +2121,63 @@ public:
 	}
 	int a_body1loopBody1cont2(int loopDepth) 
 	{
-															#line 388 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 388 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		unthrottledTags = 0;
-															#line 389 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 389 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		uint64_t manualUnthrottledTags = 0;
-															#line 390 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 390 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		for( auto tag : tags ) {
-															#line 391 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 391 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			if (onlyExpiredThrottles)
-															#line 2132 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2132 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			{
-															#line 392 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 392 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 				double expirationTime = TagThrottleValue::fromValue(tag.value).expirationTime;
-															#line 393 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 393 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 				if (expirationTime == 0 || expirationTime > now())
-															#line 2138 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2138 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 				{
 					continue;
 				}
 			}
-															#line 398 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 398 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			TagThrottleKey key = TagThrottleKey::fromKey(tag.key);
-															#line 399 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 399 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			if (priority.present() && key.priority != priority.get())
-															#line 2147 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2147 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			{
 				continue;
 			}
-															#line 403 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 403 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			if (key.throttleType == TagThrottleType::MANUAL)
-															#line 2153 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2153 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			{
-															#line 404 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 404 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 				++manualUnthrottledTags;
-															#line 2157 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2157 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			}
-															#line 407 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 407 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			removed = true;
-															#line 408 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 408 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			tr->clear(tag.key);
-															#line 409 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 409 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			unthrottledTags++;
-															#line 2165 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2165 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		}
-															#line 412 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 412 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		if (manualUnthrottledTags > 0)
-															#line 2169 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2169 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		{
-															#line 413 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 413 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			StrictFuture<Void> __when_expr_1 = updateThrottleCount(tr, -manualUnthrottledTags);
-															#line 413 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 413 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			if (static_cast<UnthrottleMatchingThrottlesActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 2175 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2175 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1loopBody1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1loopBody1cont2when1(__when_expr_1.get(), loopDepth); };
 			static_cast<UnthrottleMatchingThrottlesActor*>(this)->actor_wait_state = 2;
-															#line 413 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 413 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< UnthrottleMatchingThrottlesActor, 1, Void >*>(static_cast<UnthrottleMatchingThrottlesActor*>(this)));
-															#line 2180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2180 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			loopDepth = 0;
 		}
 		else
@@ -2189,9 +2189,9 @@ public:
 	}
 	int a_body1loopBody1when1(RangeResult const& __tags,int loopDepth) 
 	{
-															#line 387 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 387 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		tags = __tags;
-															#line 2194 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2194 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		loopDepth = a_body1loopBody1cont2(loopDepth);
 
 		return loopDepth;
@@ -2256,24 +2256,24 @@ public:
 	}
 	int a_body1loopBody1cont3(int loopDepth) 
 	{
-															#line 416 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 416 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		if (unthrottledTags > 0)
-															#line 2261 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2261 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		{
-															#line 417 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 417 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			signalThrottleChange(tr);
-															#line 2265 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2265 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		}
-															#line 420 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 420 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		StrictFuture<Void> __when_expr_2 = safeThreadFutureToFuture(tr->commit());
-															#line 420 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 420 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		if (static_cast<UnthrottleMatchingThrottlesActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 2271 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2271 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1loopBody1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1loopBody1cont3when1(__when_expr_2.get(), loopDepth); };
 		static_cast<UnthrottleMatchingThrottlesActor*>(this)->actor_wait_state = 3;
-															#line 420 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 420 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< UnthrottleMatchingThrottlesActor, 2, Void >*>(static_cast<UnthrottleMatchingThrottlesActor*>(this)));
-															#line 2276 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2276 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -2355,46 +2355,46 @@ public:
 	}
 	int a_body1loopBody1cont10(Void const& _,int loopDepth) 
 	{
-															#line 422 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 422 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		if (!tags.more)
-															#line 2360 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2360 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		{
-															#line 423 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 423 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			if (!static_cast<UnthrottleMatchingThrottlesActor*>(this)->SAV<bool>::futures) { (void)(removed); this->~UnthrottleMatchingThrottlesActorState(); static_cast<UnthrottleMatchingThrottlesActor*>(this)->destroy(); return 0; }
-															#line 2364 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2364 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			new (&static_cast<UnthrottleMatchingThrottlesActor*>(this)->SAV< bool >::value()) bool(std::move(removed)); // state_var_RVO
 			this->~UnthrottleMatchingThrottlesActorState();
 			static_cast<UnthrottleMatchingThrottlesActor*>(this)->finishSendAndDelPromiseRef();
 			return 0;
 		}
-															#line 426 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 426 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		ASSERT(tags.size() > 0);
-															#line 427 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 427 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		begin = KeySelector(firstGreaterThan(tags[tags.size() - 1].key), tags.arena());
-															#line 2374 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2374 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		loopDepth = a_body1loopBody1cont10cont3(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont10(Void && _,int loopDepth) 
 	{
-															#line 422 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 422 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		if (!tags.more)
-															#line 2383 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2383 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		{
-															#line 423 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 423 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			if (!static_cast<UnthrottleMatchingThrottlesActor*>(this)->SAV<bool>::futures) { (void)(removed); this->~UnthrottleMatchingThrottlesActorState(); static_cast<UnthrottleMatchingThrottlesActor*>(this)->destroy(); return 0; }
-															#line 2387 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2387 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			new (&static_cast<UnthrottleMatchingThrottlesActor*>(this)->SAV< bool >::value()) bool(std::move(removed)); // state_var_RVO
 			this->~UnthrottleMatchingThrottlesActorState();
 			static_cast<UnthrottleMatchingThrottlesActor*>(this)->finishSendAndDelPromiseRef();
 			return 0;
 		}
-															#line 426 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 426 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		ASSERT(tags.size() > 0);
-															#line 427 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 427 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		begin = KeySelector(firstGreaterThan(tags[tags.size() - 1].key), tags.arena());
-															#line 2397 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2397 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		loopDepth = a_body1loopBody1cont10cont3(loopDepth);
 
 		return loopDepth;
@@ -2550,38 +2550,38 @@ public:
 		fdb_probe_actor_exit("unthrottleMatchingThrottles", reinterpret_cast<unsigned long>(this), 3);
 
 	}
-															#line 369 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 369 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	Reference<DB> db;
-															#line 369 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 369 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	KeyRef beginKey;
-															#line 369 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 369 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	KeyRef endKey;
-															#line 369 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 369 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	Optional<TransactionPriority> priority;
-															#line 369 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 369 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	bool onlyExpiredThrottles;
-															#line 375 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 375 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	Reference<typename DB::TransactionT> tr;
-															#line 377 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 377 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	KeySelector begin;
-															#line 378 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 378 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	KeySelector end;
-															#line 380 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 380 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	bool removed;
-															#line 386 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 386 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	typename DB::TransactionT::template FutureT<RangeResult> f;
-															#line 387 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 387 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	RangeResult tags;
-															#line 388 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 388 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	uint64_t unthrottledTags;
-															#line 2577 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2577 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 };
 // This generated class is to be used only via unthrottleMatchingThrottles()
-															#line 369 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 369 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 template <class DB>
-															#line 369 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 369 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 class UnthrottleMatchingThrottlesActor final : public Actor<bool>, public ActorCallback< UnthrottleMatchingThrottlesActor<DB>, 0, RangeResult >, public ActorCallback< UnthrottleMatchingThrottlesActor<DB>, 1, Void >, public ActorCallback< UnthrottleMatchingThrottlesActor<DB>, 2, Void >, public ActorCallback< UnthrottleMatchingThrottlesActor<DB>, 3, Void >, public FastAllocated<UnthrottleMatchingThrottlesActor<DB>>, public UnthrottleMatchingThrottlesActorState<DB, UnthrottleMatchingThrottlesActor<DB>> {
-															#line 2584 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2584 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 public:
 	using FastAllocated<UnthrottleMatchingThrottlesActor<DB>>::operator new;
 	using FastAllocated<UnthrottleMatchingThrottlesActor<DB>>::operator delete;
@@ -2593,9 +2593,9 @@ friend struct ActorCallback< UnthrottleMatchingThrottlesActor<DB>, 0, RangeResul
 friend struct ActorCallback< UnthrottleMatchingThrottlesActor<DB>, 1, Void >;
 friend struct ActorCallback< UnthrottleMatchingThrottlesActor<DB>, 2, Void >;
 friend struct ActorCallback< UnthrottleMatchingThrottlesActor<DB>, 3, Void >;
-															#line 369 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 369 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	UnthrottleMatchingThrottlesActor(Reference<DB> const& db,KeyRef const& beginKey,KeyRef const& endKey,Optional<TransactionPriority> const& priority,bool const& onlyExpiredThrottles) 
-															#line 2598 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2598 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		 : Actor<bool>(),
 		   UnthrottleMatchingThrottlesActorState<DB, UnthrottleMatchingThrottlesActor<DB>>(db, beginKey, endKey, priority, onlyExpiredThrottles)
 	{
@@ -2621,16 +2621,16 @@ friend struct ActorCallback< UnthrottleMatchingThrottlesActor<DB>, 3, Void >;
 
 	}
 };
-															#line 369 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 369 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 template <class DB>
-															#line 369 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 369 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 [[nodiscard]] Future<bool> unthrottleMatchingThrottles( Reference<DB> const& db, KeyRef const& beginKey, KeyRef const& endKey, Optional<TransactionPriority> const& priority, bool const& onlyExpiredThrottles ) {
-															#line 369 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 369 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	return Future<bool>(new UnthrottleMatchingThrottlesActor<DB>(db, beginKey, endKey, priority, onlyExpiredThrottles));
-															#line 2630 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2630 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 }
 
-#line 433 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+#line 433 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 
 template <class DB>
 Future<bool> expire(DB db) {
@@ -2654,30 +2654,30 @@ Future<bool> unthrottleAll(Reference<DB> db,
 	return unthrottleMatchingThrottles(db, begin, end, priority, false);
 }
 
-															#line 2657 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2657 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 // This generated class is to be used only via unthrottleTags()
-															#line 456 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 456 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 template <class DB, class UnthrottleTagsActor>
-															#line 456 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 456 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 class UnthrottleTagsActorState {
-															#line 2663 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2663 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 public:
-															#line 456 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 456 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	UnthrottleTagsActorState(Reference<DB> const& db,TagSet const& tags,Optional<TagThrottleType> const& throttleType,Optional<TransactionPriority> const& priority) 
-															#line 456 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
-															#line 456 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 456 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
+															#line 456 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		 : db(db),
-															#line 456 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 456 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		   tags(tags),
-															#line 456 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 456 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		   throttleType(throttleType),
-															#line 456 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 456 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		   priority(priority),
-															#line 461 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 461 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		   tr(db->createTransaction()),
-															#line 463 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 463 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		   keys()
-															#line 2680 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2680 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 	{
 		fdb_probe_actor_create("unthrottleTags", reinterpret_cast<unsigned long>(this));
 
@@ -2690,35 +2690,35 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 464 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 464 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			for( auto p : allTransactionPriorities ) {
-															#line 465 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 465 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 				if (!priority.present() || priority.get() == p)
-															#line 2697 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2697 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 				{
-															#line 466 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 466 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 					if (!throttleType.present() || throttleType.get() == TagThrottleType::AUTO)
-															#line 2701 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2701 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 					{
-															#line 467 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 467 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 						keys.push_back(TagThrottleKey(tags, TagThrottleType::AUTO, p).toKey());
-															#line 2705 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2705 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 					}
-															#line 469 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 469 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 					if (!throttleType.present() || throttleType.get() == TagThrottleType::MANUAL)
-															#line 2709 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2709 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 					{
-															#line 470 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 470 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 						keys.push_back(TagThrottleKey(tags, TagThrottleType::MANUAL, p).toKey());
-															#line 2713 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2713 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 					}
 				}
 			}
-															#line 475 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 475 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			removed = false;
-															#line 477 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 477 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			;
-															#line 2721 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2721 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -2746,34 +2746,34 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 478 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 478 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		tr->setOption(FDBTransactionOptions::ACCESS_SYSTEM_KEYS);
-															#line 2751 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2751 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		try {
-															#line 480 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 480 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			valueFutures = std::vector<typename DB::TransactionT::template FutureT<Optional<Value>>>();
-															#line 481 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 481 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			values = std::vector<Future<Optional<Value>>>();
-															#line 482 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 482 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			values.reserve(keys.size());
-															#line 483 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 483 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			for( auto key : keys ) {
-															#line 484 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 484 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 				valueFutures.push_back(tr->get(key));
-															#line 485 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 485 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 				values.push_back(safeThreadFutureToFuture(valueFutures.back()));
-															#line 2765 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2765 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			}
-															#line 488 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 488 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			StrictFuture<Void> __when_expr_0 = waitForAll(values);
-															#line 488 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 488 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			if (static_cast<UnthrottleTagsActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 2771 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2771 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1loopBody1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<UnthrottleTagsActor*>(this)->actor_wait_state = 1;
-															#line 488 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 488 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< UnthrottleTagsActor, 0, Void >*>(static_cast<UnthrottleTagsActor*>(this)));
-															#line 2776 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2776 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -2793,16 +2793,16 @@ public:
 	int a_body1loopBody1Catch1(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 517 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 517 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			StrictFuture<Void> __when_expr_3 = safeThreadFutureToFuture(tr->onError(e));
-															#line 517 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 517 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			if (static_cast<UnthrottleTagsActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 2800 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2800 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			if (__when_expr_3.isReady()) { if (__when_expr_3.isError()) return a_body1Catch1(__when_expr_3.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1Catch1when1(__when_expr_3.get(), loopDepth); };
 			static_cast<UnthrottleTagsActor*>(this)->actor_wait_state = 4;
-															#line 517 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 517 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			__when_expr_3.addCallbackAndClear(static_cast<ActorCallback< UnthrottleTagsActor, 3, Void >*>(static_cast<UnthrottleTagsActor*>(this)));
-															#line 2805 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2805 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -2815,43 +2815,43 @@ public:
 	}
 	int a_body1loopBody1cont2(Void const& _,int loopDepth) 
 	{
-															#line 490 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 490 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		int delta = 0;
-															#line 491 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 491 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		for(int i = 0;i < values.size();++i) {
-															#line 492 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 492 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			if (values[i].get().present())
-															#line 2824 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2824 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			{
-															#line 493 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 493 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 				if (TagThrottleKey::fromKey(keys[i]).throttleType == TagThrottleType::MANUAL)
-															#line 2828 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2828 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 				{
-															#line 494 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 494 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 					delta -= 1;
-															#line 2832 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2832 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 				}
-															#line 497 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 497 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 				tr->clear(keys[i]);
-															#line 503 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 503 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 				removed = true;
-															#line 2838 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2838 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			}
 		}
-															#line 507 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 507 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		if (delta != 0)
-															#line 2843 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2843 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		{
-															#line 508 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 508 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			StrictFuture<Void> __when_expr_1 = updateThrottleCount(tr, delta);
-															#line 508 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 508 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			if (static_cast<UnthrottleTagsActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 2849 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2849 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1loopBody1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1loopBody1cont2when1(__when_expr_1.get(), loopDepth); };
 			static_cast<UnthrottleTagsActor*>(this)->actor_wait_state = 2;
-															#line 508 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 508 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< UnthrottleTagsActor, 1, Void >*>(static_cast<UnthrottleTagsActor*>(this)));
-															#line 2854 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2854 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			loopDepth = 0;
 		}
 		else
@@ -2863,43 +2863,43 @@ public:
 	}
 	int a_body1loopBody1cont2(Void && _,int loopDepth) 
 	{
-															#line 490 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 490 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		int delta = 0;
-															#line 491 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 491 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		for(int i = 0;i < values.size();++i) {
-															#line 492 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 492 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			if (values[i].get().present())
-															#line 2872 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2872 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			{
-															#line 493 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 493 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 				if (TagThrottleKey::fromKey(keys[i]).throttleType == TagThrottleType::MANUAL)
-															#line 2876 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2876 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 				{
-															#line 494 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 494 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 					delta -= 1;
-															#line 2880 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2880 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 				}
-															#line 497 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 497 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 				tr->clear(keys[i]);
-															#line 503 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 503 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 				removed = true;
-															#line 2886 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2886 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			}
 		}
-															#line 507 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 507 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		if (delta != 0)
-															#line 2891 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2891 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		{
-															#line 508 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 508 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			StrictFuture<Void> __when_expr_1 = updateThrottleCount(tr, delta);
-															#line 508 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 508 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			if (static_cast<UnthrottleTagsActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 2897 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2897 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1loopBody1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1loopBody1cont2when1(__when_expr_1.get(), loopDepth); };
 			static_cast<UnthrottleTagsActor*>(this)->actor_wait_state = 2;
-															#line 508 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 508 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< UnthrottleTagsActor, 1, Void >*>(static_cast<UnthrottleTagsActor*>(this)));
-															#line 2902 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2902 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			loopDepth = 0;
 		}
 		else
@@ -2974,22 +2974,22 @@ public:
 	}
 	int a_body1loopBody1cont4(int loopDepth) 
 	{
-															#line 510 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 510 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		if (removed)
-															#line 2979 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2979 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		{
-															#line 511 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 511 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			signalThrottleChange(tr);
-															#line 512 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 512 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			StrictFuture<Void> __when_expr_2 = safeThreadFutureToFuture(tr->commit());
-															#line 512 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 512 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			if (static_cast<UnthrottleTagsActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 2987 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2987 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1loopBody1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1loopBody1cont4when1(__when_expr_2.get(), loopDepth); };
 			static_cast<UnthrottleTagsActor*>(this)->actor_wait_state = 3;
-															#line 512 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 512 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< UnthrottleTagsActor, 2, Void >*>(static_cast<UnthrottleTagsActor*>(this)));
-															#line 2992 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 2992 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			loopDepth = 0;
 		}
 		else
@@ -3076,9 +3076,9 @@ public:
 	}
 	int a_body1loopBody1cont9(int loopDepth) 
 	{
-															#line 515 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 515 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		if (!static_cast<UnthrottleTagsActor*>(this)->SAV<bool>::futures) { (void)(removed); this->~UnthrottleTagsActorState(); static_cast<UnthrottleTagsActor*>(this)->destroy(); return 0; }
-															#line 3081 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 3081 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		new (&static_cast<UnthrottleTagsActor*>(this)->SAV< bool >::value()) bool(std::move(removed)); // state_var_RVO
 		this->~UnthrottleTagsActorState();
 		static_cast<UnthrottleTagsActor*>(this)->finishSendAndDelPromiseRef();
@@ -3236,32 +3236,32 @@ public:
 		fdb_probe_actor_exit("unthrottleTags", reinterpret_cast<unsigned long>(this), 3);
 
 	}
-															#line 456 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 456 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	Reference<DB> db;
-															#line 456 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 456 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	TagSet tags;
-															#line 456 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 456 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	Optional<TagThrottleType> throttleType;
-															#line 456 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 456 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	Optional<TransactionPriority> priority;
-															#line 461 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 461 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	Reference<typename DB::TransactionT> tr;
-															#line 463 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 463 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	std::vector<Key> keys;
-															#line 475 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 475 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	bool removed;
-															#line 480 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 480 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	std::vector<typename DB::TransactionT::template FutureT<Optional<Value>>> valueFutures;
-															#line 481 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 481 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	std::vector<Future<Optional<Value>>> values;
-															#line 3257 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 3257 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 };
 // This generated class is to be used only via unthrottleTags()
-															#line 456 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 456 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 template <class DB>
-															#line 456 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 456 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 class UnthrottleTagsActor final : public Actor<bool>, public ActorCallback< UnthrottleTagsActor<DB>, 0, Void >, public ActorCallback< UnthrottleTagsActor<DB>, 1, Void >, public ActorCallback< UnthrottleTagsActor<DB>, 2, Void >, public ActorCallback< UnthrottleTagsActor<DB>, 3, Void >, public FastAllocated<UnthrottleTagsActor<DB>>, public UnthrottleTagsActorState<DB, UnthrottleTagsActor<DB>> {
-															#line 3264 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 3264 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 public:
 	using FastAllocated<UnthrottleTagsActor<DB>>::operator new;
 	using FastAllocated<UnthrottleTagsActor<DB>>::operator delete;
@@ -3273,9 +3273,9 @@ friend struct ActorCallback< UnthrottleTagsActor<DB>, 0, Void >;
 friend struct ActorCallback< UnthrottleTagsActor<DB>, 1, Void >;
 friend struct ActorCallback< UnthrottleTagsActor<DB>, 2, Void >;
 friend struct ActorCallback< UnthrottleTagsActor<DB>, 3, Void >;
-															#line 456 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 456 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	UnthrottleTagsActor(Reference<DB> const& db,TagSet const& tags,Optional<TagThrottleType> const& throttleType,Optional<TransactionPriority> const& priority) 
-															#line 3278 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 3278 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		 : Actor<bool>(),
 		   UnthrottleTagsActorState<DB, UnthrottleTagsActor<DB>>(db, tags, throttleType, priority)
 	{
@@ -3301,49 +3301,49 @@ friend struct ActorCallback< UnthrottleTagsActor<DB>, 3, Void >;
 
 	}
 };
-															#line 456 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 456 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 template <class DB>
-															#line 456 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 456 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 [[nodiscard]] Future<bool> unthrottleTags( Reference<DB> const& db, TagSet const& tags, Optional<TagThrottleType> const& throttleType, Optional<TransactionPriority> const& priority ) {
-															#line 456 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 456 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	return Future<bool>(new UnthrottleTagsActor<DB>(db, tags, throttleType, priority));
-															#line 3310 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 3310 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 }
 
-#line 521 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+#line 521 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 
-															#line 3315 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 3315 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 // This generated class is to be used only via throttleTags()
-															#line 522 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 522 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 template <class DB, class ThrottleTagsActor>
-															#line 522 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 522 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 class ThrottleTagsActorState {
-															#line 3321 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 3321 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 public:
-															#line 522 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 522 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	ThrottleTagsActorState(Reference<DB> const& db,TagSet const& tags,double const& tpsRate,double const& initialDuration,TagThrottleType const& throttleType,TransactionPriority const& priority,Optional<double> const& expirationTime = Optional<double>(),Optional<TagThrottledReason> const& reason = Optional<TagThrottledReason>()) 
-															#line 522 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
-															#line 522 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 522 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
+															#line 522 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		 : db(db),
-															#line 522 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 522 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		   tags(tags),
-															#line 522 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 522 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		   tpsRate(tpsRate),
-															#line 522 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 522 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		   initialDuration(initialDuration),
-															#line 522 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 522 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		   throttleType(throttleType),
-															#line 522 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 522 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		   priority(priority),
-															#line 522 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 522 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		   expirationTime(expirationTime),
-															#line 522 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 522 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		   reason(reason),
-															#line 531 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 531 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		   tr(db->createTransaction()),
-															#line 532 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 532 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		   key(TagThrottleKey(tags, throttleType, priority).toKey())
-															#line 3346 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 3346 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 	{
 		fdb_probe_actor_create("throttleTags", reinterpret_cast<unsigned long>(this));
 
@@ -3356,27 +3356,27 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 534 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 534 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			ASSERT(initialDuration > 0);
-															#line 536 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 536 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			if (throttleType == TagThrottleType::MANUAL)
-															#line 3363 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 3363 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			{
-															#line 537 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 537 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 				reason = TagThrottledReason::MANUAL;
-															#line 3367 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 3367 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			}
-															#line 539 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 539 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			TagThrottleValue throttle(tpsRate, expirationTime.present() ? expirationTime.get() : 0, initialDuration, reason.present() ? reason.get() : TagThrottledReason::UNSET);
-															#line 543 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 543 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			BinaryWriter wr(IncludeVersion(ProtocolVersion::withTagThrottleValueReason()));
-															#line 544 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 544 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			wr << throttle;
-															#line 545 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 545 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			value = wr.toValue();
-															#line 547 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 547 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			;
-															#line 3379 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 3379 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -3404,26 +3404,26 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 548 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 548 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		tr->setOption(FDBTransactionOptions::ACCESS_SYSTEM_KEYS);
-															#line 3409 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 3409 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		try {
-															#line 550 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 550 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			if (throttleType == TagThrottleType::MANUAL)
-															#line 3413 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 3413 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			{
-															#line 552 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 552 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 				oldThrottleF = tr->get(key);
-															#line 553 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 553 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 				StrictFuture<Optional<Value>> __when_expr_0 = safeThreadFutureToFuture(oldThrottleF);
-															#line 553 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 553 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 				if (static_cast<ThrottleTagsActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 3421 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 3421 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 				if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1loopBody1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 				static_cast<ThrottleTagsActor*>(this)->actor_wait_state = 1;
-															#line 553 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 553 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 				__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ThrottleTagsActor, 0, Optional<Value> >*>(static_cast<ThrottleTagsActor*>(this)));
-															#line 3426 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 3426 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 				loopDepth = 0;
 			}
 			else
@@ -3448,16 +3448,16 @@ public:
 	int a_body1loopBody1Catch1(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 568 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 568 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			StrictFuture<Void> __when_expr_3 = safeThreadFutureToFuture(tr->onError(e));
-															#line 568 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 568 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			if (static_cast<ThrottleTagsActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 3455 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 3455 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			if (__when_expr_3.isReady()) { if (__when_expr_3.isError()) return a_body1Catch1(__when_expr_3.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1Catch1when1(__when_expr_3.get(), loopDepth); };
 			static_cast<ThrottleTagsActor*>(this)->actor_wait_state = 4;
-															#line 568 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 568 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			__when_expr_3.addCallbackAndClear(static_cast<ActorCallback< ThrottleTagsActor, 3, Void >*>(static_cast<ThrottleTagsActor*>(this)));
-															#line 3460 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 3460 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -3470,46 +3470,46 @@ public:
 	}
 	int a_body1loopBody1cont2(int loopDepth) 
 	{
-															#line 559 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 559 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		tr->set(key, value);
-															#line 561 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 561 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		if (throttleType == TagThrottleType::MANUAL)
-															#line 3477 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 3477 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		{
-															#line 562 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 562 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			signalThrottleChange(tr);
-															#line 3481 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 3481 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		}
-															#line 565 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 565 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		StrictFuture<Void> __when_expr_2 = safeThreadFutureToFuture(tr->commit());
-															#line 565 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 565 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		if (static_cast<ThrottleTagsActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 3487 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 3487 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1loopBody1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1loopBody1cont2when1(__when_expr_2.get(), loopDepth); };
 		static_cast<ThrottleTagsActor*>(this)->actor_wait_state = 3;
-															#line 565 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 565 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< ThrottleTagsActor, 2, Void >*>(static_cast<ThrottleTagsActor*>(this)));
-															#line 3492 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 3492 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont3(Optional<Value> const& oldThrottle,int loopDepth) 
 	{
-															#line 554 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 554 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		if (!oldThrottle.present())
-															#line 3501 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 3501 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		{
-															#line 555 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 555 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			StrictFuture<Void> __when_expr_1 = updateThrottleCount(tr, 1);
-															#line 555 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 555 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			if (static_cast<ThrottleTagsActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 3507 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 3507 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1loopBody1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1loopBody1cont3when1(__when_expr_1.get(), loopDepth); };
 			static_cast<ThrottleTagsActor*>(this)->actor_wait_state = 2;
-															#line 555 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 555 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< ThrottleTagsActor, 1, Void >*>(static_cast<ThrottleTagsActor*>(this)));
-															#line 3512 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 3512 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			loopDepth = 0;
 		}
 		else
@@ -3521,20 +3521,20 @@ public:
 	}
 	int a_body1loopBody1cont3(Optional<Value> && oldThrottle,int loopDepth) 
 	{
-															#line 554 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 554 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		if (!oldThrottle.present())
-															#line 3526 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 3526 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		{
-															#line 555 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 555 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			StrictFuture<Void> __when_expr_1 = updateThrottleCount(tr, 1);
-															#line 555 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 555 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			if (static_cast<ThrottleTagsActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 3532 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 3532 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1loopBody1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1loopBody1cont3when1(__when_expr_1.get(), loopDepth); };
 			static_cast<ThrottleTagsActor*>(this)->actor_wait_state = 2;
-															#line 555 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 555 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< ThrottleTagsActor, 1, Void >*>(static_cast<ThrottleTagsActor*>(this)));
-															#line 3537 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 3537 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			loopDepth = 0;
 		}
 		else
@@ -3690,9 +3690,9 @@ public:
 	}
 	int a_body1loopBody1cont6(Void const& _,int loopDepth) 
 	{
-															#line 566 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 566 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		if (!static_cast<ThrottleTagsActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~ThrottleTagsActorState(); static_cast<ThrottleTagsActor*>(this)->destroy(); return 0; }
-															#line 3695 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 3695 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		new (&static_cast<ThrottleTagsActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~ThrottleTagsActorState();
 		static_cast<ThrottleTagsActor*>(this)->finishSendAndDelPromiseRef();
@@ -3702,9 +3702,9 @@ public:
 	}
 	int a_body1loopBody1cont6(Void && _,int loopDepth) 
 	{
-															#line 566 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 566 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		if (!static_cast<ThrottleTagsActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~ThrottleTagsActorState(); static_cast<ThrottleTagsActor*>(this)->destroy(); return 0; }
-															#line 3707 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 3707 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		new (&static_cast<ThrottleTagsActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~ThrottleTagsActorState();
 		static_cast<ThrottleTagsActor*>(this)->finishSendAndDelPromiseRef();
@@ -3850,38 +3850,38 @@ public:
 		fdb_probe_actor_exit("throttleTags", reinterpret_cast<unsigned long>(this), 3);
 
 	}
-															#line 522 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 522 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	Reference<DB> db;
-															#line 522 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 522 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	TagSet tags;
-															#line 522 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 522 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	double tpsRate;
-															#line 522 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 522 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	double initialDuration;
-															#line 522 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 522 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	TagThrottleType throttleType;
-															#line 522 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 522 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	TransactionPriority priority;
-															#line 522 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 522 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	Optional<double> expirationTime;
-															#line 522 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 522 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	Optional<TagThrottledReason> reason;
-															#line 531 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 531 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	Reference<typename DB::TransactionT> tr;
-															#line 532 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 532 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	Key key;
-															#line 545 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 545 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	Value value;
-															#line 552 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 552 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	typename DB::TransactionT::template FutureT<Optional<Value>> oldThrottleF;
-															#line 3877 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 3877 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 };
 // This generated class is to be used only via throttleTags()
-															#line 522 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 522 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 template <class DB>
-															#line 522 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 522 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 class ThrottleTagsActor final : public Actor<Void>, public ActorCallback< ThrottleTagsActor<DB>, 0, Optional<Value> >, public ActorCallback< ThrottleTagsActor<DB>, 1, Void >, public ActorCallback< ThrottleTagsActor<DB>, 2, Void >, public ActorCallback< ThrottleTagsActor<DB>, 3, Void >, public FastAllocated<ThrottleTagsActor<DB>>, public ThrottleTagsActorState<DB, ThrottleTagsActor<DB>> {
-															#line 3884 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 3884 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 public:
 	using FastAllocated<ThrottleTagsActor<DB>>::operator new;
 	using FastAllocated<ThrottleTagsActor<DB>>::operator delete;
@@ -3893,9 +3893,9 @@ friend struct ActorCallback< ThrottleTagsActor<DB>, 0, Optional<Value> >;
 friend struct ActorCallback< ThrottleTagsActor<DB>, 1, Void >;
 friend struct ActorCallback< ThrottleTagsActor<DB>, 2, Void >;
 friend struct ActorCallback< ThrottleTagsActor<DB>, 3, Void >;
-															#line 522 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 522 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	ThrottleTagsActor(Reference<DB> const& db,TagSet const& tags,double const& tpsRate,double const& initialDuration,TagThrottleType const& throttleType,TransactionPriority const& priority,Optional<double> const& expirationTime = Optional<double>(),Optional<TagThrottledReason> const& reason = Optional<TagThrottledReason>()) 
-															#line 3898 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 3898 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		 : Actor<Void>(),
 		   ThrottleTagsActorState<DB, ThrottleTagsActor<DB>>(db, tags, tpsRate, initialDuration, throttleType, priority, expirationTime, reason)
 	{
@@ -3921,35 +3921,35 @@ friend struct ActorCallback< ThrottleTagsActor<DB>, 3, Void >;
 
 	}
 };
-															#line 522 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 522 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 template <class DB>
-															#line 522 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 522 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 [[nodiscard]] Future<Void> throttleTags( Reference<DB> const& db, TagSet const& tags, double const& tpsRate, double const& initialDuration, TagThrottleType const& throttleType, TransactionPriority const& priority, Optional<double> const& expirationTime = Optional<double>(), Optional<TagThrottledReason> const& reason = Optional<TagThrottledReason>() ) {
-															#line 522 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 522 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	return Future<Void>(new ThrottleTagsActor<DB>(db, tags, tpsRate, initialDuration, throttleType, priority, expirationTime, reason));
-															#line 3930 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 3930 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 }
 
-#line 572 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+#line 572 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 
-															#line 3935 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 3935 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 // This generated class is to be used only via enableAuto()
-															#line 573 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 573 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 template <class DB, class EnableAutoActor>
-															#line 573 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 573 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 class EnableAutoActorState {
-															#line 3941 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 3941 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 public:
-															#line 573 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 573 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	EnableAutoActorState(Reference<DB> const& db,bool const& enabled) 
-															#line 573 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
-															#line 573 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 573 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
+															#line 573 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		 : db(db),
-															#line 573 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 573 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		   enabled(enabled),
-															#line 575 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 575 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		   tr(db->createTransaction())
-															#line 3952 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 3952 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 	{
 		fdb_probe_actor_create("enableAuto", reinterpret_cast<unsigned long>(this));
 
@@ -3962,9 +3962,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 577 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 577 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			;
-															#line 3967 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 3967 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -3992,22 +3992,22 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 578 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 578 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		tr->setOption(FDBTransactionOptions::ACCESS_SYSTEM_KEYS);
-															#line 3997 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 3997 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		try {
-															#line 581 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 581 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			valueF = tr->get(tagThrottleAutoEnabledKey);
-															#line 583 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 583 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			StrictFuture<Optional<Value>> __when_expr_0 = safeThreadFutureToFuture(valueF);
-															#line 583 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 583 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			if (static_cast<EnableAutoActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 4005 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 4005 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1loopBody1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<EnableAutoActor*>(this)->actor_wait_state = 1;
-															#line 583 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 583 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< EnableAutoActor, 0, Optional<Value> >*>(static_cast<EnableAutoActor*>(this)));
-															#line 4010 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 4010 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -4027,16 +4027,16 @@ public:
 	int a_body1loopBody1Catch1(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 593 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 593 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			StrictFuture<Void> __when_expr_2 = safeThreadFutureToFuture(tr->onError(e));
-															#line 593 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 593 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			if (static_cast<EnableAutoActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 4034 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 4034 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1Catch1when1(__when_expr_2.get(), loopDepth); };
 			static_cast<EnableAutoActor*>(this)->actor_wait_state = 3;
-															#line 593 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 593 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< EnableAutoActor, 2, Void >*>(static_cast<EnableAutoActor*>(this)));
-															#line 4039 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 4039 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -4049,24 +4049,24 @@ public:
 	}
 	int a_body1loopBody1cont2(Optional<Value> const& value,int loopDepth) 
 	{
-															#line 584 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 584 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		if (!value.present() || (enabled && value.get() != LiteralStringRef("1")) || (!enabled && value.get() != LiteralStringRef("0")))
-															#line 4054 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 4054 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		{
-															#line 586 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 586 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			tr->set(tagThrottleAutoEnabledKey, LiteralStringRef(enabled ? "1" : "0"));
-															#line 587 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 587 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			signalThrottleChange<typename DB::TransactionT>(tr);
-															#line 589 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 589 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			StrictFuture<Void> __when_expr_1 = safeThreadFutureToFuture(tr->commit());
-															#line 589 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 589 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			if (static_cast<EnableAutoActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 4064 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 4064 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1loopBody1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1loopBody1cont2when1(__when_expr_1.get(), loopDepth); };
 			static_cast<EnableAutoActor*>(this)->actor_wait_state = 2;
-															#line 589 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 589 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< EnableAutoActor, 1, Void >*>(static_cast<EnableAutoActor*>(this)));
-															#line 4069 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 4069 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			loopDepth = 0;
 		}
 		else
@@ -4078,24 +4078,24 @@ public:
 	}
 	int a_body1loopBody1cont2(Optional<Value> && value,int loopDepth) 
 	{
-															#line 584 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 584 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		if (!value.present() || (enabled && value.get() != LiteralStringRef("1")) || (!enabled && value.get() != LiteralStringRef("0")))
-															#line 4083 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 4083 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		{
-															#line 586 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 586 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			tr->set(tagThrottleAutoEnabledKey, LiteralStringRef(enabled ? "1" : "0"));
-															#line 587 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 587 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			signalThrottleChange<typename DB::TransactionT>(tr);
-															#line 589 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 589 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			StrictFuture<Void> __when_expr_1 = safeThreadFutureToFuture(tr->commit());
-															#line 589 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 589 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			if (static_cast<EnableAutoActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 4093 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 4093 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1loopBody1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1loopBody1cont2when1(__when_expr_1.get(), loopDepth); };
 			static_cast<EnableAutoActor*>(this)->actor_wait_state = 2;
-															#line 589 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 589 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 			__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< EnableAutoActor, 1, Void >*>(static_cast<EnableAutoActor*>(this)));
-															#line 4098 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 4098 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 			loopDepth = 0;
 		}
 		else
@@ -4170,9 +4170,9 @@ public:
 	}
 	int a_body1loopBody1cont3(int loopDepth) 
 	{
-															#line 591 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 591 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 		if (!static_cast<EnableAutoActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~EnableAutoActorState(); static_cast<EnableAutoActor*>(this)->destroy(); return 0; }
-															#line 4175 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 4175 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		new (&static_cast<EnableAutoActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~EnableAutoActorState();
 		static_cast<EnableAutoActor*>(this)->finishSendAndDelPromiseRef();
@@ -4330,22 +4330,22 @@ public:
 		fdb_probe_actor_exit("enableAuto", reinterpret_cast<unsigned long>(this), 2);
 
 	}
-															#line 573 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 573 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	Reference<DB> db;
-															#line 573 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 573 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	bool enabled;
-															#line 575 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 575 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	Reference<typename DB::TransactionT> tr;
-															#line 581 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 581 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	typename DB::TransactionT::template FutureT<Optional<Value>> valueF;
-															#line 4341 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 4341 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 };
 // This generated class is to be used only via enableAuto()
-															#line 573 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 573 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 template <class DB>
-															#line 573 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 573 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 class EnableAutoActor final : public Actor<Void>, public ActorCallback< EnableAutoActor<DB>, 0, Optional<Value> >, public ActorCallback< EnableAutoActor<DB>, 1, Void >, public ActorCallback< EnableAutoActor<DB>, 2, Void >, public FastAllocated<EnableAutoActor<DB>>, public EnableAutoActorState<DB, EnableAutoActor<DB>> {
-															#line 4348 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 4348 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 public:
 	using FastAllocated<EnableAutoActor<DB>>::operator new;
 	using FastAllocated<EnableAutoActor<DB>>::operator delete;
@@ -4356,9 +4356,9 @@ public:
 friend struct ActorCallback< EnableAutoActor<DB>, 0, Optional<Value> >;
 friend struct ActorCallback< EnableAutoActor<DB>, 1, Void >;
 friend struct ActorCallback< EnableAutoActor<DB>, 2, Void >;
-															#line 573 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 573 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	EnableAutoActor(Reference<DB> const& db,bool const& enabled) 
-															#line 4361 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 4361 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 		 : Actor<Void>(),
 		   EnableAutoActorState<DB, EnableAutoActor<DB>>(db, enabled)
 	{
@@ -4383,16 +4383,16 @@ friend struct ActorCallback< EnableAutoActor<DB>, 2, Void >;
 
 	}
 };
-															#line 573 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 573 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 template <class DB>
-															#line 573 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 573 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 [[nodiscard]] Future<Void> enableAuto( Reference<DB> const& db, bool const& enabled ) {
-															#line 573 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+															#line 573 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 	return Future<Void>(new EnableAutoActor<DB>(db, enabled));
-															#line 4392 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.g.h"
+															#line 4392 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.g.h"
 }
 
-#line 597 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/TagThrottle.actor.h"
+#line 597 "/usr/src/libfdb_c/fdbclient/TagThrottle.actor.h"
 
 }; // namespace ThrottleApi
 

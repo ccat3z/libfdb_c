@@ -1,5 +1,5 @@
 #define POST_ACTOR_COMPILER 1
-#line 1 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+#line 1 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 /*
  * ParallelStream.actor.h
  *
@@ -73,24 +73,24 @@ private:
 
 public:
 	// A background actor which take results from the oldest fragment and sends them to the main output stream
-																#line 76 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.g.h"
+																#line 76 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.g.h"
 // This generated class is to be used only via flushToClient()
-															#line 74 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 74 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 template <class FlushToClientActor>
-															#line 74 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 74 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 class FlushToClientActorState {
-															#line 82 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.g.h"
+															#line 82 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.g.h"
 public:
-															#line 74 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 74 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 	FlushToClientActorState(ParallelStream<T>* const& self) 
-															#line 74 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
-															#line 74 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 74 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
+															#line 74 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 		 : self(self),
-															#line 75 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 75 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 		   messagesBetweenYields(1000),
-															#line 76 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 76 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 		   messagesSinceYield(0)
-															#line 93 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.g.h"
+															#line 93 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.g.h"
 	{
 		fdb_probe_actor_create("flushToClient", reinterpret_cast<unsigned long>(this));
 
@@ -104,9 +104,9 @@ public:
 	{
 		try {
 			try {
-															#line 78 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 78 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 				;
-															#line 109 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.g.h"
+															#line 109 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.g.h"
 				loopDepth = a_body1loopHead1(loopDepth);
 			}
 			catch (Error& error) {
@@ -134,19 +134,19 @@ public:
 	int a_body1Catch2(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 100 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 100 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 			if (e.code() == error_code_actor_cancelled)
-															#line 139 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.g.h"
+															#line 139 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.g.h"
 			{
-															#line 101 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 101 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 				return a_body1Catch1(e, loopDepth);
-															#line 143 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.g.h"
+															#line 143 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.g.h"
 			}
-															#line 103 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 103 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 			self->results.sendError(e);
-															#line 104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 104 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 			if (!static_cast<FlushToClientActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~FlushToClientActorState(); static_cast<FlushToClientActor*>(this)->destroy(); return 0; }
-															#line 149 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.g.h"
+															#line 149 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.g.h"
 			new (&static_cast<FlushToClientActor*>(this)->SAV< Void >::value()) Void(Void());
 			this->~FlushToClientActorState();
 			static_cast<FlushToClientActor*>(this)->finishSendAndDelPromiseRef();
@@ -169,34 +169,34 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 79 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 79 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 		FutureStream<Reference<Fragment>> __when_expr_0 = self->fragments.getFuture();
-															#line 79 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 79 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 		if (static_cast<FlushToClientActor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 176 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.g.h"
+															#line 176 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.g.h"
 		if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch2(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.pop(), loopDepth); };
 		static_cast<FlushToClientActor*>(this)->actor_wait_state = 1;
-															#line 79 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 79 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 		__when_expr_0.addCallbackAndClear(static_cast<ActorSingleCallback< FlushToClientActor, 0, Reference<Fragment> >*>(static_cast<FlushToClientActor*>(this)));
-															#line 181 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.g.h"
+															#line 181 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.g.h"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont1(int loopDepth) 
 	{
-															#line 80 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 80 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 		;
-															#line 190 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.g.h"
+															#line 190 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.g.h"
 		loopDepth = a_body1loopBody1cont1loopHead1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1when1(Reference<Fragment> const& __fragment,int loopDepth) 
 	{
-															#line 79 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 79 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 		fragment = __fragment;
-															#line 199 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.g.h"
+															#line 199 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.g.h"
 		loopDepth = a_body1loopBody1cont1(loopDepth);
 
 		return loopDepth;
@@ -275,16 +275,16 @@ public:
 	int a_body1loopBody1cont1loopBody1(int loopDepth) 
 	{
 		try {
-															#line 82 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 82 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 			StrictFuture<Void> __when_expr_1 = self->results.onEmpty();
-															#line 82 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 82 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 			if (static_cast<FlushToClientActor*>(this)->actor_wait_state < 0) return a_body1loopBody1cont1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 282 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.g.h"
+															#line 282 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.g.h"
 			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1loopBody1cont1loopBody1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1loopBody1cont1loopBody1when1(__when_expr_1.get(), loopDepth); };
 			static_cast<FlushToClientActor*>(this)->actor_wait_state = 2;
-															#line 82 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 82 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 			__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< FlushToClientActor, 1, Void >*>(static_cast<FlushToClientActor*>(this)));
-															#line 287 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.g.h"
+															#line 287 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.g.h"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -317,20 +317,20 @@ public:
 	int a_body1loopBody1cont1loopBody1Catch1(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 90 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 90 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 			if (e.code() == error_code_end_of_stream)
-															#line 322 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.g.h"
+															#line 322 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.g.h"
 			{
-															#line 91 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 91 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 				fragment.clear();
-															#line 326 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.g.h"
+															#line 326 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.g.h"
 				return a_body1loopBody1cont1break1(loopDepth==0?0:loopDepth-1); // break
 			}
 			else
 			{
-															#line 94 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 94 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 				return a_body1Catch2(e, std::max(0, loopDepth - 2));
-															#line 333 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.g.h"
+															#line 333 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.g.h"
 			}
 		}
 		catch (Error& error) {
@@ -343,32 +343,32 @@ public:
 	}
 	int a_body1loopBody1cont1loopBody1cont2(Void const& _,int loopDepth) 
 	{
-															#line 83 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 83 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 		FutureStream<T> __when_expr_2 = fragment->stream.getFuture();
-															#line 83 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 83 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 		if (static_cast<FlushToClientActor*>(this)->actor_wait_state < 0) return a_body1loopBody1cont1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 350 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.g.h"
+															#line 350 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.g.h"
 		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1loopBody1cont1loopBody1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1loopBody1cont1loopBody1cont2when1(__when_expr_2.pop(), loopDepth); };
 		static_cast<FlushToClientActor*>(this)->actor_wait_state = 3;
-															#line 83 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 83 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 		__when_expr_2.addCallbackAndClear(static_cast<ActorSingleCallback< FlushToClientActor, 2, T >*>(static_cast<FlushToClientActor*>(this)));
-															#line 355 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.g.h"
+															#line 355 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.g.h"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont1loopBody1cont2(Void && _,int loopDepth) 
 	{
-															#line 83 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 83 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 		FutureStream<T> __when_expr_2 = fragment->stream.getFuture();
-															#line 83 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 83 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 		if (static_cast<FlushToClientActor*>(this)->actor_wait_state < 0) return a_body1loopBody1cont1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 366 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.g.h"
+															#line 366 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.g.h"
 		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1loopBody1cont1loopBody1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1loopBody1cont1loopBody1cont2when1(__when_expr_2.pop(), loopDepth); };
 		static_cast<FlushToClientActor*>(this)->actor_wait_state = 3;
-															#line 83 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 83 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 		__when_expr_2.addCallbackAndClear(static_cast<ActorSingleCallback< FlushToClientActor, 2, T >*>(static_cast<FlushToClientActor*>(this)));
-															#line 371 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.g.h"
+															#line 371 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.g.h"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -438,22 +438,22 @@ public:
 	}
 	int a_body1loopBody1cont1loopBody1cont3(T const& value,int loopDepth) 
 	{
-															#line 84 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 84 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 		self->results.send(value);
-															#line 85 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 85 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 		if (++messagesSinceYield == messagesBetweenYields)
-															#line 445 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.g.h"
+															#line 445 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.g.h"
 		{
-															#line 86 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 86 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 			StrictFuture<Void> __when_expr_3 = yield();
-															#line 86 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 86 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 			if (static_cast<FlushToClientActor*>(this)->actor_wait_state < 0) return a_body1loopBody1cont1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 451 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.g.h"
+															#line 451 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.g.h"
 			if (__when_expr_3.isReady()) { if (__when_expr_3.isError()) return a_body1loopBody1cont1loopBody1Catch1(__when_expr_3.getError(), loopDepth); else return a_body1loopBody1cont1loopBody1cont3when1(__when_expr_3.get(), loopDepth); };
 			static_cast<FlushToClientActor*>(this)->actor_wait_state = 4;
-															#line 86 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 86 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 			__when_expr_3.addCallbackAndClear(static_cast<ActorCallback< FlushToClientActor, 3, Void >*>(static_cast<FlushToClientActor*>(this)));
-															#line 456 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.g.h"
+															#line 456 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.g.h"
 			loopDepth = 0;
 		}
 		else
@@ -465,22 +465,22 @@ public:
 	}
 	int a_body1loopBody1cont1loopBody1cont3(T && value,int loopDepth) 
 	{
-															#line 84 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 84 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 		self->results.send(value);
-															#line 85 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 85 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 		if (++messagesSinceYield == messagesBetweenYields)
-															#line 472 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.g.h"
+															#line 472 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.g.h"
 		{
-															#line 86 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 86 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 			StrictFuture<Void> __when_expr_3 = yield();
-															#line 86 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 86 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 			if (static_cast<FlushToClientActor*>(this)->actor_wait_state < 0) return a_body1loopBody1cont1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 478 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.g.h"
+															#line 478 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.g.h"
 			if (__when_expr_3.isReady()) { if (__when_expr_3.isError()) return a_body1loopBody1cont1loopBody1Catch1(__when_expr_3.getError(), loopDepth); else return a_body1loopBody1cont1loopBody1cont3when1(__when_expr_3.get(), loopDepth); };
 			static_cast<FlushToClientActor*>(this)->actor_wait_state = 4;
-															#line 86 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 86 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 			__when_expr_3.addCallbackAndClear(static_cast<ActorCallback< FlushToClientActor, 3, Void >*>(static_cast<FlushToClientActor*>(this)));
-															#line 483 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.g.h"
+															#line 483 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.g.h"
 			loopDepth = 0;
 		}
 		else
@@ -561,18 +561,18 @@ public:
 	}
 	int a_body1loopBody1cont1loopBody1cont5(Void const& _,int loopDepth) 
 	{
-															#line 87 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 87 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 		messagesSinceYield = 0;
-															#line 566 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.g.h"
+															#line 566 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.g.h"
 		loopDepth = a_body1loopBody1cont1loopBody1cont4(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont1loopBody1cont5(Void && _,int loopDepth) 
 	{
-															#line 87 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 87 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 		messagesSinceYield = 0;
-															#line 575 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.g.h"
+															#line 575 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.g.h"
 		loopDepth = a_body1loopBody1cont1loopBody1cont4(loopDepth);
 
 		return loopDepth;
@@ -653,20 +653,20 @@ public:
 
 		return loopDepth;
 	}
-															#line 74 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 74 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 	ParallelStream<T>* self;
-															#line 75 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 75 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 	const int messagesBetweenYields;
-															#line 76 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 76 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 	int messagesSinceYield;
-															#line 79 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 79 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 	Reference<Fragment> fragment;
-															#line 664 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.g.h"
+															#line 664 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.g.h"
 };
 // This generated class is to be used only via flushToClient()
-															#line 74 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 74 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 class FlushToClientActor final : public Actor<Void>, public ActorSingleCallback< FlushToClientActor, 0, Reference<Fragment> >, public ActorCallback< FlushToClientActor, 1, Void >, public ActorSingleCallback< FlushToClientActor, 2, T >, public ActorCallback< FlushToClientActor, 3, Void >, public FastAllocated<FlushToClientActor>, public FlushToClientActorState<FlushToClientActor> {
-															#line 669 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.g.h"
+															#line 669 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.g.h"
 public:
 	using FastAllocated<FlushToClientActor>::operator new;
 	using FastAllocated<FlushToClientActor>::operator delete;
@@ -678,9 +678,9 @@ friend struct ActorSingleCallback< FlushToClientActor, 0, Reference<Fragment> >;
 friend struct ActorCallback< FlushToClientActor, 1, Void >;
 friend struct ActorSingleCallback< FlushToClientActor, 2, T >;
 friend struct ActorCallback< FlushToClientActor, 3, Void >;
-															#line 74 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 74 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 	FlushToClientActor(ParallelStream<T>* const& self) 
-															#line 683 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.g.h"
+															#line 683 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.g.h"
 		 : Actor<Void>(),
 		   FlushToClientActorState<FlushToClientActor>(self)
 	{
@@ -706,14 +706,14 @@ friend struct ActorCallback< FlushToClientActor, 3, Void >;
 
 	}
 };
-															#line 74 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 74 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 [[nodiscard]] static Future<Void> flushToClient( ParallelStream<T>* const& self ) {
-															#line 74 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 74 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 	return Future<Void>(new FlushToClientActor(self));
-															#line 713 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.g.h"
+															#line 713 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.g.h"
 }
 
-#line 107 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+#line 107 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 
 	ParallelStream(PromiseStream<T> results, size_t bufferLimit) : results(results) {
 		semaphore = makeReference<BoundedFlowLock>(1, bufferLimit);
@@ -721,20 +721,20 @@ friend struct ActorCallback< FlushToClientActor, 3, Void >;
 	}
 
 	// Creates a fragment to get merged into the main output stream
-																#line 724 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.g.h"
+																#line 724 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.g.h"
 // This generated class is to be used only via createFragmentImpl()
-															#line 114 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 114 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 template <class CreateFragmentImplActor>
-															#line 114 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 114 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 class CreateFragmentImplActorState {
-															#line 730 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.g.h"
+															#line 730 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.g.h"
 public:
-															#line 114 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 114 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 	CreateFragmentImplActorState(ParallelStream<T>* const& self) 
-															#line 114 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
-															#line 114 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 114 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
+															#line 114 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 		 : self(self)
-															#line 737 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.g.h"
+															#line 737 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.g.h"
 	{
 		fdb_probe_actor_create("createFragmentImpl", reinterpret_cast<unsigned long>(this));
 
@@ -747,16 +747,16 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 115 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 115 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 			StrictFuture<int64_t> __when_expr_0 = self->semaphore->take();
-															#line 115 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 115 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 			if (static_cast<CreateFragmentImplActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 754 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.g.h"
+															#line 754 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.g.h"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<CreateFragmentImplActor*>(this)->actor_wait_state = 1;
-															#line 115 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 115 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< CreateFragmentImplActor, 0, int64_t >*>(static_cast<CreateFragmentImplActor*>(this)));
-															#line 759 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.g.h"
+															#line 759 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.g.h"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -777,13 +777,13 @@ public:
 	}
 	int a_body1cont1(int64_t const& permitNumber,int loopDepth) 
 	{
-															#line 116 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 116 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 		auto fragment = makeReference<Fragment>(self->semaphore, permitNumber, FragmentConstructorTag());
-															#line 117 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 117 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 		self->fragments.send(fragment);
-															#line 118 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 118 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 		if (!static_cast<CreateFragmentImplActor*>(this)->SAV<Fragment*>::futures) { (void)(fragment.getPtr()); this->~CreateFragmentImplActorState(); static_cast<CreateFragmentImplActor*>(this)->destroy(); return 0; }
-															#line 786 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.g.h"
+															#line 786 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.g.h"
 		new (&static_cast<CreateFragmentImplActor*>(this)->SAV< Fragment* >::value()) Fragment*(fragment.getPtr());
 		this->~CreateFragmentImplActorState();
 		static_cast<CreateFragmentImplActor*>(this)->finishSendAndDelPromiseRef();
@@ -793,13 +793,13 @@ public:
 	}
 	int a_body1cont1(int64_t && permitNumber,int loopDepth) 
 	{
-															#line 116 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 116 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 		auto fragment = makeReference<Fragment>(self->semaphore, permitNumber, FragmentConstructorTag());
-															#line 117 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 117 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 		self->fragments.send(fragment);
-															#line 118 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 118 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 		if (!static_cast<CreateFragmentImplActor*>(this)->SAV<Fragment*>::futures) { (void)(fragment.getPtr()); this->~CreateFragmentImplActorState(); static_cast<CreateFragmentImplActor*>(this)->destroy(); return 0; }
-															#line 802 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.g.h"
+															#line 802 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.g.h"
 		new (&static_cast<CreateFragmentImplActor*>(this)->SAV< Fragment* >::value()) Fragment*(fragment.getPtr());
 		this->~CreateFragmentImplActorState();
 		static_cast<CreateFragmentImplActor*>(this)->finishSendAndDelPromiseRef();
@@ -870,14 +870,14 @@ public:
 		fdb_probe_actor_exit("createFragmentImpl", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 114 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 114 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 	ParallelStream<T>* self;
-															#line 875 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.g.h"
+															#line 875 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.g.h"
 };
 // This generated class is to be used only via createFragmentImpl()
-															#line 114 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 114 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 class CreateFragmentImplActor final : public Actor<Fragment*>, public ActorCallback< CreateFragmentImplActor, 0, int64_t >, public FastAllocated<CreateFragmentImplActor>, public CreateFragmentImplActorState<CreateFragmentImplActor> {
-															#line 880 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.g.h"
+															#line 880 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.g.h"
 public:
 	using FastAllocated<CreateFragmentImplActor>::operator new;
 	using FastAllocated<CreateFragmentImplActor>::operator delete;
@@ -886,9 +886,9 @@ public:
 	void destroy() override { ((Actor<Fragment*>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< CreateFragmentImplActor, 0, int64_t >;
-															#line 114 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 114 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 	CreateFragmentImplActor(ParallelStream<T>* const& self) 
-															#line 891 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.g.h"
+															#line 891 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.g.h"
 		 : Actor<Fragment*>(),
 		   CreateFragmentImplActorState<CreateFragmentImplActor>(self)
 	{
@@ -911,14 +911,14 @@ friend struct ActorCallback< CreateFragmentImplActor, 0, int64_t >;
 
 	}
 };
-															#line 114 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 114 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 [[nodiscard]] static Future<Fragment*> createFragmentImpl( ParallelStream<T>* const& self ) {
-															#line 114 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+															#line 114 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 	return Future<Fragment*>(new CreateFragmentImplActor(self));
-															#line 918 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.g.h"
+															#line 918 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.g.h"
 }
 
-#line 120 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ParallelStream.actor.h"
+#line 120 "/usr/src/libfdb_c/fdbclient/ParallelStream.actor.h"
 
 	Future<Fragment*> createFragment() { return createFragmentImpl(this); }
 

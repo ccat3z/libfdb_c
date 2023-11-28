@@ -1,5 +1,5 @@
 #define POST_ACTOR_COMPILER 1
-#line 1 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+#line 1 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 /*
  * GlobalConfig.actor.cpp
  *
@@ -170,24 +170,24 @@ private:
 // Older FDB versions used different keys for client profiling data. This
 // function performs a one-time migration of data in these keys to the new
 // global configuration key space.
-															#line 173 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 173 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 // This generated class is to be used only via migrate()
-															#line 171 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 171 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 template <class GlobalConfig_MigrateActor>
-															#line 171 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 171 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 class GlobalConfig_MigrateActorState {
-															#line 179 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 179 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 public:
-															#line 171 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 171 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 	GlobalConfig_MigrateActorState(GlobalConfig* const& self) 
-															#line 171 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
-															#line 171 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 171 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
+															#line 171 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		 : self(self),
-															#line 172 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 172 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		   migratedKey("\xff\x02/fdbClientInfo/migrated/"_sr),
-															#line 173 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 173 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		   tr()
-															#line 190 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 190 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 	{
 		fdb_probe_actor_create("migrate", reinterpret_cast<unsigned long>(this));
 
@@ -201,11 +201,11 @@ public:
 	{
 		try {
 			try {
-															#line 175 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 175 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 				backoff = Backoff();
-															#line 176 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 176 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 				;
-															#line 208 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 208 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 				loopDepth = a_body1loopHead1(loopDepth);
 			}
 			catch (Error& error) {
@@ -232,9 +232,9 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 227 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 227 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		if (!static_cast<GlobalConfig_MigrateActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~GlobalConfig_MigrateActorState(); static_cast<GlobalConfig_MigrateActor*>(this)->destroy(); return 0; }
-															#line 237 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 237 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 		new (&static_cast<GlobalConfig_MigrateActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~GlobalConfig_MigrateActorState();
 		static_cast<GlobalConfig_MigrateActor*>(this)->finishSendAndDelPromiseRef();
@@ -245,9 +245,9 @@ public:
 	int a_body1Catch2(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 225 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 225 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			TraceEvent(SevWarnAlways, "GlobalConfig_MigrationError").error(e);
-															#line 250 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 250 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 			loopDepth = a_body1cont1(loopDepth);
 		}
 		catch (Error& error) {
@@ -273,24 +273,24 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 177 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 177 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		tr = makeReference<ReadYourWritesTransaction>(Database(Reference<DatabaseContext>::addRef(self->cx)));
-															#line 178 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 178 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		tr->setOption(FDBTransactionOptions::ACCESS_SYSTEM_KEYS);
-															#line 179 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 179 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		tr->setOption(FDBTransactionOptions::LOCK_AWARE);
-															#line 282 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 282 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 		try {
-															#line 182 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 182 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			StrictFuture<Optional<Value>> __when_expr_0 = tr->get(migratedKey);
-															#line 182 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 182 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			if (static_cast<GlobalConfig_MigrateActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 288 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 288 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1loopBody1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<GlobalConfig_MigrateActor*>(this)->actor_wait_state = 1;
-															#line 182 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 182 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< GlobalConfig_MigrateActor, 0, Optional<Value> >*>(static_cast<GlobalConfig_MigrateActor*>(this)));
-															#line 293 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 293 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -323,18 +323,18 @@ public:
 	int a_body1loopBody1Catch1(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 216 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 216 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			TraceEvent(SevInfo, "GlobalConfig_RetryableMigrationError").errorUnsuppressed(e).suppressFor(1.0);
-															#line 217 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 217 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			StrictFuture<Void> __when_expr_4 = tr->onError(e);
-															#line 217 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 217 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			if (static_cast<GlobalConfig_MigrateActor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 332 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 332 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 			if (__when_expr_4.isReady()) { if (__when_expr_4.isError()) return a_body1Catch2(__when_expr_4.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1Catch1when1(__when_expr_4.get(), loopDepth); };
 			static_cast<GlobalConfig_MigrateActor*>(this)->actor_wait_state = 5;
-															#line 217 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 217 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			__when_expr_4.addCallbackAndClear(static_cast<ActorCallback< GlobalConfig_MigrateActor, 4, Void >*>(static_cast<GlobalConfig_MigrateActor*>(this)));
-															#line 337 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 337 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -347,37 +347,37 @@ public:
 	}
 	int a_body1loopBody1cont2(int loopDepth) 
 	{
-															#line 183 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 183 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		if (migrated.present())
-															#line 352 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 352 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 		{
-															#line 185 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 185 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			if (!static_cast<GlobalConfig_MigrateActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~GlobalConfig_MigrateActorState(); static_cast<GlobalConfig_MigrateActor*>(this)->destroy(); return 0; }
-															#line 356 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 356 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 			new (&static_cast<GlobalConfig_MigrateActor*>(this)->SAV< Void >::value()) Void(Void());
 			this->~GlobalConfig_MigrateActorState();
 			static_cast<GlobalConfig_MigrateActor*>(this)->finishSendAndDelPromiseRef();
 			return 0;
 		}
-															#line 188 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 188 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		StrictFuture<Optional<Value>> __when_expr_1 = tr->get(Key("\xff\x02/fdbClientInfo/client_txn_sample_rate/"_sr));
-															#line 188 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 188 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		if (static_cast<GlobalConfig_MigrateActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 366 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 366 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1loopBody1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1loopBody1cont2when1(__when_expr_1.get(), loopDepth); };
 		static_cast<GlobalConfig_MigrateActor*>(this)->actor_wait_state = 2;
-															#line 188 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 188 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< GlobalConfig_MigrateActor, 1, Optional<Value> >*>(static_cast<GlobalConfig_MigrateActor*>(this)));
-															#line 371 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 371 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1loopBody1when1(Optional<Value> const& __migrated,int loopDepth) 
 	{
-															#line 182 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 182 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		migrated = __migrated;
-															#line 380 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 380 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont2(loopDepth);
 
 		return loopDepth;
@@ -442,25 +442,25 @@ public:
 	}
 	int a_body1loopBody1cont3(int loopDepth) 
 	{
-															#line 190 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 190 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		StrictFuture<Optional<Value>> __when_expr_2 = tr->get(Key("\xff\x02/fdbClientInfo/client_txn_size_limit/"_sr));
-															#line 190 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 190 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		if (static_cast<GlobalConfig_MigrateActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 449 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 449 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1loopBody1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1loopBody1cont3when1(__when_expr_2.get(), loopDepth); };
 		static_cast<GlobalConfig_MigrateActor*>(this)->actor_wait_state = 3;
-															#line 190 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 190 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< GlobalConfig_MigrateActor, 2, Optional<Value> >*>(static_cast<GlobalConfig_MigrateActor*>(this)));
-															#line 454 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 454 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont2when1(Optional<Value> const& __sampleRate,int loopDepth) 
 	{
-															#line 188 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 188 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		sampleRate = __sampleRate;
-															#line 463 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 463 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont3(loopDepth);
 
 		return loopDepth;
@@ -525,53 +525,53 @@ public:
 	}
 	int a_body1loopBody1cont5(int loopDepth) 
 	{
-															#line 193 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 193 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		tr->setOption(FDBTransactionOptions::SPECIAL_KEY_SPACE_ENABLE_WRITES);
-															#line 195 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 195 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		tr->set(migratedKey.contents(), "1"_sr);
-															#line 196 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 196 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		if (sampleRate.present())
-															#line 534 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 534 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 		{
-															#line 197 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 197 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			const double sampleRateDbl = BinaryReader::fromStringRef<double>(sampleRate.get().contents(), Unversioned());
-															#line 199 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 199 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			Tuple rate = Tuple().appendDouble(sampleRateDbl);
-															#line 200 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 200 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			tr->set(GlobalConfig::prefixedKey(fdbClientInfoTxnSampleRate), rate.pack());
-															#line 542 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 542 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 		}
-															#line 202 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 202 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		if (sizeLimit.present())
-															#line 546 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 546 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 		{
-															#line 203 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 203 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			const int64_t sizeLimitInt = BinaryReader::fromStringRef<int64_t>(sizeLimit.get().contents(), Unversioned());
-															#line 205 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 205 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			Tuple size = Tuple().append(sizeLimitInt);
-															#line 206 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 206 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			tr->set(GlobalConfig::prefixedKey(fdbClientInfoTxnSizeLimit), size.pack());
-															#line 554 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 554 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 		}
-															#line 209 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 209 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		StrictFuture<Void> __when_expr_3 = tr->commit();
-															#line 209 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 209 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		if (static_cast<GlobalConfig_MigrateActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 560 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 560 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 		if (__when_expr_3.isReady()) { if (__when_expr_3.isError()) return a_body1loopBody1Catch1(__when_expr_3.getError(), loopDepth); else return a_body1loopBody1cont5when1(__when_expr_3.get(), loopDepth); };
 		static_cast<GlobalConfig_MigrateActor*>(this)->actor_wait_state = 4;
-															#line 209 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 209 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		__when_expr_3.addCallbackAndClear(static_cast<ActorCallback< GlobalConfig_MigrateActor, 3, Void >*>(static_cast<GlobalConfig_MigrateActor*>(this)));
-															#line 565 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 565 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont3when1(Optional<Value> const& __sizeLimit,int loopDepth) 
 	{
-															#line 190 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 190 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		sizeLimit = __sizeLimit;
-															#line 574 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 574 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont5(loopDepth);
 
 		return loopDepth;
@@ -711,36 +711,36 @@ public:
 	}
 	int a_body1loopBody1Catch1cont1(Void const& _,int loopDepth) 
 	{
-															#line 218 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 218 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		tr.clear();
-															#line 220 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 220 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		StrictFuture<Void> __when_expr_5 = backoff.onError();
-															#line 220 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 220 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		if (static_cast<GlobalConfig_MigrateActor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 720 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 720 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 		if (__when_expr_5.isReady()) { if (__when_expr_5.isError()) return a_body1Catch2(__when_expr_5.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1Catch1cont1when1(__when_expr_5.get(), loopDepth); };
 		static_cast<GlobalConfig_MigrateActor*>(this)->actor_wait_state = 6;
-															#line 220 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 220 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		__when_expr_5.addCallbackAndClear(static_cast<ActorCallback< GlobalConfig_MigrateActor, 5, Void >*>(static_cast<GlobalConfig_MigrateActor*>(this)));
-															#line 725 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 725 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1loopBody1Catch1cont1(Void && _,int loopDepth) 
 	{
-															#line 218 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 218 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		tr.clear();
-															#line 220 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 220 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		StrictFuture<Void> __when_expr_5 = backoff.onError();
-															#line 220 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 220 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		if (static_cast<GlobalConfig_MigrateActor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 738 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 738 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 		if (__when_expr_5.isReady()) { if (__when_expr_5.isError()) return a_body1Catch2(__when_expr_5.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1Catch1cont1when1(__when_expr_5.get(), loopDepth); };
 		static_cast<GlobalConfig_MigrateActor*>(this)->actor_wait_state = 6;
-															#line 220 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 220 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		__when_expr_5.addCallbackAndClear(static_cast<ActorCallback< GlobalConfig_MigrateActor, 5, Void >*>(static_cast<GlobalConfig_MigrateActor*>(this)));
-															#line 743 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 743 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -896,26 +896,26 @@ public:
 
 		return loopDepth;
 	}
-															#line 171 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 171 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 	GlobalConfig* self;
-															#line 172 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 172 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 	Key migratedKey;
-															#line 173 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 173 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 	Reference<ReadYourWritesTransaction> tr;
-															#line 175 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 175 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 	Backoff backoff;
-															#line 182 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 182 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 	Optional<Value> migrated;
-															#line 188 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 188 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 	Optional<Value> sampleRate;
-															#line 190 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 190 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 	Optional<Value> sizeLimit;
-															#line 913 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 913 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 };
 // This generated class is to be used only via migrate()
-															#line 171 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 171 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 class GlobalConfig_MigrateActor final : public Actor<Void>, public ActorCallback< GlobalConfig_MigrateActor, 0, Optional<Value> >, public ActorCallback< GlobalConfig_MigrateActor, 1, Optional<Value> >, public ActorCallback< GlobalConfig_MigrateActor, 2, Optional<Value> >, public ActorCallback< GlobalConfig_MigrateActor, 3, Void >, public ActorCallback< GlobalConfig_MigrateActor, 4, Void >, public ActorCallback< GlobalConfig_MigrateActor, 5, Void >, public FastAllocated<GlobalConfig_MigrateActor>, public GlobalConfig_MigrateActorState<GlobalConfig_MigrateActor> {
-															#line 918 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 918 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 public:
 	using FastAllocated<GlobalConfig_MigrateActor>::operator new;
 	using FastAllocated<GlobalConfig_MigrateActor>::operator delete;
@@ -929,9 +929,9 @@ friend struct ActorCallback< GlobalConfig_MigrateActor, 2, Optional<Value> >;
 friend struct ActorCallback< GlobalConfig_MigrateActor, 3, Void >;
 friend struct ActorCallback< GlobalConfig_MigrateActor, 4, Void >;
 friend struct ActorCallback< GlobalConfig_MigrateActor, 5, Void >;
-															#line 171 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 171 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 	GlobalConfig_MigrateActor(GlobalConfig* const& self) 
-															#line 934 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 934 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 		 : Actor<Void>(),
 		   GlobalConfig_MigrateActorState<GlobalConfig_MigrateActor>(self)
 	{
@@ -959,31 +959,31 @@ friend struct ActorCallback< GlobalConfig_MigrateActor, 5, Void >;
 
 	}
 };
-															#line 171 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 171 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 [[nodiscard]] Future<Void> GlobalConfig::migrate( GlobalConfig* const& self ) {
-															#line 171 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 171 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 	return Future<Void>(new GlobalConfig_MigrateActor(self));
-															#line 966 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 966 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 }
 
-#line 229 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+#line 229 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 
 // Updates local copy of global configuration by reading the entire key-range
 // from storage.
-															#line 973 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 973 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 // This generated class is to be used only via refresh()
-															#line 232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 232 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 template <class GlobalConfig_RefreshActor>
-															#line 232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 232 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 class GlobalConfig_RefreshActorState {
-															#line 979 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 979 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 public:
-															#line 232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 232 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 	GlobalConfig_RefreshActorState(GlobalConfig* const& self) 
-															#line 232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
-															#line 232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 232 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
+															#line 232 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		 : self(self)
-															#line 986 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 986 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 	{
 		fdb_probe_actor_create("refresh", reinterpret_cast<unsigned long>(this));
 
@@ -996,15 +996,15 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 234 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 234 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			self->erase(KeyRangeRef(""_sr, "\xff"_sr));
-															#line 236 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 236 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			backoff = Backoff();
-															#line 238 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 238 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			tr = Reference<ReadYourWritesTransaction>();
-															#line 239 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 239 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			;
-															#line 1007 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1007 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -1025,9 +1025,9 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 258 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 258 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		if (!static_cast<GlobalConfig_RefreshActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~GlobalConfig_RefreshActorState(); static_cast<GlobalConfig_RefreshActor*>(this)->destroy(); return 0; }
-															#line 1030 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1030 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 		new (&static_cast<GlobalConfig_RefreshActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~GlobalConfig_RefreshActorState();
 		static_cast<GlobalConfig_RefreshActor*>(this)->finishSendAndDelPromiseRef();
@@ -1045,22 +1045,22 @@ public:
 	int a_body1loopBody1(int loopDepth) 
 	{
 		try {
-															#line 241 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 241 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			tr = makeReference<ReadYourWritesTransaction>(Database(Reference<DatabaseContext>::addRef(self->cx)));
-															#line 242 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 242 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			tr->setOption(FDBTransactionOptions::READ_SYSTEM_KEYS);
-															#line 243 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 243 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			tr->setOption(FDBTransactionOptions::LOCK_AWARE);
-															#line 244 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 244 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			StrictFuture<RangeResult> __when_expr_0 = tr->getRange(globalConfigDataKeys, CLIENT_KNOBS->TOO_MANY);
-															#line 244 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 244 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			if (static_cast<GlobalConfig_RefreshActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 1058 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1058 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1loopBody1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<GlobalConfig_RefreshActor*>(this)->actor_wait_state = 1;
-															#line 244 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 244 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< GlobalConfig_RefreshActor, 0, RangeResult >*>(static_cast<GlobalConfig_RefreshActor*>(this)));
-															#line 1063 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1063 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -1093,18 +1093,18 @@ public:
 	int a_body1loopBody1Catch1(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 251 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 251 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			TraceEvent("GlobalConfigRefreshError").errorUnsuppressed(e).suppressFor(1.0);
-															#line 252 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 252 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			StrictFuture<Void> __when_expr_1 = tr->onError(e);
-															#line 252 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 252 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			if (static_cast<GlobalConfig_RefreshActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 1102 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1102 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1Catch1when1(__when_expr_1.get(), loopDepth); };
 			static_cast<GlobalConfig_RefreshActor*>(this)->actor_wait_state = 2;
-															#line 252 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 252 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< GlobalConfig_RefreshActor, 1, Void >*>(static_cast<GlobalConfig_RefreshActor*>(this)));
-															#line 1107 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1107 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -1117,13 +1117,13 @@ public:
 	}
 	int a_body1loopBody1cont2(RangeResult const& result,int loopDepth) 
 	{
-															#line 245 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 245 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		for( const auto& kv : result ) {
-															#line 246 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 246 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			KeyRef systemKey = kv.key.removePrefix(globalConfigKeysPrefix);
-															#line 247 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 247 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			self->insert(systemKey, kv.value);
-															#line 1126 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1126 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 		}
 		return a_body1break1(loopDepth==0?0:loopDepth-1); // break
 
@@ -1131,13 +1131,13 @@ public:
 	}
 	int a_body1loopBody1cont2(RangeResult && result,int loopDepth) 
 	{
-															#line 245 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 245 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		for( const auto& kv : result ) {
-															#line 246 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 246 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			KeyRef systemKey = kv.key.removePrefix(globalConfigKeysPrefix);
-															#line 247 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 247 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			self->insert(systemKey, kv.value);
-															#line 1140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1140 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 		}
 		return a_body1break1(loopDepth==0?0:loopDepth-1); // break
 
@@ -1208,36 +1208,36 @@ public:
 	}
 	int a_body1loopBody1Catch1cont1(Void const& _,int loopDepth) 
 	{
-															#line 253 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 253 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		tr.clear();
-															#line 255 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 255 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		StrictFuture<Void> __when_expr_2 = backoff.onError();
-															#line 255 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 255 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		if (static_cast<GlobalConfig_RefreshActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 1217 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1217 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1Catch1cont1when1(__when_expr_2.get(), loopDepth); };
 		static_cast<GlobalConfig_RefreshActor*>(this)->actor_wait_state = 3;
-															#line 255 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 255 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< GlobalConfig_RefreshActor, 2, Void >*>(static_cast<GlobalConfig_RefreshActor*>(this)));
-															#line 1222 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1222 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1loopBody1Catch1cont1(Void && _,int loopDepth) 
 	{
-															#line 253 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 253 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		tr.clear();
-															#line 255 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 255 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		StrictFuture<Void> __when_expr_2 = backoff.onError();
-															#line 255 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 255 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		if (static_cast<GlobalConfig_RefreshActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 1235 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1235 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1Catch1cont1when1(__when_expr_2.get(), loopDepth); };
 		static_cast<GlobalConfig_RefreshActor*>(this)->actor_wait_state = 3;
-															#line 255 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 255 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< GlobalConfig_RefreshActor, 2, Void >*>(static_cast<GlobalConfig_RefreshActor*>(this)));
-															#line 1240 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1240 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -1380,18 +1380,18 @@ public:
 		fdb_probe_actor_exit("refresh", reinterpret_cast<unsigned long>(this), 2);
 
 	}
-															#line 232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 232 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 	GlobalConfig* self;
-															#line 236 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 236 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 	Backoff backoff;
-															#line 238 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 238 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 	Reference<ReadYourWritesTransaction> tr;
-															#line 1389 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1389 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 };
 // This generated class is to be used only via refresh()
-															#line 232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 232 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 class GlobalConfig_RefreshActor final : public Actor<Void>, public ActorCallback< GlobalConfig_RefreshActor, 0, RangeResult >, public ActorCallback< GlobalConfig_RefreshActor, 1, Void >, public ActorCallback< GlobalConfig_RefreshActor, 2, Void >, public FastAllocated<GlobalConfig_RefreshActor>, public GlobalConfig_RefreshActorState<GlobalConfig_RefreshActor> {
-															#line 1394 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1394 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 public:
 	using FastAllocated<GlobalConfig_RefreshActor>::operator new;
 	using FastAllocated<GlobalConfig_RefreshActor>::operator delete;
@@ -1402,9 +1402,9 @@ public:
 friend struct ActorCallback< GlobalConfig_RefreshActor, 0, RangeResult >;
 friend struct ActorCallback< GlobalConfig_RefreshActor, 1, Void >;
 friend struct ActorCallback< GlobalConfig_RefreshActor, 2, Void >;
-															#line 232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 232 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 	GlobalConfig_RefreshActor(GlobalConfig* const& self) 
-															#line 1407 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1407 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 		 : Actor<Void>(),
 		   GlobalConfig_RefreshActorState<GlobalConfig_RefreshActor>(self)
 	{
@@ -1429,33 +1429,33 @@ friend struct ActorCallback< GlobalConfig_RefreshActor, 2, Void >;
 
 	}
 };
-															#line 232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 232 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 [[nodiscard]] Future<Void> GlobalConfig::refresh( GlobalConfig* const& self ) {
-															#line 232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 232 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 	return Future<Void>(new GlobalConfig_RefreshActor(self));
-															#line 1436 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1436 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 }
 
-#line 260 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+#line 260 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 
 // Applies updates to the local copy of the global configuration when this
 // process receives an updated history.
-															#line 1443 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1443 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 // This generated class is to be used only via updater()
-															#line 263 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 263 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 template <class GlobalConfig_UpdaterActor>
-															#line 263 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 263 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 class GlobalConfig_UpdaterActorState {
-															#line 1449 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1449 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 public:
-															#line 263 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 263 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 	GlobalConfig_UpdaterActorState(GlobalConfig* const& self,const ClientDBInfo* const& dbInfo) 
-															#line 263 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
-															#line 263 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 263 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
+															#line 263 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		 : self(self),
-															#line 263 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 263 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		   dbInfo(dbInfo)
-															#line 1458 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1458 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 	{
 		fdb_probe_actor_create("updater", reinterpret_cast<unsigned long>(this));
 
@@ -1468,9 +1468,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 264 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 264 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			;
-															#line 1473 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1473 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -1499,20 +1499,20 @@ public:
 	int a_body1loopBody1(int loopDepth) 
 	{
 		try {
-															#line 266 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 266 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			if (self->initialized.canBeSet())
-															#line 1504 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1504 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 			{
-															#line 267 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 267 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 				StrictFuture<Void> __when_expr_0 = self->cx->onConnected();
-															#line 267 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 267 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 				if (static_cast<GlobalConfig_UpdaterActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 1510 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1510 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 				if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1loopBody1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 				static_cast<GlobalConfig_UpdaterActor*>(this)->actor_wait_state = 1;
-															#line 267 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 267 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 				__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< GlobalConfig_UpdaterActor, 0, Void >*>(static_cast<GlobalConfig_UpdaterActor*>(this)));
-															#line 1515 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1515 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 				loopDepth = 0;
 			}
 			else
@@ -1537,18 +1537,18 @@ public:
 	int a_body1loopBody1Catch1(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 323 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 323 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			TraceEvent("GlobalConfigUpdaterError").error(e);
-															#line 324 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 324 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			StrictFuture<Void> __when_expr_5 = delay(1.0);
-															#line 324 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 324 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			if (static_cast<GlobalConfig_UpdaterActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 1546 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1546 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 			if (__when_expr_5.isReady()) { if (__when_expr_5.isError()) return a_body1Catch1(__when_expr_5.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1Catch1when1(__when_expr_5.get(), loopDepth); };
 			static_cast<GlobalConfig_UpdaterActor*>(this)->actor_wait_state = 6;
-															#line 324 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 324 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			__when_expr_5.addCallbackAndClear(static_cast<ActorCallback< GlobalConfig_UpdaterActor, 5, Void >*>(static_cast<GlobalConfig_UpdaterActor*>(this)));
-															#line 1551 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1551 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -1561,41 +1561,41 @@ public:
 	}
 	int a_body1loopBody1cont2(int loopDepth) 
 	{
-															#line 274 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 274 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		;
-															#line 1566 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1566 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont2loopHead1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont3(Void const& _,int loopDepth) 
 	{
-															#line 268 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 268 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = self->migrate(self);
-															#line 268 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 268 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		if (static_cast<GlobalConfig_UpdaterActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 1577 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1577 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1loopBody1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1loopBody1cont3when1(__when_expr_1.get(), loopDepth); };
 		static_cast<GlobalConfig_UpdaterActor*>(this)->actor_wait_state = 2;
-															#line 268 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 268 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< GlobalConfig_UpdaterActor, 1, Void >*>(static_cast<GlobalConfig_UpdaterActor*>(this)));
-															#line 1582 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1582 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont3(Void && _,int loopDepth) 
 	{
-															#line 268 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 268 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = self->migrate(self);
-															#line 268 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 268 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		if (static_cast<GlobalConfig_UpdaterActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 1593 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1593 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1loopBody1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1loopBody1cont3when1(__when_expr_1.get(), loopDepth); };
 		static_cast<GlobalConfig_UpdaterActor*>(this)->actor_wait_state = 2;
-															#line 268 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 268 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< GlobalConfig_UpdaterActor, 1, Void >*>(static_cast<GlobalConfig_UpdaterActor*>(this)));
-															#line 1598 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1598 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -1665,32 +1665,32 @@ public:
 	}
 	int a_body1loopBody1cont4(Void const& _,int loopDepth) 
 	{
-															#line 270 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 270 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		StrictFuture<Void> __when_expr_2 = self->refresh(self);
-															#line 270 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 270 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		if (static_cast<GlobalConfig_UpdaterActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 1672 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1672 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1loopBody1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1loopBody1cont4when1(__when_expr_2.get(), loopDepth); };
 		static_cast<GlobalConfig_UpdaterActor*>(this)->actor_wait_state = 3;
-															#line 270 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 270 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< GlobalConfig_UpdaterActor, 2, Void >*>(static_cast<GlobalConfig_UpdaterActor*>(this)));
-															#line 1677 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1677 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont4(Void && _,int loopDepth) 
 	{
-															#line 270 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 270 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		StrictFuture<Void> __when_expr_2 = self->refresh(self);
-															#line 270 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 270 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		if (static_cast<GlobalConfig_UpdaterActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 1688 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1688 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1loopBody1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1loopBody1cont4when1(__when_expr_2.get(), loopDepth); };
 		static_cast<GlobalConfig_UpdaterActor*>(this)->actor_wait_state = 3;
-															#line 270 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 270 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< GlobalConfig_UpdaterActor, 2, Void >*>(static_cast<GlobalConfig_UpdaterActor*>(this)));
-															#line 1693 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1693 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -1760,18 +1760,18 @@ public:
 	}
 	int a_body1loopBody1cont5(Void const& _,int loopDepth) 
 	{
-															#line 271 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 271 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		self->initialized.send(Void());
-															#line 1765 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1765 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont2(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont5(Void && _,int loopDepth) 
 	{
-															#line 271 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 271 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		self->initialized.send(Void());
-															#line 1774 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1774 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont2(loopDepth);
 
 		return loopDepth;
@@ -1849,16 +1849,16 @@ public:
 	int a_body1loopBody1cont2loopBody1(int loopDepth) 
 	{
 		try {
-															#line 276 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 276 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			StrictFuture<Void> __when_expr_3 = self->dbInfoChanged.onTrigger();
-															#line 276 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 276 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			if (static_cast<GlobalConfig_UpdaterActor*>(this)->actor_wait_state < 0) return a_body1loopBody1cont2loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 1856 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1856 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 			if (__when_expr_3.isReady()) { if (__when_expr_3.isError()) return a_body1loopBody1cont2loopBody1Catch1(__when_expr_3.getError(), loopDepth); else return a_body1loopBody1cont2loopBody1when1(__when_expr_3.get(), loopDepth); };
 			static_cast<GlobalConfig_UpdaterActor*>(this)->actor_wait_state = 4;
-															#line 276 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 276 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			__when_expr_3.addCallbackAndClear(static_cast<ActorCallback< GlobalConfig_UpdaterActor, 3, Void >*>(static_cast<GlobalConfig_UpdaterActor*>(this)));
-															#line 1861 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1861 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -1878,9 +1878,9 @@ public:
 	int a_body1loopBody1cont2loopBody1Catch1(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 317 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 317 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			return a_body1loopBody1Catch1(e, std::max(0, loopDepth - 1));
-															#line 1883 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1883 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 		}
 		catch (Error& error) {
 			loopDepth = a_body1loopBody1Catch1(error, std::max(0, loopDepth - 1));
@@ -1892,73 +1892,73 @@ public:
 	}
 	int a_body1loopBody1cont2loopBody1cont2(Void const& _,int loopDepth) 
 	{
-															#line 278 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 278 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		auto& history = dbInfo->history;
-															#line 279 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 279 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		if (history.size() == 0)
-															#line 1899 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1899 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 		{
 			return a_body1loopBody1cont2loopHead1(loopDepth); // continue
 		}
-															#line 283 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 283 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		if (self->lastUpdate < history[0].version)
-															#line 1905 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1905 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 		{
-															#line 287 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 287 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			StrictFuture<Void> __when_expr_4 = self->refresh(self);
-															#line 287 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 287 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			if (static_cast<GlobalConfig_UpdaterActor*>(this)->actor_wait_state < 0) return a_body1loopBody1cont2loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 1911 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1911 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 			if (__when_expr_4.isReady()) { if (__when_expr_4.isError()) return a_body1loopBody1cont2loopBody1Catch1(__when_expr_4.getError(), loopDepth); else return a_body1loopBody1cont2loopBody1cont2when1(__when_expr_4.get(), loopDepth); };
 			static_cast<GlobalConfig_UpdaterActor*>(this)->actor_wait_state = 5;
-															#line 287 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 287 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			__when_expr_4.addCallbackAndClear(static_cast<ActorCallback< GlobalConfig_UpdaterActor, 4, Void >*>(static_cast<GlobalConfig_UpdaterActor*>(this)));
-															#line 1916 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1916 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 			loopDepth = 0;
 		}
 		else
 		{
-															#line 295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 295 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			for( const auto& vh : history ) {
-															#line 296 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 296 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 				if (vh.version <= self->lastUpdate)
-															#line 1925 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1925 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 				{
 					continue;
 				}
-															#line 300 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 300 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 				for( const auto& mutation : vh.mutations.contents() ) {
-															#line 301 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 301 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 					if (mutation.type == MutationRef::SetValue)
-															#line 1933 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1933 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 					{
-															#line 302 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 302 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 						self->insert(mutation.param1, mutation.param2);
-															#line 1937 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1937 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 					}
 					else
 					{
-															#line 303 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 303 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 						if (mutation.type == MutationRef::ClearRange)
-															#line 1943 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1943 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 						{
-															#line 304 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 304 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 							self->erase(KeyRangeRef(mutation.param1, mutation.param2));
-															#line 1947 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1947 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 						}
 						else
 						{
-															#line 306 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 306 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 							ASSERT(false);
-															#line 1953 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1953 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 						}
 					}
 				}
-															#line 310 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 310 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 				ASSERT(vh.version > self->lastUpdate);
-															#line 311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 311 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 				self->lastUpdate = vh.version;
-															#line 1961 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1961 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 			}
 			loopDepth = a_body1loopBody1cont2loopBody1cont3(loopDepth);
 		}
@@ -1967,73 +1967,73 @@ public:
 	}
 	int a_body1loopBody1cont2loopBody1cont2(Void && _,int loopDepth) 
 	{
-															#line 278 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 278 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		auto& history = dbInfo->history;
-															#line 279 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 279 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		if (history.size() == 0)
-															#line 1974 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1974 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 		{
 			return a_body1loopBody1cont2loopHead1(loopDepth); // continue
 		}
-															#line 283 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 283 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		if (self->lastUpdate < history[0].version)
-															#line 1980 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1980 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 		{
-															#line 287 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 287 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			StrictFuture<Void> __when_expr_4 = self->refresh(self);
-															#line 287 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 287 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			if (static_cast<GlobalConfig_UpdaterActor*>(this)->actor_wait_state < 0) return a_body1loopBody1cont2loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 1986 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1986 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 			if (__when_expr_4.isReady()) { if (__when_expr_4.isError()) return a_body1loopBody1cont2loopBody1Catch1(__when_expr_4.getError(), loopDepth); else return a_body1loopBody1cont2loopBody1cont2when1(__when_expr_4.get(), loopDepth); };
 			static_cast<GlobalConfig_UpdaterActor*>(this)->actor_wait_state = 5;
-															#line 287 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 287 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			__when_expr_4.addCallbackAndClear(static_cast<ActorCallback< GlobalConfig_UpdaterActor, 4, Void >*>(static_cast<GlobalConfig_UpdaterActor*>(this)));
-															#line 1991 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 1991 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 			loopDepth = 0;
 		}
 		else
 		{
-															#line 295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 295 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			for( const auto& vh : history ) {
-															#line 296 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 296 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 				if (vh.version <= self->lastUpdate)
-															#line 2000 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 2000 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 				{
 					continue;
 				}
-															#line 300 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 300 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 				for( const auto& mutation : vh.mutations.contents() ) {
-															#line 301 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 301 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 					if (mutation.type == MutationRef::SetValue)
-															#line 2008 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 2008 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 					{
-															#line 302 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 302 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 						self->insert(mutation.param1, mutation.param2);
-															#line 2012 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 2012 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 					}
 					else
 					{
-															#line 303 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 303 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 						if (mutation.type == MutationRef::ClearRange)
-															#line 2018 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 2018 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 						{
-															#line 304 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 304 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 							self->erase(KeyRangeRef(mutation.param1, mutation.param2));
-															#line 2022 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 2022 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 						}
 						else
 						{
-															#line 306 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 306 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 							ASSERT(false);
-															#line 2028 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 2028 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 						}
 					}
 				}
-															#line 310 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 310 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 				ASSERT(vh.version > self->lastUpdate);
-															#line 311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 311 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 				self->lastUpdate = vh.version;
-															#line 2036 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 2036 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 			}
 			loopDepth = a_body1loopBody1cont2loopBody1cont3(loopDepth);
 		}
@@ -2105,22 +2105,22 @@ public:
 	}
 	int a_body1loopBody1cont2loopBody1cont3(int loopDepth) 
 	{
-															#line 315 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 315 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		self->configChanged.trigger();
-															#line 2110 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 2110 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont2loopBody1cont17(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont2loopBody1cont5(Void const& _,int loopDepth) 
 	{
-															#line 288 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 288 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		if (dbInfo->history.size() > 0)
-															#line 2119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 2119 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 		{
-															#line 289 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 289 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			self->lastUpdate = dbInfo->history.back().version;
-															#line 2123 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 2123 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 		}
 		loopDepth = a_body1loopBody1cont2loopBody1cont3(loopDepth);
 
@@ -2128,13 +2128,13 @@ public:
 	}
 	int a_body1loopBody1cont2loopBody1cont5(Void && _,int loopDepth) 
 	{
-															#line 288 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 288 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 		if (dbInfo->history.size() > 0)
-															#line 2133 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 2133 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 		{
-															#line 289 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 289 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 			self->lastUpdate = dbInfo->history.back().version;
-															#line 2137 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 2137 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 		}
 		loopDepth = a_body1loopBody1cont2loopBody1cont3(loopDepth);
 
@@ -2291,16 +2291,16 @@ public:
 		fdb_probe_actor_exit("updater", reinterpret_cast<unsigned long>(this), 5);
 
 	}
-															#line 263 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 263 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 	GlobalConfig* self;
-															#line 263 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 263 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 	const ClientDBInfo* dbInfo;
-															#line 2298 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 2298 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 };
 // This generated class is to be used only via updater()
-															#line 263 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 263 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 class GlobalConfig_UpdaterActor final : public Actor<Void>, public ActorCallback< GlobalConfig_UpdaterActor, 0, Void >, public ActorCallback< GlobalConfig_UpdaterActor, 1, Void >, public ActorCallback< GlobalConfig_UpdaterActor, 2, Void >, public ActorCallback< GlobalConfig_UpdaterActor, 3, Void >, public ActorCallback< GlobalConfig_UpdaterActor, 4, Void >, public ActorCallback< GlobalConfig_UpdaterActor, 5, Void >, public FastAllocated<GlobalConfig_UpdaterActor>, public GlobalConfig_UpdaterActorState<GlobalConfig_UpdaterActor> {
-															#line 2303 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 2303 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 public:
 	using FastAllocated<GlobalConfig_UpdaterActor>::operator new;
 	using FastAllocated<GlobalConfig_UpdaterActor>::operator delete;
@@ -2314,9 +2314,9 @@ friend struct ActorCallback< GlobalConfig_UpdaterActor, 2, Void >;
 friend struct ActorCallback< GlobalConfig_UpdaterActor, 3, Void >;
 friend struct ActorCallback< GlobalConfig_UpdaterActor, 4, Void >;
 friend struct ActorCallback< GlobalConfig_UpdaterActor, 5, Void >;
-															#line 263 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 263 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 	GlobalConfig_UpdaterActor(GlobalConfig* const& self,const ClientDBInfo* const& dbInfo) 
-															#line 2319 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 2319 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 		 : Actor<Void>(),
 		   GlobalConfig_UpdaterActorState<GlobalConfig_UpdaterActor>(self, dbInfo)
 	{
@@ -2344,11 +2344,11 @@ friend struct ActorCallback< GlobalConfig_UpdaterActor, 5, Void >;
 
 	}
 };
-															#line 263 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 263 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 [[nodiscard]] Future<Void> GlobalConfig::updater( GlobalConfig* const& self, const ClientDBInfo* const& dbInfo ) {
-															#line 263 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+															#line 263 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"
 	return Future<Void>(new GlobalConfig_UpdaterActor(self, dbInfo));
-															#line 2351 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.cpp"
+															#line 2351 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.cpp"
 }
 
-#line 328 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.cpp"
+#line 328 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.cpp"

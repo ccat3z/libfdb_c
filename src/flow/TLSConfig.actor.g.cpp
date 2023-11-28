@@ -1,5 +1,5 @@
 #define POST_ACTOR_COMPILER 1
-#line 1 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+#line 1 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 /*
  * TLSConfig.actor.cpp
  *
@@ -276,23 +276,23 @@ LoadedTLSConfig TLSConfig::loadSync() const {
 
 // And now do the same thing, but async...
 
-															#line 279 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.g.cpp"
+															#line 279 "/usr/src/libfdb_c/flow/TLSConfig.actor.g.cpp"
 namespace {
 // This generated class is to be used only via readEntireFile()
-															#line 277 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 277 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 template <class ReadEntireFileActor>
-															#line 277 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 277 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 class ReadEntireFileActorState {
-															#line 286 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.g.cpp"
+															#line 286 "/usr/src/libfdb_c/flow/TLSConfig.actor.g.cpp"
 public:
-															#line 277 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 277 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 	ReadEntireFileActorState(std::string const& filename,std::string* const& destination) 
-															#line 277 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
-															#line 277 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 277 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
+															#line 277 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 		 : filename(filename),
-															#line 277 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 277 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 		   destination(destination)
-															#line 295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.g.cpp"
+															#line 295 "/usr/src/libfdb_c/flow/TLSConfig.actor.g.cpp"
 	{
 		fdb_probe_actor_create("readEntireFile", reinterpret_cast<unsigned long>(this));
 
@@ -305,16 +305,16 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 278 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 278 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 			StrictFuture<Reference<IAsyncFile>> __when_expr_0 = IAsyncFileSystem::filesystem()->open(filename, IAsyncFile::OPEN_READONLY | IAsyncFile::OPEN_UNCACHED, 0);
-															#line 278 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 278 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 			if (static_cast<ReadEntireFileActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 312 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.g.cpp"
+															#line 312 "/usr/src/libfdb_c/flow/TLSConfig.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<ReadEntireFileActor*>(this)->actor_wait_state = 1;
-															#line 278 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 278 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ReadEntireFileActor, 0, Reference<IAsyncFile> >*>(static_cast<ReadEntireFileActor*>(this)));
-															#line 317 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.g.cpp"
+															#line 317 "/usr/src/libfdb_c/flow/TLSConfig.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -335,25 +335,25 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 280 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 280 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 		StrictFuture<int64_t> __when_expr_1 = file->size();
-															#line 280 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 280 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 		if (static_cast<ReadEntireFileActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 342 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.g.cpp"
+															#line 342 "/usr/src/libfdb_c/flow/TLSConfig.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<ReadEntireFileActor*>(this)->actor_wait_state = 2;
-															#line 280 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 280 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< ReadEntireFileActor, 1, int64_t >*>(static_cast<ReadEntireFileActor*>(this)));
-															#line 347 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.g.cpp"
+															#line 347 "/usr/src/libfdb_c/flow/TLSConfig.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1when1(Reference<IAsyncFile> const& __file,int loopDepth) 
 	{
-															#line 278 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 278 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 		file = __file;
-															#line 356 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.g.cpp"
+															#line 356 "/usr/src/libfdb_c/flow/TLSConfig.actor.g.cpp"
 		loopDepth = a_body1cont1(loopDepth);
 
 		return loopDepth;
@@ -418,35 +418,35 @@ public:
 	}
 	int a_body1cont2(int loopDepth) 
 	{
-															#line 281 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 281 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 		if (filesize > FLOW_KNOBS->CERT_FILE_MAX_SIZE)
-															#line 423 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.g.cpp"
+															#line 423 "/usr/src/libfdb_c/flow/TLSConfig.actor.g.cpp"
 		{
-															#line 282 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 282 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 			return a_body1Catch1(file_too_large(), loopDepth);
-															#line 427 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.g.cpp"
+															#line 427 "/usr/src/libfdb_c/flow/TLSConfig.actor.g.cpp"
 		}
-															#line 284 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 284 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 		destination->resize(filesize);
-															#line 285 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 285 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 		StrictFuture<Void> __when_expr_2 = success(file->read(&((*destination)[0]), filesize, 0));
-															#line 285 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 285 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 		if (static_cast<ReadEntireFileActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 435 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.g.cpp"
+															#line 435 "/usr/src/libfdb_c/flow/TLSConfig.actor.g.cpp"
 		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1cont2when1(__when_expr_2.get(), loopDepth); };
 		static_cast<ReadEntireFileActor*>(this)->actor_wait_state = 3;
-															#line 285 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 285 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 		__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< ReadEntireFileActor, 2, Void >*>(static_cast<ReadEntireFileActor*>(this)));
-															#line 440 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.g.cpp"
+															#line 440 "/usr/src/libfdb_c/flow/TLSConfig.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont1when1(int64_t const& __filesize,int loopDepth) 
 	{
-															#line 280 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 280 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 		filesize = __filesize;
-															#line 449 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.g.cpp"
+															#line 449 "/usr/src/libfdb_c/flow/TLSConfig.actor.g.cpp"
 		loopDepth = a_body1cont2(loopDepth);
 
 		return loopDepth;
@@ -511,9 +511,9 @@ public:
 	}
 	int a_body1cont3(Void const& _,int loopDepth) 
 	{
-															#line 286 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 286 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 		if (!static_cast<ReadEntireFileActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~ReadEntireFileActorState(); static_cast<ReadEntireFileActor*>(this)->destroy(); return 0; }
-															#line 516 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.g.cpp"
+															#line 516 "/usr/src/libfdb_c/flow/TLSConfig.actor.g.cpp"
 		new (&static_cast<ReadEntireFileActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~ReadEntireFileActorState();
 		static_cast<ReadEntireFileActor*>(this)->finishSendAndDelPromiseRef();
@@ -523,9 +523,9 @@ public:
 	}
 	int a_body1cont3(Void && _,int loopDepth) 
 	{
-															#line 286 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 286 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 		if (!static_cast<ReadEntireFileActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~ReadEntireFileActorState(); static_cast<ReadEntireFileActor*>(this)->destroy(); return 0; }
-															#line 528 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.g.cpp"
+															#line 528 "/usr/src/libfdb_c/flow/TLSConfig.actor.g.cpp"
 		new (&static_cast<ReadEntireFileActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~ReadEntireFileActorState();
 		static_cast<ReadEntireFileActor*>(this)->finishSendAndDelPromiseRef();
@@ -596,20 +596,20 @@ public:
 		fdb_probe_actor_exit("readEntireFile", reinterpret_cast<unsigned long>(this), 2);
 
 	}
-															#line 277 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 277 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 	std::string filename;
-															#line 277 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 277 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 	std::string* destination;
-															#line 278 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 278 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 	Reference<IAsyncFile> file;
-															#line 280 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 280 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 	int64_t filesize;
-															#line 607 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.g.cpp"
+															#line 607 "/usr/src/libfdb_c/flow/TLSConfig.actor.g.cpp"
 };
 // This generated class is to be used only via readEntireFile()
-															#line 277 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 277 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 class ReadEntireFileActor final : public Actor<Void>, public ActorCallback< ReadEntireFileActor, 0, Reference<IAsyncFile> >, public ActorCallback< ReadEntireFileActor, 1, int64_t >, public ActorCallback< ReadEntireFileActor, 2, Void >, public FastAllocated<ReadEntireFileActor>, public ReadEntireFileActorState<ReadEntireFileActor> {
-															#line 612 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.g.cpp"
+															#line 612 "/usr/src/libfdb_c/flow/TLSConfig.actor.g.cpp"
 public:
 	using FastAllocated<ReadEntireFileActor>::operator new;
 	using FastAllocated<ReadEntireFileActor>::operator delete;
@@ -620,9 +620,9 @@ public:
 friend struct ActorCallback< ReadEntireFileActor, 0, Reference<IAsyncFile> >;
 friend struct ActorCallback< ReadEntireFileActor, 1, int64_t >;
 friend struct ActorCallback< ReadEntireFileActor, 2, Void >;
-															#line 277 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 277 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 	ReadEntireFileActor(std::string const& filename,std::string* const& destination) 
-															#line 625 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.g.cpp"
+															#line 625 "/usr/src/libfdb_c/flow/TLSConfig.actor.g.cpp"
 		 : Actor<Void>(),
 		   ReadEntireFileActorState<ReadEntireFileActor>(filename, destination)
 	{
@@ -648,41 +648,41 @@ friend struct ActorCallback< ReadEntireFileActor, 2, Void >;
 	}
 };
 }
-															#line 277 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 277 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 [[nodiscard]] static Future<Void> readEntireFile( std::string const& filename, std::string* const& destination ) {
-															#line 277 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 277 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 	return Future<Void>(new ReadEntireFileActor(filename, destination));
-															#line 655 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.g.cpp"
+															#line 655 "/usr/src/libfdb_c/flow/TLSConfig.actor.g.cpp"
 }
 
-#line 288 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+#line 288 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 
-															#line 660 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.g.cpp"
+															#line 660 "/usr/src/libfdb_c/flow/TLSConfig.actor.g.cpp"
 // This generated class is to be used only via loadAsync()
-															#line 289 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 289 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 template <class TLSConfig_LoadAsyncActor>
-															#line 289 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 289 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 class TLSConfig_LoadAsyncActorState {
-															#line 666 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.g.cpp"
+															#line 666 "/usr/src/libfdb_c/flow/TLSConfig.actor.g.cpp"
 public:
-															#line 289 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 289 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 	TLSConfig_LoadAsyncActorState(const TLSConfig* const& self) 
-															#line 289 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
-															#line 289 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 289 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
+															#line 289 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 		 : self(self),
-															#line 290 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 290 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 		   loaded(),
-															#line 291 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 291 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 		   reads(),
-															#line 293 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 293 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 		   certIdx(-1),
-															#line 294 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 294 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 		   keyIdx(-1),
-															#line 295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 295 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 		   caIdx(-1),
-															#line 297 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 297 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 		   certPath(self->getCertificatePathSync())
-															#line 685 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.g.cpp"
+															#line 685 "/usr/src/libfdb_c/flow/TLSConfig.actor.g.cpp"
 	{
 		fdb_probe_actor_create("loadAsync", reinterpret_cast<unsigned long>(this));
 
@@ -695,69 +695,69 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 298 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 298 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 			if (certPath.size())
-															#line 700 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.g.cpp"
+															#line 700 "/usr/src/libfdb_c/flow/TLSConfig.actor.g.cpp"
 			{
-															#line 299 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 299 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 				reads.push_back(readEntireFile(certPath, &loaded.tlsCertBytes));
-															#line 300 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 300 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 				certIdx = reads.size() - 1;
-															#line 706 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.g.cpp"
+															#line 706 "/usr/src/libfdb_c/flow/TLSConfig.actor.g.cpp"
 			}
 			else
 			{
-															#line 302 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 302 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 				loaded.tlsCertBytes = self->tlsCertBytes;
-															#line 712 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.g.cpp"
+															#line 712 "/usr/src/libfdb_c/flow/TLSConfig.actor.g.cpp"
 			}
-															#line 305 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 305 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 			keyPath = self->getKeyPathSync();
-															#line 306 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 306 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 			if (keyPath.size())
-															#line 718 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.g.cpp"
+															#line 718 "/usr/src/libfdb_c/flow/TLSConfig.actor.g.cpp"
 			{
-															#line 307 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 307 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 				reads.push_back(readEntireFile(keyPath, &loaded.tlsKeyBytes));
-															#line 308 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 308 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 				keyIdx = reads.size() - 1;
-															#line 724 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.g.cpp"
+															#line 724 "/usr/src/libfdb_c/flow/TLSConfig.actor.g.cpp"
 			}
 			else
 			{
-															#line 310 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 310 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 				loaded.tlsKeyBytes = self->tlsKeyBytes;
-															#line 730 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.g.cpp"
+															#line 730 "/usr/src/libfdb_c/flow/TLSConfig.actor.g.cpp"
 			}
-															#line 313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 313 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 			CAPath = self->getCAPathSync();
-															#line 314 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 314 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 			if (CAPath.size())
-															#line 736 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.g.cpp"
+															#line 736 "/usr/src/libfdb_c/flow/TLSConfig.actor.g.cpp"
 			{
-															#line 315 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 315 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 				reads.push_back(readEntireFile(CAPath, &loaded.tlsCABytes));
-															#line 316 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 316 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 				caIdx = reads.size() - 1;
-															#line 742 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.g.cpp"
+															#line 742 "/usr/src/libfdb_c/flow/TLSConfig.actor.g.cpp"
 			}
 			else
 			{
-															#line 318 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 318 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 				loaded.tlsCABytes = self->tlsCABytes;
-															#line 748 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.g.cpp"
+															#line 748 "/usr/src/libfdb_c/flow/TLSConfig.actor.g.cpp"
 			}
 			try {
-															#line 322 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 322 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 				StrictFuture<Void> __when_expr_0 = waitForAll(reads);
-															#line 322 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 322 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 				if (static_cast<TLSConfig_LoadAsyncActor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), loopDepth);
-															#line 755 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.g.cpp"
+															#line 755 "/usr/src/libfdb_c/flow/TLSConfig.actor.g.cpp"
 				if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch2(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 				static_cast<TLSConfig_LoadAsyncActor*>(this)->actor_wait_state = 1;
-															#line 322 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 322 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 				__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< TLSConfig_LoadAsyncActor, 0, Void >*>(static_cast<TLSConfig_LoadAsyncActor*>(this)));
-															#line 760 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.g.cpp"
+															#line 760 "/usr/src/libfdb_c/flow/TLSConfig.actor.g.cpp"
 				loopDepth = 0;
 			}
 			catch (Error& error) {
@@ -784,15 +784,15 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 337 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 337 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 		loaded.tlsPassword = self->tlsPassword;
-															#line 338 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 338 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 		loaded.tlsVerifyPeers = self->tlsVerifyPeers;
-															#line 339 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 339 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 		loaded.endpointType = self->endpointType;
-															#line 341 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 341 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 		if (!static_cast<TLSConfig_LoadAsyncActor*>(this)->SAV<LoadedTLSConfig>::futures) { (void)(loaded); this->~TLSConfig_LoadAsyncActorState(); static_cast<TLSConfig_LoadAsyncActor*>(this)->destroy(); return 0; }
-															#line 795 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.g.cpp"
+															#line 795 "/usr/src/libfdb_c/flow/TLSConfig.actor.g.cpp"
 		new (&static_cast<TLSConfig_LoadAsyncActor*>(this)->SAV< LoadedTLSConfig >::value()) LoadedTLSConfig(std::move(loaded)); // state_var_RVO
 		this->~TLSConfig_LoadAsyncActorState();
 		static_cast<TLSConfig_LoadAsyncActor*>(this)->finishSendAndDelPromiseRef();
@@ -803,45 +803,45 @@ public:
 	int a_body1Catch2(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 324 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 324 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 			if (certIdx != -1 && reads[certIdx].isError())
-															#line 808 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.g.cpp"
+															#line 808 "/usr/src/libfdb_c/flow/TLSConfig.actor.g.cpp"
 			{
-															#line 325 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 325 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 				fprintf(stderr, "Failure reading TLS Certificate [%s]: %s\n", certPath.c_str(), e.what());
-															#line 812 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.g.cpp"
+															#line 812 "/usr/src/libfdb_c/flow/TLSConfig.actor.g.cpp"
 			}
 			else
 			{
-															#line 326 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 326 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 				if (keyIdx != -1 && reads[keyIdx].isError())
-															#line 818 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.g.cpp"
+															#line 818 "/usr/src/libfdb_c/flow/TLSConfig.actor.g.cpp"
 				{
-															#line 327 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 327 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 					fprintf(stderr, "Failure reading TLS Key [%s]: %s\n", keyPath.c_str(), e.what());
-															#line 822 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.g.cpp"
+															#line 822 "/usr/src/libfdb_c/flow/TLSConfig.actor.g.cpp"
 				}
 				else
 				{
-															#line 328 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 328 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 					if (caIdx != -1 && reads[caIdx].isError())
-															#line 828 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.g.cpp"
+															#line 828 "/usr/src/libfdb_c/flow/TLSConfig.actor.g.cpp"
 					{
-															#line 329 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 329 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 						fprintf(stderr, "Failure reading TLS Key [%s]: %s\n", CAPath.c_str(), e.what());
-															#line 832 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.g.cpp"
+															#line 832 "/usr/src/libfdb_c/flow/TLSConfig.actor.g.cpp"
 					}
 					else
 					{
-															#line 331 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 331 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 						fprintf(stderr, "Failure reading TLS needed file: %s\n", e.what());
-															#line 838 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.g.cpp"
+															#line 838 "/usr/src/libfdb_c/flow/TLSConfig.actor.g.cpp"
 					}
 				}
 			}
-															#line 334 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 334 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 			return a_body1Catch1(e, loopDepth);
-															#line 844 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.g.cpp"
+															#line 844 "/usr/src/libfdb_c/flow/TLSConfig.actor.g.cpp"
 		}
 		catch (Error& error) {
 			loopDepth = a_body1Catch1(error, loopDepth);
@@ -939,30 +939,30 @@ public:
 
 		return loopDepth;
 	}
-															#line 289 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 289 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 	const TLSConfig* self;
-															#line 290 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 290 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 	LoadedTLSConfig loaded;
-															#line 291 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 291 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 	std::vector<Future<Void>> reads;
-															#line 293 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 293 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 	int32_t certIdx;
-															#line 294 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 294 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 	int32_t keyIdx;
-															#line 295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 295 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 	int32_t caIdx;
-															#line 297 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 297 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 	std::string certPath;
-															#line 305 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 305 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 	std::string keyPath;
-															#line 313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 313 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 	std::string CAPath;
-															#line 960 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.g.cpp"
+															#line 960 "/usr/src/libfdb_c/flow/TLSConfig.actor.g.cpp"
 };
 // This generated class is to be used only via loadAsync()
-															#line 289 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 289 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 class TLSConfig_LoadAsyncActor final : public Actor<LoadedTLSConfig>, public ActorCallback< TLSConfig_LoadAsyncActor, 0, Void >, public FastAllocated<TLSConfig_LoadAsyncActor>, public TLSConfig_LoadAsyncActorState<TLSConfig_LoadAsyncActor> {
-															#line 965 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.g.cpp"
+															#line 965 "/usr/src/libfdb_c/flow/TLSConfig.actor.g.cpp"
 public:
 	using FastAllocated<TLSConfig_LoadAsyncActor>::operator new;
 	using FastAllocated<TLSConfig_LoadAsyncActor>::operator delete;
@@ -971,9 +971,9 @@ public:
 	void destroy() override { ((Actor<LoadedTLSConfig>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< TLSConfig_LoadAsyncActor, 0, Void >;
-															#line 289 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 289 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 	TLSConfig_LoadAsyncActor(const TLSConfig* const& self) 
-															#line 976 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.g.cpp"
+															#line 976 "/usr/src/libfdb_c/flow/TLSConfig.actor.g.cpp"
 		 : Actor<LoadedTLSConfig>(),
 		   TLSConfig_LoadAsyncActorState<TLSConfig_LoadAsyncActor>(self)
 	{
@@ -996,14 +996,14 @@ friend struct ActorCallback< TLSConfig_LoadAsyncActor, 0, Void >;
 
 	}
 };
-															#line 289 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 289 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 [[nodiscard]] Future<LoadedTLSConfig> TLSConfig::loadAsync( const TLSConfig* const& self ) {
-															#line 289 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+															#line 289 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 	return Future<LoadedTLSConfig>(new TLSConfig_LoadAsyncActor(self));
-															#line 1003 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.g.cpp"
+															#line 1003 "/usr/src/libfdb_c/flow/TLSConfig.actor.g.cpp"
 }
 
-#line 343 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/TLSConfig.actor.cpp"
+#line 343 "/usr/src/libfdb_c/flow/TLSConfig.actor.cpp"
 
 std::string TLSPolicy::ErrorString(boost::system::error_code e) {
 	char* str = ERR_error_string(e.value(), nullptr);

@@ -1,5 +1,5 @@
 #define POST_ACTOR_COMPILER 1
-#line 1 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.h"
+#line 1 "/usr/src/libfdb_c/fdbclient/MutationLogReader.actor.h"
 /*
  * MutationLogReader.actor.h
  *
@@ -70,11 +70,11 @@ public:
 
 	void startReading(Database cx);
 	Future<Void> getNext(Database cx);
-																#line 73 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.g.h"
+																#line 73 "/usr/src/libfdb_c/fdbclient/MutationLogReader.actor.g.h"
 [[nodiscard]] static Future<Void> getNext_impl( PipelinedReader* const& self, Database const& cx );
 template <class> friend class PipelinedReader_GetNext_implActorState;
 
-#line 72 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.h"
+#line 72 "/usr/src/libfdb_c/fdbclient/MutationLogReader.actor.h"
 
 	void release() { readerLimit.release(); }
 
@@ -114,32 +114,32 @@ public:
 		}
 	}
 
-																#line 117 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.g.h"
+																#line 117 "/usr/src/libfdb_c/fdbclient/MutationLogReader.actor.g.h"
 // This generated class is to be used only via Create()
-															#line 111 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.h"
+															#line 111 "/usr/src/libfdb_c/fdbclient/MutationLogReader.actor.h"
 template <class CreateActor>
-															#line 111 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.h"
+															#line 111 "/usr/src/libfdb_c/fdbclient/MutationLogReader.actor.h"
 class CreateActorState {
-															#line 123 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.g.h"
+															#line 123 "/usr/src/libfdb_c/fdbclient/MutationLogReader.actor.g.h"
 public:
-															#line 111 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.h"
+															#line 111 "/usr/src/libfdb_c/fdbclient/MutationLogReader.actor.h"
 	CreateActorState(Database const& cx,Version const& bv,Version const& ev,Key const& uid,Key const& beginKey,unsigned const& pd) 
-															#line 111 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.h"
-															#line 111 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.h"
+															#line 111 "/usr/src/libfdb_c/fdbclient/MutationLogReader.actor.h"
+															#line 111 "/usr/src/libfdb_c/fdbclient/MutationLogReader.actor.h"
 		 : cx(cx),
-															#line 111 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.h"
+															#line 111 "/usr/src/libfdb_c/fdbclient/MutationLogReader.actor.h"
 		   bv(bv),
-															#line 111 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.h"
+															#line 111 "/usr/src/libfdb_c/fdbclient/MutationLogReader.actor.h"
 		   ev(ev),
-															#line 111 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.h"
+															#line 111 "/usr/src/libfdb_c/fdbclient/MutationLogReader.actor.h"
 		   uid(uid),
-															#line 111 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.h"
+															#line 111 "/usr/src/libfdb_c/fdbclient/MutationLogReader.actor.h"
 		   beginKey(beginKey),
-															#line 111 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.h"
+															#line 111 "/usr/src/libfdb_c/fdbclient/MutationLogReader.actor.h"
 		   pd(pd),
-															#line 117 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.h"
+															#line 117 "/usr/src/libfdb_c/fdbclient/MutationLogReader.actor.h"
 		   self(new MutationLogReader(cx, bv, ev, uid, beginKey, pd))
-															#line 142 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.g.h"
+															#line 142 "/usr/src/libfdb_c/fdbclient/MutationLogReader.actor.g.h"
 	{
 		fdb_probe_actor_create("Create", reinterpret_cast<unsigned long>(this));
 
@@ -152,16 +152,16 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 118 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.h"
+															#line 118 "/usr/src/libfdb_c/fdbclient/MutationLogReader.actor.h"
 			StrictFuture<Void> __when_expr_0 = self->initializePQ(self.getPtr());
-															#line 118 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.h"
+															#line 118 "/usr/src/libfdb_c/fdbclient/MutationLogReader.actor.h"
 			if (static_cast<CreateActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 159 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.g.h"
+															#line 159 "/usr/src/libfdb_c/fdbclient/MutationLogReader.actor.g.h"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<CreateActor*>(this)->actor_wait_state = 1;
-															#line 118 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.h"
+															#line 118 "/usr/src/libfdb_c/fdbclient/MutationLogReader.actor.h"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< CreateActor, 0, Void >*>(static_cast<CreateActor*>(this)));
-															#line 164 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.g.h"
+															#line 164 "/usr/src/libfdb_c/fdbclient/MutationLogReader.actor.g.h"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -182,9 +182,9 @@ public:
 	}
 	int a_body1cont1(Void const& _,int loopDepth) 
 	{
-															#line 119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.h"
+															#line 119 "/usr/src/libfdb_c/fdbclient/MutationLogReader.actor.h"
 		if (!static_cast<CreateActor*>(this)->SAV<Reference<MutationLogReader>>::futures) { (void)(self); this->~CreateActorState(); static_cast<CreateActor*>(this)->destroy(); return 0; }
-															#line 187 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.g.h"
+															#line 187 "/usr/src/libfdb_c/fdbclient/MutationLogReader.actor.g.h"
 		new (&static_cast<CreateActor*>(this)->SAV< Reference<MutationLogReader> >::value()) Reference<MutationLogReader>(std::move(self)); // state_var_RVO
 		this->~CreateActorState();
 		static_cast<CreateActor*>(this)->finishSendAndDelPromiseRef();
@@ -194,9 +194,9 @@ public:
 	}
 	int a_body1cont1(Void && _,int loopDepth) 
 	{
-															#line 119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.h"
+															#line 119 "/usr/src/libfdb_c/fdbclient/MutationLogReader.actor.h"
 		if (!static_cast<CreateActor*>(this)->SAV<Reference<MutationLogReader>>::futures) { (void)(self); this->~CreateActorState(); static_cast<CreateActor*>(this)->destroy(); return 0; }
-															#line 199 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.g.h"
+															#line 199 "/usr/src/libfdb_c/fdbclient/MutationLogReader.actor.g.h"
 		new (&static_cast<CreateActor*>(this)->SAV< Reference<MutationLogReader> >::value()) Reference<MutationLogReader>(std::move(self)); // state_var_RVO
 		this->~CreateActorState();
 		static_cast<CreateActor*>(this)->finishSendAndDelPromiseRef();
@@ -267,26 +267,26 @@ public:
 		fdb_probe_actor_exit("Create", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 111 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.h"
+															#line 111 "/usr/src/libfdb_c/fdbclient/MutationLogReader.actor.h"
 	Database cx;
-															#line 111 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.h"
+															#line 111 "/usr/src/libfdb_c/fdbclient/MutationLogReader.actor.h"
 	Version bv;
-															#line 111 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.h"
+															#line 111 "/usr/src/libfdb_c/fdbclient/MutationLogReader.actor.h"
 	Version ev;
-															#line 111 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.h"
+															#line 111 "/usr/src/libfdb_c/fdbclient/MutationLogReader.actor.h"
 	Key uid;
-															#line 111 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.h"
+															#line 111 "/usr/src/libfdb_c/fdbclient/MutationLogReader.actor.h"
 	Key beginKey;
-															#line 111 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.h"
+															#line 111 "/usr/src/libfdb_c/fdbclient/MutationLogReader.actor.h"
 	unsigned pd;
-															#line 117 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.h"
+															#line 117 "/usr/src/libfdb_c/fdbclient/MutationLogReader.actor.h"
 	Reference<MutationLogReader> self;
-															#line 284 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.g.h"
+															#line 284 "/usr/src/libfdb_c/fdbclient/MutationLogReader.actor.g.h"
 };
 // This generated class is to be used only via Create()
-															#line 111 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.h"
+															#line 111 "/usr/src/libfdb_c/fdbclient/MutationLogReader.actor.h"
 class CreateActor final : public Actor<Reference<MutationLogReader>>, public ActorCallback< CreateActor, 0, Void >, public FastAllocated<CreateActor>, public CreateActorState<CreateActor> {
-															#line 289 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.g.h"
+															#line 289 "/usr/src/libfdb_c/fdbclient/MutationLogReader.actor.g.h"
 public:
 	using FastAllocated<CreateActor>::operator new;
 	using FastAllocated<CreateActor>::operator delete;
@@ -295,9 +295,9 @@ public:
 	void destroy() override { ((Actor<Reference<MutationLogReader>>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< CreateActor, 0, Void >;
-															#line 111 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.h"
+															#line 111 "/usr/src/libfdb_c/fdbclient/MutationLogReader.actor.h"
 	CreateActor(Database const& cx,Version const& bv,Version const& ev,Key const& uid,Key const& beginKey,unsigned const& pd) 
-															#line 300 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.g.h"
+															#line 300 "/usr/src/libfdb_c/fdbclient/MutationLogReader.actor.g.h"
 		 : Actor<Reference<MutationLogReader>>(),
 		   CreateActorState<CreateActor>(cx, bv, ev, uid, beginKey, pd)
 	{
@@ -320,28 +320,28 @@ friend struct ActorCallback< CreateActor, 0, Void >;
 
 	}
 };
-															#line 111 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.h"
+															#line 111 "/usr/src/libfdb_c/fdbclient/MutationLogReader.actor.h"
 [[nodiscard]] static Future<Reference<MutationLogReader>> Create( Database const& cx, Version const& bv, Version const& ev, Key const& uid, Key const& beginKey, unsigned const& pd ) {
-															#line 111 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.h"
+															#line 111 "/usr/src/libfdb_c/fdbclient/MutationLogReader.actor.h"
 	return Future<Reference<MutationLogReader>>(new CreateActor(cx, bv, ev, uid, beginKey, pd));
-															#line 327 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.g.h"
+															#line 327 "/usr/src/libfdb_c/fdbclient/MutationLogReader.actor.g.h"
 }
 
-#line 121 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.h"
+#line 121 "/usr/src/libfdb_c/fdbclient/MutationLogReader.actor.h"
 
 	Future<Standalone<RangeResultRef>> getNext();
 
 private:
-																#line 335 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.g.h"
+																#line 335 "/usr/src/libfdb_c/fdbclient/MutationLogReader.actor.g.h"
 [[nodiscard]] static Future<Void> initializePQ( MutationLogReader* const& self );
 template <class> friend class MutationLogReader_InitializePQActorState;
 
-#line 126 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.h"
-																#line 340 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.g.h"
+#line 126 "/usr/src/libfdb_c/fdbclient/MutationLogReader.actor.h"
+																#line 340 "/usr/src/libfdb_c/fdbclient/MutationLogReader.actor.g.h"
 [[nodiscard]] static Future<Standalone<RangeResultRef>> getNext_impl( MutationLogReader* const& self );
 template <class> friend class MutationLogReader_GetNext_implActorState;
 
-#line 127 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MutationLogReader.actor.h"
+#line 127 "/usr/src/libfdb_c/fdbclient/MutationLogReader.actor.h"
 
 	std::vector<std::unique_ptr<mutation_log_reader::PipelinedReader>> pipelinedReaders;
 	std::priority_queue<mutation_log_reader::RangeResultBlock> priorityQueue;

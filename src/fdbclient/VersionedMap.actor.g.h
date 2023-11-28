@@ -1,5 +1,5 @@
 #define POST_ACTOR_COMPILER 1
-#line 1 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/VersionedMap.actor.h"
+#line 1 "/usr/src/libfdb_c/fdbclient/VersionedMap.actor.h"
 /*
  * VersionedMap.actor.h
  *
@@ -33,25 +33,25 @@
 #include "flow/flow.h"
 #include "flow/actorcompiler.h" // This must be the last #include.
 
-															#line 36 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/VersionedMap.actor.g.h"
+															#line 36 "/usr/src/libfdb_c/fdbclient/VersionedMap.actor.g.h"
 namespace {
 // This generated class is to be used only via deferredCleanupActor()
-															#line 34 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/VersionedMap.actor.h"
+															#line 34 "/usr/src/libfdb_c/fdbclient/VersionedMap.actor.h"
 template <class Tree, class DeferredCleanupActorActor>
-															#line 34 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/VersionedMap.actor.h"
+															#line 34 "/usr/src/libfdb_c/fdbclient/VersionedMap.actor.h"
 class DeferredCleanupActorActorState {
-															#line 43 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/VersionedMap.actor.g.h"
+															#line 43 "/usr/src/libfdb_c/fdbclient/VersionedMap.actor.g.h"
 public:
-															#line 34 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/VersionedMap.actor.h"
+															#line 34 "/usr/src/libfdb_c/fdbclient/VersionedMap.actor.h"
 	DeferredCleanupActorActorState(std::vector<Tree> const& toFree,TaskPriority const& taskID = TaskPriority::DefaultYield) 
-															#line 34 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/VersionedMap.actor.h"
-															#line 34 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/VersionedMap.actor.h"
+															#line 34 "/usr/src/libfdb_c/fdbclient/VersionedMap.actor.h"
+															#line 34 "/usr/src/libfdb_c/fdbclient/VersionedMap.actor.h"
 		 : toFree(toFree),
-															#line 34 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/VersionedMap.actor.h"
+															#line 34 "/usr/src/libfdb_c/fdbclient/VersionedMap.actor.h"
 		   taskID(taskID),
-															#line 36 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/VersionedMap.actor.h"
+															#line 36 "/usr/src/libfdb_c/fdbclient/VersionedMap.actor.h"
 		   freeCount(0)
-															#line 54 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/VersionedMap.actor.g.h"
+															#line 54 "/usr/src/libfdb_c/fdbclient/VersionedMap.actor.g.h"
 	{
 		fdb_probe_actor_create("deferredCleanupActor", reinterpret_cast<unsigned long>(this));
 
@@ -64,9 +64,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 37 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/VersionedMap.actor.h"
+															#line 37 "/usr/src/libfdb_c/fdbclient/VersionedMap.actor.h"
 			;
-															#line 69 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/VersionedMap.actor.g.h"
+															#line 69 "/usr/src/libfdb_c/fdbclient/VersionedMap.actor.g.h"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -87,9 +87,9 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 50 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/VersionedMap.actor.h"
+															#line 50 "/usr/src/libfdb_c/fdbclient/VersionedMap.actor.h"
 		if (!static_cast<DeferredCleanupActorActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~DeferredCleanupActorActorState(); static_cast<DeferredCleanupActorActor*>(this)->destroy(); return 0; }
-															#line 92 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/VersionedMap.actor.g.h"
+															#line 92 "/usr/src/libfdb_c/fdbclient/VersionedMap.actor.g.h"
 		new (&static_cast<DeferredCleanupActorActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~DeferredCleanupActorActorState();
 		static_cast<DeferredCleanupActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -106,41 +106,41 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 37 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/VersionedMap.actor.h"
+															#line 37 "/usr/src/libfdb_c/fdbclient/VersionedMap.actor.h"
 		if (!(!toFree.empty()))
-															#line 111 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/VersionedMap.actor.g.h"
+															#line 111 "/usr/src/libfdb_c/fdbclient/VersionedMap.actor.g.h"
 		{
 			return a_body1break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 38 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/VersionedMap.actor.h"
+															#line 38 "/usr/src/libfdb_c/fdbclient/VersionedMap.actor.h"
 		Tree a = std::move(toFree.back());
-															#line 39 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/VersionedMap.actor.h"
+															#line 39 "/usr/src/libfdb_c/fdbclient/VersionedMap.actor.h"
 		toFree.pop_back();
-															#line 41 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/VersionedMap.actor.h"
+															#line 41 "/usr/src/libfdb_c/fdbclient/VersionedMap.actor.h"
 		for(int c = 0;c < 3;c++) {
-															#line 42 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/VersionedMap.actor.h"
+															#line 42 "/usr/src/libfdb_c/fdbclient/VersionedMap.actor.h"
 			if (a->pointer[c] && a->pointer[c]->isSoleOwner())
-															#line 123 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/VersionedMap.actor.g.h"
+															#line 123 "/usr/src/libfdb_c/fdbclient/VersionedMap.actor.g.h"
 			{
-															#line 43 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/VersionedMap.actor.h"
+															#line 43 "/usr/src/libfdb_c/fdbclient/VersionedMap.actor.h"
 				toFree.push_back(std::move(a->pointer[c]));
-															#line 127 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/VersionedMap.actor.g.h"
+															#line 127 "/usr/src/libfdb_c/fdbclient/VersionedMap.actor.g.h"
 			}
 		}
-															#line 46 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/VersionedMap.actor.h"
+															#line 46 "/usr/src/libfdb_c/fdbclient/VersionedMap.actor.h"
 		if (++freeCount % 100 == 0)
-															#line 132 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/VersionedMap.actor.g.h"
+															#line 132 "/usr/src/libfdb_c/fdbclient/VersionedMap.actor.g.h"
 		{
-															#line 47 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/VersionedMap.actor.h"
+															#line 47 "/usr/src/libfdb_c/fdbclient/VersionedMap.actor.h"
 			StrictFuture<Void> __when_expr_0 = yield(taskID);
-															#line 47 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/VersionedMap.actor.h"
+															#line 47 "/usr/src/libfdb_c/fdbclient/VersionedMap.actor.h"
 			if (static_cast<DeferredCleanupActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 138 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/VersionedMap.actor.g.h"
+															#line 138 "/usr/src/libfdb_c/fdbclient/VersionedMap.actor.g.h"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<DeferredCleanupActorActor*>(this)->actor_wait_state = 1;
-															#line 47 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/VersionedMap.actor.h"
+															#line 47 "/usr/src/libfdb_c/fdbclient/VersionedMap.actor.h"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< DeferredCleanupActorActor, 0, Void >*>(static_cast<DeferredCleanupActorActor*>(this)));
-															#line 143 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/VersionedMap.actor.g.h"
+															#line 143 "/usr/src/libfdb_c/fdbclient/VersionedMap.actor.g.h"
 			loopDepth = 0;
 		}
 		else
@@ -244,20 +244,20 @@ public:
 		fdb_probe_actor_exit("deferredCleanupActor", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 34 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/VersionedMap.actor.h"
+															#line 34 "/usr/src/libfdb_c/fdbclient/VersionedMap.actor.h"
 	std::vector<Tree> toFree;
-															#line 34 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/VersionedMap.actor.h"
+															#line 34 "/usr/src/libfdb_c/fdbclient/VersionedMap.actor.h"
 	TaskPriority taskID;
-															#line 36 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/VersionedMap.actor.h"
+															#line 36 "/usr/src/libfdb_c/fdbclient/VersionedMap.actor.h"
 	int freeCount;
-															#line 253 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/VersionedMap.actor.g.h"
+															#line 253 "/usr/src/libfdb_c/fdbclient/VersionedMap.actor.g.h"
 };
 // This generated class is to be used only via deferredCleanupActor()
-															#line 34 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/VersionedMap.actor.h"
+															#line 34 "/usr/src/libfdb_c/fdbclient/VersionedMap.actor.h"
 template <class Tree>
-															#line 34 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/VersionedMap.actor.h"
+															#line 34 "/usr/src/libfdb_c/fdbclient/VersionedMap.actor.h"
 class DeferredCleanupActorActor final : public Actor<Void>, public ActorCallback< DeferredCleanupActorActor<Tree>, 0, Void >, public FastAllocated<DeferredCleanupActorActor<Tree>>, public DeferredCleanupActorActorState<Tree, DeferredCleanupActorActor<Tree>> {
-															#line 260 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/VersionedMap.actor.g.h"
+															#line 260 "/usr/src/libfdb_c/fdbclient/VersionedMap.actor.g.h"
 public:
 	using FastAllocated<DeferredCleanupActorActor<Tree>>::operator new;
 	using FastAllocated<DeferredCleanupActorActor<Tree>>::operator delete;
@@ -266,9 +266,9 @@ public:
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< DeferredCleanupActorActor<Tree>, 0, Void >;
-															#line 34 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/VersionedMap.actor.h"
+															#line 34 "/usr/src/libfdb_c/fdbclient/VersionedMap.actor.h"
 	DeferredCleanupActorActor(std::vector<Tree> const& toFree,TaskPriority const& taskID = TaskPriority::DefaultYield) 
-															#line 271 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/VersionedMap.actor.g.h"
+															#line 271 "/usr/src/libfdb_c/fdbclient/VersionedMap.actor.g.h"
 		 : Actor<Void>(),
 		   DeferredCleanupActorActorState<Tree, DeferredCleanupActorActor<Tree>>(toFree, taskID)
 	{
@@ -292,16 +292,16 @@ friend struct ActorCallback< DeferredCleanupActorActor<Tree>, 0, Void >;
 	}
 };
 }
-															#line 34 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/VersionedMap.actor.h"
+															#line 34 "/usr/src/libfdb_c/fdbclient/VersionedMap.actor.h"
 template <class Tree>
-															#line 34 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/VersionedMap.actor.h"
+															#line 34 "/usr/src/libfdb_c/fdbclient/VersionedMap.actor.h"
 [[nodiscard]] Future<Void> deferredCleanupActor( std::vector<Tree> const& toFree, TaskPriority const& taskID = TaskPriority::DefaultYield ) {
-															#line 34 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/VersionedMap.actor.h"
+															#line 34 "/usr/src/libfdb_c/fdbclient/VersionedMap.actor.h"
 	return Future<Void>(new DeferredCleanupActorActor<Tree>(toFree, taskID));
-															#line 301 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/VersionedMap.actor.g.h"
+															#line 301 "/usr/src/libfdb_c/fdbclient/VersionedMap.actor.g.h"
 }
 
-#line 52 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/VersionedMap.actor.h"
+#line 52 "/usr/src/libfdb_c/fdbclient/VersionedMap.actor.h"
 
 #include "flow/unactorcompiler.h"
 #endif

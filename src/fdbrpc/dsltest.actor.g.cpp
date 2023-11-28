@@ -1,5 +1,5 @@
 #define POST_ACTOR_COMPILER 1
-#line 1 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+#line 1 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 /*
  * dsltest.actor.cpp
  *
@@ -250,21 +250,21 @@ void memoryTest() {
 }
 #endif
 
-															#line 253 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 253 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 namespace {
 // This generated class is to be used only via addN()
-															#line 251 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 251 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 template <int N, class X, class AddNActor>
-															#line 251 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 251 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class AddNActorState {
-															#line 260 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 260 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
-															#line 251 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 251 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	AddNActorState(Future<X> const& in) 
-															#line 251 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
-															#line 251 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 251 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
+															#line 251 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		 : in(in)
-															#line 267 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 267 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 	{
 		fdb_probe_actor_create("addN", reinterpret_cast<unsigned long>(this));
 
@@ -277,16 +277,16 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 253 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 253 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			StrictFuture<X> __when_expr_0 = in;
-															#line 253 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 253 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			if (static_cast<AddNActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 284 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 284 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<AddNActor*>(this)->actor_wait_state = 1;
-															#line 253 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 253 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< AddNActor, 0, X >*>(static_cast<AddNActor*>(this)));
-															#line 289 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 289 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -307,9 +307,9 @@ public:
 	}
 	int a_body1cont1(X const& i,int loopDepth) 
 	{
-															#line 254 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 254 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (!static_cast<AddNActor*>(this)->SAV<X>::futures) { (void)(i + N); this->~AddNActorState(); static_cast<AddNActor*>(this)->destroy(); return 0; }
-															#line 312 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 312 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		new (&static_cast<AddNActor*>(this)->SAV< X >::value()) X(i + N);
 		this->~AddNActorState();
 		static_cast<AddNActor*>(this)->finishSendAndDelPromiseRef();
@@ -319,9 +319,9 @@ public:
 	}
 	int a_body1cont1(X && i,int loopDepth) 
 	{
-															#line 254 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 254 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (!static_cast<AddNActor*>(this)->SAV<X>::futures) { (void)(i + N); this->~AddNActorState(); static_cast<AddNActor*>(this)->destroy(); return 0; }
-															#line 324 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 324 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		new (&static_cast<AddNActor*>(this)->SAV< X >::value()) X(i + N);
 		this->~AddNActorState();
 		static_cast<AddNActor*>(this)->finishSendAndDelPromiseRef();
@@ -392,16 +392,16 @@ public:
 		fdb_probe_actor_exit("addN", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 251 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 251 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	Future<X> in;
-															#line 397 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 397 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 };
 // This generated class is to be used only via addN()
-															#line 251 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 251 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 template <int N, class X>
-															#line 251 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 251 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class AddNActor final : public Actor<X>, public ActorCallback< AddNActor<N, X>, 0, X >, public FastAllocated<AddNActor<N, X>>, public AddNActorState<N, X, AddNActor<N, X>> {
-															#line 404 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 404 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
 	using FastAllocated<AddNActor<N, X>>::operator new;
 	using FastAllocated<AddNActor<N, X>>::operator delete;
@@ -410,9 +410,9 @@ public:
 	void destroy() override { ((Actor<X>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< AddNActor<N, X>, 0, X >;
-															#line 251 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 251 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	AddNActor(Future<X> const& in) 
-															#line 415 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 415 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		 : Actor<X>(),
 		   AddNActorState<N, X, AddNActor<N, X>>(in)
 	{
@@ -436,34 +436,34 @@ friend struct ActorCallback< AddNActor<N, X>, 0, X >;
 	}
 };
 }
-															#line 251 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 251 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 template <int N, class X>
-															#line 251 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 251 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 Future<X> addN( Future<X> const& in ) {
-															#line 251 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 251 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	return Future<X>(new AddNActor<N, X>(in));
-															#line 445 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 445 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 }
 
-#line 256 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+#line 256 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 
-															#line 450 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 450 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 namespace {
 // This generated class is to be used only via switchTest()
-															#line 257 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 257 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 template <class A, class B, class SwitchTestActor>
-															#line 257 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 257 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class SwitchTestActorState {
-															#line 457 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 457 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
-															#line 257 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 257 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	SwitchTestActorState(FutureStream<A> const& as,Future<B> const& oneb) 
-															#line 257 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
-															#line 257 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 257 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
+															#line 257 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		 : as(as),
-															#line 257 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 257 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		   oneb(oneb)
-															#line 466 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 466 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 	{
 		fdb_probe_actor_create("switchTest", reinterpret_cast<unsigned long>(this));
 
@@ -476,9 +476,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 259 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 259 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			;
-															#line 481 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 481 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -499,13 +499,13 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 268 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 268 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		for(;;) {
-															#line 269 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 269 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			std::cout << "Done!" << std::endl;
-															#line 270 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 270 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			if (!static_cast<SwitchTestActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~SwitchTestActorState(); static_cast<SwitchTestActor*>(this)->destroy(); return 0; }
-															#line 508 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 508 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			new (&static_cast<SwitchTestActor*>(this)->SAV< Void >::value()) Void(Void());
 			this->~SwitchTestActorState();
 			static_cast<SwitchTestActor*>(this)->finishSendAndDelPromiseRef();
@@ -523,22 +523,22 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 260 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 260 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		FutureStream<A> __when_expr_0 = as;
-															#line 259 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 259 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (static_cast<SwitchTestActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 530 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 530 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.pop(), loopDepth); };
-															#line 263 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 263 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		StrictFuture<B> __when_expr_1 = oneb;
-															#line 534 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 534 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when2(__when_expr_1.get(), loopDepth); };
 		static_cast<SwitchTestActor*>(this)->actor_wait_state = 1;
-															#line 260 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 260 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		__when_expr_0.addCallbackAndClear(static_cast<ActorSingleCallback< SwitchTestActor, 0, A >*>(static_cast<SwitchTestActor*>(this)));
-															#line 263 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 263 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< SwitchTestActor, 1, B >*>(static_cast<SwitchTestActor*>(this)));
-															#line 541 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 541 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -564,36 +564,36 @@ public:
 	}
 	int a_body1loopBody1when1(A const& a,int loopDepth) 
 	{
-															#line 261 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 261 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		std::cout << "A " << a << std::endl;
-															#line 569 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 569 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1when1(A && a,int loopDepth) 
 	{
-															#line 261 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 261 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		std::cout << "A " << a << std::endl;
-															#line 578 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 578 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1when2(B const& b,int loopDepth) 
 	{
-															#line 264 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 264 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		std::cout << "B " << b << std::endl;
-															#line 587 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 587 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		return a_body1break1(loopDepth==0?0:loopDepth-1); // break
 
 		return loopDepth;
 	}
 	int a_body1loopBody1when2(B && b,int loopDepth) 
 	{
-															#line 264 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 264 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		std::cout << "B " << b << std::endl;
-															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 596 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		return a_body1break1(loopDepth==0?0:loopDepth-1); // break
 
 		return loopDepth;
@@ -695,18 +695,18 @@ public:
 		fdb_probe_actor_exit("switchTest", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 257 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 257 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	FutureStream<A> as;
-															#line 257 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 257 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	Future<B> oneb;
-															#line 702 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 702 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 };
 // This generated class is to be used only via switchTest()
-															#line 257 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 257 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 template <class A, class B>
-															#line 257 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 257 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class SwitchTestActor final : public Actor<Void>, public ActorSingleCallback< SwitchTestActor<A, B>, 0, A >, public ActorCallback< SwitchTestActor<A, B>, 1, B >, public FastAllocated<SwitchTestActor<A, B>>, public SwitchTestActorState<A, B, SwitchTestActor<A, B>> {
-															#line 709 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 709 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
 	using FastAllocated<SwitchTestActor<A, B>>::operator new;
 	using FastAllocated<SwitchTestActor<A, B>>::operator delete;
@@ -716,9 +716,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorSingleCallback< SwitchTestActor<A, B>, 0, A >;
 friend struct ActorCallback< SwitchTestActor<A, B>, 1, B >;
-															#line 257 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 257 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	SwitchTestActor(FutureStream<A> const& as,Future<B> const& oneb) 
-															#line 721 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 721 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		 : Actor<Void>(),
 		   SwitchTestActorState<A, B, SwitchTestActor<A, B>>(as, oneb)
 	{
@@ -742,16 +742,16 @@ friend struct ActorCallback< SwitchTestActor<A, B>, 1, B >;
 	}
 };
 }
-															#line 257 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 257 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 template <class A, class B>
-															#line 257 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 257 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 Future<Void> switchTest( FutureStream<A> const& as, Future<B> const& oneb ) {
-															#line 257 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 257 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	return Future<Void>(new SwitchTestActor<A, B>(as, oneb));
-															#line 751 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 751 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 }
 
-#line 273 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+#line 273 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 
 class TestBuffer : public ReferenceCounted<TestBuffer> {
 public:
@@ -962,23 +962,23 @@ Future<Void> threadSafetySender(std::vector<PromiseT>& v, Event& start, Event& r
 	return Void();
 }
 
-															#line 965 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 965 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 namespace {
 // This generated class is to be used only via threadSafetyWaiter()
-															#line 483 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 483 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 template <class ThreadSafetyWaiterActor>
-															#line 483 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 483 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class ThreadSafetyWaiterActorState {
-															#line 972 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 972 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
-															#line 483 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 483 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	ThreadSafetyWaiterActorState(Future<Void> const& f,int32_t* const& count) 
-															#line 483 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
-															#line 483 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 483 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
+															#line 483 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		 : f(f),
-															#line 483 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 483 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		   count(count)
-															#line 981 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 981 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 	{
 		fdb_probe_actor_create("threadSafetyWaiter", reinterpret_cast<unsigned long>(this));
 
@@ -991,15 +991,15 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 484 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 484 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			StrictFuture<Void> __when_expr_0 = f;
-															#line 484 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 484 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
-															#line 998 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 998 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			static_cast<ThreadSafetyWaiterActor*>(this)->actor_wait_state = 1;
-															#line 484 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 484 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ThreadSafetyWaiterActor, 0, Void >*>(static_cast<ThreadSafetyWaiterActor*>(this)));
-															#line 1002 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 1002 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -1019,18 +1019,18 @@ public:
 	}
 	int a_body1cont1(Void const& _,int loopDepth) 
 	{
-															#line 485 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 485 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		interlockedIncrement(count);
-															#line 1024 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 1024 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		loopDepth = a_body1cont3(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1cont1(Void && _,int loopDepth) 
 	{
-															#line 485 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 485 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		interlockedIncrement(count);
-															#line 1033 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 1033 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		loopDepth = a_body1cont3(loopDepth);
 
 		return loopDepth;
@@ -1100,23 +1100,23 @@ public:
 	}
 	int a_body1cont3(int loopDepth) 
 	{
-															#line 483 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 483 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		delete static_cast<ThreadSafetyWaiterActor*>(this);
-															#line 1105 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 1105 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		return 0;
 
 		return loopDepth;
 	}
-															#line 483 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 483 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	Future<Void> f;
-															#line 483 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 483 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	int32_t* count;
-															#line 1114 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 1114 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 };
 // This generated class is to be used only via threadSafetyWaiter()
-															#line 483 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 483 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class ThreadSafetyWaiterActor final : public Actor<void>, public ActorCallback< ThreadSafetyWaiterActor, 0, Void >, public FastAllocated<ThreadSafetyWaiterActor>, public ThreadSafetyWaiterActorState<ThreadSafetyWaiterActor> {
-															#line 1119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 1119 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
 	using FastAllocated<ThreadSafetyWaiterActor>::operator new;
 	using FastAllocated<ThreadSafetyWaiterActor>::operator delete;
@@ -1125,9 +1125,9 @@ public:
 	void destroy() {{ ((Actor<void>*)this)->~Actor(); operator delete(this); }}
 #pragma clang diagnostic pop
 friend struct ActorCallback< ThreadSafetyWaiterActor, 0, Void >;
-															#line 483 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 483 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	ThreadSafetyWaiterActor(Future<Void> const& f,int32_t* const& count) 
-															#line 1130 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 1130 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		 : Actor<void>(),
 		   ThreadSafetyWaiterActorState<ThreadSafetyWaiterActor>(f, count)
 	{
@@ -1142,33 +1142,33 @@ friend struct ActorCallback< ThreadSafetyWaiterActor, 0, Void >;
 	}
 };
 }
-															#line 483 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 483 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 void threadSafetyWaiter( Future<Void> const& f, int32_t* const& count ) {
-															#line 483 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 483 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	new ThreadSafetyWaiterActor(f, count);
-															#line 1149 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 1149 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 }
 
-#line 487 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
-															#line 1153 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+#line 487 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
+															#line 1153 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 namespace {
 // This generated class is to be used only via threadSafetyWaiter()
-															#line 487 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 487 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 template <class ThreadSafetyWaiterActor1>
-															#line 487 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 487 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class ThreadSafetyWaiterActor1State {
-															#line 1160 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 1160 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
-															#line 487 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 487 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	ThreadSafetyWaiterActor1State(FutureStream<Void> const& f,int const& n,int32_t* const& count) 
-															#line 487 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
-															#line 487 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 487 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
+															#line 487 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		 : f(f),
-															#line 487 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 487 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		   n(n),
-															#line 487 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 487 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		   count(count)
-															#line 1171 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 1171 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 	{
 		fdb_probe_actor_create("threadSafetyWaiter", reinterpret_cast<unsigned long>(this));
 
@@ -1181,9 +1181,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 488 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 488 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			;
-															#line 1186 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 1186 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -1216,21 +1216,21 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 488 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 488 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (!(n--))
-															#line 1221 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 1221 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		{
 			return a_body1break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 489 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 489 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		FutureStream<Void> __when_expr_0 = f;
-															#line 489 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 489 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.pop(), loopDepth); };
-															#line 1229 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 1229 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		static_cast<ThreadSafetyWaiterActor1*>(this)->actor_wait_state = 1;
-															#line 489 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 489 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		__when_expr_0.addCallbackAndClear(static_cast<ActorSingleCallback< ThreadSafetyWaiterActor1, 0, Void >*>(static_cast<ThreadSafetyWaiterActor1*>(this)));
-															#line 1233 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 1233 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -1250,18 +1250,18 @@ public:
 	}
 	int a_body1loopBody1cont1(Void const& _,int loopDepth) 
 	{
-															#line 490 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 490 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		interlockedIncrement(count);
-															#line 1255 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 1255 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		if (loopDepth == 0) return a_body1loopHead1(0);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont1(Void && _,int loopDepth) 
 	{
-															#line 490 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 490 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		interlockedIncrement(count);
-															#line 1264 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 1264 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		if (loopDepth == 0) return a_body1loopHead1(0);
 
 		return loopDepth;
@@ -1331,25 +1331,25 @@ public:
 	}
 	int a_body1cont2(int loopDepth) 
 	{
-															#line 487 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 487 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		delete static_cast<ThreadSafetyWaiterActor1*>(this);
-															#line 1336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 1336 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		return 0;
 
 		return loopDepth;
 	}
-															#line 487 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 487 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	FutureStream<Void> f;
-															#line 487 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 487 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	int n;
-															#line 487 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 487 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	int32_t* count;
-															#line 1347 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 1347 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 };
 // This generated class is to be used only via threadSafetyWaiter()
-															#line 487 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 487 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class ThreadSafetyWaiterActor1 final : public Actor<void>, public ActorSingleCallback< ThreadSafetyWaiterActor1, 0, Void >, public FastAllocated<ThreadSafetyWaiterActor1>, public ThreadSafetyWaiterActor1State<ThreadSafetyWaiterActor1> {
-															#line 1352 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 1352 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
 	using FastAllocated<ThreadSafetyWaiterActor1>::operator new;
 	using FastAllocated<ThreadSafetyWaiterActor1>::operator delete;
@@ -1358,9 +1358,9 @@ public:
 	void destroy() {{ ((Actor<void>*)this)->~Actor(); operator delete(this); }}
 #pragma clang diagnostic pop
 friend struct ActorSingleCallback< ThreadSafetyWaiterActor1, 0, Void >;
-															#line 487 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 487 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	ThreadSafetyWaiterActor1(FutureStream<Void> const& f,int const& n,int32_t* const& count) 
-															#line 1363 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 1363 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		 : Actor<void>(),
 		   ThreadSafetyWaiterActor1State<ThreadSafetyWaiterActor1>(f, n, count)
 	{
@@ -1375,14 +1375,14 @@ friend struct ActorSingleCallback< ThreadSafetyWaiterActor1, 0, Void >;
 	}
 };
 }
-															#line 487 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 487 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 void threadSafetyWaiter( FutureStream<Void> const& f, int const& n, int32_t* const& count ) {
-															#line 487 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 487 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	new ThreadSafetyWaiterActor1(f, n, count);
-															#line 1382 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 1382 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 }
 
-#line 493 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+#line 493 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 
 #if 0
 void threadSafetyTest() {
@@ -1455,21 +1455,21 @@ void threadSafetyTest2() {
 
 volatile int32_t cancelled = 0, returned = 0;
 
-															#line 1458 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 1458 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 namespace {
 // This generated class is to be used only via returnCancelRacer()
-															#line 565 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 565 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 template <class ReturnCancelRacerActor>
-															#line 565 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 565 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class ReturnCancelRacerActorState {
-															#line 1465 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 1465 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
-															#line 565 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 565 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	ReturnCancelRacerActorState(Future<Void> const& f) 
-															#line 565 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
-															#line 565 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 565 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
+															#line 565 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		 : f(f)
-															#line 1472 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 1472 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 	{
 		fdb_probe_actor_create("returnCancelRacer", reinterpret_cast<unsigned long>(this));
 
@@ -1483,16 +1483,16 @@ public:
 	{
 		try {
 			try {
-															#line 567 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 567 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 				StrictFuture<Void> __when_expr_0 = f;
-															#line 567 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 567 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 				if (static_cast<ReturnCancelRacerActor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), loopDepth);
-															#line 1490 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 1490 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 				if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch2(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 				static_cast<ReturnCancelRacerActor*>(this)->actor_wait_state = 1;
-															#line 567 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 567 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 				__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ReturnCancelRacerActor, 0, Void >*>(static_cast<ReturnCancelRacerActor*>(this)));
-															#line 1495 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 1495 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 				loopDepth = 0;
 			}
 			catch (Error& error) {
@@ -1519,11 +1519,11 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 572 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 572 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		interlockedIncrement( &returned );
-															#line 573 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 573 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (!static_cast<ReturnCancelRacerActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~ReturnCancelRacerActorState(); static_cast<ReturnCancelRacerActor*>(this)->destroy(); return 0; }
-															#line 1526 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 1526 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		new (&static_cast<ReturnCancelRacerActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~ReturnCancelRacerActorState();
 		static_cast<ReturnCancelRacerActor*>(this)->finishSendAndDelPromiseRef();
@@ -1534,11 +1534,11 @@ public:
 	int a_body1Catch2(const Error& __current_error,int loopDepth=0) 
 	{
 		try {
-															#line 569 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 569 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			interlockedIncrement( &cancelled );
-															#line 570 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 570 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			return a_body1Catch1(__current_error, loopDepth);
-															#line 1541 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 1541 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		}
 		catch (Error& error) {
 			loopDepth = a_body1Catch1(error, loopDepth);
@@ -1636,14 +1636,14 @@ public:
 
 		return loopDepth;
 	}
-															#line 565 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 565 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	Future<Void> f;
-															#line 1641 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 1641 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 };
 // This generated class is to be used only via returnCancelRacer()
-															#line 565 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 565 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class ReturnCancelRacerActor final : public Actor<Void>, public ActorCallback< ReturnCancelRacerActor, 0, Void >, public FastAllocated<ReturnCancelRacerActor>, public ReturnCancelRacerActorState<ReturnCancelRacerActor> {
-															#line 1646 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 1646 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
 	using FastAllocated<ReturnCancelRacerActor>::operator new;
 	using FastAllocated<ReturnCancelRacerActor>::operator delete;
@@ -1652,9 +1652,9 @@ public:
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< ReturnCancelRacerActor, 0, Void >;
-															#line 565 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 565 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	ReturnCancelRacerActor(Future<Void> const& f) 
-															#line 1657 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 1657 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		 : Actor<Void>(),
 		   ReturnCancelRacerActorState<ReturnCancelRacerActor>(f)
 	{
@@ -1678,14 +1678,14 @@ friend struct ActorCallback< ReturnCancelRacerActor, 0, Void >;
 	}
 };
 }
-															#line 565 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 565 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 Future<Void> returnCancelRacer( Future<Void> const& f ) {
-															#line 565 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 565 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	return Future<Void>(new ReturnCancelRacerActor(f));
-															#line 1685 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 1685 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 }
 
-#line 575 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+#line 575 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 
 void returnCancelRaceTest() {
 	int N = 100, M = 100;
@@ -1728,23 +1728,23 @@ void returnCancelRaceTest() {
 }
 #endif
 
-															#line 1731 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 1731 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 namespace {
 // This generated class is to be used only via chooseTest()
-															#line 617 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 617 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 template <class ChooseTestActor>
-															#line 617 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 617 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class ChooseTestActorState {
-															#line 1738 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 1738 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
-															#line 617 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 617 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	ChooseTestActorState(Future<int> const& a,Future<int> const& b) 
-															#line 617 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
-															#line 617 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 617 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
+															#line 617 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		 : a(a),
-															#line 617 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 617 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		   b(b)
-															#line 1747 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 1747 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 	{
 		fdb_probe_actor_create("chooseTest", reinterpret_cast<unsigned long>(this));
 
@@ -1757,22 +1757,22 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 619 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 619 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			StrictFuture<int> __when_expr_0 = a;
-															#line 618 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 618 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			if (static_cast<ChooseTestActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 1764 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 1764 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
-															#line 622 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 622 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			StrictFuture<int> __when_expr_1 = b;
-															#line 1768 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 1768 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1when2(__when_expr_1.get(), loopDepth); };
 			static_cast<ChooseTestActor*>(this)->actor_wait_state = 1;
-															#line 619 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 619 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ChooseTestActor, 0, int >*>(static_cast<ChooseTestActor*>(this)));
-															#line 622 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 622 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< ChooseTestActor, 1, int >*>(static_cast<ChooseTestActor*>(this)));
-															#line 1775 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 1775 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -1793,9 +1793,9 @@ public:
 	}
 	int a_body1when1(int const& A,int loopDepth) 
 	{
-															#line 620 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 620 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (!static_cast<ChooseTestActor*>(this)->SAV<int>::futures) { (void)(A); this->~ChooseTestActorState(); static_cast<ChooseTestActor*>(this)->destroy(); return 0; }
-															#line 1798 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 1798 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		new (&static_cast<ChooseTestActor*>(this)->SAV< int >::value()) int(A);
 		this->~ChooseTestActorState();
 		static_cast<ChooseTestActor*>(this)->finishSendAndDelPromiseRef();
@@ -1805,9 +1805,9 @@ public:
 	}
 	int a_body1when1(int && A,int loopDepth) 
 	{
-															#line 620 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 620 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (!static_cast<ChooseTestActor*>(this)->SAV<int>::futures) { (void)(A); this->~ChooseTestActorState(); static_cast<ChooseTestActor*>(this)->destroy(); return 0; }
-															#line 1810 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 1810 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		new (&static_cast<ChooseTestActor*>(this)->SAV< int >::value()) int(A);
 		this->~ChooseTestActorState();
 		static_cast<ChooseTestActor*>(this)->finishSendAndDelPromiseRef();
@@ -1817,9 +1817,9 @@ public:
 	}
 	int a_body1when2(int const& B,int loopDepth) 
 	{
-															#line 623 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 623 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (!static_cast<ChooseTestActor*>(this)->SAV<int>::futures) { (void)(B); this->~ChooseTestActorState(); static_cast<ChooseTestActor*>(this)->destroy(); return 0; }
-															#line 1822 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 1822 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		new (&static_cast<ChooseTestActor*>(this)->SAV< int >::value()) int(B);
 		this->~ChooseTestActorState();
 		static_cast<ChooseTestActor*>(this)->finishSendAndDelPromiseRef();
@@ -1829,9 +1829,9 @@ public:
 	}
 	int a_body1when2(int && B,int loopDepth) 
 	{
-															#line 623 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 623 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (!static_cast<ChooseTestActor*>(this)->SAV<int>::futures) { (void)(B); this->~ChooseTestActorState(); static_cast<ChooseTestActor*>(this)->destroy(); return 0; }
-															#line 1834 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 1834 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		new (&static_cast<ChooseTestActor*>(this)->SAV< int >::value()) int(B);
 		this->~ChooseTestActorState();
 		static_cast<ChooseTestActor*>(this)->finishSendAndDelPromiseRef();
@@ -1936,16 +1936,16 @@ public:
 		fdb_probe_actor_exit("chooseTest", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 617 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 617 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	Future<int> a;
-															#line 617 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 617 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	Future<int> b;
-															#line 1943 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 1943 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 };
 // This generated class is to be used only via chooseTest()
-															#line 617 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 617 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class ChooseTestActor final : public Actor<int>, public ActorCallback< ChooseTestActor, 0, int >, public ActorCallback< ChooseTestActor, 1, int >, public FastAllocated<ChooseTestActor>, public ChooseTestActorState<ChooseTestActor> {
-															#line 1948 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 1948 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
 	using FastAllocated<ChooseTestActor>::operator new;
 	using FastAllocated<ChooseTestActor>::operator delete;
@@ -1955,9 +1955,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< ChooseTestActor, 0, int >;
 friend struct ActorCallback< ChooseTestActor, 1, int >;
-															#line 617 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 617 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	ChooseTestActor(Future<int> const& a,Future<int> const& b) 
-															#line 1960 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 1960 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		 : Actor<int>(),
 		   ChooseTestActorState<ChooseTestActor>(a, b)
 	{
@@ -1981,14 +1981,14 @@ friend struct ActorCallback< ChooseTestActor, 1, int >;
 	}
 };
 }
-															#line 617 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 617 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 Future<int> chooseTest( Future<int> const& a, Future<int> const& b ) {
-															#line 617 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 617 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	return Future<int>(new ChooseTestActor(a, b));
-															#line 1988 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 1988 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 }
 
-#line 627 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+#line 627 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 
 void showArena(ArenaBlock* a, ArenaBlock* parent) {
 	printf("ArenaBlock %p (<-%p): %d bytes, %d refs\n", a, parent, a->size(), a->debugGetReferenceCount());
@@ -2049,21 +2049,21 @@ void arenaTest() {
 	// showArena( ar.impl.getPtr(), 0 );
 };
 
-															#line 2052 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2052 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 namespace {
 // This generated class is to be used only via testStream()
-															#line 687 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 687 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 template <class TestStreamActor>
-															#line 687 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 687 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class TestStreamActorState {
-															#line 2059 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2059 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
-															#line 687 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 687 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	TestStreamActorState(FutureStream<int> const& xs) 
-															#line 687 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
-															#line 687 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 687 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
+															#line 687 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		 : xs(xs)
-															#line 2066 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2066 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 	{
 		fdb_probe_actor_create("testStream", reinterpret_cast<unsigned long>(this));
 
@@ -2076,9 +2076,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 688 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 688 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			;
-															#line 2081 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2081 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -2105,33 +2105,33 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 689 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 689 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		FutureStream<int> __when_expr_0 = xs;
-															#line 689 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 689 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.pop(), loopDepth); };
-															#line 2112 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2112 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		static_cast<TestStreamActor*>(this)->actor_wait_state = 1;
-															#line 689 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 689 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		__when_expr_0.addCallbackAndClear(static_cast<ActorSingleCallback< TestStreamActor, 0, int >*>(static_cast<TestStreamActor*>(this)));
-															#line 2116 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2116 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont1(int const& x,int loopDepth) 
 	{
-															#line 690 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 690 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		std::cout << x << std::endl;
-															#line 2125 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2125 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		if (loopDepth == 0) return a_body1loopHead1(0);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont1(int && x,int loopDepth) 
 	{
-															#line 690 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 690 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		std::cout << x << std::endl;
-															#line 2134 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2134 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		if (loopDepth == 0) return a_body1loopHead1(0);
 
 		return loopDepth;
@@ -2199,14 +2199,14 @@ public:
 		fdb_probe_actor_exit("testStream", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 687 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 687 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	FutureStream<int> xs;
-															#line 2204 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2204 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 };
 // This generated class is to be used only via testStream()
-															#line 687 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 687 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class TestStreamActor final : public Actor<void>, public ActorSingleCallback< TestStreamActor, 0, int >, public FastAllocated<TestStreamActor>, public TestStreamActorState<TestStreamActor> {
-															#line 2209 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2209 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
 	using FastAllocated<TestStreamActor>::operator new;
 	using FastAllocated<TestStreamActor>::operator delete;
@@ -2215,9 +2215,9 @@ public:
 	void destroy() {{ ((Actor<void>*)this)->~Actor(); operator delete(this); }}
 #pragma clang diagnostic pop
 friend struct ActorSingleCallback< TestStreamActor, 0, int >;
-															#line 687 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 687 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	TestStreamActor(FutureStream<int> const& xs) 
-															#line 2220 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2220 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		 : Actor<void>(),
 		   TestStreamActorState<TestStreamActor>(xs)
 	{
@@ -2232,30 +2232,30 @@ friend struct ActorSingleCallback< TestStreamActor, 0, int >;
 	}
 };
 }
-															#line 687 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 687 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 void testStream( FutureStream<int> const& xs ) {
-															#line 687 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 687 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	new TestStreamActor(xs);
-															#line 2239 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2239 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 }
 
-#line 693 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+#line 693 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 
-															#line 2244 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2244 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 namespace {
 // This generated class is to be used only via actorTest1()
-															#line 694 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 694 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 template <class ActorTest1Actor>
-															#line 694 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 694 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class ActorTest1ActorState {
-															#line 2251 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2251 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
-															#line 694 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 694 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	ActorTest1ActorState(bool const& b) 
-															#line 694 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
-															#line 694 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 694 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
+															#line 694 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		 : b(b)
-															#line 2258 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2258 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 	{
 		fdb_probe_actor_create("actorTest1", reinterpret_cast<unsigned long>(this));
 
@@ -2268,19 +2268,19 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 695 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 695 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			printf("1");
-															#line 696 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 696 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			if (b)
-															#line 2275 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2275 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			{
-															#line 697 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 697 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 				return a_body1Catch1(future_version(), loopDepth);
-															#line 2279 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2279 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			}
-															#line 698 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 698 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			if (!static_cast<ActorTest1Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~ActorTest1ActorState(); static_cast<ActorTest1Actor*>(this)->destroy(); return 0; }
-															#line 2283 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2283 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			new (&static_cast<ActorTest1Actor*>(this)->SAV< Void >::value()) Void(Void());
 			this->~ActorTest1ActorState();
 			static_cast<ActorTest1Actor*>(this)->finishSendAndDelPromiseRef();
@@ -2302,14 +2302,14 @@ public:
 
 		return loopDepth;
 	}
-															#line 694 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 694 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	bool b;
-															#line 2307 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2307 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 };
 // This generated class is to be used only via actorTest1()
-															#line 694 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 694 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class ActorTest1Actor final : public Actor<Void>, public FastAllocated<ActorTest1Actor>, public ActorTest1ActorState<ActorTest1Actor> {
-															#line 2312 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2312 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
 	using FastAllocated<ActorTest1Actor>::operator new;
 	using FastAllocated<ActorTest1Actor>::operator delete;
@@ -2317,9 +2317,9 @@ public:
 #pragma clang diagnostic ignored "-Wdelete-non-virtual-dtor"
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
-															#line 694 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 694 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	ActorTest1Actor(bool const& b) 
-															#line 2322 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2322 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		 : Actor<Void>(),
 		   ActorTest1ActorState<ActorTest1Actor>(b)
 	{
@@ -2342,30 +2342,30 @@ public:
 	}
 };
 }
-															#line 694 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 694 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 Future<Void> actorTest1( bool const& b ) {
-															#line 694 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 694 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	return Future<Void>(new ActorTest1Actor(b));
-															#line 2349 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2349 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 }
 
-#line 700 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+#line 700 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 
-															#line 2354 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2354 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 namespace {
 // This generated class is to be used only via actorTest2()
-															#line 701 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 701 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 template <class ActorTest2Actor>
-															#line 701 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 701 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class ActorTest2ActorState {
-															#line 2361 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2361 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
-															#line 701 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 701 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	ActorTest2ActorState(bool const& b) 
-															#line 701 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
-															#line 701 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 701 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
+															#line 701 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		 : b(b)
-															#line 2368 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2368 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 	{
 		fdb_probe_actor_create("actorTest2", reinterpret_cast<unsigned long>(this));
 
@@ -2378,15 +2378,15 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 702 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 702 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			printf("2");
-															#line 703 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 703 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			if (b)
-															#line 2385 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2385 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			{
-															#line 704 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 704 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 				return a_body1Catch1(future_version(), loopDepth);
-															#line 2389 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2389 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			}
 			loopDepth = a_body1cont3(loopDepth);
 		}
@@ -2407,21 +2407,21 @@ public:
 	}
 	int a_body1cont3(int loopDepth) 
 	{
-															#line 701 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 701 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		delete static_cast<ActorTest2Actor*>(this);
-															#line 2412 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2412 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		return 0;
 
 		return loopDepth;
 	}
-															#line 701 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 701 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	bool b;
-															#line 2419 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2419 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 };
 // This generated class is to be used only via actorTest2()
-															#line 701 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 701 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class ActorTest2Actor final : public Actor<void>, public FastAllocated<ActorTest2Actor>, public ActorTest2ActorState<ActorTest2Actor> {
-															#line 2424 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2424 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
 	using FastAllocated<ActorTest2Actor>::operator new;
 	using FastAllocated<ActorTest2Actor>::operator delete;
@@ -2429,9 +2429,9 @@ public:
 #pragma clang diagnostic ignored "-Wdelete-non-virtual-dtor"
 	void destroy() {{ ((Actor<void>*)this)->~Actor(); operator delete(this); }}
 #pragma clang diagnostic pop
-															#line 701 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 701 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	ActorTest2Actor(bool const& b) 
-															#line 2434 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2434 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		 : Actor<void>(),
 		   ActorTest2ActorState<ActorTest2Actor>(b)
 	{
@@ -2446,30 +2446,30 @@ public:
 	}
 };
 }
-															#line 701 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 701 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 void actorTest2( bool const& b ) {
-															#line 701 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 701 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	new ActorTest2Actor(b);
-															#line 2453 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2453 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 }
 
-#line 706 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+#line 706 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 
-															#line 2458 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2458 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 namespace {
 // This generated class is to be used only via actorTest3()
-															#line 707 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 707 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 template <class ActorTest3Actor>
-															#line 707 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 707 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class ActorTest3ActorState {
-															#line 2465 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2465 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
-															#line 707 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 707 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	ActorTest3ActorState(bool const& b) 
-															#line 707 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
-															#line 707 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 707 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
+															#line 707 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		 : b(b)
-															#line 2472 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2472 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 	{
 		fdb_probe_actor_create("actorTest3", reinterpret_cast<unsigned long>(this));
 
@@ -2483,13 +2483,13 @@ public:
 	{
 		try {
 			try {
-															#line 709 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 709 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 				if (b)
-															#line 2488 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2488 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 				{
-															#line 710 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 710 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 					return a_body1Catch2(future_version(), loopDepth);
-															#line 2492 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2492 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 				}
 				loopDepth = a_body1cont4(loopDepth);
 			}
@@ -2517,11 +2517,11 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 715 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 715 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		printf("\nactorTest3 failed\n");
-															#line 716 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 716 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (!static_cast<ActorTest3Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~ActorTest3ActorState(); static_cast<ActorTest3Actor*>(this)->destroy(); return 0; }
-															#line 2524 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2524 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		new (&static_cast<ActorTest3Actor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~ActorTest3ActorState();
 		static_cast<ActorTest3Actor*>(this)->finishSendAndDelPromiseRef();
@@ -2532,11 +2532,11 @@ public:
 	int a_body1Catch2(const Error& __current_error,int loopDepth=0) 
 	{
 		try {
-															#line 712 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 712 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			printf("3");
-															#line 713 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 713 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			if (!static_cast<ActorTest3Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~ActorTest3ActorState(); static_cast<ActorTest3Actor*>(this)->destroy(); return 0; }
-															#line 2539 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2539 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			new (&static_cast<ActorTest3Actor*>(this)->SAV< Void >::value()) Void(Void());
 			this->~ActorTest3ActorState();
 			static_cast<ActorTest3Actor*>(this)->finishSendAndDelPromiseRef();
@@ -2563,14 +2563,14 @@ public:
 
 		return loopDepth;
 	}
-															#line 707 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 707 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	bool b;
-															#line 2568 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2568 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 };
 // This generated class is to be used only via actorTest3()
-															#line 707 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 707 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class ActorTest3Actor final : public Actor<Void>, public FastAllocated<ActorTest3Actor>, public ActorTest3ActorState<ActorTest3Actor> {
-															#line 2573 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2573 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
 	using FastAllocated<ActorTest3Actor>::operator new;
 	using FastAllocated<ActorTest3Actor>::operator delete;
@@ -2578,9 +2578,9 @@ public:
 #pragma clang diagnostic ignored "-Wdelete-non-virtual-dtor"
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
-															#line 707 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 707 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	ActorTest3Actor(bool const& b) 
-															#line 2583 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2583 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		 : Actor<Void>(),
 		   ActorTest3ActorState<ActorTest3Actor>(b)
 	{
@@ -2603,32 +2603,32 @@ public:
 	}
 };
 }
-															#line 707 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 707 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 Future<Void> actorTest3( bool const& b ) {
-															#line 707 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 707 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	return Future<Void>(new ActorTest3Actor(b));
-															#line 2610 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2610 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 }
 
-#line 718 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+#line 718 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 
-															#line 2615 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2615 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 namespace {
 // This generated class is to be used only via actorTest4()
-															#line 719 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 719 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 template <class ActorTest4Actor>
-															#line 719 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 719 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class ActorTest4ActorState {
-															#line 2622 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2622 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
-															#line 719 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 719 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	ActorTest4ActorState(bool const& b) 
-															#line 719 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
-															#line 719 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 719 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
+															#line 719 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		 : b(b),
-															#line 720 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 720 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		   tstart(now())
-															#line 2631 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2631 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 	{
 		fdb_probe_actor_create("actorTest4", reinterpret_cast<unsigned long>(this));
 
@@ -2642,13 +2642,13 @@ public:
 	{
 		try {
 			try {
-															#line 722 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 722 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 				if (b)
-															#line 2647 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2647 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 				{
-															#line 723 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 723 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 					return a_body1Catch2(operation_failed(), loopDepth);
-															#line 2651 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2651 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 				}
 				loopDepth = a_body1cont4(loopDepth);
 			}
@@ -2676,23 +2676,23 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 727 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 727 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (now() < tstart + 1)
-															#line 2681 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2681 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		{
-															#line 728 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 728 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			printf("actorTest4 failed");
-															#line 2685 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2685 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		}
 		else
 		{
-															#line 730 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 730 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			printf("4");
-															#line 2691 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2691 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		}
-															#line 731 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 731 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (!static_cast<ActorTest4Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~ActorTest4ActorState(); static_cast<ActorTest4Actor*>(this)->destroy(); return 0; }
-															#line 2695 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2695 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		new (&static_cast<ActorTest4Actor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~ActorTest4ActorState();
 		static_cast<ActorTest4Actor*>(this)->finishSendAndDelPromiseRef();
@@ -2703,16 +2703,16 @@ public:
 	int a_body1Catch2(const Error& __current_error,int loopDepth=0) 
 	{
 		try {
-															#line 725 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 725 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			StrictFuture<Void> __when_expr_0 = delay(1);
-															#line 725 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 725 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			if (static_cast<ActorTest4Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 2710 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2710 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1Catch2when1(__when_expr_0.get(), loopDepth); };
 			static_cast<ActorTest4Actor*>(this)->actor_wait_state = 1;
-															#line 725 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 725 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ActorTest4Actor, 0, Void >*>(static_cast<ActorTest4Actor*>(this)));
-															#line 2715 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2715 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -2811,16 +2811,16 @@ public:
 		fdb_probe_actor_exit("actorTest4", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 719 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 719 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	bool b;
-															#line 720 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 720 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	double tstart;
-															#line 2818 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2818 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 };
 // This generated class is to be used only via actorTest4()
-															#line 719 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 719 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class ActorTest4Actor final : public Actor<Void>, public ActorCallback< ActorTest4Actor, 0, Void >, public FastAllocated<ActorTest4Actor>, public ActorTest4ActorState<ActorTest4Actor> {
-															#line 2823 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2823 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
 	using FastAllocated<ActorTest4Actor>::operator new;
 	using FastAllocated<ActorTest4Actor>::operator delete;
@@ -2829,9 +2829,9 @@ public:
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< ActorTest4Actor, 0, Void >;
-															#line 719 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 719 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	ActorTest4Actor(bool const& b) 
-															#line 2834 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2834 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		 : Actor<Void>(),
 		   ActorTest4ActorState<ActorTest4Actor>(b)
 	{
@@ -2855,30 +2855,30 @@ friend struct ActorCallback< ActorTest4Actor, 0, Void >;
 	}
 };
 }
-															#line 719 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 719 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 Future<Void> actorTest4( bool const& b ) {
-															#line 719 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 719 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	return Future<Void>(new ActorTest4Actor(b));
-															#line 2862 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2862 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 }
 
-#line 733 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+#line 733 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 
-															#line 2867 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2867 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 namespace {
 // This generated class is to be used only via actorTest5()
-															#line 734 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 734 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 template <class ActorTest5Actor>
-															#line 734 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 734 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class ActorTest5ActorState {
-															#line 2874 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2874 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
-															#line 734 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 734 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	ActorTest5ActorState() 
-															#line 734 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
-															#line 735 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 734 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
+															#line 735 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		 : caught(false)
-															#line 2881 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2881 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 	{
 		fdb_probe_actor_create("actorTest5", reinterpret_cast<unsigned long>(this));
 
@@ -2891,9 +2891,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 737 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 737 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			;
-															#line 2896 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2896 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -2921,9 +2921,9 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 738 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 738 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		;
-															#line 2926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2926 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		loopDepth = a_body1loopBody1loopHead1(loopDepth);
 
 		return loopDepth;
@@ -2937,48 +2937,48 @@ public:
 	}
 	int a_body1loopBody1loopBody1(int loopDepth) 
 	{
-															#line 739 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 739 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		inloop = false;
-															#line 740 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 740 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (caught)
-															#line 2944 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2944 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		{
-															#line 741 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 741 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			printf("5");
-															#line 742 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 742 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			if (!static_cast<ActorTest5Actor*>(this)->SAV<bool>::futures) { (void)(true); this->~ActorTest5ActorState(); static_cast<ActorTest5Actor*>(this)->destroy(); return 0; }
-															#line 2950 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2950 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			new (&static_cast<ActorTest5Actor*>(this)->SAV< bool >::value()) bool(true);
 			this->~ActorTest5ActorState();
 			static_cast<ActorTest5Actor*>(this)->finishSendAndDelPromiseRef();
 			return 0;
 		}
 		try {
-															#line 745 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 745 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			for(;;) {
-															#line 746 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 746 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 				if (inloop)
-															#line 2961 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2961 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 				{
-															#line 747 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 747 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 					printf("\nactorTest5 failed\n");
-															#line 748 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 748 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 					if (!static_cast<ActorTest5Actor*>(this)->SAV<bool>::futures) { (void)(false); this->~ActorTest5ActorState(); static_cast<ActorTest5Actor*>(this)->destroy(); return 0; }
-															#line 2967 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2967 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 					new (&static_cast<ActorTest5Actor*>(this)->SAV< bool >::value()) bool(false);
 					this->~ActorTest5ActorState();
 					static_cast<ActorTest5Actor*>(this)->finishSendAndDelPromiseRef();
 					return 0;
 				}
-															#line 750 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 750 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 				inloop = true;
-															#line 751 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 751 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 				if (1)
-															#line 2977 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2977 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 				{
-															#line 752 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 752 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 					return a_body1loopBody1loopBody1Catch1(operation_failed(), loopDepth);
-															#line 2981 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 2981 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 				}
 			}
 		}
@@ -2999,9 +2999,9 @@ public:
 	int a_body1loopBody1loopBody1Catch1(const Error& __current_error,int loopDepth=0) 
 	{
 		try {
-															#line 755 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 755 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			caught = true;
-															#line 3004 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3004 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			loopDepth = a_body1loopBody1loopBody1cont1(loopDepth);
 		}
 		catch (Error& error) {
@@ -3012,16 +3012,16 @@ public:
 
 		return loopDepth;
 	}
-															#line 735 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 735 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	bool caught;
-															#line 739 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 739 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	bool inloop;
-															#line 3019 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3019 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 };
 // This generated class is to be used only via actorTest5()
-															#line 734 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 734 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class ActorTest5Actor final : public Actor<bool>, public FastAllocated<ActorTest5Actor>, public ActorTest5ActorState<ActorTest5Actor> {
-															#line 3024 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3024 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
 	using FastAllocated<ActorTest5Actor>::operator new;
 	using FastAllocated<ActorTest5Actor>::operator delete;
@@ -3029,9 +3029,9 @@ public:
 #pragma clang diagnostic ignored "-Wdelete-non-virtual-dtor"
 	void destroy() override { ((Actor<bool>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
-															#line 734 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 734 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	ActorTest5Actor() 
-															#line 3034 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3034 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		 : Actor<bool>(),
 		   ActorTest5ActorState<ActorTest5Actor>()
 	{
@@ -3054,30 +3054,30 @@ public:
 	}
 };
 }
-															#line 734 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 734 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 Future<bool> actorTest5(  ) {
-															#line 734 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 734 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	return Future<bool>(new ActorTest5Actor());
-															#line 3061 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3061 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 }
 
-#line 760 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+#line 760 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 
-															#line 3066 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3066 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 namespace {
 // This generated class is to be used only via actorTest6()
-															#line 761 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 761 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 template <class ActorTest6Actor>
-															#line 761 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 761 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class ActorTest6ActorState {
-															#line 3073 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3073 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
-															#line 761 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 761 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	ActorTest6ActorState() 
-															#line 761 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
-															#line 762 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 761 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
+															#line 762 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		 : caught(false)
-															#line 3080 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3080 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 	{
 		fdb_probe_actor_create("actorTest6", reinterpret_cast<unsigned long>(this));
 
@@ -3090,9 +3090,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 763 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 763 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			;
-															#line 3095 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3095 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -3120,28 +3120,28 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 764 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 764 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (caught)
-															#line 3125 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3125 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		{
-															#line 765 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 765 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			printf("6");
-															#line 766 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 766 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			if (!static_cast<ActorTest6Actor*>(this)->SAV<bool>::futures) { (void)(true); this->~ActorTest6ActorState(); static_cast<ActorTest6Actor*>(this)->destroy(); return 0; }
-															#line 3131 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3131 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			new (&static_cast<ActorTest6Actor*>(this)->SAV< bool >::value()) bool(true);
 			this->~ActorTest6ActorState();
 			static_cast<ActorTest6Actor*>(this)->finishSendAndDelPromiseRef();
 			return 0;
 		}
 		try {
-															#line 769 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 769 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			if (1)
-															#line 3140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3140 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			{
-															#line 770 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 770 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 				return a_body1loopBody1Catch1(operation_failed(), loopDepth);
-															#line 3144 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3144 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			}
 			loopDepth = a_body1loopBody1cont5(loopDepth);
 		}
@@ -3162,9 +3162,9 @@ public:
 	int a_body1loopBody1Catch1(const Error& __current_error,int loopDepth=0) 
 	{
 		try {
-															#line 772 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 772 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			caught = true;
-															#line 3167 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3167 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			loopDepth = a_body1loopBody1cont1(loopDepth);
 		}
 		catch (Error& error) {
@@ -3188,14 +3188,14 @@ public:
 
 		return loopDepth;
 	}
-															#line 762 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 762 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	bool caught;
-															#line 3193 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3193 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 };
 // This generated class is to be used only via actorTest6()
-															#line 761 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 761 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class ActorTest6Actor final : public Actor<bool>, public FastAllocated<ActorTest6Actor>, public ActorTest6ActorState<ActorTest6Actor> {
-															#line 3198 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3198 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
 	using FastAllocated<ActorTest6Actor>::operator new;
 	using FastAllocated<ActorTest6Actor>::operator delete;
@@ -3203,9 +3203,9 @@ public:
 #pragma clang diagnostic ignored "-Wdelete-non-virtual-dtor"
 	void destroy() override { ((Actor<bool>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
-															#line 761 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 761 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	ActorTest6Actor() 
-															#line 3208 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3208 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		 : Actor<bool>(),
 		   ActorTest6ActorState<ActorTest6Actor>()
 	{
@@ -3228,29 +3228,29 @@ public:
 	}
 };
 }
-															#line 761 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 761 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 Future<bool> actorTest6(  ) {
-															#line 761 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 761 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	return Future<bool>(new ActorTest6Actor());
-															#line 3235 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3235 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 }
 
-#line 776 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+#line 776 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 
-															#line 3240 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3240 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 namespace {
 // This generated class is to be used only via actorTest7()
-															#line 777 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 777 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 template <class ActorTest7Actor>
-															#line 777 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 777 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class ActorTest7ActorState {
-															#line 3247 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3247 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
-															#line 777 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 777 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	ActorTest7ActorState() 
-															#line 777 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 777 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	{
-															#line 3253 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3253 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		fdb_probe_actor_create("actorTest7", reinterpret_cast<unsigned long>(this));
 
 	}
@@ -3263,48 +3263,48 @@ public:
 	{
 		try {
 			try {
-															#line 779 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 779 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 				for(;;) {
-															#line 780 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 780 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 					for(;;) {
-															#line 781 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 781 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 						if (1)
-															#line 3272 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3272 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 						{
-															#line 782 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 782 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 							return a_body1Catch2(operation_failed(), loopDepth);
-															#line 3276 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3276 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 						}
-															#line 783 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 783 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 						if (1)
-															#line 3280 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3280 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 						{
-															#line 784 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 784 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 							printf("actorTest7 failed (1)\n");
-															#line 785 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 785 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 							if (!static_cast<ActorTest7Actor*>(this)->SAV<bool>::futures) { (void)(false); this->~ActorTest7ActorState(); static_cast<ActorTest7Actor*>(this)->destroy(); return 0; }
-															#line 3286 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3286 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 							new (&static_cast<ActorTest7Actor*>(this)->SAV< bool >::value()) bool(false);
 							this->~ActorTest7ActorState();
 							static_cast<ActorTest7Actor*>(this)->finishSendAndDelPromiseRef();
 							return 0;
 						}
-															#line 787 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 787 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 						if (0)
-															#line 3294 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3294 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 						{
 							break;
 						}
 					}
-															#line 790 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 790 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 					if (1)
-															#line 3301 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3301 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 					{
-															#line 791 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 791 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 						printf("actorTest7 failed (2)\n");
-															#line 792 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 792 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 						if (!static_cast<ActorTest7Actor*>(this)->SAV<bool>::futures) { (void)(false); this->~ActorTest7ActorState(); static_cast<ActorTest7Actor*>(this)->destroy(); return 0; }
-															#line 3307 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3307 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 						new (&static_cast<ActorTest7Actor*>(this)->SAV< bool >::value()) bool(false);
 						this->~ActorTest7ActorState();
 						static_cast<ActorTest7Actor*>(this)->finishSendAndDelPromiseRef();
@@ -3337,11 +3337,11 @@ public:
 	int a_body1Catch2(const Error& __current_error,int loopDepth=0) 
 	{
 		try {
-															#line 796 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 796 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			printf("7");
-															#line 797 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 797 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			if (!static_cast<ActorTest7Actor*>(this)->SAV<bool>::futures) { (void)(true); this->~ActorTest7ActorState(); static_cast<ActorTest7Actor*>(this)->destroy(); return 0; }
-															#line 3344 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3344 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			new (&static_cast<ActorTest7Actor*>(this)->SAV< bool >::value()) bool(true);
 			this->~ActorTest7ActorState();
 			static_cast<ActorTest7Actor*>(this)->finishSendAndDelPromiseRef();
@@ -3357,9 +3357,9 @@ public:
 	}
 };
 // This generated class is to be used only via actorTest7()
-															#line 777 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 777 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class ActorTest7Actor final : public Actor<bool>, public FastAllocated<ActorTest7Actor>, public ActorTest7ActorState<ActorTest7Actor> {
-															#line 3362 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3362 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
 	using FastAllocated<ActorTest7Actor>::operator new;
 	using FastAllocated<ActorTest7Actor>::operator delete;
@@ -3367,9 +3367,9 @@ public:
 #pragma clang diagnostic ignored "-Wdelete-non-virtual-dtor"
 	void destroy() override { ((Actor<bool>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
-															#line 777 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 777 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	ActorTest7Actor() 
-															#line 3372 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3372 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		 : Actor<bool>(),
 		   ActorTest7ActorState<ActorTest7Actor>()
 	{
@@ -3392,32 +3392,32 @@ public:
 	}
 };
 }
-															#line 777 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 777 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 Future<bool> actorTest7(  ) {
-															#line 777 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 777 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	return Future<bool>(new ActorTest7Actor());
-															#line 3399 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3399 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 }
 
-#line 800 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+#line 800 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 
-															#line 3404 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3404 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 namespace {
 // This generated class is to be used only via actorTest8()
-															#line 801 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 801 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 template <class ActorTest8Actor>
-															#line 801 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 801 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class ActorTest8ActorState {
-															#line 3411 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3411 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
-															#line 801 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 801 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	ActorTest8ActorState() 
-															#line 801 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
-															#line 802 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 801 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
+															#line 802 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		 : caught(false),
-															#line 803 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 803 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		   set(true)
-															#line 3420 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3420 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 	{
 		fdb_probe_actor_create("actorTest8", reinterpret_cast<unsigned long>(this));
 
@@ -3430,9 +3430,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 805 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 805 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			;
-															#line 3435 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3435 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -3460,26 +3460,26 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 806 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 806 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		inloop = false;
-															#line 807 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 807 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (caught)
-															#line 3467 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3467 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		{
-															#line 808 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 808 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			printf("8");
-															#line 809 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 809 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			if (!static_cast<ActorTest8Actor*>(this)->SAV<bool>::futures) { (void)(true); this->~ActorTest8ActorState(); static_cast<ActorTest8Actor*>(this)->destroy(); return 0; }
-															#line 3473 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3473 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			new (&static_cast<ActorTest8Actor*>(this)->SAV< bool >::value()) bool(true);
 			this->~ActorTest8ActorState();
 			static_cast<ActorTest8Actor*>(this)->finishSendAndDelPromiseRef();
 			return 0;
 		}
 		try {
-															#line 812 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 812 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			;
-															#line 3482 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3482 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			loopDepth = a_body1loopBody1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -3499,9 +3499,9 @@ public:
 	int a_body1loopBody1Catch1(const Error& __current_error,int loopDepth=0) 
 	{
 		try {
-															#line 823 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 823 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			caught = true;
-															#line 3504 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3504 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			loopDepth = a_body1loopBody1cont1(loopDepth);
 		}
 		catch (Error& error) {
@@ -3521,45 +3521,45 @@ public:
 	}
 	int a_body1loopBody1loopBody1(int loopDepth) 
 	{
-															#line 813 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 813 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (inloop)
-															#line 3526 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3526 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		{
-															#line 814 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 814 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			printf("\nactorTest8 failed\n");
-															#line 815 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 815 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			if (!static_cast<ActorTest8Actor*>(this)->SAV<bool>::futures) { (void)(false); this->~ActorTest8ActorState(); static_cast<ActorTest8Actor*>(this)->destroy(); return 0; }
-															#line 3532 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3532 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			new (&static_cast<ActorTest8Actor*>(this)->SAV< bool >::value()) bool(false);
 			this->~ActorTest8ActorState();
 			static_cast<ActorTest8Actor*>(this)->finishSendAndDelPromiseRef();
 			return 0;
 		}
-															#line 817 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 817 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		StrictFuture<bool> __when_expr_0 = set;
-															#line 817 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 817 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (static_cast<ActorTest8Actor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 3542 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3542 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1loopBody1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1loopBody1when1(__when_expr_0.get(), loopDepth); };
 		static_cast<ActorTest8Actor*>(this)->actor_wait_state = 1;
-															#line 817 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 817 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ActorTest8Actor, 0, bool >*>(static_cast<ActorTest8Actor*>(this)));
-															#line 3547 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3547 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1loopBody1loopBody1cont1(bool const& b,int loopDepth) 
 	{
-															#line 818 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 818 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		inloop = true;
-															#line 819 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 819 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (1)
-															#line 3558 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3558 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		{
-															#line 820 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 820 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			return a_body1loopBody1Catch1(operation_failed(), std::max(0, loopDepth - 1));
-															#line 3562 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3562 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		}
 		if (loopDepth == 0) return a_body1loopBody1loopHead1(0);
 
@@ -3567,15 +3567,15 @@ public:
 	}
 	int a_body1loopBody1loopBody1cont1(bool && b,int loopDepth) 
 	{
-															#line 818 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 818 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		inloop = true;
-															#line 819 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 819 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (1)
-															#line 3574 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3574 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		{
-															#line 820 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 820 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			return a_body1loopBody1Catch1(operation_failed(), std::max(0, loopDepth - 1));
-															#line 3578 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3578 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		}
 		if (loopDepth == 0) return a_body1loopBody1loopHead1(0);
 
@@ -3644,18 +3644,18 @@ public:
 		fdb_probe_actor_exit("actorTest8", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 802 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 802 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	bool caught;
-															#line 803 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 803 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	Future<bool> set;
-															#line 806 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 806 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	bool inloop;
-															#line 3653 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3653 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 };
 // This generated class is to be used only via actorTest8()
-															#line 801 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 801 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class ActorTest8Actor final : public Actor<bool>, public ActorCallback< ActorTest8Actor, 0, bool >, public FastAllocated<ActorTest8Actor>, public ActorTest8ActorState<ActorTest8Actor> {
-															#line 3658 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3658 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
 	using FastAllocated<ActorTest8Actor>::operator new;
 	using FastAllocated<ActorTest8Actor>::operator delete;
@@ -3664,9 +3664,9 @@ public:
 	void destroy() override { ((Actor<bool>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< ActorTest8Actor, 0, bool >;
-															#line 801 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 801 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	ActorTest8Actor() 
-															#line 3669 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3669 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		 : Actor<bool>(),
 		   ActorTest8ActorState<ActorTest8Actor>()
 	{
@@ -3690,32 +3690,32 @@ friend struct ActorCallback< ActorTest8Actor, 0, bool >;
 	}
 };
 }
-															#line 801 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 801 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 Future<bool> actorTest8(  ) {
-															#line 801 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 801 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	return Future<bool>(new ActorTest8Actor());
-															#line 3697 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3697 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 }
 
-#line 827 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+#line 827 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 
-															#line 3702 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3702 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 namespace {
 // This generated class is to be used only via actorTest9A()
-															#line 828 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 828 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 template <class ActorTest9AActor>
-															#line 828 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 828 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class ActorTest9AActorState {
-															#line 3709 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3709 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
-															#line 828 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 828 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	ActorTest9AActorState(Future<Void> const& setAfterCalling) 
-															#line 828 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
-															#line 828 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 828 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
+															#line 828 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		 : setAfterCalling(setAfterCalling),
-															#line 829 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 829 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		   count(0)
-															#line 3718 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3718 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 	{
 		fdb_probe_actor_create("actorTest9A", reinterpret_cast<unsigned long>(this));
 
@@ -3728,9 +3728,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 830 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 830 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			;
-															#line 3733 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3733 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -3758,37 +3758,37 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 831 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 831 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (count == 4)
-															#line 3763 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3763 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		{
-															#line 832 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 832 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			printf("9");
-															#line 833 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 833 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			if (!static_cast<ActorTest9AActor*>(this)->SAV<bool>::futures) { (void)(true); this->~ActorTest9AActorState(); static_cast<ActorTest9AActor*>(this)->destroy(); return 0; }
-															#line 3769 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3769 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			new (&static_cast<ActorTest9AActor*>(this)->SAV< bool >::value()) bool(true);
 			this->~ActorTest9AActorState();
 			static_cast<ActorTest9AActor*>(this)->finishSendAndDelPromiseRef();
 			return 0;
 		}
-															#line 835 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 835 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (count && count != 4)
-															#line 3777 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3777 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		{
-															#line 836 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 836 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			printf("\nactorTest9 failed\n");
-															#line 837 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 837 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			if (!static_cast<ActorTest9AActor*>(this)->SAV<bool>::futures) { (void)(false); this->~ActorTest9AActorState(); static_cast<ActorTest9AActor*>(this)->destroy(); return 0; }
-															#line 3783 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3783 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			new (&static_cast<ActorTest9AActor*>(this)->SAV< bool >::value()) bool(false);
 			this->~ActorTest9AActorState();
 			static_cast<ActorTest9AActor*>(this)->finishSendAndDelPromiseRef();
 			return 0;
 		}
-															#line 839 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 839 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		;
-															#line 3791 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3791 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		loopDepth = a_body1loopBody1loopHead1(loopDepth);
 
 		return loopDepth;
@@ -3808,9 +3808,9 @@ public:
 	}
 	int a_body1loopBody1loopBody1(int loopDepth) 
 	{
-															#line 840 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 840 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		;
-															#line 3813 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3813 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		loopDepth = a_body1loopBody1loopBody1loopHead1(loopDepth);
 
 		return loopDepth;
@@ -3830,9 +3830,9 @@ public:
 	}
 	int a_body1loopBody1loopBody1cont1(int loopDepth) 
 	{
-															#line 854 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 854 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		count++;
-															#line 3835 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3835 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		return a_body1loopBody1break1(loopDepth==0?0:loopDepth-1); // break
 
 		return loopDepth;
@@ -3846,16 +3846,16 @@ public:
 	}
 	int a_body1loopBody1loopBody1loopBody1(int loopDepth) 
 	{
-															#line 841 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 841 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		StrictFuture<Void> __when_expr_0 = setAfterCalling;
-															#line 841 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 841 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (static_cast<ActorTest9AActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 3));
-															#line 3853 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3853 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 3)); else return a_body1loopBody1loopBody1loopBody1when1(__when_expr_0.get(), loopDepth); };
 		static_cast<ActorTest9AActor*>(this)->actor_wait_state = 1;
-															#line 841 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 841 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ActorTest9AActor, 0, Void >*>(static_cast<ActorTest9AActor*>(this)));
-															#line 3858 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3858 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -3875,18 +3875,18 @@ public:
 	}
 	int a_body1loopBody1loopBody1loopBody1cont1(Void const& _,int loopDepth) 
 	{
-															#line 842 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 842 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		;
-															#line 3880 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3880 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		loopDepth = a_body1loopBody1loopBody1loopBody1cont1loopHead1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1loopBody1loopBody1cont1(Void && _,int loopDepth) 
 	{
-															#line 842 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 842 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		;
-															#line 3889 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3889 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		loopDepth = a_body1loopBody1loopBody1loopBody1cont1loopHead1(loopDepth);
 
 		return loopDepth;
@@ -3956,9 +3956,9 @@ public:
 	}
 	int a_body1loopBody1loopBody1loopBody1cont2(int loopDepth) 
 	{
-															#line 851 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 851 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		count++;
-															#line 3961 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3961 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		return a_body1loopBody1loopBody1break1(loopDepth==0?0:loopDepth-1); // break
 
 		return loopDepth;
@@ -3972,23 +3972,23 @@ public:
 	}
 	int a_body1loopBody1loopBody1loopBody1cont1loopBody1(int loopDepth) 
 	{
-															#line 843 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 843 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		for(;;) {
-															#line 844 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 844 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			count++;
-															#line 3979 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3979 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			break;
 		}
-															#line 847 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 847 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = Future<Void>(Void());
-															#line 847 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 847 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (static_cast<ActorTest9AActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 4));
-															#line 3986 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3986 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), std::max(0, loopDepth - 4)); else return a_body1loopBody1loopBody1loopBody1cont1loopBody1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<ActorTest9AActor*>(this)->actor_wait_state = 2;
-															#line 847 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 847 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< ActorTest9AActor, 1, Void >*>(static_cast<ActorTest9AActor*>(this)));
-															#line 3991 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 3991 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -4008,18 +4008,18 @@ public:
 	}
 	int a_body1loopBody1loopBody1loopBody1cont1loopBody1cont1(Void const& _,int loopDepth) 
 	{
-															#line 848 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 848 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		count++;
-															#line 4013 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4013 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		return a_body1loopBody1loopBody1loopBody1cont1break1(loopDepth==0?0:loopDepth-1); // break
 
 		return loopDepth;
 	}
 	int a_body1loopBody1loopBody1loopBody1cont1loopBody1cont1(Void && _,int loopDepth) 
 	{
-															#line 848 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 848 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		count++;
-															#line 4022 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4022 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		return a_body1loopBody1loopBody1loopBody1cont1break1(loopDepth==0?0:loopDepth-1); // break
 
 		return loopDepth;
@@ -4087,16 +4087,16 @@ public:
 		fdb_probe_actor_exit("actorTest9A", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 828 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 828 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	Future<Void> setAfterCalling;
-															#line 829 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 829 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	int count;
-															#line 4094 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4094 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 };
 // This generated class is to be used only via actorTest9A()
-															#line 828 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 828 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class ActorTest9AActor final : public Actor<bool>, public ActorCallback< ActorTest9AActor, 0, Void >, public ActorCallback< ActorTest9AActor, 1, Void >, public FastAllocated<ActorTest9AActor>, public ActorTest9AActorState<ActorTest9AActor> {
-															#line 4099 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4099 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
 	using FastAllocated<ActorTest9AActor>::operator new;
 	using FastAllocated<ActorTest9AActor>::operator delete;
@@ -4106,9 +4106,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< ActorTest9AActor, 0, Void >;
 friend struct ActorCallback< ActorTest9AActor, 1, Void >;
-															#line 828 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 828 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	ActorTest9AActor(Future<Void> const& setAfterCalling) 
-															#line 4111 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4111 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		 : Actor<bool>(),
 		   ActorTest9AActorState<ActorTest9AActor>(setAfterCalling)
 	{
@@ -4133,14 +4133,14 @@ friend struct ActorCallback< ActorTest9AActor, 1, Void >;
 	}
 };
 }
-															#line 828 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 828 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 Future<bool> actorTest9A( Future<Void> const& setAfterCalling ) {
-															#line 828 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 828 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	return Future<bool>(new ActorTest9AActor(setAfterCalling));
-															#line 4140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4140 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 }
 
-#line 860 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+#line 860 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 
 Future<bool> actorTest9() {
 	Promise<Void> p;
@@ -4149,25 +4149,25 @@ Future<bool> actorTest9() {
 	return f;
 }
 
-															#line 4152 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4152 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 namespace {
 // This generated class is to be used only via actorTest10A()
-															#line 868 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 868 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 template <class ActorTest10AActor>
-															#line 868 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 868 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class ActorTest10AActorState {
-															#line 4159 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4159 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
-															#line 868 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 868 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	ActorTest10AActorState(FutureStream<int> const& inputStream,Future<Void> const& go) 
-															#line 868 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
-															#line 868 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 868 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
+															#line 868 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		 : inputStream(inputStream),
-															#line 868 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 868 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		   go(go),
-															#line 869 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 869 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		   i()
-															#line 4170 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4170 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 	{
 		fdb_probe_actor_create("actorTest10A", reinterpret_cast<unsigned long>(this));
 
@@ -4180,9 +4180,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 870 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 870 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			i = 0;
-															#line 4185 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4185 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -4203,9 +4203,9 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 874 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 874 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (!static_cast<ActorTest10AActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~ActorTest10AActorState(); static_cast<ActorTest10AActor*>(this)->destroy(); return 0; }
-															#line 4208 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4208 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		new (&static_cast<ActorTest10AActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~ActorTest10AActorState();
 		static_cast<ActorTest10AActor*>(this)->finishSendAndDelPromiseRef();
@@ -4222,22 +4222,22 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 870 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 870 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (!(i < 5))
-															#line 4227 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4227 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		{
 			return a_body1break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 871 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 871 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		StrictFuture<Void> __when_expr_0 = go;
-															#line 871 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 871 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (static_cast<ActorTest10AActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 4235 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4235 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 		static_cast<ActorTest10AActor*>(this)->actor_wait_state = 1;
-															#line 871 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 871 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ActorTest10AActor, 0, Void >*>(static_cast<ActorTest10AActor*>(this)));
-															#line 4240 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4240 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -4257,32 +4257,32 @@ public:
 	}
 	int a_body1loopBody1cont1(Void const& _,int loopDepth) 
 	{
-															#line 872 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 872 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		FutureStream<int> __when_expr_1 = inputStream;
-															#line 872 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 872 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (static_cast<ActorTest10AActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 4264 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4264 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1cont1when1(__when_expr_1.pop(), loopDepth); };
 		static_cast<ActorTest10AActor*>(this)->actor_wait_state = 2;
-															#line 872 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 872 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorSingleCallback< ActorTest10AActor, 1, int >*>(static_cast<ActorTest10AActor*>(this)));
-															#line 4269 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4269 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont1(Void && _,int loopDepth) 
 	{
-															#line 872 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 872 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		FutureStream<int> __when_expr_1 = inputStream;
-															#line 872 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 872 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (static_cast<ActorTest10AActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 4280 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4280 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1cont1when1(__when_expr_1.pop(), loopDepth); };
 		static_cast<ActorTest10AActor*>(this)->actor_wait_state = 2;
-															#line 872 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 872 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorSingleCallback< ActorTest10AActor, 1, int >*>(static_cast<ActorTest10AActor*>(this)));
-															#line 4285 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4285 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -4352,18 +4352,18 @@ public:
 	}
 	int a_body1loopBody1cont3(int const& input,int loopDepth) 
 	{
-															#line 870 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 870 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		i++;
-															#line 4357 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4357 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		if (loopDepth == 0) return a_body1loopHead1(0);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont3(int && input,int loopDepth) 
 	{
-															#line 870 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 870 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		i++;
-															#line 4366 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4366 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		if (loopDepth == 0) return a_body1loopHead1(0);
 
 		return loopDepth;
@@ -4431,18 +4431,18 @@ public:
 		fdb_probe_actor_exit("actorTest10A", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 868 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 868 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	FutureStream<int> inputStream;
-															#line 868 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 868 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	Future<Void> go;
-															#line 869 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 869 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	int i;
-															#line 4440 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4440 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 };
 // This generated class is to be used only via actorTest10A()
-															#line 868 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 868 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class ActorTest10AActor final : public Actor<Void>, public ActorCallback< ActorTest10AActor, 0, Void >, public ActorSingleCallback< ActorTest10AActor, 1, int >, public FastAllocated<ActorTest10AActor>, public ActorTest10AActorState<ActorTest10AActor> {
-															#line 4445 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4445 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
 	using FastAllocated<ActorTest10AActor>::operator new;
 	using FastAllocated<ActorTest10AActor>::operator delete;
@@ -4452,9 +4452,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< ActorTest10AActor, 0, Void >;
 friend struct ActorSingleCallback< ActorTest10AActor, 1, int >;
-															#line 868 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 868 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	ActorTest10AActor(FutureStream<int> const& inputStream,Future<Void> const& go) 
-															#line 4457 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4457 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		 : Actor<Void>(),
 		   ActorTest10AActorState<ActorTest10AActor>(inputStream, go)
 	{
@@ -4479,14 +4479,14 @@ friend struct ActorSingleCallback< ActorTest10AActor, 1, int >;
 	}
 };
 }
-															#line 868 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 868 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 Future<Void> actorTest10A( FutureStream<int> const& inputStream, Future<Void> const& go ) {
-															#line 868 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 868 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	return Future<Void>(new ActorTest10AActor(inputStream, go));
-															#line 4486 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4486 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 }
 
-#line 876 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+#line 876 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 
 void actorTest10() {
 	PromiseStream<int> ins;
@@ -4503,20 +4503,20 @@ void actorTest10() {
 		printf("10");
 }
 
-															#line 4506 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4506 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 namespace {
 // This generated class is to be used only via cancellable()
-															#line 892 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 892 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 template <class CancellableActor>
-															#line 892 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 892 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class CancellableActorState {
-															#line 4513 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4513 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
-															#line 892 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 892 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	CancellableActorState() 
-															#line 892 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 892 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	{
-															#line 4519 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4519 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		fdb_probe_actor_create("cancellable", reinterpret_cast<unsigned long>(this));
 
 	}
@@ -4528,16 +4528,16 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 893 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 893 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			StrictFuture<Void> __when_expr_0 = Never();
-															#line 893 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 893 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			if (static_cast<CancellableActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 4535 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4535 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<CancellableActor*>(this)->actor_wait_state = 1;
-															#line 893 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 893 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< CancellableActor, 0, Void >*>(static_cast<CancellableActor*>(this)));
-															#line 4540 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4540 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -4558,9 +4558,9 @@ public:
 	}
 	int a_body1cont1(Void const& _,int loopDepth) 
 	{
-															#line 894 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 894 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (!static_cast<CancellableActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~CancellableActorState(); static_cast<CancellableActor*>(this)->destroy(); return 0; }
-															#line 4563 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4563 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		new (&static_cast<CancellableActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~CancellableActorState();
 		static_cast<CancellableActor*>(this)->finishSendAndDelPromiseRef();
@@ -4570,9 +4570,9 @@ public:
 	}
 	int a_body1cont1(Void && _,int loopDepth) 
 	{
-															#line 894 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 894 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (!static_cast<CancellableActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~CancellableActorState(); static_cast<CancellableActor*>(this)->destroy(); return 0; }
-															#line 4575 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4575 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		new (&static_cast<CancellableActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~CancellableActorState();
 		static_cast<CancellableActor*>(this)->finishSendAndDelPromiseRef();
@@ -4645,9 +4645,9 @@ public:
 	}
 };
 // This generated class is to be used only via cancellable()
-															#line 892 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 892 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class CancellableActor final : public Actor<Void>, public ActorCallback< CancellableActor, 0, Void >, public FastAllocated<CancellableActor>, public CancellableActorState<CancellableActor> {
-															#line 4650 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4650 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
 	using FastAllocated<CancellableActor>::operator new;
 	using FastAllocated<CancellableActor>::operator delete;
@@ -4656,9 +4656,9 @@ public:
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< CancellableActor, 0, Void >;
-															#line 892 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 892 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	CancellableActor() 
-															#line 4661 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4661 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		 : Actor<Void>(),
 		   CancellableActorState<CancellableActor>()
 	{
@@ -4682,29 +4682,29 @@ friend struct ActorCallback< CancellableActor, 0, Void >;
 	}
 };
 }
-															#line 892 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 892 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 Future<Void> cancellable(  ) {
-															#line 892 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 892 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	return Future<Void>(new CancellableActor());
-															#line 4689 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4689 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 }
 
-#line 896 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+#line 896 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 
-															#line 4694 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4694 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 namespace {
 // This generated class is to be used only via simple()
-															#line 897 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 897 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 template <class SimpleActor>
-															#line 897 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 897 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class SimpleActorState {
-															#line 4701 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4701 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
-															#line 897 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 897 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	SimpleActorState() 
-															#line 897 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 897 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	{
-															#line 4707 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4707 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		fdb_probe_actor_create("simple", reinterpret_cast<unsigned long>(this));
 
 	}
@@ -4716,9 +4716,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 898 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 898 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			if (!static_cast<SimpleActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~SimpleActorState(); static_cast<SimpleActor*>(this)->destroy(); return 0; }
-															#line 4721 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4721 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			new (&static_cast<SimpleActor*>(this)->SAV< Void >::value()) Void(Void());
 			this->~SimpleActorState();
 			static_cast<SimpleActor*>(this)->finishSendAndDelPromiseRef();
@@ -4742,9 +4742,9 @@ public:
 	}
 };
 // This generated class is to be used only via simple()
-															#line 897 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 897 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class SimpleActor final : public Actor<Void>, public FastAllocated<SimpleActor>, public SimpleActorState<SimpleActor> {
-															#line 4747 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4747 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
 	using FastAllocated<SimpleActor>::operator new;
 	using FastAllocated<SimpleActor>::operator delete;
@@ -4752,9 +4752,9 @@ public:
 #pragma clang diagnostic ignored "-Wdelete-non-virtual-dtor"
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
-															#line 897 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 897 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	SimpleActor() 
-															#line 4757 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4757 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		 : Actor<Void>(),
 		   SimpleActorState<SimpleActor>()
 	{
@@ -4777,29 +4777,29 @@ public:
 	}
 };
 }
-															#line 897 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 897 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 Future<Void> simple(  ) {
-															#line 897 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 897 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	return Future<Void>(new SimpleActor());
-															#line 4784 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4784 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 }
 
-#line 900 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+#line 900 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 
-															#line 4789 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4789 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 namespace {
 // This generated class is to be used only via simpleWait()
-															#line 901 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 901 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 template <class SimpleWaitActor>
-															#line 901 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 901 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class SimpleWaitActorState {
-															#line 4796 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4796 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
-															#line 901 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 901 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	SimpleWaitActorState() 
-															#line 901 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 901 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	{
-															#line 4802 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4802 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		fdb_probe_actor_create("simpleWait", reinterpret_cast<unsigned long>(this));
 
 	}
@@ -4811,16 +4811,16 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 902 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 902 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			StrictFuture<Void> __when_expr_0 = Future<Void>(Void());
-															#line 902 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 902 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			if (static_cast<SimpleWaitActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 4818 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4818 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<SimpleWaitActor*>(this)->actor_wait_state = 1;
-															#line 902 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 902 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< SimpleWaitActor, 0, Void >*>(static_cast<SimpleWaitActor*>(this)));
-															#line 4823 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4823 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -4841,9 +4841,9 @@ public:
 	}
 	int a_body1cont1(Void const& _,int loopDepth) 
 	{
-															#line 903 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 903 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (!static_cast<SimpleWaitActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~SimpleWaitActorState(); static_cast<SimpleWaitActor*>(this)->destroy(); return 0; }
-															#line 4846 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4846 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		new (&static_cast<SimpleWaitActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~SimpleWaitActorState();
 		static_cast<SimpleWaitActor*>(this)->finishSendAndDelPromiseRef();
@@ -4853,9 +4853,9 @@ public:
 	}
 	int a_body1cont1(Void && _,int loopDepth) 
 	{
-															#line 903 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 903 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (!static_cast<SimpleWaitActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~SimpleWaitActorState(); static_cast<SimpleWaitActor*>(this)->destroy(); return 0; }
-															#line 4858 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4858 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		new (&static_cast<SimpleWaitActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~SimpleWaitActorState();
 		static_cast<SimpleWaitActor*>(this)->finishSendAndDelPromiseRef();
@@ -4928,9 +4928,9 @@ public:
 	}
 };
 // This generated class is to be used only via simpleWait()
-															#line 901 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 901 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class SimpleWaitActor final : public Actor<Void>, public ActorCallback< SimpleWaitActor, 0, Void >, public FastAllocated<SimpleWaitActor>, public SimpleWaitActorState<SimpleWaitActor> {
-															#line 4933 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4933 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
 	using FastAllocated<SimpleWaitActor>::operator new;
 	using FastAllocated<SimpleWaitActor>::operator delete;
@@ -4939,9 +4939,9 @@ public:
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< SimpleWaitActor, 0, Void >;
-															#line 901 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 901 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	SimpleWaitActor() 
-															#line 4944 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4944 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		 : Actor<Void>(),
 		   SimpleWaitActorState<SimpleWaitActor>()
 	{
@@ -4965,30 +4965,30 @@ friend struct ActorCallback< SimpleWaitActor, 0, Void >;
 	}
 };
 }
-															#line 901 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 901 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 Future<Void> simpleWait(  ) {
-															#line 901 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 901 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	return Future<Void>(new SimpleWaitActor());
-															#line 4972 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4972 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 }
 
-#line 905 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+#line 905 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 
-															#line 4977 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4977 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 namespace {
 // This generated class is to be used only via simpleRet()
-															#line 906 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 906 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 template <class SimpleRetActor>
-															#line 906 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 906 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class SimpleRetActorState {
-															#line 4984 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4984 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
-															#line 906 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 906 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	SimpleRetActorState(Future<int> const& x) 
-															#line 906 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
-															#line 906 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 906 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
+															#line 906 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		 : x(x)
-															#line 4991 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 4991 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 	{
 		fdb_probe_actor_create("simpleRet", reinterpret_cast<unsigned long>(this));
 
@@ -5001,16 +5001,16 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 907 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 907 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			StrictFuture<int> __when_expr_0 = x;
-															#line 907 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 907 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			if (static_cast<SimpleRetActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 5008 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5008 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<SimpleRetActor*>(this)->actor_wait_state = 1;
-															#line 907 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 907 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< SimpleRetActor, 0, int >*>(static_cast<SimpleRetActor*>(this)));
-															#line 5013 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5013 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -5031,9 +5031,9 @@ public:
 	}
 	int a_body1cont1(int const& i,int loopDepth) 
 	{
-															#line 908 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 908 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (!static_cast<SimpleRetActor*>(this)->SAV<int>::futures) { (void)(i); this->~SimpleRetActorState(); static_cast<SimpleRetActor*>(this)->destroy(); return 0; }
-															#line 5036 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5036 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		new (&static_cast<SimpleRetActor*>(this)->SAV< int >::value()) int(i);
 		this->~SimpleRetActorState();
 		static_cast<SimpleRetActor*>(this)->finishSendAndDelPromiseRef();
@@ -5043,9 +5043,9 @@ public:
 	}
 	int a_body1cont1(int && i,int loopDepth) 
 	{
-															#line 908 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 908 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (!static_cast<SimpleRetActor*>(this)->SAV<int>::futures) { (void)(i); this->~SimpleRetActorState(); static_cast<SimpleRetActor*>(this)->destroy(); return 0; }
-															#line 5048 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5048 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		new (&static_cast<SimpleRetActor*>(this)->SAV< int >::value()) int(i);
 		this->~SimpleRetActorState();
 		static_cast<SimpleRetActor*>(this)->finishSendAndDelPromiseRef();
@@ -5116,14 +5116,14 @@ public:
 		fdb_probe_actor_exit("simpleRet", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 906 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 906 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	Future<int> x;
-															#line 5121 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5121 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 };
 // This generated class is to be used only via simpleRet()
-															#line 906 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 906 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class SimpleRetActor final : public Actor<int>, public ActorCallback< SimpleRetActor, 0, int >, public FastAllocated<SimpleRetActor>, public SimpleRetActorState<SimpleRetActor> {
-															#line 5126 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5126 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
 	using FastAllocated<SimpleRetActor>::operator new;
 	using FastAllocated<SimpleRetActor>::operator delete;
@@ -5132,9 +5132,9 @@ public:
 	void destroy() override { ((Actor<int>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< SimpleRetActor, 0, int >;
-															#line 906 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 906 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	SimpleRetActor(Future<int> const& x) 
-															#line 5137 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5137 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		 : Actor<int>(),
 		   SimpleRetActorState<SimpleRetActor>(x)
 	{
@@ -5158,33 +5158,33 @@ friend struct ActorCallback< SimpleRetActor, 0, int >;
 	}
 };
 }
-															#line 906 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 906 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 Future<int> simpleRet( Future<int> const& x ) {
-															#line 906 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 906 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	return Future<int>(new SimpleRetActor(x));
-															#line 5165 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5165 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 }
 
-#line 910 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+#line 910 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 
 template <int i>
 Future<int> chain(Future<int> const& x);
 
-															#line 5173 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5173 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 namespace {
 // This generated class is to be used only via achain()
-															#line 914 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 914 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 template <int i, class AchainActor>
-															#line 914 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 914 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class AchainActorState {
-															#line 5180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5180 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
-															#line 914 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 914 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	AchainActorState(Future<int> const& x) 
-															#line 914 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
-															#line 914 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 914 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
+															#line 914 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		 : x(x)
-															#line 5187 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5187 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 	{
 		fdb_probe_actor_create("achain", reinterpret_cast<unsigned long>(this));
 
@@ -5197,16 +5197,16 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 916 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 916 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			StrictFuture<int> __when_expr_0 = chain<i>(x);
-															#line 916 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 916 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			if (static_cast<AchainActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 5204 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5204 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<AchainActor*>(this)->actor_wait_state = 1;
-															#line 916 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 916 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< AchainActor, 0, int >*>(static_cast<AchainActor*>(this)));
-															#line 5209 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5209 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -5227,9 +5227,9 @@ public:
 	}
 	int a_body1cont1(int const& k,int loopDepth) 
 	{
-															#line 917 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 917 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (!static_cast<AchainActor*>(this)->SAV<int>::futures) { (void)(k + 1); this->~AchainActorState(); static_cast<AchainActor*>(this)->destroy(); return 0; }
-															#line 5232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5232 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		new (&static_cast<AchainActor*>(this)->SAV< int >::value()) int(k + 1);
 		this->~AchainActorState();
 		static_cast<AchainActor*>(this)->finishSendAndDelPromiseRef();
@@ -5239,9 +5239,9 @@ public:
 	}
 	int a_body1cont1(int && k,int loopDepth) 
 	{
-															#line 917 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 917 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (!static_cast<AchainActor*>(this)->SAV<int>::futures) { (void)(k + 1); this->~AchainActorState(); static_cast<AchainActor*>(this)->destroy(); return 0; }
-															#line 5244 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5244 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		new (&static_cast<AchainActor*>(this)->SAV< int >::value()) int(k + 1);
 		this->~AchainActorState();
 		static_cast<AchainActor*>(this)->finishSendAndDelPromiseRef();
@@ -5312,16 +5312,16 @@ public:
 		fdb_probe_actor_exit("achain", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 914 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 914 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	Future<int> x;
-															#line 5317 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5317 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 };
 // This generated class is to be used only via achain()
-															#line 914 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 914 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 template <int i>
-															#line 914 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 914 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class AchainActor final : public Actor<int>, public ActorCallback< AchainActor<i>, 0, int >, public FastAllocated<AchainActor<i>>, public AchainActorState<i, AchainActor<i>> {
-															#line 5324 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5324 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
 	using FastAllocated<AchainActor<i>>::operator new;
 	using FastAllocated<AchainActor<i>>::operator delete;
@@ -5330,9 +5330,9 @@ public:
 	void destroy() override { ((Actor<int>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< AchainActor<i>, 0, int >;
-															#line 914 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 914 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	AchainActor(Future<int> const& x) 
-															#line 5335 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5335 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		 : Actor<int>(),
 		   AchainActorState<i, AchainActor<i>>(x)
 	{
@@ -5356,16 +5356,16 @@ friend struct ActorCallback< AchainActor<i>, 0, int >;
 	}
 };
 }
-															#line 914 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 914 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 template <int i>
-															#line 914 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 914 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 Future<int> achain( Future<int> const& x ) {
-															#line 914 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 914 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	return Future<int>(new AchainActor<i>(x));
-															#line 5365 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5365 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 }
 
-#line 919 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+#line 919 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 
 template <int i>
 Future<int> chain(Future<int> const& x) {
@@ -5377,28 +5377,28 @@ Future<int> chain<0>(Future<int> const& x) {
 	return x;
 }
 
-															#line 5380 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5380 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 Future<int> chain2( Future<int> const& x, int const& i );
 
-#line 931 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+#line 931 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 
-															#line 5385 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5385 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 namespace {
 // This generated class is to be used only via chain2()
-															#line 932 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 932 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 template <class Chain2Actor>
-															#line 932 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 932 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class Chain2ActorState {
-															#line 5392 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5392 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
-															#line 932 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 932 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	Chain2ActorState(Future<int> const& x,int const& i) 
-															#line 932 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
-															#line 932 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 932 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
+															#line 932 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		 : x(x),
-															#line 932 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 932 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		   i(i)
-															#line 5401 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5401 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 	{
 		fdb_probe_actor_create("chain2", reinterpret_cast<unsigned long>(this));
 
@@ -5411,34 +5411,34 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 933 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 933 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			if (i > 1)
-															#line 5416 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5416 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			{
-															#line 934 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 934 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 				StrictFuture<int> __when_expr_0 = chain2(x, i - 1);
-															#line 934 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 934 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 				if (static_cast<Chain2Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 5422 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5422 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 				if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 				static_cast<Chain2Actor*>(this)->actor_wait_state = 1;
-															#line 934 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 934 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 				__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< Chain2Actor, 0, int >*>(static_cast<Chain2Actor*>(this)));
-															#line 5427 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5427 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 				loopDepth = 0;
 			}
 			else
 			{
-															#line 937 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 937 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 				StrictFuture<int> __when_expr_1 = x;
-															#line 937 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 937 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 				if (static_cast<Chain2Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 5436 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5436 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 				if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1when2(__when_expr_1.get(), loopDepth); };
 				static_cast<Chain2Actor*>(this)->actor_wait_state = 2;
-															#line 937 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 937 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 				__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< Chain2Actor, 1, int >*>(static_cast<Chain2Actor*>(this)));
-															#line 5441 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5441 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 				loopDepth = 0;
 			}
 		}
@@ -5460,9 +5460,9 @@ public:
 	}
 	int a_body1cont2(int const& k,int loopDepth) 
 	{
-															#line 935 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 935 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (!static_cast<Chain2Actor*>(this)->SAV<int>::futures) { (void)(k + 1); this->~Chain2ActorState(); static_cast<Chain2Actor*>(this)->destroy(); return 0; }
-															#line 5465 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5465 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		new (&static_cast<Chain2Actor*>(this)->SAV< int >::value()) int(k + 1);
 		this->~Chain2ActorState();
 		static_cast<Chain2Actor*>(this)->finishSendAndDelPromiseRef();
@@ -5472,9 +5472,9 @@ public:
 	}
 	int a_body1cont2(int && k,int loopDepth) 
 	{
-															#line 935 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 935 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (!static_cast<Chain2Actor*>(this)->SAV<int>::futures) { (void)(k + 1); this->~Chain2ActorState(); static_cast<Chain2Actor*>(this)->destroy(); return 0; }
-															#line 5477 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5477 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		new (&static_cast<Chain2Actor*>(this)->SAV< int >::value()) int(k + 1);
 		this->~Chain2ActorState();
 		static_cast<Chain2Actor*>(this)->finishSendAndDelPromiseRef();
@@ -5547,9 +5547,9 @@ public:
 	}
 	int a_body1cont4(int const& k,int loopDepth) 
 	{
-															#line 938 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 938 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (!static_cast<Chain2Actor*>(this)->SAV<int>::futures) { (void)(k + i); this->~Chain2ActorState(); static_cast<Chain2Actor*>(this)->destroy(); return 0; }
-															#line 5552 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5552 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		new (&static_cast<Chain2Actor*>(this)->SAV< int >::value()) int(k + i);
 		this->~Chain2ActorState();
 		static_cast<Chain2Actor*>(this)->finishSendAndDelPromiseRef();
@@ -5559,9 +5559,9 @@ public:
 	}
 	int a_body1cont4(int && k,int loopDepth) 
 	{
-															#line 938 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 938 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (!static_cast<Chain2Actor*>(this)->SAV<int>::futures) { (void)(k + i); this->~Chain2ActorState(); static_cast<Chain2Actor*>(this)->destroy(); return 0; }
-															#line 5564 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5564 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		new (&static_cast<Chain2Actor*>(this)->SAV< int >::value()) int(k + i);
 		this->~Chain2ActorState();
 		static_cast<Chain2Actor*>(this)->finishSendAndDelPromiseRef();
@@ -5632,16 +5632,16 @@ public:
 		fdb_probe_actor_exit("chain2", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 932 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 932 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	Future<int> x;
-															#line 932 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 932 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	int i;
-															#line 5639 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5639 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 };
 // This generated class is to be used only via chain2()
-															#line 932 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 932 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class Chain2Actor final : public Actor<int>, public ActorCallback< Chain2Actor, 0, int >, public ActorCallback< Chain2Actor, 1, int >, public FastAllocated<Chain2Actor>, public Chain2ActorState<Chain2Actor> {
-															#line 5644 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5644 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
 	using FastAllocated<Chain2Actor>::operator new;
 	using FastAllocated<Chain2Actor>::operator delete;
@@ -5651,9 +5651,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< Chain2Actor, 0, int >;
 friend struct ActorCallback< Chain2Actor, 1, int >;
-															#line 932 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 932 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	Chain2Actor(Future<int> const& x,int const& i) 
-															#line 5656 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5656 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		 : Actor<int>(),
 		   Chain2ActorState<Chain2Actor>(x, i)
 	{
@@ -5678,29 +5678,29 @@ friend struct ActorCallback< Chain2Actor, 1, int >;
 	}
 };
 }
-															#line 932 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 932 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 Future<int> chain2( Future<int> const& x, int const& i ) {
-															#line 932 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 932 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	return Future<int>(new Chain2Actor(x, i));
-															#line 5685 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5685 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 }
 
-#line 941 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+#line 941 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 
-															#line 5690 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5690 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 namespace {
 // This generated class is to be used only via cancellable2()
-															#line 942 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 942 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 template <class Cancellable2Actor>
-															#line 942 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 942 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class Cancellable2ActorState {
-															#line 5697 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5697 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
-															#line 942 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 942 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	Cancellable2ActorState() 
-															#line 942 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 942 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	{
-															#line 5703 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5703 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		fdb_probe_actor_create("cancellable2", reinterpret_cast<unsigned long>(this));
 
 	}
@@ -5713,16 +5713,16 @@ public:
 	{
 		try {
 			try {
-															#line 944 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 944 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 				StrictFuture<Void> __when_expr_0 = Never();
-															#line 944 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 944 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 				if (static_cast<Cancellable2Actor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), loopDepth);
-															#line 5720 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5720 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 				if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch2(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 				static_cast<Cancellable2Actor*>(this)->actor_wait_state = 1;
-															#line 944 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 944 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 				__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< Cancellable2Actor, 0, Void >*>(static_cast<Cancellable2Actor*>(this)));
-															#line 5725 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5725 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 				loopDepth = 0;
 			}
 			catch (Error& error) {
@@ -5750,9 +5750,9 @@ public:
 	int a_body1Catch2(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 947 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 947 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			return a_body1Catch1(e, loopDepth);
-															#line 5755 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5755 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		}
 		catch (Error& error) {
 			loopDepth = a_body1Catch1(error, loopDepth);
@@ -5764,9 +5764,9 @@ public:
 	}
 	int a_body1cont2(Void const& _,int loopDepth) 
 	{
-															#line 945 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 945 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (!static_cast<Cancellable2Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~Cancellable2ActorState(); static_cast<Cancellable2Actor*>(this)->destroy(); return 0; }
-															#line 5769 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5769 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		new (&static_cast<Cancellable2Actor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~Cancellable2ActorState();
 		static_cast<Cancellable2Actor*>(this)->finishSendAndDelPromiseRef();
@@ -5776,9 +5776,9 @@ public:
 	}
 	int a_body1cont2(Void && _,int loopDepth) 
 	{
-															#line 945 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 945 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (!static_cast<Cancellable2Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~Cancellable2ActorState(); static_cast<Cancellable2Actor*>(this)->destroy(); return 0; }
-															#line 5781 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5781 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		new (&static_cast<Cancellable2Actor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~Cancellable2ActorState();
 		static_cast<Cancellable2Actor*>(this)->finishSendAndDelPromiseRef();
@@ -5851,9 +5851,9 @@ public:
 	}
 };
 // This generated class is to be used only via cancellable2()
-															#line 942 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 942 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class Cancellable2Actor final : public Actor<Void>, public ActorCallback< Cancellable2Actor, 0, Void >, public FastAllocated<Cancellable2Actor>, public Cancellable2ActorState<Cancellable2Actor> {
-															#line 5856 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5856 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
 	using FastAllocated<Cancellable2Actor>::operator new;
 	using FastAllocated<Cancellable2Actor>::operator delete;
@@ -5862,9 +5862,9 @@ public:
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< Cancellable2Actor, 0, Void >;
-															#line 942 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 942 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	Cancellable2Actor() 
-															#line 5867 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5867 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		 : Actor<Void>(),
 		   Cancellable2ActorState<Cancellable2Actor>()
 	{
@@ -5888,30 +5888,30 @@ friend struct ActorCallback< Cancellable2Actor, 0, Void >;
 	}
 };
 }
-															#line 942 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 942 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 Future<Void> cancellable2(  ) {
-															#line 942 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 942 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	return Future<Void>(new Cancellable2Actor());
-															#line 5895 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5895 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 }
 
-#line 950 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+#line 950 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 
-															#line 5900 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5900 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 namespace {
 // This generated class is to be used only via introLoadValueFromDisk()
-															#line 951 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 951 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 template <class IntroLoadValueFromDiskActor>
-															#line 951 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 951 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class IntroLoadValueFromDiskActorState {
-															#line 5907 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5907 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
-															#line 951 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 951 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	IntroLoadValueFromDiskActorState(Future<std::string> const& filename) 
-															#line 951 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
-															#line 951 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 951 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
+															#line 951 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		 : filename(filename)
-															#line 5914 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5914 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 	{
 		fdb_probe_actor_create("introLoadValueFromDisk", reinterpret_cast<unsigned long>(this));
 
@@ -5924,16 +5924,16 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 952 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 952 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			StrictFuture<std::string> __when_expr_0 = filename;
-															#line 952 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 952 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			if (static_cast<IntroLoadValueFromDiskActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 5931 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5931 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<IntroLoadValueFromDiskActor*>(this)->actor_wait_state = 1;
-															#line 952 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 952 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< IntroLoadValueFromDiskActor, 0, std::string >*>(static_cast<IntroLoadValueFromDiskActor*>(this)));
-															#line 5936 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5936 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -5954,13 +5954,13 @@ public:
 	}
 	int a_body1cont1(std::string const& file,int loopDepth) 
 	{
-															#line 954 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 954 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (file == "/dev/threes")
-															#line 5959 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5959 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		{
-															#line 955 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 955 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			if (!static_cast<IntroLoadValueFromDiskActor*>(this)->SAV<int>::futures) { (void)(3); this->~IntroLoadValueFromDiskActorState(); static_cast<IntroLoadValueFromDiskActor*>(this)->destroy(); return 0; }
-															#line 5963 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5963 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			new (&static_cast<IntroLoadValueFromDiskActor*>(this)->SAV< int >::value()) int(3);
 			this->~IntroLoadValueFromDiskActorState();
 			static_cast<IntroLoadValueFromDiskActor*>(this)->finishSendAndDelPromiseRef();
@@ -5968,13 +5968,13 @@ public:
 		}
 		else
 		{
-															#line 957 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 957 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			ASSERT(false);
-															#line 5973 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5973 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		}
-															#line 958 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 958 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (!static_cast<IntroLoadValueFromDiskActor*>(this)->SAV<int>::futures) { (void)(0); this->~IntroLoadValueFromDiskActorState(); static_cast<IntroLoadValueFromDiskActor*>(this)->destroy(); return 0; }
-															#line 5977 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5977 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		new (&static_cast<IntroLoadValueFromDiskActor*>(this)->SAV< int >::value()) int(0);
 		this->~IntroLoadValueFromDiskActorState();
 		static_cast<IntroLoadValueFromDiskActor*>(this)->finishSendAndDelPromiseRef();
@@ -5984,13 +5984,13 @@ public:
 	}
 	int a_body1cont1(std::string && file,int loopDepth) 
 	{
-															#line 954 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 954 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (file == "/dev/threes")
-															#line 5989 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5989 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		{
-															#line 955 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 955 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			if (!static_cast<IntroLoadValueFromDiskActor*>(this)->SAV<int>::futures) { (void)(3); this->~IntroLoadValueFromDiskActorState(); static_cast<IntroLoadValueFromDiskActor*>(this)->destroy(); return 0; }
-															#line 5993 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 5993 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			new (&static_cast<IntroLoadValueFromDiskActor*>(this)->SAV< int >::value()) int(3);
 			this->~IntroLoadValueFromDiskActorState();
 			static_cast<IntroLoadValueFromDiskActor*>(this)->finishSendAndDelPromiseRef();
@@ -5998,13 +5998,13 @@ public:
 		}
 		else
 		{
-															#line 957 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 957 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			ASSERT(false);
-															#line 6003 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 6003 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		}
-															#line 958 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 958 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (!static_cast<IntroLoadValueFromDiskActor*>(this)->SAV<int>::futures) { (void)(0); this->~IntroLoadValueFromDiskActorState(); static_cast<IntroLoadValueFromDiskActor*>(this)->destroy(); return 0; }
-															#line 6007 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 6007 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		new (&static_cast<IntroLoadValueFromDiskActor*>(this)->SAV< int >::value()) int(0);
 		this->~IntroLoadValueFromDiskActorState();
 		static_cast<IntroLoadValueFromDiskActor*>(this)->finishSendAndDelPromiseRef();
@@ -6075,14 +6075,14 @@ public:
 		fdb_probe_actor_exit("introLoadValueFromDisk", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 951 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 951 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	Future<std::string> filename;
-															#line 6080 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 6080 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 };
 // This generated class is to be used only via introLoadValueFromDisk()
-															#line 951 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 951 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class IntroLoadValueFromDiskActor final : public Actor<int>, public ActorCallback< IntroLoadValueFromDiskActor, 0, std::string >, public FastAllocated<IntroLoadValueFromDiskActor>, public IntroLoadValueFromDiskActorState<IntroLoadValueFromDiskActor> {
-															#line 6085 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 6085 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
 	using FastAllocated<IntroLoadValueFromDiskActor>::operator new;
 	using FastAllocated<IntroLoadValueFromDiskActor>::operator delete;
@@ -6091,9 +6091,9 @@ public:
 	void destroy() override { ((Actor<int>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< IntroLoadValueFromDiskActor, 0, std::string >;
-															#line 951 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 951 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	IntroLoadValueFromDiskActor(Future<std::string> const& filename) 
-															#line 6096 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 6096 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		 : Actor<int>(),
 		   IntroLoadValueFromDiskActorState<IntroLoadValueFromDiskActor>(filename)
 	{
@@ -6117,32 +6117,32 @@ friend struct ActorCallback< IntroLoadValueFromDiskActor, 0, std::string >;
 	}
 };
 }
-															#line 951 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 951 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 Future<int> introLoadValueFromDisk( Future<std::string> const& filename ) {
-															#line 951 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 951 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	return Future<int>(new IntroLoadValueFromDiskActor(filename));
-															#line 6124 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 6124 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 }
 
-#line 960 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+#line 960 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 
-															#line 6129 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 6129 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 namespace {
 // This generated class is to be used only via introAdd()
-															#line 961 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 961 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 template <class IntroAddActor>
-															#line 961 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 961 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class IntroAddActorState {
-															#line 6136 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 6136 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
-															#line 961 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 961 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	IntroAddActorState(Future<int> const& a,Future<int> const& b) 
-															#line 961 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
-															#line 961 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 961 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
+															#line 961 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		 : a(a),
-															#line 961 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 961 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		   b(b)
-															#line 6145 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 6145 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 	{
 		fdb_probe_actor_create("introAdd", reinterpret_cast<unsigned long>(this));
 
@@ -6155,16 +6155,16 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 962 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 962 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			StrictFuture<int> __when_expr_0 = a;
-															#line 962 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 962 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			if (static_cast<IntroAddActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 6162 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 6162 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<IntroAddActor*>(this)->actor_wait_state = 1;
-															#line 962 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 962 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< IntroAddActor, 0, int >*>(static_cast<IntroAddActor*>(this)));
-															#line 6167 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 6167 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -6185,25 +6185,25 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 963 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 963 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		StrictFuture<int> __when_expr_1 = b;
-															#line 963 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 963 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (static_cast<IntroAddActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 6192 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 6192 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<IntroAddActor*>(this)->actor_wait_state = 2;
-															#line 963 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 963 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< IntroAddActor, 1, int >*>(static_cast<IntroAddActor*>(this)));
-															#line 6197 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 6197 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1when1(int const& __x,int loopDepth) 
 	{
-															#line 962 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 962 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		x = __x;
-															#line 6206 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 6206 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		loopDepth = a_body1cont1(loopDepth);
 
 		return loopDepth;
@@ -6268,9 +6268,9 @@ public:
 	}
 	int a_body1cont2(int const& y,int loopDepth) 
 	{
-															#line 964 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 964 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (!static_cast<IntroAddActor*>(this)->SAV<int>::futures) { (void)(x + y); this->~IntroAddActorState(); static_cast<IntroAddActor*>(this)->destroy(); return 0; }
-															#line 6273 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 6273 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		new (&static_cast<IntroAddActor*>(this)->SAV< int >::value()) int(x + y);
 		this->~IntroAddActorState();
 		static_cast<IntroAddActor*>(this)->finishSendAndDelPromiseRef();
@@ -6280,9 +6280,9 @@ public:
 	}
 	int a_body1cont2(int && y,int loopDepth) 
 	{
-															#line 964 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 964 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (!static_cast<IntroAddActor*>(this)->SAV<int>::futures) { (void)(x + y); this->~IntroAddActorState(); static_cast<IntroAddActor*>(this)->destroy(); return 0; }
-															#line 6285 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 6285 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		new (&static_cast<IntroAddActor*>(this)->SAV< int >::value()) int(x + y);
 		this->~IntroAddActorState();
 		static_cast<IntroAddActor*>(this)->finishSendAndDelPromiseRef();
@@ -6353,18 +6353,18 @@ public:
 		fdb_probe_actor_exit("introAdd", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 961 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 961 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	Future<int> a;
-															#line 961 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 961 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	Future<int> b;
-															#line 962 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 962 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	int x;
-															#line 6362 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 6362 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 };
 // This generated class is to be used only via introAdd()
-															#line 961 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 961 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class IntroAddActor final : public Actor<int>, public ActorCallback< IntroAddActor, 0, int >, public ActorCallback< IntroAddActor, 1, int >, public FastAllocated<IntroAddActor>, public IntroAddActorState<IntroAddActor> {
-															#line 6367 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 6367 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
 	using FastAllocated<IntroAddActor>::operator new;
 	using FastAllocated<IntroAddActor>::operator delete;
@@ -6374,9 +6374,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< IntroAddActor, 0, int >;
 friend struct ActorCallback< IntroAddActor, 1, int >;
-															#line 961 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 961 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	IntroAddActor(Future<int> const& a,Future<int> const& b) 
-															#line 6379 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 6379 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		 : Actor<int>(),
 		   IntroAddActorState<IntroAddActor>(a, b)
 	{
@@ -6401,32 +6401,32 @@ friend struct ActorCallback< IntroAddActor, 1, int >;
 	}
 };
 }
-															#line 961 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 961 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 Future<int> introAdd( Future<int> const& a, Future<int> const& b ) {
-															#line 961 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 961 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	return Future<int>(new IntroAddActor(a, b));
-															#line 6408 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 6408 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 }
 
-#line 966 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+#line 966 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 
-															#line 6413 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 6413 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 namespace {
 // This generated class is to be used only via introFirst()
-															#line 967 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 967 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 template <class IntroFirstActor>
-															#line 967 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 967 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class IntroFirstActorState {
-															#line 6420 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 6420 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
-															#line 967 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 967 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	IntroFirstActorState(Future<int> const& a,Future<int> const& b) 
-															#line 967 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
-															#line 967 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 967 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
+															#line 967 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		 : a(a),
-															#line 967 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 967 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		   b(b)
-															#line 6429 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 6429 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 	{
 		fdb_probe_actor_create("introFirst", reinterpret_cast<unsigned long>(this));
 
@@ -6439,22 +6439,22 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 969 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 969 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			StrictFuture<int> __when_expr_0 = a;
-															#line 968 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 968 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			if (static_cast<IntroFirstActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 6446 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 6446 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
-															#line 972 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 972 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			StrictFuture<int> __when_expr_1 = b;
-															#line 6450 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 6450 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1when2(__when_expr_1.get(), loopDepth); };
 			static_cast<IntroFirstActor*>(this)->actor_wait_state = 1;
-															#line 969 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 969 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< IntroFirstActor, 0, int >*>(static_cast<IntroFirstActor*>(this)));
-															#line 972 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 972 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< IntroFirstActor, 1, int >*>(static_cast<IntroFirstActor*>(this)));
-															#line 6457 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 6457 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -6475,9 +6475,9 @@ public:
 	}
 	int a_body1when1(int const& x,int loopDepth) 
 	{
-															#line 970 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 970 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (!static_cast<IntroFirstActor*>(this)->SAV<int>::futures) { (void)(x); this->~IntroFirstActorState(); static_cast<IntroFirstActor*>(this)->destroy(); return 0; }
-															#line 6480 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 6480 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		new (&static_cast<IntroFirstActor*>(this)->SAV< int >::value()) int(x);
 		this->~IntroFirstActorState();
 		static_cast<IntroFirstActor*>(this)->finishSendAndDelPromiseRef();
@@ -6487,9 +6487,9 @@ public:
 	}
 	int a_body1when1(int && x,int loopDepth) 
 	{
-															#line 970 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 970 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (!static_cast<IntroFirstActor*>(this)->SAV<int>::futures) { (void)(x); this->~IntroFirstActorState(); static_cast<IntroFirstActor*>(this)->destroy(); return 0; }
-															#line 6492 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 6492 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		new (&static_cast<IntroFirstActor*>(this)->SAV< int >::value()) int(x);
 		this->~IntroFirstActorState();
 		static_cast<IntroFirstActor*>(this)->finishSendAndDelPromiseRef();
@@ -6499,9 +6499,9 @@ public:
 	}
 	int a_body1when2(int const& x,int loopDepth) 
 	{
-															#line 973 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 973 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (!static_cast<IntroFirstActor*>(this)->SAV<int>::futures) { (void)(x); this->~IntroFirstActorState(); static_cast<IntroFirstActor*>(this)->destroy(); return 0; }
-															#line 6504 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 6504 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		new (&static_cast<IntroFirstActor*>(this)->SAV< int >::value()) int(x);
 		this->~IntroFirstActorState();
 		static_cast<IntroFirstActor*>(this)->finishSendAndDelPromiseRef();
@@ -6511,9 +6511,9 @@ public:
 	}
 	int a_body1when2(int && x,int loopDepth) 
 	{
-															#line 973 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 973 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (!static_cast<IntroFirstActor*>(this)->SAV<int>::futures) { (void)(x); this->~IntroFirstActorState(); static_cast<IntroFirstActor*>(this)->destroy(); return 0; }
-															#line 6516 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 6516 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		new (&static_cast<IntroFirstActor*>(this)->SAV< int >::value()) int(x);
 		this->~IntroFirstActorState();
 		static_cast<IntroFirstActor*>(this)->finishSendAndDelPromiseRef();
@@ -6618,16 +6618,16 @@ public:
 		fdb_probe_actor_exit("introFirst", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 967 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 967 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	Future<int> a;
-															#line 967 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 967 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	Future<int> b;
-															#line 6625 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 6625 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 };
 // This generated class is to be used only via introFirst()
-															#line 967 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 967 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class IntroFirstActor final : public Actor<int>, public ActorCallback< IntroFirstActor, 0, int >, public ActorCallback< IntroFirstActor, 1, int >, public FastAllocated<IntroFirstActor>, public IntroFirstActorState<IntroFirstActor> {
-															#line 6630 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 6630 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
 	using FastAllocated<IntroFirstActor>::operator new;
 	using FastAllocated<IntroFirstActor>::operator delete;
@@ -6637,9 +6637,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< IntroFirstActor, 0, int >;
 friend struct ActorCallback< IntroFirstActor, 1, int >;
-															#line 967 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 967 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	IntroFirstActor(Future<int> const& a,Future<int> const& b) 
-															#line 6642 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 6642 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		 : Actor<int>(),
 		   IntroFirstActorState<IntroFirstActor>(a, b)
 	{
@@ -6663,14 +6663,14 @@ friend struct ActorCallback< IntroFirstActor, 1, int >;
 	}
 };
 }
-															#line 967 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 967 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 Future<int> introFirst( Future<int> const& a, Future<int> const& b ) {
-															#line 967 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 967 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	return Future<int>(new IntroFirstActor(a, b));
-															#line 6670 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 6670 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 }
 
-#line 977 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+#line 977 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 
 struct AddReply {
 	int sum;
@@ -6696,21 +6696,21 @@ struct AddRequest {
 	}
 };
 
-															#line 6699 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 6699 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 namespace {
 // This generated class is to be used only via introAddServer()
-															#line 1002 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1002 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 template <class IntroAddServerActor>
-															#line 1002 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1002 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class IntroAddServerActorState {
-															#line 6706 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 6706 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
-															#line 1002 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1002 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	IntroAddServerActorState(PromiseStream<AddRequest> const& add) 
-															#line 1002 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
-															#line 1002 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1002 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
+															#line 1002 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		 : add(add)
-															#line 6713 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 6713 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 	{
 		fdb_probe_actor_create("introAddServer", reinterpret_cast<unsigned long>(this));
 
@@ -6723,9 +6723,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 1003 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1003 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			;
-															#line 6728 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 6728 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -6752,15 +6752,15 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 1004 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1004 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		FutureStream<AddRequest> __when_expr_0 = add.getFuture();
-															#line 1003 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1003 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.pop(), loopDepth); };
-															#line 6759 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 6759 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		static_cast<IntroAddServerActor*>(this)->actor_wait_state = 1;
-															#line 1004 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1004 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		__when_expr_0.addCallbackAndClear(static_cast<ActorSingleCallback< IntroAddServerActor, 0, AddRequest >*>(static_cast<IntroAddServerActor*>(this)));
-															#line 6763 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 6763 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -6773,22 +6773,22 @@ public:
 	}
 	int a_body1loopBody1when1(AddRequest const& req,int loopDepth) 
 	{
-															#line 1005 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1005 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		printf("%d + %d = %d\n", req.a, req.b, req.a + req.b);
-															#line 1006 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1006 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		req.reply.send(req.a + req.b);
-															#line 6780 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 6780 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1when1(AddRequest && req,int loopDepth) 
 	{
-															#line 1005 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1005 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		printf("%d + %d = %d\n", req.a, req.b, req.a + req.b);
-															#line 1006 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1006 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		req.reply.send(req.a + req.b);
-															#line 6791 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 6791 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont1(loopDepth);
 
 		return loopDepth;
@@ -6844,14 +6844,14 @@ public:
 		fdb_probe_actor_exit("introAddServer", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 1002 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1002 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	PromiseStream<AddRequest> add;
-															#line 6849 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 6849 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 };
 // This generated class is to be used only via introAddServer()
-															#line 1002 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1002 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class IntroAddServerActor final : public Actor<void>, public ActorSingleCallback< IntroAddServerActor, 0, AddRequest >, public FastAllocated<IntroAddServerActor>, public IntroAddServerActorState<IntroAddServerActor> {
-															#line 6854 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 6854 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
 	using FastAllocated<IntroAddServerActor>::operator new;
 	using FastAllocated<IntroAddServerActor>::operator delete;
@@ -6860,9 +6860,9 @@ public:
 	void destroy() {{ ((Actor<void>*)this)->~Actor(); operator delete(this); }}
 #pragma clang diagnostic pop
 friend struct ActorSingleCallback< IntroAddServerActor, 0, AddRequest >;
-															#line 1002 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1002 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	IntroAddServerActor(PromiseStream<AddRequest> const& add) 
-															#line 6865 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 6865 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		 : Actor<void>(),
 		   IntroAddServerActorState<IntroAddServerActor>(add)
 	{
@@ -6877,14 +6877,14 @@ friend struct ActorSingleCallback< IntroAddServerActor, 0, AddRequest >;
 	}
 };
 }
-															#line 1002 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1002 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 void introAddServer( PromiseStream<AddRequest> const& add ) {
-															#line 1002 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1002 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	new IntroAddServerActor(add);
-															#line 6884 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 6884 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 }
 
-#line 1010 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+#line 1010 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 
 void introPromiseFuture() {
 	Promise<int> myPromise;
@@ -6947,25 +6947,25 @@ void chainTest() {
 	printf("chain2<%d>: %0.3f M/sec\n", N, 0.1 / (endt - startt));
 }
 
-															#line 6950 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 6950 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 namespace {
 // This generated class is to be used only via cycle()
-															#line 1072 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1072 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 template <class CycleActor>
-															#line 1072 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1072 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class CycleActorState {
-															#line 6957 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 6957 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
-															#line 1072 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1072 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	CycleActorState(FutureStream<Void> const& in,PromiseStream<Void> const& out,int* const& ptotal) 
-															#line 1072 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
-															#line 1072 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1072 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
+															#line 1072 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		 : in(in),
-															#line 1072 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1072 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		   out(out),
-															#line 1072 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1072 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		   ptotal(ptotal)
-															#line 6968 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 6968 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 	{
 		fdb_probe_actor_create("cycle", reinterpret_cast<unsigned long>(this));
 
@@ -6978,9 +6978,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 1073 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1073 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			;
-															#line 6983 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 6983 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -7007,37 +7007,37 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 1074 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1074 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		FutureStream<Void> __when_expr_0 = in;
-															#line 1074 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1074 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.pop(), loopDepth); };
-															#line 7014 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 7014 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		static_cast<CycleActor*>(this)->actor_wait_state = 1;
-															#line 1074 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1074 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		__when_expr_0.addCallbackAndClear(static_cast<ActorSingleCallback< CycleActor, 0, Void >*>(static_cast<CycleActor*>(this)));
-															#line 7018 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 7018 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont1(Void const& _,int loopDepth) 
 	{
-															#line 1075 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1075 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		(*ptotal)++;
-															#line 1076 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1076 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		out.send(Void());
-															#line 7029 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 7029 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		if (loopDepth == 0) return a_body1loopHead1(0);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont1(Void && _,int loopDepth) 
 	{
-															#line 1075 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1075 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		(*ptotal)++;
-															#line 1076 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1076 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		out.send(Void());
-															#line 7040 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 7040 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		if (loopDepth == 0) return a_body1loopHead1(0);
 
 		return loopDepth;
@@ -7105,18 +7105,18 @@ public:
 		fdb_probe_actor_exit("cycle", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 1072 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1072 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	FutureStream<Void> in;
-															#line 1072 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1072 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	PromiseStream<Void> out;
-															#line 1072 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1072 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	int* ptotal;
-															#line 7114 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 7114 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 };
 // This generated class is to be used only via cycle()
-															#line 1072 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1072 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class CycleActor final : public Actor<void>, public ActorSingleCallback< CycleActor, 0, Void >, public FastAllocated<CycleActor>, public CycleActorState<CycleActor> {
-															#line 7119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 7119 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
 	using FastAllocated<CycleActor>::operator new;
 	using FastAllocated<CycleActor>::operator delete;
@@ -7125,9 +7125,9 @@ public:
 	void destroy() {{ ((Actor<void>*)this)->~Actor(); operator delete(this); }}
 #pragma clang diagnostic pop
 friend struct ActorSingleCallback< CycleActor, 0, Void >;
-															#line 1072 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1072 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	CycleActor(FutureStream<Void> const& in,PromiseStream<Void> const& out,int* const& ptotal) 
-															#line 7130 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 7130 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		 : Actor<void>(),
 		   CycleActorState<CycleActor>(in, out, ptotal)
 	{
@@ -7142,36 +7142,36 @@ friend struct ActorSingleCallback< CycleActor, 0, Void >;
 	}
 };
 }
-															#line 1072 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1072 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 void cycle( FutureStream<Void> const& in, PromiseStream<Void> const& out, int* const& ptotal ) {
-															#line 1072 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1072 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	new CycleActor(in, out, ptotal);
-															#line 7149 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 7149 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 }
 
-#line 1079 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+#line 1079 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 
-															#line 7154 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 7154 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 namespace {
 // This generated class is to be used only via cycleTime()
-															#line 1080 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1080 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 template <class CycleTimeActor>
-															#line 1080 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1080 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class CycleTimeActorState {
-															#line 7161 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 7161 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
-															#line 1080 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1080 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	CycleTimeActorState(int const& nodes,int const& times) 
-															#line 1080 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
-															#line 1080 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1080 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
+															#line 1080 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		 : nodes(nodes),
-															#line 1080 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1080 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		   times(times),
-															#line 1081 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1081 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		   n(nodes),
-															#line 1082 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1082 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		   total(0)
-															#line 7174 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 7174 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 	{
 		fdb_probe_actor_create("cycleTime", reinterpret_cast<unsigned long>(this));
 
@@ -7184,19 +7184,19 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 1085 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1085 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			for(int i = 1;i < nodes;i++) {
-															#line 1086 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1086 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 				cycle(n[i].getFuture(), n[(i + 1) % nodes], &total);
-															#line 7191 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 7191 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			}
-															#line 1088 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1088 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			startT = timer();
-															#line 1089 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1089 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			n[1].send(Void());
-															#line 1090 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1090 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 			;
-															#line 7199 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 7199 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -7217,11 +7217,11 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 1097 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1097 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		printf("Ring test: %d nodes, %d total ops, %.3f seconds\n", nodes, total, timer() - startT);
-															#line 1098 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1098 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (!static_cast<CycleTimeActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~CycleTimeActorState(); static_cast<CycleTimeActor*>(this)->destroy(); return 0; }
-															#line 7224 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 7224 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		new (&static_cast<CycleTimeActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~CycleTimeActorState();
 		static_cast<CycleTimeActor*>(this)->finishSendAndDelPromiseRef();
@@ -7238,16 +7238,16 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 1091 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1091 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		FutureStream<Void> __when_expr_0 = n[0].getFuture();
-															#line 1091 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1091 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (static_cast<CycleTimeActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 7245 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 7245 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.pop(), loopDepth); };
 		static_cast<CycleTimeActor*>(this)->actor_wait_state = 1;
-															#line 1091 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1091 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		__when_expr_0.addCallbackAndClear(static_cast<ActorSingleCallback< CycleTimeActor, 0, Void >*>(static_cast<CycleTimeActor*>(this)));
-															#line 7250 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 7250 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -7267,30 +7267,30 @@ public:
 	}
 	int a_body1loopBody1cont1(Void const& _,int loopDepth) 
 	{
-															#line 1092 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1092 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (!--times)
-															#line 7272 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 7272 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		{
 			return a_body1break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 1094 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1094 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		n[1].send(Void());
-															#line 7278 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 7278 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		if (loopDepth == 0) return a_body1loopHead1(0);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont1(Void && _,int loopDepth) 
 	{
-															#line 1092 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1092 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		if (!--times)
-															#line 7287 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 7287 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		{
 			return a_body1break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 1094 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1094 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 		n[1].send(Void());
-															#line 7293 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 7293 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		if (loopDepth == 0) return a_body1loopHead1(0);
 
 		return loopDepth;
@@ -7358,22 +7358,22 @@ public:
 		fdb_probe_actor_exit("cycleTime", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 1080 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1080 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	int nodes;
-															#line 1080 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1080 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	int times;
-															#line 1081 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1081 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	std::vector<PromiseStream<Void>> n;
-															#line 1082 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1082 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	int total;
-															#line 1088 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1088 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	double startT;
-															#line 7371 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 7371 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 };
 // This generated class is to be used only via cycleTime()
-															#line 1080 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1080 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 class CycleTimeActor final : public Actor<Void>, public ActorSingleCallback< CycleTimeActor, 0, Void >, public FastAllocated<CycleTimeActor>, public CycleTimeActorState<CycleTimeActor> {
-															#line 7376 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 7376 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 public:
 	using FastAllocated<CycleTimeActor>::operator new;
 	using FastAllocated<CycleTimeActor>::operator delete;
@@ -7382,9 +7382,9 @@ public:
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorSingleCallback< CycleTimeActor, 0, Void >;
-															#line 1080 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1080 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	CycleTimeActor(int const& nodes,int const& times) 
-															#line 7387 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 7387 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 		 : Actor<Void>(),
 		   CycleTimeActorState<CycleTimeActor>(nodes, times)
 	{
@@ -7408,14 +7408,14 @@ friend struct ActorSingleCallback< CycleTimeActor, 0, Void >;
 	}
 };
 }
-															#line 1080 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1080 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 Future<Void> cycleTime( int const& nodes, int const& times ) {
-															#line 1080 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+															#line 1080 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 	return Future<Void>(new CycleTimeActor(nodes, times));
-															#line 7415 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.g.cpp"
+															#line 7415 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.g.cpp"
 }
 
-#line 1100 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/dsltest.actor.cpp"
+#line 1100 "/usr/src/libfdb_c/fdbrpc/dsltest.actor.cpp"
 
 void sleeptest() {
 #ifdef __linux__

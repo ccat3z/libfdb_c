@@ -1,5 +1,5 @@
 #define POST_ACTOR_COMPILER 1
-#line 1 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ClusterConnectionKey.actor.h"
+#line 1 "/usr/src/libfdb_c/fdbclient/ClusterConnectionKey.actor.h"
 /*
  * ClusterConnectionKey.actor.h
  *
@@ -47,11 +47,11 @@ public:
 
 	// Loads and parses the connection string at the specified key, throwing errors if the file cannot be read or the
 	// format is invalid.
-																#line 50 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ClusterConnectionKey.actor.g.h"
+																#line 50 "/usr/src/libfdb_c/fdbclient/ClusterConnectionKey.actor.g.h"
 [[nodiscard]] static Future<Reference<ClusterConnectionKey>> loadClusterConnectionKey( Database const& db, Key const& connectionStringKey );
 template <class> friend class ClusterConnectionKey_LoadClusterConnectionKeyActorState;
 
-#line 49 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ClusterConnectionKey.actor.h"
+#line 49 "/usr/src/libfdb_c/fdbclient/ClusterConnectionKey.actor.h"
 
 	// Sets the connections string held by this object and persists it.
 	Future<Void> setAndPersistConnectionString(ClusterConnectionString const&) override;
@@ -82,21 +82,21 @@ protected:
 	Future<bool> persist() override;
 
 private:
-																#line 85 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ClusterConnectionKey.actor.g.h"
+																#line 85 "/usr/src/libfdb_c/fdbclient/ClusterConnectionKey.actor.g.h"
 [[nodiscard]] static Future<ClusterConnectionString> getStoredConnectionStringImpl( Reference<ClusterConnectionKey> const& self );
 template <class> friend class ClusterConnectionKey_GetStoredConnectionStringImplActorState;
 
-#line 80 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ClusterConnectionKey.actor.h"
-																#line 90 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ClusterConnectionKey.actor.g.h"
+#line 80 "/usr/src/libfdb_c/fdbclient/ClusterConnectionKey.actor.h"
+																#line 90 "/usr/src/libfdb_c/fdbclient/ClusterConnectionKey.actor.g.h"
 [[nodiscard]] static Future<bool> upToDateImpl( Reference<ClusterConnectionKey> const& self, ClusterConnectionString* const& connectionString );
 template <class> friend class ClusterConnectionKey_UpToDateImplActorState;
 
-#line 82 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ClusterConnectionKey.actor.h"
-																#line 95 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ClusterConnectionKey.actor.g.h"
+#line 82 "/usr/src/libfdb_c/fdbclient/ClusterConnectionKey.actor.h"
+																#line 95 "/usr/src/libfdb_c/fdbclient/ClusterConnectionKey.actor.g.h"
 [[nodiscard]] static Future<bool> persistImpl( Reference<ClusterConnectionKey> const& self );
 template <class> friend class ClusterConnectionKey_PersistImplActorState;
 
-#line 83 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ClusterConnectionKey.actor.h"
+#line 83 "/usr/src/libfdb_c/fdbclient/ClusterConnectionKey.actor.h"
 
 	// The database where the connection key is stored. Note that this does not need to be the same database as the one
 	// that the connection string would connect to.

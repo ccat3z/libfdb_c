@@ -1,5 +1,5 @@
 #define POST_ACTOR_COMPILER 1
-#line 2 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+#line 2 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 
 /*
  * ActorFuzz.actor.cpp
@@ -28,27 +28,27 @@
 
 #ifndef WIN32
 
-															#line 31 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 31 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 namespace {
 // This generated class is to be used only via actorFuzz0()
-															#line 29 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 29 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 template <class ActorFuzz0Actor>
-															#line 29 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 29 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz0ActorState {
-															#line 38 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 38 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
-															#line 29 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 29 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz0ActorState(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 29 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
-															#line 29 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 29 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
+															#line 29 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		 : inputStream(inputStream),
-															#line 29 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 29 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   outputStream(outputStream),
-															#line 29 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 29 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   error(error),
-															#line 30 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 30 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   ifstate(0)
-															#line 51 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 51 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 	{
 		fdb_probe_actor_create("actorFuzz0", reinterpret_cast<unsigned long>(this));
 
@@ -62,33 +62,33 @@ public:
 	{
 		try {
 			try {
-															#line 32 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 32 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(390229);
-															#line 33 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 33 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				list637154 = std::vector<int>();
-															#line 34 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 34 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				list637154.push_back(1);
-															#line 35 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 35 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				list637154.push_back(2);
-															#line 36 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 36 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				list637154.push_back(3);
-															#line 37 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 37 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				for( auto i : list637154 ) {
-															#line 38 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 38 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 					(void)i;
-															#line 39 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 39 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 					outputStream.send(596271);
-															#line 40 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 40 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 					if (!static_cast<ActorFuzz0Actor*>(this)->SAV<int>::futures) { (void)(574865); this->~ActorFuzz0ActorState(); static_cast<ActorFuzz0Actor*>(this)->destroy(); return 0; }
-															#line 83 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 83 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 					new (&static_cast<ActorFuzz0Actor*>(this)->SAV< int >::value()) int(574865);
 					this->~ActorFuzz0ActorState();
 					static_cast<ActorFuzz0Actor*>(this)->finishSendAndDelPromiseRef();
 					return 0;
 				}
-															#line 42 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 42 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(616994);
-															#line 91 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 91 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 				loopDepth = a_body1cont4(loopDepth);
 			}
 			catch (Error& error) {
@@ -115,9 +115,9 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 93 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 93 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if (!static_cast<ActorFuzz0Actor*>(this)->SAV<int>::futures) { (void)(240968); this->~ActorFuzz0ActorState(); static_cast<ActorFuzz0Actor*>(this)->destroy(); return 0; }
-															#line 120 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 120 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		new (&static_cast<ActorFuzz0Actor*>(this)->SAV< int >::value()) int(240968);
 		this->~ActorFuzz0ActorState();
 		static_cast<ActorFuzz0Actor*>(this)->finishSendAndDelPromiseRef();
@@ -128,13 +128,13 @@ public:
 	int a_body1Catch2(const Error& __current_error,int loopDepth=0) 
 	{
 		try {
-															#line 44 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 44 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(282473);
-															#line 45 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 45 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			i538813 = int();
-															#line 46 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 46 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			i538813 = 0;
-															#line 137 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 137 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			loopDepth = a_body1Catch2loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -160,9 +160,9 @@ public:
 	}
 	int a_body1Catch2cont1(int loopDepth) 
 	{
-															#line 91 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 91 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(492398);
-															#line 165 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 165 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1cont1(loopDepth);
 
 		return loopDepth;
@@ -176,25 +176,25 @@ public:
 	}
 	int a_body1Catch2loopBody1(int loopDepth) 
 	{
-															#line 46 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 46 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if (!(i538813 < 5))
-															#line 181 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 181 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		{
 			return a_body1Catch2break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 47 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 47 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(202451);
-															#line 48 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 48 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		list106964 = std::vector<int>();
-															#line 49 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 49 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		list106964.push_back(1);
-															#line 50 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 50 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		list106964.push_back(2);
-															#line 51 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 51 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		list106964.push_back(3);
-															#line 52 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 52 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		RangeForbody1Catch2loopBody1Iterator0 = std::begin(list106964);
-															#line 197 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 197 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1Catch2loopBody1loopHead1(loopDepth);
 
 		return loopDepth;
@@ -214,11 +214,11 @@ public:
 	}
 	int a_body1Catch2loopBody1cont1(int loopDepth) 
 	{
-															#line 89 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 89 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(710432);
-															#line 46 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 46 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		i538813++;
-															#line 221 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 221 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		if (loopDepth == 0) return a_body1Catch2loopHead1(0);
 
 		return loopDepth;
@@ -232,66 +232,66 @@ public:
 	}
 	int a_body1Catch2loopBody1loopBody1(int loopDepth) 
 	{
-															#line 52 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 52 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if (!(RangeForbody1Catch2loopBody1Iterator0 != std::end(list106964)))
-															#line 237 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 237 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		{
 			return a_body1Catch2loopBody1break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 52 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 52 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		auto i = *RangeForbody1Catch2loopBody1Iterator0;
-															#line 243 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 243 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		{
-															#line 53 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 53 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			(void)i;
-															#line 54 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 54 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(306539);
-															#line 55 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 55 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			if ((++ifstate & 1) == 1)
-															#line 251 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 251 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			{
-															#line 56 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 56 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(980726);
-															#line 255 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 255 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 				try {
-															#line 58 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 58 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 					outputStream.send(103523);
-															#line 59 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 59 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 					if ((++ifstate & 1) == 1)
-															#line 261 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 261 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 					{
-															#line 60 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 60 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 						outputStream.send(750915);
-															#line 61 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 61 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 						FutureStream<int> __when_expr_0 = inputStream;
-															#line 61 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 61 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 						if (static_cast<ActorFuzz0Actor*>(this)->actor_wait_state < 0) return a_body1Catch2loopBody1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 269 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 269 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 						if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch2loopBody1loopBody1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1Catch2loopBody1loopBody1when1(__when_expr_0.pop(), loopDepth); };
 						static_cast<ActorFuzz0Actor*>(this)->actor_wait_state = 1;
-															#line 61 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 61 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 						__when_expr_0.addCallbackAndClear(static_cast<ActorSingleCallback< ActorFuzz0Actor, 0, int >*>(static_cast<ActorFuzz0Actor*>(this)));
-															#line 274 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 274 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 						loopDepth = 0;
 					}
 					else
 					{
-															#line 65 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 65 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 						outputStream.send(883911);
-															#line 281 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 281 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 						try {
-															#line 67 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 67 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 							outputStream.send(625121);
-															#line 68 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 68 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 							FutureStream<int> __when_expr_1 = inputStream;
-															#line 68 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 68 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 							if (static_cast<ActorFuzz0Actor*>(this)->actor_wait_state < 0) return a_body1Catch2loopBody1loopBody1Catch2(actor_cancelled(), loopDepth);
-															#line 289 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 289 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 							if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch2loopBody1loopBody1Catch2(__when_expr_1.getError(), loopDepth); else return a_body1Catch2loopBody1loopBody1when2(__when_expr_1.pop(), loopDepth); };
 							static_cast<ActorFuzz0Actor*>(this)->actor_wait_state = 2;
-															#line 68 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 68 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 							__when_expr_1.addCallbackAndClear(static_cast<ActorSingleCallback< ActorFuzz0Actor, 1, int >*>(static_cast<ActorFuzz0Actor*>(this)));
-															#line 294 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 294 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 							loopDepth = 0;
 						}
 						catch (Error& error) {
@@ -309,9 +309,9 @@ public:
 			}
 			else
 			{
-															#line 84 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 84 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(972353);
-															#line 314 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 314 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 				return a_body1Catch2loopBody1break1(loopDepth==0?0:loopDepth-1); // break
 			}
 		}
@@ -333,27 +333,27 @@ public:
 	}
 	int a_body1Catch2loopBody1loopBody1cont1(int loopDepth) 
 	{
-															#line 52 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 52 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		++RangeForbody1Catch2loopBody1Iterator0;
-															#line 338 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 338 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		if (loopDepth == 0) return a_body1Catch2loopBody1loopHead1(0);
 
 		return loopDepth;
 	}
 	int a_body1Catch2loopBody1loopBody1cont3(int loopDepth) 
 	{
-															#line 87 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 87 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(732279);
-															#line 347 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 347 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1Catch2loopBody1loopBody1cont1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1Catch2loopBody1loopBody1cont4(int loopDepth) 
 	{
-															#line 82 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 82 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(496422);
-															#line 356 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 356 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1Catch2loopBody1loopBody1cont3(loopDepth);
 
 		return loopDepth;
@@ -361,9 +361,9 @@ public:
 	int a_body1Catch2loopBody1loopBody1Catch1(const Error& __current_error,int loopDepth=0) 
 	{
 		try {
-															#line 79 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 79 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(822404);
-															#line 366 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 366 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			return a_body1Catch2loopBody1break1(loopDepth==0?0:loopDepth-1); // break
 		}
 		catch (Error& error) {
@@ -376,31 +376,31 @@ public:
 	}
 	int a_body1Catch2loopBody1loopBody1cont5(int loopDepth) 
 	{
-															#line 77 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 77 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(547309);
-															#line 381 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 381 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1Catch2loopBody1loopBody1cont14(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1Catch2loopBody1loopBody1cont6(int const& input,int loopDepth) 
 	{
-															#line 62 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 62 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(input + 714763);
-															#line 63 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 63 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(838596);
-															#line 392 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 392 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1Catch2loopBody1loopBody1cont5(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1Catch2loopBody1loopBody1cont6(int && input,int loopDepth) 
 	{
-															#line 62 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 62 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(input + 714763);
-															#line 63 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 63 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(838596);
-															#line 403 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 403 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1Catch2loopBody1loopBody1cont5(loopDepth);
 
 		return loopDepth;
@@ -470,9 +470,9 @@ public:
 	}
 	int a_body1Catch2loopBody1loopBody1cont8(int loopDepth) 
 	{
-															#line 75 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 75 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(855094);
-															#line 475 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 475 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1Catch2loopBody1loopBody1cont5(loopDepth);
 
 		return loopDepth;
@@ -480,11 +480,11 @@ public:
 	int a_body1Catch2loopBody1loopBody1Catch2(const Error& __current_error,int loopDepth=0) 
 	{
 		try {
-															#line 72 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 72 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(376812);
-															#line 73 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 73 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			if (!static_cast<ActorFuzz0Actor*>(this)->SAV<int>::futures) { (void)(247718); this->~ActorFuzz0ActorState(); static_cast<ActorFuzz0Actor*>(this)->destroy(); return 0; }
-															#line 487 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 487 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			new (&static_cast<ActorFuzz0Actor*>(this)->SAV< int >::value()) int(247718);
 			this->~ActorFuzz0ActorState();
 			static_cast<ActorFuzz0Actor*>(this)->finishSendAndDelPromiseRef();
@@ -500,22 +500,22 @@ public:
 	}
 	int a_body1Catch2loopBody1loopBody1cont9(int const& input,int loopDepth) 
 	{
-															#line 69 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 69 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(input + 826693);
-															#line 70 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 70 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(593359);
-															#line 507 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 507 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1Catch2loopBody1loopBody1cont11(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1Catch2loopBody1loopBody1cont9(int && input,int loopDepth) 
 	{
-															#line 69 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 69 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(input + 826693);
-															#line 70 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 70 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(593359);
-															#line 518 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 518 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1Catch2loopBody1loopBody1cont11(loopDepth);
 
 		return loopDepth;
@@ -609,28 +609,28 @@ public:
 
 		return loopDepth;
 	}
-															#line 29 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 29 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	FutureStream<int> inputStream;
-															#line 29 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 29 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	PromiseStream<int> outputStream;
-															#line 29 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 29 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	Future<Void> error;
-															#line 30 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 30 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	int ifstate;
-															#line 33 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 33 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	std::vector<int> list637154;
-															#line 45 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 45 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	int i538813;
-															#line 48 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 48 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	std::vector<int> list106964;
-															#line 52 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 52 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	decltype(std::begin(std::declval<std::vector<int>>())) RangeForbody1Catch2loopBody1Iterator0;
-															#line 628 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 628 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 };
 // This generated class is to be used only via actorFuzz0()
-															#line 29 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 29 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz0Actor final : public Actor<int>, public ActorSingleCallback< ActorFuzz0Actor, 0, int >, public ActorSingleCallback< ActorFuzz0Actor, 1, int >, public FastAllocated<ActorFuzz0Actor>, public ActorFuzz0ActorState<ActorFuzz0Actor> {
-															#line 633 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 633 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
 	using FastAllocated<ActorFuzz0Actor>::operator new;
 	using FastAllocated<ActorFuzz0Actor>::operator delete;
@@ -640,9 +640,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorSingleCallback< ActorFuzz0Actor, 0, int >;
 friend struct ActorSingleCallback< ActorFuzz0Actor, 1, int >;
-															#line 29 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 29 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz0Actor(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 645 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 645 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		 : Actor<int>(),
 		   ActorFuzz0ActorState<ActorFuzz0Actor>(inputStream, outputStream, error)
 	{
@@ -667,38 +667,38 @@ friend struct ActorSingleCallback< ActorFuzz0Actor, 1, int >;
 	}
 };
 }
-															#line 29 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 29 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 [[nodiscard]] Future<int> actorFuzz0( FutureStream<int> const& inputStream, PromiseStream<int> const& outputStream, Future<Void> const& error ) {
-															#line 29 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 29 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	return Future<int>(new ActorFuzz0Actor(inputStream, outputStream, error));
-															#line 674 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 674 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 }
 
-#line 95 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+#line 95 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 
-															#line 679 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 679 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 namespace {
 // This generated class is to be used only via actorFuzz1()
-															#line 96 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 96 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 template <class ActorFuzz1Actor>
-															#line 96 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 96 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz1ActorState {
-															#line 686 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 686 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
-															#line 96 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 96 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz1ActorState(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 96 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
-															#line 96 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 96 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
+															#line 96 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		 : inputStream(inputStream),
-															#line 96 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 96 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   outputStream(outputStream),
-															#line 96 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 96 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   error(error),
-															#line 97 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 97 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   ifstate(0),
-															#line 98 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 98 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   i661806()
-															#line 701 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 701 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 	{
 		fdb_probe_actor_create("actorFuzz1", reinterpret_cast<unsigned long>(this));
 
@@ -711,9 +711,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 99 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 99 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			i661806 = 0;
-															#line 716 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 716 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -734,9 +734,9 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 140 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if (!static_cast<ActorFuzz1Actor*>(this)->SAV<int>::futures) { (void)(917160); this->~ActorFuzz1ActorState(); static_cast<ActorFuzz1Actor*>(this)->destroy(); return 0; }
-															#line 739 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 739 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		new (&static_cast<ActorFuzz1Actor*>(this)->SAV< int >::value()) int(917160);
 		this->~ActorFuzz1ActorState();
 		static_cast<ActorFuzz1Actor*>(this)->finishSendAndDelPromiseRef();
@@ -753,19 +753,19 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 99 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 99 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if (!(i661806 < 5))
-															#line 758 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 758 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		{
 			return a_body1break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 100 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 100 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(477566);
-															#line 764 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 764 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		try {
-															#line 102 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 102 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(815578);
-															#line 768 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 768 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			return a_body1continue1(loopDepth); // continue
 		}
 		catch (Error& error) {
@@ -791,18 +791,18 @@ public:
 	}
 	int a_body1continue1(int loopDepth) 
 	{
-															#line 99 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 99 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		i661806++;
-															#line 796 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 796 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		if (loopDepth == 0) return a_body1loopHead1(0);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont1(int loopDepth) 
 	{
-															#line 137 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 137 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(287946);
-															#line 805 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 805 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		return a_body1break1(loopDepth==0?0:loopDepth-1); // break
 
 		return loopDepth;
@@ -810,19 +810,19 @@ public:
 	int a_body1loopBody1Catch1(const Error& __current_error,int loopDepth=0) 
 	{
 		try {
-															#line 105 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 105 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(787898);
-															#line 106 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 106 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			list781874 = std::vector<int>();
-															#line 107 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 107 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			list781874.push_back(1);
-															#line 108 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 108 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			list781874.push_back(2);
-															#line 109 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 109 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			list781874.push_back(3);
-															#line 110 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 110 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			RangeForbody1loopBody1Catch1Iterator0 = std::begin(list781874);
-															#line 825 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 825 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			loopDepth = a_body1loopBody1Catch1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -835,9 +835,9 @@ public:
 	}
 	int a_body1loopBody1Catch1cont1(int loopDepth) 
 	{
-															#line 135 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 135 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(647010);
-															#line 840 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 840 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont1(loopDepth);
 
 		return loopDepth;
@@ -851,29 +851,29 @@ public:
 	}
 	int a_body1loopBody1Catch1loopBody1(int loopDepth) 
 	{
-															#line 110 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 110 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if (!(RangeForbody1loopBody1Catch1Iterator0 != std::end(list781874)))
-															#line 856 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 856 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		{
 			return a_body1loopBody1Catch1break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 110 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 110 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		auto i = *RangeForbody1loopBody1Catch1Iterator0;
-															#line 862 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 862 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		{
-															#line 111 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 111 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			(void)i;
-															#line 112 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 112 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(625656);
-															#line 868 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 868 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			try {
-															#line 114 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 114 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(114830);
-															#line 115 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 115 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				i996799 = int();
-															#line 116 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 116 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				i996799 = 0;
-															#line 876 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 876 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 				loopDepth = a_body1loopBody1Catch1loopBody1loopHead1(loopDepth);
 			}
 			catch (Error& error) {
@@ -900,18 +900,18 @@ public:
 	}
 	int a_body1loopBody1Catch1loopBody1cont1(int loopDepth) 
 	{
-															#line 110 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 110 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		++RangeForbody1loopBody1Catch1Iterator0;
-															#line 905 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 905 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		if (loopDepth == 0) return a_body1loopBody1Catch1loopHead1(0);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1Catch1loopBody1cont3(int loopDepth) 
 	{
-															#line 133 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 133 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(329141);
-															#line 914 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 914 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1loopBody1Catch1loopBody1cont1(loopDepth);
 
 		return loopDepth;
@@ -919,11 +919,11 @@ public:
 	int a_body1loopBody1Catch1loopBody1Catch1(const Error& __current_error,int loopDepth=0) 
 	{
 		try {
-															#line 130 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 130 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(703172);
-															#line 131 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 131 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			if (!static_cast<ActorFuzz1Actor*>(this)->SAV<int>::futures) { (void)(811053); this->~ActorFuzz1ActorState(); static_cast<ActorFuzz1Actor*>(this)->destroy(); return 0; }
-															#line 926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 926 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			new (&static_cast<ActorFuzz1Actor*>(this)->SAV< int >::value()) int(811053);
 			this->~ActorFuzz1ActorState();
 			static_cast<ActorFuzz1Actor*>(this)->finishSendAndDelPromiseRef();
@@ -939,9 +939,9 @@ public:
 	}
 	int a_body1loopBody1Catch1loopBody1cont4(int loopDepth) 
 	{
-															#line 128 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 128 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(613669);
-															#line 944 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 944 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1loopBody1Catch1loopBody1cont6(loopDepth);
 
 		return loopDepth;
@@ -955,28 +955,28 @@ public:
 	}
 	int a_body1loopBody1Catch1loopBody1loopBody1(int loopDepth) 
 	{
-															#line 116 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 116 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if (!(i996799 < 5))
-															#line 960 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 960 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		{
 			return a_body1loopBody1Catch1loopBody1break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 117 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 117 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(188397);
-															#line 966 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 966 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		try {
-															#line 119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 119 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(649779);
-															#line 120 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 120 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			StrictFuture<Void> __when_expr_0 = error;
-															#line 120 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 120 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			if (static_cast<ActorFuzz1Actor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1loopBody1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 974 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 974 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1loopBody1Catch1loopBody1loopBody1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1loopBody1Catch1loopBody1loopBody1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<ActorFuzz1Actor*>(this)->actor_wait_state = 1;
-															#line 120 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 120 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ActorFuzz1Actor, 0, Void >*>(static_cast<ActorFuzz1Actor*>(this)));
-															#line 979 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 979 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -1003,11 +1003,11 @@ public:
 	int a_body1loopBody1Catch1loopBody1loopBody1Catch1(const Error& __current_error,int loopDepth=0) 
 	{
 		try {
-															#line 124 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 124 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(761942);
-															#line 125 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 125 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			if (!static_cast<ActorFuzz1Actor*>(this)->SAV<int>::futures) { (void)(469895); this->~ActorFuzz1ActorState(); static_cast<ActorFuzz1Actor*>(this)->destroy(); return 0; }
-															#line 1010 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1010 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			new (&static_cast<ActorFuzz1Actor*>(this)->SAV< int >::value()) int(469895);
 			this->~ActorFuzz1ActorState();
 			static_cast<ActorFuzz1Actor*>(this)->finishSendAndDelPromiseRef();
@@ -1023,18 +1023,18 @@ public:
 	}
 	int a_body1loopBody1Catch1loopBody1loopBody1cont3(Void const& _,int loopDepth) 
 	{
-															#line 121 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 121 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(705317);
-															#line 1028 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1028 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		return a_body1loopBody1Catch1loopBody1break1(loopDepth==0?0:loopDepth-1); // break
 
 		return loopDepth;
 	}
 	int a_body1loopBody1Catch1loopBody1loopBody1cont3(Void && _,int loopDepth) 
 	{
-															#line 121 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 121 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(705317);
-															#line 1037 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1037 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		return a_body1loopBody1Catch1loopBody1break1(loopDepth==0?0:loopDepth-1); // break
 
 		return loopDepth;
@@ -1115,28 +1115,28 @@ public:
 
 		return loopDepth;
 	}
-															#line 96 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 96 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	FutureStream<int> inputStream;
-															#line 96 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 96 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	PromiseStream<int> outputStream;
-															#line 96 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 96 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	Future<Void> error;
-															#line 97 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 97 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	int ifstate;
-															#line 98 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 98 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	int i661806;
-															#line 106 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 106 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	std::vector<int> list781874;
-															#line 110 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 110 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	decltype(std::begin(std::declval<std::vector<int>>())) RangeForbody1loopBody1Catch1Iterator0;
-															#line 115 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 115 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	int i996799;
-															#line 1134 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1134 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 };
 // This generated class is to be used only via actorFuzz1()
-															#line 96 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 96 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz1Actor final : public Actor<int>, public ActorCallback< ActorFuzz1Actor, 0, Void >, public FastAllocated<ActorFuzz1Actor>, public ActorFuzz1ActorState<ActorFuzz1Actor> {
-															#line 1139 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1139 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
 	using FastAllocated<ActorFuzz1Actor>::operator new;
 	using FastAllocated<ActorFuzz1Actor>::operator delete;
@@ -1145,9 +1145,9 @@ public:
 	void destroy() override { ((Actor<int>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< ActorFuzz1Actor, 0, Void >;
-															#line 96 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 96 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz1Actor(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 1150 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1150 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		 : Actor<int>(),
 		   ActorFuzz1ActorState<ActorFuzz1Actor>(inputStream, outputStream, error)
 	{
@@ -1171,36 +1171,36 @@ friend struct ActorCallback< ActorFuzz1Actor, 0, Void >;
 	}
 };
 }
-															#line 96 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 96 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 [[nodiscard]] Future<int> actorFuzz1( FutureStream<int> const& inputStream, PromiseStream<int> const& outputStream, Future<Void> const& error ) {
-															#line 96 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 96 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	return Future<int>(new ActorFuzz1Actor(inputStream, outputStream, error));
-															#line 1178 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1178 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 }
 
-#line 142 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+#line 142 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 
-															#line 1183 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1183 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 namespace {
 // This generated class is to be used only via actorFuzz2()
-															#line 143 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 143 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 template <class ActorFuzz2Actor>
-															#line 143 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 143 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz2ActorState {
-															#line 1190 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1190 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
-															#line 143 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 143 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz2ActorState(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 143 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
-															#line 143 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 143 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
+															#line 143 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		 : inputStream(inputStream),
-															#line 143 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 143 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   outputStream(outputStream),
-															#line 143 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 143 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   error(error),
-															#line 144 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 144 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   ifstate(0)
-															#line 1203 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1203 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 	{
 		fdb_probe_actor_create("actorFuzz2", reinterpret_cast<unsigned long>(this));
 
@@ -1213,16 +1213,16 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 145 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 145 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			FutureStream<int> __when_expr_0 = inputStream;
-															#line 145 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 145 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			if (static_cast<ActorFuzz2Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 1220 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1220 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.pop(), loopDepth); };
 			static_cast<ActorFuzz2Actor*>(this)->actor_wait_state = 1;
-															#line 145 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 145 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorSingleCallback< ActorFuzz2Actor, 0, int >*>(static_cast<ActorFuzz2Actor*>(this)));
-															#line 1225 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1225 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -1243,11 +1243,11 @@ public:
 	}
 	int a_body1cont1(int const& input,int loopDepth) 
 	{
-															#line 146 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 146 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(input + 475677);
-															#line 147 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 147 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if (!static_cast<ActorFuzz2Actor*>(this)->SAV<int>::futures) { (void)(930237); this->~ActorFuzz2ActorState(); static_cast<ActorFuzz2Actor*>(this)->destroy(); return 0; }
-															#line 1250 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1250 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		new (&static_cast<ActorFuzz2Actor*>(this)->SAV< int >::value()) int(930237);
 		this->~ActorFuzz2ActorState();
 		static_cast<ActorFuzz2Actor*>(this)->finishSendAndDelPromiseRef();
@@ -1257,11 +1257,11 @@ public:
 	}
 	int a_body1cont1(int && input,int loopDepth) 
 	{
-															#line 146 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 146 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(input + 475677);
-															#line 147 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 147 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if (!static_cast<ActorFuzz2Actor*>(this)->SAV<int>::futures) { (void)(930237); this->~ActorFuzz2ActorState(); static_cast<ActorFuzz2Actor*>(this)->destroy(); return 0; }
-															#line 1264 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1264 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		new (&static_cast<ActorFuzz2Actor*>(this)->SAV< int >::value()) int(930237);
 		this->~ActorFuzz2ActorState();
 		static_cast<ActorFuzz2Actor*>(this)->finishSendAndDelPromiseRef();
@@ -1332,20 +1332,20 @@ public:
 		fdb_probe_actor_exit("actorFuzz2", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 143 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 143 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	FutureStream<int> inputStream;
-															#line 143 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 143 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	PromiseStream<int> outputStream;
-															#line 143 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 143 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	Future<Void> error;
-															#line 144 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 144 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	int ifstate;
-															#line 1343 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1343 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 };
 // This generated class is to be used only via actorFuzz2()
-															#line 143 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 143 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz2Actor final : public Actor<int>, public ActorSingleCallback< ActorFuzz2Actor, 0, int >, public FastAllocated<ActorFuzz2Actor>, public ActorFuzz2ActorState<ActorFuzz2Actor> {
-															#line 1348 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1348 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
 	using FastAllocated<ActorFuzz2Actor>::operator new;
 	using FastAllocated<ActorFuzz2Actor>::operator delete;
@@ -1354,9 +1354,9 @@ public:
 	void destroy() override { ((Actor<int>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorSingleCallback< ActorFuzz2Actor, 0, int >;
-															#line 143 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 143 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz2Actor(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 1359 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1359 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		 : Actor<int>(),
 		   ActorFuzz2ActorState<ActorFuzz2Actor>(inputStream, outputStream, error)
 	{
@@ -1380,36 +1380,36 @@ friend struct ActorSingleCallback< ActorFuzz2Actor, 0, int >;
 	}
 };
 }
-															#line 143 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 143 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 [[nodiscard]] Future<int> actorFuzz2( FutureStream<int> const& inputStream, PromiseStream<int> const& outputStream, Future<Void> const& error ) {
-															#line 143 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 143 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	return Future<int>(new ActorFuzz2Actor(inputStream, outputStream, error));
-															#line 1387 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1387 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 }
 
-#line 149 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+#line 149 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 
-															#line 1392 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1392 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 namespace {
 // This generated class is to be used only via actorFuzz3()
-															#line 150 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 150 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 template <class ActorFuzz3Actor>
-															#line 150 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 150 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz3ActorState {
-															#line 1399 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1399 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
-															#line 150 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 150 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz3ActorState(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 150 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
-															#line 150 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 150 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
+															#line 150 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		 : inputStream(inputStream),
-															#line 150 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 150 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   outputStream(outputStream),
-															#line 150 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 150 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   error(error),
-															#line 151 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 151 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   ifstate(0)
-															#line 1412 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1412 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 	{
 		fdb_probe_actor_create("actorFuzz3", reinterpret_cast<unsigned long>(this));
 
@@ -1422,11 +1422,11 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 152 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 152 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			throw_operation_failed();
-															#line 153 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 153 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			if (!static_cast<ActorFuzz3Actor*>(this)->SAV<int>::futures) { (void)(499525); this->~ActorFuzz3ActorState(); static_cast<ActorFuzz3Actor*>(this)->destroy(); return 0; }
-															#line 1429 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1429 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			new (&static_cast<ActorFuzz3Actor*>(this)->SAV< int >::value()) int(499525);
 			this->~ActorFuzz3ActorState();
 			static_cast<ActorFuzz3Actor*>(this)->finishSendAndDelPromiseRef();
@@ -1448,20 +1448,20 @@ public:
 
 		return loopDepth;
 	}
-															#line 150 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 150 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	FutureStream<int> inputStream;
-															#line 150 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 150 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	PromiseStream<int> outputStream;
-															#line 150 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 150 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	Future<Void> error;
-															#line 151 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 151 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	int ifstate;
-															#line 1459 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1459 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 };
 // This generated class is to be used only via actorFuzz3()
-															#line 150 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 150 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz3Actor final : public Actor<int>, public FastAllocated<ActorFuzz3Actor>, public ActorFuzz3ActorState<ActorFuzz3Actor> {
-															#line 1464 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1464 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
 	using FastAllocated<ActorFuzz3Actor>::operator new;
 	using FastAllocated<ActorFuzz3Actor>::operator delete;
@@ -1469,9 +1469,9 @@ public:
 #pragma clang diagnostic ignored "-Wdelete-non-virtual-dtor"
 	void destroy() override { ((Actor<int>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
-															#line 150 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 150 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz3Actor(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 1474 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1474 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		 : Actor<int>(),
 		   ActorFuzz3ActorState<ActorFuzz3Actor>(inputStream, outputStream, error)
 	{
@@ -1494,36 +1494,36 @@ public:
 	}
 };
 }
-															#line 150 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 150 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 [[nodiscard]] Future<int> actorFuzz3( FutureStream<int> const& inputStream, PromiseStream<int> const& outputStream, Future<Void> const& error ) {
-															#line 150 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 150 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	return Future<int>(new ActorFuzz3Actor(inputStream, outputStream, error));
-															#line 1501 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1501 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 }
 
-#line 155 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+#line 155 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 
-															#line 1506 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1506 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 namespace {
 // This generated class is to be used only via actorFuzz4()
-															#line 156 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 156 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 template <class ActorFuzz4Actor>
-															#line 156 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 156 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz4ActorState {
-															#line 1513 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1513 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
-															#line 156 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 156 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz4ActorState(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 156 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
-															#line 156 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 156 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
+															#line 156 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		 : inputStream(inputStream),
-															#line 156 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 156 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   outputStream(outputStream),
-															#line 156 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 156 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   error(error),
-															#line 157 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 157 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   ifstate(0)
-															#line 1526 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1526 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 	{
 		fdb_probe_actor_create("actorFuzz4", reinterpret_cast<unsigned long>(this));
 
@@ -1537,28 +1537,28 @@ public:
 	{
 		try {
 			try {
-															#line 159 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 159 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(180600);
-															#line 160 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 160 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				list613889 = std::vector<int>();
-															#line 161 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 161 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				list613889.push_back(1);
-															#line 162 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 162 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				list613889.push_back(2);
-															#line 163 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 163 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				list613889.push_back(3);
-															#line 164 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 164 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				for( auto i : list613889 ) {
-															#line 165 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 165 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 					(void)i;
-															#line 166 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 166 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 					outputStream.send(177605);
-															#line 1556 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1556 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 					continue;
 				}
-															#line 169 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 169 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(954508);
-															#line 1561 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1561 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 				loopDepth = a_body1cont4(loopDepth);
 			}
 			catch (Error& error) {
@@ -1585,9 +1585,9 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 174 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 174 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if (!static_cast<ActorFuzz4Actor*>(this)->SAV<int>::futures) { (void)(810052); this->~ActorFuzz4ActorState(); static_cast<ActorFuzz4Actor*>(this)->destroy(); return 0; }
-															#line 1590 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1590 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		new (&static_cast<ActorFuzz4Actor*>(this)->SAV< int >::value()) int(810052);
 		this->~ActorFuzz4ActorState();
 		static_cast<ActorFuzz4Actor*>(this)->finishSendAndDelPromiseRef();
@@ -1598,11 +1598,11 @@ public:
 	int a_body1Catch2(const Error& __current_error,int loopDepth=0) 
 	{
 		try {
-															#line 171 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 171 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(461484);
-															#line 172 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 172 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			if (!static_cast<ActorFuzz4Actor*>(this)->SAV<int>::futures) { (void)(117481); this->~ActorFuzz4ActorState(); static_cast<ActorFuzz4Actor*>(this)->destroy(); return 0; }
-															#line 1605 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1605 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			new (&static_cast<ActorFuzz4Actor*>(this)->SAV< int >::value()) int(117481);
 			this->~ActorFuzz4ActorState();
 			static_cast<ActorFuzz4Actor*>(this)->finishSendAndDelPromiseRef();
@@ -1629,22 +1629,22 @@ public:
 
 		return loopDepth;
 	}
-															#line 156 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 156 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	FutureStream<int> inputStream;
-															#line 156 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 156 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	PromiseStream<int> outputStream;
-															#line 156 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 156 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	Future<Void> error;
-															#line 157 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 157 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	int ifstate;
-															#line 160 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 160 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	std::vector<int> list613889;
-															#line 1642 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1642 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 };
 // This generated class is to be used only via actorFuzz4()
-															#line 156 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 156 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz4Actor final : public Actor<int>, public FastAllocated<ActorFuzz4Actor>, public ActorFuzz4ActorState<ActorFuzz4Actor> {
-															#line 1647 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1647 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
 	using FastAllocated<ActorFuzz4Actor>::operator new;
 	using FastAllocated<ActorFuzz4Actor>::operator delete;
@@ -1652,9 +1652,9 @@ public:
 #pragma clang diagnostic ignored "-Wdelete-non-virtual-dtor"
 	void destroy() override { ((Actor<int>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
-															#line 156 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 156 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz4Actor(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 1657 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1657 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		 : Actor<int>(),
 		   ActorFuzz4ActorState<ActorFuzz4Actor>(inputStream, outputStream, error)
 	{
@@ -1677,36 +1677,36 @@ public:
 	}
 };
 }
-															#line 156 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 156 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 [[nodiscard]] Future<int> actorFuzz4( FutureStream<int> const& inputStream, PromiseStream<int> const& outputStream, Future<Void> const& error ) {
-															#line 156 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 156 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	return Future<int>(new ActorFuzz4Actor(inputStream, outputStream, error));
-															#line 1684 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1684 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 }
 
-#line 176 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+#line 176 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 
-															#line 1689 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1689 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 namespace {
 // This generated class is to be used only via actorFuzz5()
-															#line 177 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 177 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 template <class ActorFuzz5Actor>
-															#line 177 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 177 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz5ActorState {
-															#line 1696 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1696 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
-															#line 177 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 177 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz5ActorState(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 177 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
-															#line 177 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 177 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
+															#line 177 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		 : inputStream(inputStream),
-															#line 177 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 177 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   outputStream(outputStream),
-															#line 177 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 177 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   error(error),
-															#line 178 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 178 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   ifstate(0)
-															#line 1709 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1709 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 	{
 		fdb_probe_actor_create("actorFuzz5", reinterpret_cast<unsigned long>(this));
 
@@ -1719,16 +1719,16 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 179 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 179 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			StrictFuture<Void> __when_expr_0 = error;
-															#line 179 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 179 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			if (static_cast<ActorFuzz5Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 1726 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1726 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<ActorFuzz5Actor*>(this)->actor_wait_state = 1;
-															#line 179 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 179 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ActorFuzz5Actor, 0, Void >*>(static_cast<ActorFuzz5Actor*>(this)));
-															#line 1731 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1731 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -1749,19 +1749,19 @@ public:
 	}
 	int a_body1cont1(Void const& _,int loopDepth) 
 	{
-															#line 180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 180 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(382339);
-															#line 181 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 181 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if ((++ifstate & 1) == 1)
-															#line 1756 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1756 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		{
-															#line 182 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 182 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(655938);
-															#line 183 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 183 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			i139204 = int();
-															#line 184 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 184 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			i139204 = 0;
-															#line 1764 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1764 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			loopDepth = a_body1cont1loopHead1(loopDepth);
 		}
 		else
@@ -1773,19 +1773,19 @@ public:
 	}
 	int a_body1cont1(Void && _,int loopDepth) 
 	{
-															#line 180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 180 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(382339);
-															#line 181 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 181 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if ((++ifstate & 1) == 1)
-															#line 1780 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1780 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		{
-															#line 182 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 182 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(655938);
-															#line 183 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 183 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			i139204 = int();
-															#line 184 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 184 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			i139204 = 0;
-															#line 1788 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1788 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			loopDepth = a_body1cont1loopHead1(loopDepth);
 		}
 		else
@@ -1860,9 +1860,9 @@ public:
 	}
 	int a_body1cont2(int loopDepth) 
 	{
-															#line 191 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 191 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if (!static_cast<ActorFuzz5Actor*>(this)->SAV<int>::futures) { (void)(273288); this->~ActorFuzz5ActorState(); static_cast<ActorFuzz5Actor*>(this)->destroy(); return 0; }
-															#line 1865 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1865 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		new (&static_cast<ActorFuzz5Actor*>(this)->SAV< int >::value()) int(273288);
 		this->~ActorFuzz5ActorState();
 		static_cast<ActorFuzz5Actor*>(this)->finishSendAndDelPromiseRef();
@@ -1872,9 +1872,9 @@ public:
 	}
 	int a_body1cont3(int loopDepth) 
 	{
-															#line 189 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 189 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(252859);
-															#line 1877 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1877 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1cont2(loopDepth);
 
 		return loopDepth;
@@ -1888,24 +1888,24 @@ public:
 	}
 	int a_body1cont1loopBody1(int loopDepth) 
 	{
-															#line 184 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 184 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if (!(i139204 < 5))
-															#line 1893 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1893 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		{
 			return a_body1cont1break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 185 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 185 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(481427);
-															#line 186 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 186 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = error;
-															#line 186 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 186 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if (static_cast<ActorFuzz5Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 1903 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1903 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), std::max(0, loopDepth - 1)); else return a_body1cont1loopBody1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<ActorFuzz5Actor*>(this)->actor_wait_state = 2;
-															#line 186 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 186 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< ActorFuzz5Actor, 1, Void >*>(static_cast<ActorFuzz5Actor*>(this)));
-															#line 1908 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1908 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -1925,22 +1925,22 @@ public:
 	}
 	int a_body1cont1loopBody1cont1(Void const& _,int loopDepth) 
 	{
-															#line 187 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 187 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(577939);
-															#line 184 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 184 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		i139204++;
-															#line 1932 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1932 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		if (loopDepth == 0) return a_body1cont1loopHead1(0);
 
 		return loopDepth;
 	}
 	int a_body1cont1loopBody1cont1(Void && _,int loopDepth) 
 	{
-															#line 187 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 187 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(577939);
-															#line 184 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 184 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		i139204++;
-															#line 1943 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 1943 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		if (loopDepth == 0) return a_body1cont1loopHead1(0);
 
 		return loopDepth;
@@ -2008,22 +2008,22 @@ public:
 		fdb_probe_actor_exit("actorFuzz5", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 177 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 177 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	FutureStream<int> inputStream;
-															#line 177 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 177 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	PromiseStream<int> outputStream;
-															#line 177 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 177 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	Future<Void> error;
-															#line 178 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 178 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	int ifstate;
-															#line 183 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 183 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	int i139204;
-															#line 2021 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2021 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 };
 // This generated class is to be used only via actorFuzz5()
-															#line 177 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 177 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz5Actor final : public Actor<int>, public ActorCallback< ActorFuzz5Actor, 0, Void >, public ActorCallback< ActorFuzz5Actor, 1, Void >, public FastAllocated<ActorFuzz5Actor>, public ActorFuzz5ActorState<ActorFuzz5Actor> {
-															#line 2026 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2026 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
 	using FastAllocated<ActorFuzz5Actor>::operator new;
 	using FastAllocated<ActorFuzz5Actor>::operator delete;
@@ -2033,9 +2033,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< ActorFuzz5Actor, 0, Void >;
 friend struct ActorCallback< ActorFuzz5Actor, 1, Void >;
-															#line 177 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 177 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz5Actor(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 2038 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2038 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		 : Actor<int>(),
 		   ActorFuzz5ActorState<ActorFuzz5Actor>(inputStream, outputStream, error)
 	{
@@ -2060,38 +2060,38 @@ friend struct ActorCallback< ActorFuzz5Actor, 1, Void >;
 	}
 };
 }
-															#line 177 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 177 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 [[nodiscard]] Future<int> actorFuzz5( FutureStream<int> const& inputStream, PromiseStream<int> const& outputStream, Future<Void> const& error ) {
-															#line 177 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 177 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	return Future<int>(new ActorFuzz5Actor(inputStream, outputStream, error));
-															#line 2067 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2067 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 }
 
-#line 193 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+#line 193 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 
-															#line 2072 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2072 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 namespace {
 // This generated class is to be used only via actorFuzz6()
-															#line 194 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 194 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 template <class ActorFuzz6Actor>
-															#line 194 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 194 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz6ActorState {
-															#line 2079 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2079 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
-															#line 194 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 194 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz6ActorState(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 194 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
-															#line 194 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 194 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
+															#line 194 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		 : inputStream(inputStream),
-															#line 194 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 194 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   outputStream(outputStream),
-															#line 194 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 194 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   error(error),
-															#line 195 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 195 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   ifstate(0),
-															#line 196 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 196 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   i956829()
-															#line 2094 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2094 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 	{
 		fdb_probe_actor_create("actorFuzz6", reinterpret_cast<unsigned long>(this));
 
@@ -2104,9 +2104,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 197 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 197 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			i956829 = 0;
-															#line 2109 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2109 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -2127,9 +2127,9 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 212 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 212 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if (!static_cast<ActorFuzz6Actor*>(this)->SAV<int>::futures) { (void)(945289); this->~ActorFuzz6ActorState(); static_cast<ActorFuzz6Actor*>(this)->destroy(); return 0; }
-															#line 2132 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2132 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		new (&static_cast<ActorFuzz6Actor*>(this)->SAV< int >::value()) int(945289);
 		this->~ActorFuzz6ActorState();
 		static_cast<ActorFuzz6Actor*>(this)->finishSendAndDelPromiseRef();
@@ -2146,19 +2146,19 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 197 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 197 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if (!(i956829 < 5))
-															#line 2151 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2151 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		{
 			return a_body1break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 198 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 198 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(320321);
-															#line 199 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 199 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		i350925 = int();
-															#line 200 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 200 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		i350925 = 0;
-															#line 2161 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2161 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1loopBody1loopHead1(loopDepth);
 
 		return loopDepth;
@@ -2178,11 +2178,11 @@ public:
 	}
 	int a_body1loopBody1cont1(int loopDepth) 
 	{
-															#line 210 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 210 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(463730);
-															#line 197 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 197 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		i956829++;
-															#line 2185 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2185 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		if (loopDepth == 0) return a_body1loopHead1(0);
 
 		return loopDepth;
@@ -2196,19 +2196,19 @@ public:
 	}
 	int a_body1loopBody1loopBody1(int loopDepth) 
 	{
-															#line 200 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 200 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if (!(i350925 < 5))
-															#line 2201 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2201 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		{
 			return a_body1loopBody1break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 201 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 201 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(266526);
-															#line 2207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2207 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		try {
-															#line 203 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 203 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(762336);
-															#line 2211 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2211 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			return a_body1loopBody1break1(loopDepth==0?0:loopDepth-1); // break
 		}
 		catch (Error& error) {
@@ -2234,9 +2234,9 @@ public:
 	}
 	int a_body1loopBody1continue1(int loopDepth) 
 	{
-															#line 200 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 200 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		i350925++;
-															#line 2239 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2239 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		if (loopDepth == 0) return a_body1loopBody1loopHead1(0);
 
 		return loopDepth;
@@ -2244,9 +2244,9 @@ public:
 	int a_body1loopBody1loopBody1Catch1(const Error& __current_error,int loopDepth=0) 
 	{
 		try {
-															#line 206 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 206 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(391672);
-															#line 2249 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2249 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			return a_body1loopBody1continue1(loopDepth); // continue
 		}
 		catch (Error& error) {
@@ -2257,24 +2257,24 @@ public:
 
 		return loopDepth;
 	}
-															#line 194 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 194 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	FutureStream<int> inputStream;
-															#line 194 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 194 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	PromiseStream<int> outputStream;
-															#line 194 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 194 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	Future<Void> error;
-															#line 195 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 195 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	int ifstate;
-															#line 196 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 196 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	int i956829;
-															#line 199 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 199 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	int i350925;
-															#line 2272 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2272 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 };
 // This generated class is to be used only via actorFuzz6()
-															#line 194 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 194 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz6Actor final : public Actor<int>, public FastAllocated<ActorFuzz6Actor>, public ActorFuzz6ActorState<ActorFuzz6Actor> {
-															#line 2277 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2277 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
 	using FastAllocated<ActorFuzz6Actor>::operator new;
 	using FastAllocated<ActorFuzz6Actor>::operator delete;
@@ -2282,9 +2282,9 @@ public:
 #pragma clang diagnostic ignored "-Wdelete-non-virtual-dtor"
 	void destroy() override { ((Actor<int>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
-															#line 194 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 194 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz6Actor(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 2287 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2287 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		 : Actor<int>(),
 		   ActorFuzz6ActorState<ActorFuzz6Actor>(inputStream, outputStream, error)
 	{
@@ -2307,36 +2307,36 @@ public:
 	}
 };
 }
-															#line 194 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 194 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 [[nodiscard]] Future<int> actorFuzz6( FutureStream<int> const& inputStream, PromiseStream<int> const& outputStream, Future<Void> const& error ) {
-															#line 194 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 194 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	return Future<int>(new ActorFuzz6Actor(inputStream, outputStream, error));
-															#line 2314 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2314 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 }
 
-#line 214 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+#line 214 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 
-															#line 2319 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2319 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 namespace {
 // This generated class is to be used only via actorFuzz7()
-															#line 215 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 215 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 template <class ActorFuzz7Actor>
-															#line 215 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 215 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz7ActorState {
-															#line 2326 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2326 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
-															#line 215 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 215 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz7ActorState(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 215 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
-															#line 215 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 215 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
+															#line 215 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		 : inputStream(inputStream),
-															#line 215 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 215 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   outputStream(outputStream),
-															#line 215 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 215 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   error(error),
-															#line 216 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 216 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   ifstate(0)
-															#line 2339 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2339 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 	{
 		fdb_probe_actor_create("actorFuzz7", reinterpret_cast<unsigned long>(this));
 
@@ -2350,21 +2350,21 @@ public:
 	{
 		try {
 			try {
-															#line 218 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 218 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(406152);
-															#line 2355 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2355 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 				try {
-															#line 220 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 220 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 					outputStream.send(478841);
-															#line 2359 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2359 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 					try {
-															#line 222 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 222 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 						outputStream.send(609181);
-															#line 223 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 223 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 						i510243 = int();
-															#line 224 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 224 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 						i510243 = 0;
-															#line 2367 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2367 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 						loopDepth = a_body1loopHead1(loopDepth);
 					}
 					catch (Error& error) {
@@ -2403,9 +2403,9 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 308 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 308 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if (!static_cast<ActorFuzz7Actor*>(this)->SAV<int>::futures) { (void)(949658); this->~ActorFuzz7ActorState(); static_cast<ActorFuzz7Actor*>(this)->destroy(); return 0; }
-															#line 2408 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2408 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		new (&static_cast<ActorFuzz7Actor*>(this)->SAV< int >::value()) int(949658);
 		this->~ActorFuzz7ActorState();
 		static_cast<ActorFuzz7Actor*>(this)->finishSendAndDelPromiseRef();
@@ -2416,19 +2416,19 @@ public:
 	int a_body1Catch2(const Error& __current_error,int loopDepth=0) 
 	{
 		try {
-															#line 290 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 290 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(117532);
-															#line 291 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 291 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			list243466 = std::vector<int>();
-															#line 292 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 292 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			list243466.push_back(1);
-															#line 293 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 293 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			list243466.push_back(2);
-															#line 294 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 294 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			list243466.push_back(3);
-															#line 295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 295 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			RangeForbody1Catch2Iterator0 = std::begin(list243466);
-															#line 2431 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2431 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			loopDepth = a_body1Catch2loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -2441,9 +2441,9 @@ public:
 	}
 	int a_body1cont2(int loopDepth) 
 	{
-															#line 288 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 288 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(814172);
-															#line 2446 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2446 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1cont11(loopDepth);
 
 		return loopDepth;
@@ -2451,13 +2451,13 @@ public:
 	int a_body1Catch3(const Error& __current_error,int loopDepth=0) 
 	{
 		try {
-															#line 264 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 264 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(971923);
-															#line 265 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 265 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			i793430 = int();
-															#line 266 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 266 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			i793430 = 0;
-															#line 2460 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2460 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			loopDepth = a_body1Catch3loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -2470,19 +2470,19 @@ public:
 	}
 	int a_body1cont3(int loopDepth) 
 	{
-															#line 247 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 247 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(946924);
-															#line 248 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 248 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		list833282 = std::vector<int>();
-															#line 249 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 249 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		list833282.push_back(1);
-															#line 250 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 250 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		list833282.push_back(2);
-															#line 251 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 251 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		list833282.push_back(3);
-															#line 252 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 252 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		RangeForbody1cont3Iterator0 = std::begin(list833282);
-															#line 2485 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2485 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1cont3loopHead1(loopDepth);
 
 		return loopDepth;
@@ -2490,11 +2490,11 @@ public:
 	int a_body1Catch4(const Error& __current_error,int loopDepth=0) 
 	{
 		try {
-															#line 244 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 244 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(686252);
-															#line 245 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 245 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			if (!static_cast<ActorFuzz7Actor*>(this)->SAV<int>::futures) { (void)(997694); this->~ActorFuzz7ActorState(); static_cast<ActorFuzz7Actor*>(this)->destroy(); return 0; }
-															#line 2497 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2497 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			new (&static_cast<ActorFuzz7Actor*>(this)->SAV< int >::value()) int(997694);
 			this->~ActorFuzz7ActorState();
 			static_cast<ActorFuzz7Actor*>(this)->finishSendAndDelPromiseRef();
@@ -2510,9 +2510,9 @@ public:
 	}
 	int a_body1cont4(int loopDepth) 
 	{
-															#line 242 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 242 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(331905);
-															#line 2515 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2515 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1cont6(loopDepth);
 
 		return loopDepth;
@@ -2526,25 +2526,25 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 224 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 224 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if (!(i510243 < 5))
-															#line 2531 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2531 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		{
 			return a_body1break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 225 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 225 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(634881);
-															#line 226 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 226 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		list596949 = std::vector<int>();
-															#line 227 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 227 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		list596949.push_back(1);
-															#line 228 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 228 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		list596949.push_back(2);
-															#line 229 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 229 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		list596949.push_back(3);
-															#line 230 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 230 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		RangeForbody1loopBody1Iterator0 = std::begin(list596949);
-															#line 2547 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2547 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1loopBody1loopHead1(loopDepth);
 
 		return loopDepth;
@@ -2564,18 +2564,18 @@ public:
 	}
 	int a_body1loopBody1cont1(int loopDepth) 
 	{
-															#line 237 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 237 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(415949);
-															#line 238 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 238 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		FutureStream<int> __when_expr_1 = inputStream;
-															#line 238 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 238 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if (static_cast<ActorFuzz7Actor*>(this)->actor_wait_state < 0) return a_body1Catch4(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 2573 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2573 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch4(__when_expr_1.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1cont1when1(__when_expr_1.pop(), loopDepth); };
 		static_cast<ActorFuzz7Actor*>(this)->actor_wait_state = 2;
-															#line 238 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 238 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorSingleCallback< ActorFuzz7Actor, 1, int >*>(static_cast<ActorFuzz7Actor*>(this)));
-															#line 2578 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2578 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -2589,30 +2589,30 @@ public:
 	}
 	int a_body1loopBody1loopBody1(int loopDepth) 
 	{
-															#line 230 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 230 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if (!(RangeForbody1loopBody1Iterator0 != std::end(list596949)))
-															#line 2594 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2594 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		{
 			return a_body1loopBody1break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 230 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 230 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		auto i = *RangeForbody1loopBody1Iterator0;
-															#line 2600 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2600 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		{
-															#line 231 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 231 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			(void)i;
-															#line 232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 232 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(253861);
-															#line 233 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 233 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			FutureStream<int> __when_expr_0 = inputStream;
-															#line 233 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 233 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			if (static_cast<ActorFuzz7Actor*>(this)->actor_wait_state < 0) return a_body1Catch4(actor_cancelled(), std::max(0, loopDepth - 2));
-															#line 2610 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2610 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch4(__when_expr_0.getError(), std::max(0, loopDepth - 2)); else return a_body1loopBody1loopBody1when1(__when_expr_0.pop(), loopDepth); };
 			static_cast<ActorFuzz7Actor*>(this)->actor_wait_state = 1;
-															#line 233 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 233 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorSingleCallback< ActorFuzz7Actor, 0, int >*>(static_cast<ActorFuzz7Actor*>(this)));
-															#line 2615 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2615 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			loopDepth = 0;
 		}
 
@@ -2633,31 +2633,31 @@ public:
 	}
 	int a_body1loopBody1loopBody1cont1(int loopDepth) 
 	{
-															#line 230 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 230 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		++RangeForbody1loopBody1Iterator0;
-															#line 2638 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2638 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		if (loopDepth == 0) return a_body1loopBody1loopHead1(0);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1loopBody1cont3(int const& input,int loopDepth) 
 	{
-															#line 234 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 234 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(input + 591023);
-															#line 235 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 235 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(240597);
-															#line 2649 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2649 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1loopBody1loopBody1cont1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1loopBody1cont3(int && input,int loopDepth) 
 	{
-															#line 234 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 234 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(input + 591023);
-															#line 235 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 235 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(240597);
-															#line 2660 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2660 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1loopBody1loopBody1cont1(loopDepth);
 
 		return loopDepth;
@@ -2727,26 +2727,26 @@ public:
 	}
 	int a_body1loopBody1cont3(int const& input,int loopDepth) 
 	{
-															#line 239 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 239 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(input + 165335);
-															#line 240 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 240 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(478331);
-															#line 224 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 224 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		i510243++;
-															#line 2736 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2736 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		if (loopDepth == 0) return a_body1loopHead1(0);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont3(int && input,int loopDepth) 
 	{
-															#line 239 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 239 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(input + 165335);
-															#line 240 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 240 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(478331);
-															#line 224 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 224 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		i510243++;
-															#line 2749 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2749 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		if (loopDepth == 0) return a_body1loopHead1(0);
 
 		return loopDepth;
@@ -2829,9 +2829,9 @@ public:
 	}
 	int a_body1cont7(int loopDepth) 
 	{
-															#line 262 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 262 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(996672);
-															#line 2834 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2834 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1cont9(loopDepth);
 
 		return loopDepth;
@@ -2845,36 +2845,36 @@ public:
 	}
 	int a_body1cont3loopBody1(int loopDepth) 
 	{
-															#line 252 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 252 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if (!(RangeForbody1cont3Iterator0 != std::end(list833282)))
-															#line 2850 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2850 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		{
 			return a_body1cont3break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 252 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 252 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		auto i = *RangeForbody1cont3Iterator0;
-															#line 2856 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2856 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		{
-															#line 253 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 253 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			(void)i;
-															#line 254 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 254 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(663973);
-															#line 255 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 255 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			if ((++ifstate & 1) == 1)
-															#line 2864 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2864 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			{
-															#line 256 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 256 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(797073);
-															#line 257 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 257 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				StrictFuture<Void> __when_expr_2 = error;
-															#line 257 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 257 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				if (static_cast<ActorFuzz7Actor*>(this)->actor_wait_state < 0) return a_body1Catch3(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 2872 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2872 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 				if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch3(__when_expr_2.getError(), std::max(0, loopDepth - 1)); else return a_body1cont3loopBody1when1(__when_expr_2.get(), loopDepth); };
 				static_cast<ActorFuzz7Actor*>(this)->actor_wait_state = 3;
-															#line 257 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 257 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< ActorFuzz7Actor, 2, Void >*>(static_cast<ActorFuzz7Actor*>(this)));
-															#line 2877 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2877 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 				loopDepth = 0;
 			}
 			else
@@ -2900,36 +2900,36 @@ public:
 	}
 	int a_body1cont3loopBody1cont1(int loopDepth) 
 	{
-															#line 252 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 252 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		++RangeForbody1cont3Iterator0;
-															#line 2905 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2905 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		if (loopDepth == 0) return a_body1cont3loopHead1(0);
 
 		return loopDepth;
 	}
 	int a_body1cont3loopBody1cont3(int loopDepth) 
 	{
-															#line 260 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 260 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(807309);
-															#line 2914 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2914 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1cont3loopBody1cont1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1cont3loopBody1cont4(Void const& _,int loopDepth) 
 	{
-															#line 258 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 258 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(953652);
-															#line 2923 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2923 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1cont3loopBody1cont3(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1cont3loopBody1cont4(Void && _,int loopDepth) 
 	{
-															#line 258 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 258 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(953652);
-															#line 2932 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 2932 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1cont3loopBody1cont3(loopDepth);
 
 		return loopDepth;
@@ -3012,9 +3012,9 @@ public:
 	}
 	int a_body1Catch3cont1(int loopDepth) 
 	{
-															#line 286 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 286 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(534407);
-															#line 3017 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3017 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1cont2(loopDepth);
 
 		return loopDepth;
@@ -3028,38 +3028,38 @@ public:
 	}
 	int a_body1Catch3loopBody1(int loopDepth) 
 	{
-															#line 266 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 266 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if (!(i793430 < 5))
-															#line 3033 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3033 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		{
 			return a_body1Catch3break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 267 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 267 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(295772);
-															#line 3039 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3039 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		try {
-															#line 269 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 269 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(923567);
-															#line 270 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 270 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			list814034 = std::vector<int>();
-															#line 271 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 271 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			list814034.push_back(1);
-															#line 272 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 272 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			list814034.push_back(2);
-															#line 273 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 273 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			list814034.push_back(3);
-															#line 274 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 274 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			for( auto i : list814034 ) {
-															#line 275 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 275 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				(void)i;
-															#line 276 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 276 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(559259);
-															#line 3057 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3057 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 				continue;
 			}
-															#line 279 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 279 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(325678);
-															#line 3062 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3062 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			loopDepth = a_body1Catch3loopBody1cont5(loopDepth);
 		}
 		catch (Error& error) {
@@ -3085,20 +3085,20 @@ public:
 	}
 	int a_body1Catch3continue1(int loopDepth) 
 	{
-															#line 266 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 266 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		i793430++;
-															#line 3090 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3090 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		if (loopDepth == 0) return a_body1Catch3loopHead1(0);
 
 		return loopDepth;
 	}
 	int a_body1Catch3loopBody1cont1(int loopDepth) 
 	{
-															#line 284 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 284 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(679187);
-															#line 266 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 266 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		i793430++;
-															#line 3101 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3101 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		if (loopDepth == 0) return a_body1Catch3loopHead1(0);
 
 		return loopDepth;
@@ -3106,9 +3106,9 @@ public:
 	int a_body1Catch3loopBody1Catch1(const Error& __current_error,int loopDepth=0) 
 	{
 		try {
-															#line 281 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 281 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(691889);
-															#line 3111 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3111 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			return a_body1Catch3continue1(loopDepth); // continue
 		}
 		catch (Error& error) {
@@ -3147,9 +3147,9 @@ public:
 	}
 	int a_body1Catch2cont1(int loopDepth) 
 	{
-															#line 306 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 306 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(679173);
-															#line 3152 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3152 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1cont1(loopDepth);
 
 		return loopDepth;
@@ -3163,27 +3163,27 @@ public:
 	}
 	int a_body1Catch2loopBody1(int loopDepth) 
 	{
-															#line 295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 295 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if (!(RangeForbody1Catch2Iterator0 != std::end(list243466)))
-															#line 3168 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3168 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		{
 			return a_body1Catch2break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 295 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		auto i = *RangeForbody1Catch2Iterator0;
-															#line 3174 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3174 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		{
-															#line 296 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 296 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			(void)i;
-															#line 297 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 297 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(593203);
-															#line 3180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3180 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			try {
-															#line 299 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 299 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(289002);
-															#line 300 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 300 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				if (!static_cast<ActorFuzz7Actor*>(this)->SAV<int>::futures) { (void)(321054); this->~ActorFuzz7ActorState(); static_cast<ActorFuzz7Actor*>(this)->destroy(); return 0; }
-															#line 3186 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3186 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 				new (&static_cast<ActorFuzz7Actor*>(this)->SAV< int >::value()) int(321054);
 				this->~ActorFuzz7ActorState();
 				static_cast<ActorFuzz7Actor*>(this)->finishSendAndDelPromiseRef();
@@ -3214,11 +3214,11 @@ public:
 	int a_body1Catch2loopBody1Catch1(const Error& __current_error,int loopDepth=0) 
 	{
 		try {
-															#line 302 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 302 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(540106);
-															#line 303 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 303 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			if (!static_cast<ActorFuzz7Actor*>(this)->SAV<int>::futures) { (void)(919162); this->~ActorFuzz7ActorState(); static_cast<ActorFuzz7Actor*>(this)->destroy(); return 0; }
-															#line 3221 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3221 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			new (&static_cast<ActorFuzz7Actor*>(this)->SAV< int >::value()) int(919162);
 			this->~ActorFuzz7ActorState();
 			static_cast<ActorFuzz7Actor*>(this)->finishSendAndDelPromiseRef();
@@ -3232,38 +3232,38 @@ public:
 
 		return loopDepth;
 	}
-															#line 215 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 215 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	FutureStream<int> inputStream;
-															#line 215 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 215 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	PromiseStream<int> outputStream;
-															#line 215 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 215 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	Future<Void> error;
-															#line 216 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 216 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	int ifstate;
-															#line 223 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 223 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	int i510243;
-															#line 226 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 226 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	std::vector<int> list596949;
-															#line 230 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 230 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	decltype(std::begin(std::declval<std::vector<int>>())) RangeForbody1loopBody1Iterator0;
-															#line 248 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 248 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	std::vector<int> list833282;
-															#line 252 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 252 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	decltype(std::begin(std::declval<std::vector<int>>())) RangeForbody1cont3Iterator0;
-															#line 265 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 265 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	int i793430;
-															#line 270 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 270 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	std::vector<int> list814034;
-															#line 291 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 291 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	std::vector<int> list243466;
-															#line 295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 295 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	decltype(std::begin(std::declval<std::vector<int>>())) RangeForbody1Catch2Iterator0;
-															#line 3261 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3261 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 };
 // This generated class is to be used only via actorFuzz7()
-															#line 215 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 215 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz7Actor final : public Actor<int>, public ActorSingleCallback< ActorFuzz7Actor, 0, int >, public ActorSingleCallback< ActorFuzz7Actor, 1, int >, public ActorCallback< ActorFuzz7Actor, 2, Void >, public FastAllocated<ActorFuzz7Actor>, public ActorFuzz7ActorState<ActorFuzz7Actor> {
-															#line 3266 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3266 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
 	using FastAllocated<ActorFuzz7Actor>::operator new;
 	using FastAllocated<ActorFuzz7Actor>::operator delete;
@@ -3274,9 +3274,9 @@ public:
 friend struct ActorSingleCallback< ActorFuzz7Actor, 0, int >;
 friend struct ActorSingleCallback< ActorFuzz7Actor, 1, int >;
 friend struct ActorCallback< ActorFuzz7Actor, 2, Void >;
-															#line 215 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 215 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz7Actor(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 3279 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3279 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		 : Actor<int>(),
 		   ActorFuzz7ActorState<ActorFuzz7Actor>(inputStream, outputStream, error)
 	{
@@ -3302,36 +3302,36 @@ friend struct ActorCallback< ActorFuzz7Actor, 2, Void >;
 	}
 };
 }
-															#line 215 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 215 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 [[nodiscard]] Future<int> actorFuzz7( FutureStream<int> const& inputStream, PromiseStream<int> const& outputStream, Future<Void> const& error ) {
-															#line 215 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 215 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	return Future<int>(new ActorFuzz7Actor(inputStream, outputStream, error));
-															#line 3309 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3309 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 }
 
-#line 310 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+#line 310 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 
-															#line 3314 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3314 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 namespace {
 // This generated class is to be used only via actorFuzz8()
-															#line 311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 311 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 template <class ActorFuzz8Actor>
-															#line 311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 311 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz8ActorState {
-															#line 3321 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3321 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
-															#line 311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 311 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz8ActorState(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
-															#line 311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 311 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
+															#line 311 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		 : inputStream(inputStream),
-															#line 311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 311 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   outputStream(outputStream),
-															#line 311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 311 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   error(error),
-															#line 312 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 312 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   ifstate(0)
-															#line 3334 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3334 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 	{
 		fdb_probe_actor_create("actorFuzz8", reinterpret_cast<unsigned long>(this));
 
@@ -3344,16 +3344,16 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 313 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			FutureStream<int> __when_expr_0 = inputStream;
-															#line 313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 313 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			if (static_cast<ActorFuzz8Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 3351 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3351 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.pop(), loopDepth); };
 			static_cast<ActorFuzz8Actor*>(this)->actor_wait_state = 1;
-															#line 313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 313 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorSingleCallback< ActorFuzz8Actor, 0, int >*>(static_cast<ActorFuzz8Actor*>(this)));
-															#line 3356 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3356 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -3374,11 +3374,11 @@ public:
 	}
 	int a_body1cont1(int const& input,int loopDepth) 
 	{
-															#line 314 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 314 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(input + 284937);
-															#line 315 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 315 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if (!static_cast<ActorFuzz8Actor*>(this)->SAV<int>::futures) { (void)(696473); this->~ActorFuzz8ActorState(); static_cast<ActorFuzz8Actor*>(this)->destroy(); return 0; }
-															#line 3381 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3381 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		new (&static_cast<ActorFuzz8Actor*>(this)->SAV< int >::value()) int(696473);
 		this->~ActorFuzz8ActorState();
 		static_cast<ActorFuzz8Actor*>(this)->finishSendAndDelPromiseRef();
@@ -3388,11 +3388,11 @@ public:
 	}
 	int a_body1cont1(int && input,int loopDepth) 
 	{
-															#line 314 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 314 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(input + 284937);
-															#line 315 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 315 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if (!static_cast<ActorFuzz8Actor*>(this)->SAV<int>::futures) { (void)(696473); this->~ActorFuzz8ActorState(); static_cast<ActorFuzz8Actor*>(this)->destroy(); return 0; }
-															#line 3395 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3395 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		new (&static_cast<ActorFuzz8Actor*>(this)->SAV< int >::value()) int(696473);
 		this->~ActorFuzz8ActorState();
 		static_cast<ActorFuzz8Actor*>(this)->finishSendAndDelPromiseRef();
@@ -3463,20 +3463,20 @@ public:
 		fdb_probe_actor_exit("actorFuzz8", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 311 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	FutureStream<int> inputStream;
-															#line 311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 311 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	PromiseStream<int> outputStream;
-															#line 311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 311 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	Future<Void> error;
-															#line 312 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 312 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	int ifstate;
-															#line 3474 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3474 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 };
 // This generated class is to be used only via actorFuzz8()
-															#line 311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 311 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz8Actor final : public Actor<int>, public ActorSingleCallback< ActorFuzz8Actor, 0, int >, public FastAllocated<ActorFuzz8Actor>, public ActorFuzz8ActorState<ActorFuzz8Actor> {
-															#line 3479 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3479 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
 	using FastAllocated<ActorFuzz8Actor>::operator new;
 	using FastAllocated<ActorFuzz8Actor>::operator delete;
@@ -3485,9 +3485,9 @@ public:
 	void destroy() override { ((Actor<int>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorSingleCallback< ActorFuzz8Actor, 0, int >;
-															#line 311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 311 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz8Actor(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 3490 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3490 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		 : Actor<int>(),
 		   ActorFuzz8ActorState<ActorFuzz8Actor>(inputStream, outputStream, error)
 	{
@@ -3511,36 +3511,36 @@ friend struct ActorSingleCallback< ActorFuzz8Actor, 0, int >;
 	}
 };
 }
-															#line 311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 311 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 [[nodiscard]] Future<int> actorFuzz8( FutureStream<int> const& inputStream, PromiseStream<int> const& outputStream, Future<Void> const& error ) {
-															#line 311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 311 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	return Future<int>(new ActorFuzz8Actor(inputStream, outputStream, error));
-															#line 3518 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3518 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 }
 
-#line 317 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+#line 317 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 
-															#line 3523 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3523 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 namespace {
 // This generated class is to be used only via actorFuzz9()
-															#line 318 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 318 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 template <class ActorFuzz9Actor>
-															#line 318 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 318 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz9ActorState {
-															#line 3530 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3530 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
-															#line 318 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 318 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz9ActorState(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 318 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
-															#line 318 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 318 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
+															#line 318 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		 : inputStream(inputStream),
-															#line 318 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 318 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   outputStream(outputStream),
-															#line 318 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 318 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   error(error),
-															#line 319 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 319 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   ifstate(0)
-															#line 3543 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3543 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 	{
 		fdb_probe_actor_create("actorFuzz9", reinterpret_cast<unsigned long>(this));
 
@@ -3553,16 +3553,16 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 320 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 320 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			FutureStream<int> __when_expr_0 = inputStream;
-															#line 320 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 320 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			if (static_cast<ActorFuzz9Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 3560 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3560 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.pop(), loopDepth); };
 			static_cast<ActorFuzz9Actor*>(this)->actor_wait_state = 1;
-															#line 320 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 320 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorSingleCallback< ActorFuzz9Actor, 0, int >*>(static_cast<ActorFuzz9Actor*>(this)));
-															#line 3565 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3565 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -3583,11 +3583,11 @@ public:
 	}
 	int a_body1cont1(int const& input,int loopDepth) 
 	{
-															#line 321 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 321 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(input + 140463);
-															#line 322 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 322 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if (!static_cast<ActorFuzz9Actor*>(this)->SAV<int>::futures) { (void)(397424); this->~ActorFuzz9ActorState(); static_cast<ActorFuzz9Actor*>(this)->destroy(); return 0; }
-															#line 3590 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3590 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		new (&static_cast<ActorFuzz9Actor*>(this)->SAV< int >::value()) int(397424);
 		this->~ActorFuzz9ActorState();
 		static_cast<ActorFuzz9Actor*>(this)->finishSendAndDelPromiseRef();
@@ -3597,11 +3597,11 @@ public:
 	}
 	int a_body1cont1(int && input,int loopDepth) 
 	{
-															#line 321 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 321 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(input + 140463);
-															#line 322 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 322 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if (!static_cast<ActorFuzz9Actor*>(this)->SAV<int>::futures) { (void)(397424); this->~ActorFuzz9ActorState(); static_cast<ActorFuzz9Actor*>(this)->destroy(); return 0; }
-															#line 3604 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3604 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		new (&static_cast<ActorFuzz9Actor*>(this)->SAV< int >::value()) int(397424);
 		this->~ActorFuzz9ActorState();
 		static_cast<ActorFuzz9Actor*>(this)->finishSendAndDelPromiseRef();
@@ -3672,20 +3672,20 @@ public:
 		fdb_probe_actor_exit("actorFuzz9", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 318 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 318 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	FutureStream<int> inputStream;
-															#line 318 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 318 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	PromiseStream<int> outputStream;
-															#line 318 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 318 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	Future<Void> error;
-															#line 319 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 319 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	int ifstate;
-															#line 3683 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3683 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 };
 // This generated class is to be used only via actorFuzz9()
-															#line 318 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 318 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz9Actor final : public Actor<int>, public ActorSingleCallback< ActorFuzz9Actor, 0, int >, public FastAllocated<ActorFuzz9Actor>, public ActorFuzz9ActorState<ActorFuzz9Actor> {
-															#line 3688 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3688 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
 	using FastAllocated<ActorFuzz9Actor>::operator new;
 	using FastAllocated<ActorFuzz9Actor>::operator delete;
@@ -3694,9 +3694,9 @@ public:
 	void destroy() override { ((Actor<int>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorSingleCallback< ActorFuzz9Actor, 0, int >;
-															#line 318 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 318 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz9Actor(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 3699 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3699 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		 : Actor<int>(),
 		   ActorFuzz9ActorState<ActorFuzz9Actor>(inputStream, outputStream, error)
 	{
@@ -3720,38 +3720,38 @@ friend struct ActorSingleCallback< ActorFuzz9Actor, 0, int >;
 	}
 };
 }
-															#line 318 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 318 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 [[nodiscard]] Future<int> actorFuzz9( FutureStream<int> const& inputStream, PromiseStream<int> const& outputStream, Future<Void> const& error ) {
-															#line 318 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 318 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	return Future<int>(new ActorFuzz9Actor(inputStream, outputStream, error));
-															#line 3727 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3727 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 }
 
-#line 324 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+#line 324 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 
-															#line 3732 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3732 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 namespace {
 // This generated class is to be used only via actorFuzz10()
-															#line 325 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 325 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 template <class ActorFuzz10Actor>
-															#line 325 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 325 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz10ActorState {
-															#line 3739 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3739 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
-															#line 325 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 325 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz10ActorState(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 325 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
-															#line 325 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 325 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
+															#line 325 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		 : inputStream(inputStream),
-															#line 325 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 325 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   outputStream(outputStream),
-															#line 325 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 325 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   error(error),
-															#line 326 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 326 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   ifstate(0),
-															#line 327 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 327 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   i832228()
-															#line 3754 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3754 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 	{
 		fdb_probe_actor_create("actorFuzz10", reinterpret_cast<unsigned long>(this));
 
@@ -3764,9 +3764,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 328 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 328 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			i832228 = 0;
-															#line 3769 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3769 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -3787,9 +3787,9 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 333 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 333 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if (!static_cast<ActorFuzz10Actor*>(this)->SAV<int>::futures) { (void)(402988); this->~ActorFuzz10ActorState(); static_cast<ActorFuzz10Actor*>(this)->destroy(); return 0; }
-															#line 3792 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3792 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		new (&static_cast<ActorFuzz10Actor*>(this)->SAV< int >::value()) int(402988);
 		this->~ActorFuzz10ActorState();
 		static_cast<ActorFuzz10Actor*>(this)->finishSendAndDelPromiseRef();
@@ -3806,24 +3806,24 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 328 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 328 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if (!(i832228 < 5))
-															#line 3811 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3811 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		{
 			return a_body1break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 329 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 329 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(543113);
-															#line 330 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 330 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		StrictFuture<Void> __when_expr_0 = error;
-															#line 330 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 330 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if (static_cast<ActorFuzz10Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 3821 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3821 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 		static_cast<ActorFuzz10Actor*>(this)->actor_wait_state = 1;
-															#line 330 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 330 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ActorFuzz10Actor, 0, Void >*>(static_cast<ActorFuzz10Actor*>(this)));
-															#line 3826 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3826 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -3843,22 +3843,22 @@ public:
 	}
 	int a_body1loopBody1cont1(Void const& _,int loopDepth) 
 	{
-															#line 331 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 331 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(780932);
-															#line 328 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 328 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		i832228++;
-															#line 3850 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3850 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		if (loopDepth == 0) return a_body1loopHead1(0);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont1(Void && _,int loopDepth) 
 	{
-															#line 331 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 331 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(780932);
-															#line 328 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 328 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		i832228++;
-															#line 3861 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3861 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		if (loopDepth == 0) return a_body1loopHead1(0);
 
 		return loopDepth;
@@ -3926,22 +3926,22 @@ public:
 		fdb_probe_actor_exit("actorFuzz10", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 325 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 325 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	FutureStream<int> inputStream;
-															#line 325 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 325 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	PromiseStream<int> outputStream;
-															#line 325 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 325 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	Future<Void> error;
-															#line 326 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 326 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	int ifstate;
-															#line 327 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 327 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	int i832228;
-															#line 3939 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3939 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 };
 // This generated class is to be used only via actorFuzz10()
-															#line 325 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 325 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz10Actor final : public Actor<int>, public ActorCallback< ActorFuzz10Actor, 0, Void >, public FastAllocated<ActorFuzz10Actor>, public ActorFuzz10ActorState<ActorFuzz10Actor> {
-															#line 3944 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3944 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
 	using FastAllocated<ActorFuzz10Actor>::operator new;
 	using FastAllocated<ActorFuzz10Actor>::operator delete;
@@ -3950,9 +3950,9 @@ public:
 	void destroy() override { ((Actor<int>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< ActorFuzz10Actor, 0, Void >;
-															#line 325 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 325 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz10Actor(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 3955 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3955 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		 : Actor<int>(),
 		   ActorFuzz10ActorState<ActorFuzz10Actor>(inputStream, outputStream, error)
 	{
@@ -3976,36 +3976,36 @@ friend struct ActorCallback< ActorFuzz10Actor, 0, Void >;
 	}
 };
 }
-															#line 325 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 325 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 [[nodiscard]] Future<int> actorFuzz10( FutureStream<int> const& inputStream, PromiseStream<int> const& outputStream, Future<Void> const& error ) {
-															#line 325 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 325 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	return Future<int>(new ActorFuzz10Actor(inputStream, outputStream, error));
-															#line 3983 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3983 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 }
 
-#line 335 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+#line 335 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 
-															#line 3988 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3988 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 namespace {
 // This generated class is to be used only via actorFuzz11()
-															#line 336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 336 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 template <class ActorFuzz11Actor>
-															#line 336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 336 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz11ActorState {
-															#line 3995 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 3995 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
-															#line 336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 336 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz11ActorState(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
-															#line 336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 336 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
+															#line 336 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		 : inputStream(inputStream),
-															#line 336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 336 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   outputStream(outputStream),
-															#line 336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 336 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   error(error),
-															#line 337 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 337 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   ifstate(0)
-															#line 4008 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4008 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 	{
 		fdb_probe_actor_create("actorFuzz11", reinterpret_cast<unsigned long>(this));
 
@@ -4018,16 +4018,16 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 338 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 338 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			StrictFuture<Void> __when_expr_0 = error;
-															#line 338 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 338 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			if (static_cast<ActorFuzz11Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 4025 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4025 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<ActorFuzz11Actor*>(this)->actor_wait_state = 1;
-															#line 338 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 338 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ActorFuzz11Actor, 0, Void >*>(static_cast<ActorFuzz11Actor*>(this)));
-															#line 4030 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4030 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -4048,9 +4048,9 @@ public:
 	}
 	int a_body1cont1(Void const& _,int loopDepth) 
 	{
-															#line 339 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 339 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if (!static_cast<ActorFuzz11Actor*>(this)->SAV<int>::futures) { (void)(672734); this->~ActorFuzz11ActorState(); static_cast<ActorFuzz11Actor*>(this)->destroy(); return 0; }
-															#line 4053 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4053 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		new (&static_cast<ActorFuzz11Actor*>(this)->SAV< int >::value()) int(672734);
 		this->~ActorFuzz11ActorState();
 		static_cast<ActorFuzz11Actor*>(this)->finishSendAndDelPromiseRef();
@@ -4060,9 +4060,9 @@ public:
 	}
 	int a_body1cont1(Void && _,int loopDepth) 
 	{
-															#line 339 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 339 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if (!static_cast<ActorFuzz11Actor*>(this)->SAV<int>::futures) { (void)(672734); this->~ActorFuzz11ActorState(); static_cast<ActorFuzz11Actor*>(this)->destroy(); return 0; }
-															#line 4065 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4065 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		new (&static_cast<ActorFuzz11Actor*>(this)->SAV< int >::value()) int(672734);
 		this->~ActorFuzz11ActorState();
 		static_cast<ActorFuzz11Actor*>(this)->finishSendAndDelPromiseRef();
@@ -4133,20 +4133,20 @@ public:
 		fdb_probe_actor_exit("actorFuzz11", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 336 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	FutureStream<int> inputStream;
-															#line 336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 336 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	PromiseStream<int> outputStream;
-															#line 336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 336 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	Future<Void> error;
-															#line 337 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 337 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	int ifstate;
-															#line 4144 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4144 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 };
 // This generated class is to be used only via actorFuzz11()
-															#line 336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 336 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz11Actor final : public Actor<int>, public ActorCallback< ActorFuzz11Actor, 0, Void >, public FastAllocated<ActorFuzz11Actor>, public ActorFuzz11ActorState<ActorFuzz11Actor> {
-															#line 4149 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4149 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
 	using FastAllocated<ActorFuzz11Actor>::operator new;
 	using FastAllocated<ActorFuzz11Actor>::operator delete;
@@ -4155,9 +4155,9 @@ public:
 	void destroy() override { ((Actor<int>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< ActorFuzz11Actor, 0, Void >;
-															#line 336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 336 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz11Actor(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 4160 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4160 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		 : Actor<int>(),
 		   ActorFuzz11ActorState<ActorFuzz11Actor>(inputStream, outputStream, error)
 	{
@@ -4181,38 +4181,38 @@ friend struct ActorCallback< ActorFuzz11Actor, 0, Void >;
 	}
 };
 }
-															#line 336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 336 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 [[nodiscard]] Future<int> actorFuzz11( FutureStream<int> const& inputStream, PromiseStream<int> const& outputStream, Future<Void> const& error ) {
-															#line 336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 336 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	return Future<int>(new ActorFuzz11Actor(inputStream, outputStream, error));
-															#line 4188 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4188 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 }
 
-#line 341 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+#line 341 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 
-															#line 4193 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4193 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 namespace {
 // This generated class is to be used only via actorFuzz12()
-															#line 342 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 342 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 template <class ActorFuzz12Actor>
-															#line 342 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 342 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz12ActorState {
-															#line 4200 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4200 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
-															#line 342 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 342 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz12ActorState(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 342 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
-															#line 342 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 342 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
+															#line 342 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		 : inputStream(inputStream),
-															#line 342 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 342 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   outputStream(outputStream),
-															#line 342 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 342 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   error(error),
-															#line 343 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 343 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   ifstate(0),
-															#line 344 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 344 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   list466120()
-															#line 4215 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4215 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 	{
 		fdb_probe_actor_create("actorFuzz12", reinterpret_cast<unsigned long>(this));
 
@@ -4225,29 +4225,29 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 345 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 345 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			list466120.push_back(1);
-															#line 346 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 346 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			list466120.push_back(2);
-															#line 347 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 347 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			list466120.push_back(3);
-															#line 348 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 348 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			for( auto i : list466120 ) {
-															#line 349 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 349 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				(void)i;
-															#line 350 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 350 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(970588);
-															#line 351 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 351 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				if (!static_cast<ActorFuzz12Actor*>(this)->SAV<int>::futures) { (void)(981887); this->~ActorFuzz12ActorState(); static_cast<ActorFuzz12Actor*>(this)->destroy(); return 0; }
-															#line 4242 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4242 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 				new (&static_cast<ActorFuzz12Actor*>(this)->SAV< int >::value()) int(981887);
 				this->~ActorFuzz12ActorState();
 				static_cast<ActorFuzz12Actor*>(this)->finishSendAndDelPromiseRef();
 				return 0;
 			}
-															#line 353 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 353 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			if (!static_cast<ActorFuzz12Actor*>(this)->SAV<int>::futures) { (void)(869298); this->~ActorFuzz12ActorState(); static_cast<ActorFuzz12Actor*>(this)->destroy(); return 0; }
-															#line 4250 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4250 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			new (&static_cast<ActorFuzz12Actor*>(this)->SAV< int >::value()) int(869298);
 			this->~ActorFuzz12ActorState();
 			static_cast<ActorFuzz12Actor*>(this)->finishSendAndDelPromiseRef();
@@ -4269,22 +4269,22 @@ public:
 
 		return loopDepth;
 	}
-															#line 342 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 342 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	FutureStream<int> inputStream;
-															#line 342 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 342 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	PromiseStream<int> outputStream;
-															#line 342 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 342 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	Future<Void> error;
-															#line 343 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 343 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	int ifstate;
-															#line 344 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 344 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	std::vector<int> list466120;
-															#line 4282 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4282 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 };
 // This generated class is to be used only via actorFuzz12()
-															#line 342 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 342 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz12Actor final : public Actor<int>, public FastAllocated<ActorFuzz12Actor>, public ActorFuzz12ActorState<ActorFuzz12Actor> {
-															#line 4287 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4287 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
 	using FastAllocated<ActorFuzz12Actor>::operator new;
 	using FastAllocated<ActorFuzz12Actor>::operator delete;
@@ -4292,9 +4292,9 @@ public:
 #pragma clang diagnostic ignored "-Wdelete-non-virtual-dtor"
 	void destroy() override { ((Actor<int>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
-															#line 342 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 342 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz12Actor(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 4297 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4297 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		 : Actor<int>(),
 		   ActorFuzz12ActorState<ActorFuzz12Actor>(inputStream, outputStream, error)
 	{
@@ -4317,36 +4317,36 @@ public:
 	}
 };
 }
-															#line 342 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 342 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 [[nodiscard]] Future<int> actorFuzz12( FutureStream<int> const& inputStream, PromiseStream<int> const& outputStream, Future<Void> const& error ) {
-															#line 342 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 342 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	return Future<int>(new ActorFuzz12Actor(inputStream, outputStream, error));
-															#line 4324 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4324 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 }
 
-#line 355 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+#line 355 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 
-															#line 4329 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4329 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 namespace {
 // This generated class is to be used only via actorFuzz13()
-															#line 356 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 356 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 template <class ActorFuzz13Actor>
-															#line 356 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 356 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz13ActorState {
-															#line 4336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4336 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
-															#line 356 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 356 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz13ActorState(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 356 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
-															#line 356 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 356 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
+															#line 356 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		 : inputStream(inputStream),
-															#line 356 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 356 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   outputStream(outputStream),
-															#line 356 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 356 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   error(error),
-															#line 357 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 357 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   ifstate(0)
-															#line 4349 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4349 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 	{
 		fdb_probe_actor_create("actorFuzz13", reinterpret_cast<unsigned long>(this));
 
@@ -4359,23 +4359,23 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 358 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 358 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			if ((++ifstate & 1) == 0)
-															#line 4364 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4364 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			{
-															#line 359 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 359 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(571414);
-															#line 360 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 360 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				if (!static_cast<ActorFuzz13Actor*>(this)->SAV<int>::futures) { (void)(591307); this->~ActorFuzz13ActorState(); static_cast<ActorFuzz13Actor*>(this)->destroy(); return 0; }
-															#line 4370 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4370 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 				new (&static_cast<ActorFuzz13Actor*>(this)->SAV< int >::value()) int(591307);
 				this->~ActorFuzz13ActorState();
 				static_cast<ActorFuzz13Actor*>(this)->finishSendAndDelPromiseRef();
 				return 0;
 			}
-															#line 362 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 362 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			if (!static_cast<ActorFuzz13Actor*>(this)->SAV<int>::futures) { (void)(861219); this->~ActorFuzz13ActorState(); static_cast<ActorFuzz13Actor*>(this)->destroy(); return 0; }
-															#line 4378 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4378 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			new (&static_cast<ActorFuzz13Actor*>(this)->SAV< int >::value()) int(861219);
 			this->~ActorFuzz13ActorState();
 			static_cast<ActorFuzz13Actor*>(this)->finishSendAndDelPromiseRef();
@@ -4397,20 +4397,20 @@ public:
 
 		return loopDepth;
 	}
-															#line 356 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 356 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	FutureStream<int> inputStream;
-															#line 356 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 356 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	PromiseStream<int> outputStream;
-															#line 356 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 356 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	Future<Void> error;
-															#line 357 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 357 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	int ifstate;
-															#line 4408 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4408 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 };
 // This generated class is to be used only via actorFuzz13()
-															#line 356 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 356 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz13Actor final : public Actor<int>, public FastAllocated<ActorFuzz13Actor>, public ActorFuzz13ActorState<ActorFuzz13Actor> {
-															#line 4413 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4413 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
 	using FastAllocated<ActorFuzz13Actor>::operator new;
 	using FastAllocated<ActorFuzz13Actor>::operator delete;
@@ -4418,9 +4418,9 @@ public:
 #pragma clang diagnostic ignored "-Wdelete-non-virtual-dtor"
 	void destroy() override { ((Actor<int>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
-															#line 356 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 356 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz13Actor(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 4423 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4423 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		 : Actor<int>(),
 		   ActorFuzz13ActorState<ActorFuzz13Actor>(inputStream, outputStream, error)
 	{
@@ -4443,38 +4443,38 @@ public:
 	}
 };
 }
-															#line 356 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 356 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 [[nodiscard]] Future<int> actorFuzz13( FutureStream<int> const& inputStream, PromiseStream<int> const& outputStream, Future<Void> const& error ) {
-															#line 356 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 356 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	return Future<int>(new ActorFuzz13Actor(inputStream, outputStream, error));
-															#line 4450 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4450 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 }
 
-#line 364 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+#line 364 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 
-															#line 4455 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4455 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 namespace {
 // This generated class is to be used only via actorFuzz14()
-															#line 365 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 365 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 template <class ActorFuzz14Actor>
-															#line 365 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 365 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz14ActorState {
-															#line 4462 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4462 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
-															#line 365 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 365 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz14ActorState(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 365 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
-															#line 365 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 365 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
+															#line 365 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		 : inputStream(inputStream),
-															#line 365 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 365 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   outputStream(outputStream),
-															#line 365 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 365 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   error(error),
-															#line 366 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 366 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   ifstate(0),
-															#line 367 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 367 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   list370902()
-															#line 4477 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4477 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 	{
 		fdb_probe_actor_create("actorFuzz14", reinterpret_cast<unsigned long>(this));
 
@@ -4487,24 +4487,24 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 368 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 368 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			list370902.push_back(1);
-															#line 369 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 369 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			list370902.push_back(2);
-															#line 370 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 370 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			list370902.push_back(3);
-															#line 371 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 371 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			for( auto i : list370902 ) {
-															#line 372 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 372 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				(void)i;
-															#line 373 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 373 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(527098);
-															#line 4502 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4502 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 				continue;
 			}
-															#line 376 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 376 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			if (!static_cast<ActorFuzz14Actor*>(this)->SAV<int>::futures) { (void)(628047); this->~ActorFuzz14ActorState(); static_cast<ActorFuzz14Actor*>(this)->destroy(); return 0; }
-															#line 4507 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4507 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			new (&static_cast<ActorFuzz14Actor*>(this)->SAV< int >::value()) int(628047);
 			this->~ActorFuzz14ActorState();
 			static_cast<ActorFuzz14Actor*>(this)->finishSendAndDelPromiseRef();
@@ -4526,22 +4526,22 @@ public:
 
 		return loopDepth;
 	}
-															#line 365 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 365 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	FutureStream<int> inputStream;
-															#line 365 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 365 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	PromiseStream<int> outputStream;
-															#line 365 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 365 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	Future<Void> error;
-															#line 366 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 366 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	int ifstate;
-															#line 367 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 367 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	std::vector<int> list370902;
-															#line 4539 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4539 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 };
 // This generated class is to be used only via actorFuzz14()
-															#line 365 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 365 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz14Actor final : public Actor<int>, public FastAllocated<ActorFuzz14Actor>, public ActorFuzz14ActorState<ActorFuzz14Actor> {
-															#line 4544 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4544 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
 	using FastAllocated<ActorFuzz14Actor>::operator new;
 	using FastAllocated<ActorFuzz14Actor>::operator delete;
@@ -4549,9 +4549,9 @@ public:
 #pragma clang diagnostic ignored "-Wdelete-non-virtual-dtor"
 	void destroy() override { ((Actor<int>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
-															#line 365 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 365 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz14Actor(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 4554 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4554 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		 : Actor<int>(),
 		   ActorFuzz14ActorState<ActorFuzz14Actor>(inputStream, outputStream, error)
 	{
@@ -4574,38 +4574,38 @@ public:
 	}
 };
 }
-															#line 365 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 365 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 [[nodiscard]] Future<int> actorFuzz14( FutureStream<int> const& inputStream, PromiseStream<int> const& outputStream, Future<Void> const& error ) {
-															#line 365 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 365 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	return Future<int>(new ActorFuzz14Actor(inputStream, outputStream, error));
-															#line 4581 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4581 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 }
 
-#line 378 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+#line 378 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 
-															#line 4586 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4586 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 namespace {
 // This generated class is to be used only via actorFuzz15()
-															#line 379 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 379 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 template <class ActorFuzz15Actor>
-															#line 379 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 379 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz15ActorState {
-															#line 4593 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4593 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
-															#line 379 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 379 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz15ActorState(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 379 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
-															#line 379 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 379 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
+															#line 379 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		 : inputStream(inputStream),
-															#line 379 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 379 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   outputStream(outputStream),
-															#line 379 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 379 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   error(error),
-															#line 380 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 380 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   ifstate(0),
-															#line 381 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 381 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   i450301()
-															#line 4608 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4608 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 	{
 		fdb_probe_actor_create("actorFuzz15", reinterpret_cast<unsigned long>(this));
 
@@ -4618,34 +4618,34 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 382 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 382 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			for(i450301 = 0;i450301 < 5;i450301++) {
-															#line 383 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 383 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(582389);
-															#line 384 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 384 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				list863601 = std::vector<int>();
-															#line 385 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 385 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				list863601.push_back(1);
-															#line 386 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 386 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				list863601.push_back(2);
-															#line 387 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 387 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				list863601.push_back(3);
-															#line 388 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 388 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				for( auto i : list863601 ) {
-															#line 389 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 389 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 					(void)i;
-															#line 390 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 390 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 					outputStream.send(240216);
-															#line 4639 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4639 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 					break;
 				}
-															#line 393 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 393 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(732317);
-															#line 4644 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4644 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			}
-															#line 395 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 395 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			if (!static_cast<ActorFuzz15Actor*>(this)->SAV<int>::futures) { (void)(884781); this->~ActorFuzz15ActorState(); static_cast<ActorFuzz15Actor*>(this)->destroy(); return 0; }
-															#line 4648 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4648 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			new (&static_cast<ActorFuzz15Actor*>(this)->SAV< int >::value()) int(884781);
 			this->~ActorFuzz15ActorState();
 			static_cast<ActorFuzz15Actor*>(this)->finishSendAndDelPromiseRef();
@@ -4667,24 +4667,24 @@ public:
 
 		return loopDepth;
 	}
-															#line 379 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 379 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	FutureStream<int> inputStream;
-															#line 379 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 379 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	PromiseStream<int> outputStream;
-															#line 379 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 379 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	Future<Void> error;
-															#line 380 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 380 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	int ifstate;
-															#line 381 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 381 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	int i450301;
-															#line 384 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 384 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	std::vector<int> list863601;
-															#line 4682 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4682 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 };
 // This generated class is to be used only via actorFuzz15()
-															#line 379 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 379 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz15Actor final : public Actor<int>, public FastAllocated<ActorFuzz15Actor>, public ActorFuzz15ActorState<ActorFuzz15Actor> {
-															#line 4687 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4687 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
 	using FastAllocated<ActorFuzz15Actor>::operator new;
 	using FastAllocated<ActorFuzz15Actor>::operator delete;
@@ -4692,9 +4692,9 @@ public:
 #pragma clang diagnostic ignored "-Wdelete-non-virtual-dtor"
 	void destroy() override { ((Actor<int>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
-															#line 379 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 379 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz15Actor(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 4697 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4697 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		 : Actor<int>(),
 		   ActorFuzz15ActorState<ActorFuzz15Actor>(inputStream, outputStream, error)
 	{
@@ -4717,36 +4717,36 @@ public:
 	}
 };
 }
-															#line 379 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 379 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 [[nodiscard]] Future<int> actorFuzz15( FutureStream<int> const& inputStream, PromiseStream<int> const& outputStream, Future<Void> const& error ) {
-															#line 379 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 379 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	return Future<int>(new ActorFuzz15Actor(inputStream, outputStream, error));
-															#line 4724 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4724 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 }
 
-#line 397 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+#line 397 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 
-															#line 4729 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4729 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 namespace {
 // This generated class is to be used only via actorFuzz16()
-															#line 398 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 398 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 template <class ActorFuzz16Actor>
-															#line 398 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 398 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz16ActorState {
-															#line 4736 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4736 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
-															#line 398 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 398 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz16ActorState(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 398 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
-															#line 398 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 398 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
+															#line 398 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		 : inputStream(inputStream),
-															#line 398 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 398 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   outputStream(outputStream),
-															#line 398 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 398 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   error(error),
-															#line 399 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 399 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   ifstate(0)
-															#line 4749 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4749 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 	{
 		fdb_probe_actor_create("actorFuzz16", reinterpret_cast<unsigned long>(this));
 
@@ -4759,69 +4759,69 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 400 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 400 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			if ((++ifstate & 1) == 1)
-															#line 4764 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4764 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			{
-															#line 401 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 401 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(943071);
-															#line 402 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 402 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				list811122 = std::vector<int>();
-															#line 403 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 403 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				list811122.push_back(1);
-															#line 404 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 404 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				list811122.push_back(2);
-															#line 405 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 405 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				list811122.push_back(3);
-															#line 406 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 406 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				RangeForbody1Iterator0 = std::begin(list811122);
-															#line 4778 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4778 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 				loopDepth = a_body1loopHead1(loopDepth);
 			}
 			else
 			{
-															#line 426 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 426 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(437137);
-															#line 427 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 427 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				list226908 = std::vector<int>();
-															#line 428 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 428 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				list226908.push_back(1);
-															#line 429 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 429 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				list226908.push_back(2);
-															#line 430 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 430 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				list226908.push_back(3);
-															#line 431 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 431 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				for( auto i : list226908 ) {
-															#line 432 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 432 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 					(void)i;
-															#line 433 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 433 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 					outputStream.send(321651);
-															#line 434 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 434 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 					if ((++ifstate & 1) == 1)
-															#line 4801 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4801 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 					{
-															#line 435 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 435 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 						outputStream.send(396995);
-															#line 436 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 436 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 						i753710 = int();
-															#line 437 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 437 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 						for(i753710 = 0;i753710 < 5;i753710++) {
-															#line 438 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 438 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 							outputStream.send(235407);
-															#line 4811 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4811 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 							break;
 						}
-															#line 441 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 441 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 						outputStream.send(792039);
-															#line 4816 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4816 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 					}
-															#line 443 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 443 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 					outputStream.send(659099);
-															#line 4820 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4820 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 				}
-															#line 445 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 445 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(403928);
-															#line 4824 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4824 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 				loopDepth = a_body1cont1(loopDepth);
 			}
 		}
@@ -4843,9 +4843,9 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 447 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 447 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if (!static_cast<ActorFuzz16Actor*>(this)->SAV<int>::futures) { (void)(197156); this->~ActorFuzz16ActorState(); static_cast<ActorFuzz16Actor*>(this)->destroy(); return 0; }
-															#line 4848 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4848 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		new (&static_cast<ActorFuzz16Actor*>(this)->SAV< int >::value()) int(197156);
 		this->~ActorFuzz16ActorState();
 		static_cast<ActorFuzz16Actor*>(this)->finishSendAndDelPromiseRef();
@@ -4855,9 +4855,9 @@ public:
 	}
 	int a_body1cont2(int loopDepth) 
 	{
-															#line 424 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 424 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(493007);
-															#line 4860 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4860 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1cont1(loopDepth);
 
 		return loopDepth;
@@ -4871,59 +4871,59 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 406 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 406 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if (!(RangeForbody1Iterator0 != std::end(list811122)))
-															#line 4876 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4876 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		{
 			return a_body1break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 406 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 406 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		auto i = *RangeForbody1Iterator0;
-															#line 4882 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4882 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		{
-															#line 407 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 407 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			(void)i;
-															#line 408 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 408 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(492690);
-															#line 409 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 409 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			if ((++ifstate & 1) == 1)
-															#line 4890 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4890 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			{
-															#line 410 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 410 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(388192);
-															#line 411 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 411 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				StrictFuture<Void> __when_expr_0 = error;
-															#line 411 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 411 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				if (static_cast<ActorFuzz16Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 4898 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4898 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 				if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 				static_cast<ActorFuzz16Actor*>(this)->actor_wait_state = 1;
-															#line 411 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 411 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ActorFuzz16Actor, 0, Void >*>(static_cast<ActorFuzz16Actor*>(this)));
-															#line 4903 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4903 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 				loopDepth = 0;
 			}
 			else
 			{
-															#line 414 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 414 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(908751);
-															#line 415 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 415 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				i120459 = int();
-															#line 416 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 416 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				for(i120459 = 0;i120459 < 5;i120459++) {
-															#line 417 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 417 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 					outputStream.send(198776);
-															#line 418 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 418 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 					if (!static_cast<ActorFuzz16Actor*>(this)->SAV<int>::futures) { (void)(537939); this->~ActorFuzz16ActorState(); static_cast<ActorFuzz16Actor*>(this)->destroy(); return 0; }
-															#line 4918 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4918 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 					new (&static_cast<ActorFuzz16Actor*>(this)->SAV< int >::value()) int(537939);
 					this->~ActorFuzz16ActorState();
 					static_cast<ActorFuzz16Actor*>(this)->finishSendAndDelPromiseRef();
 					return 0;
 				}
-															#line 420 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 420 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(649270);
-															#line 4926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4926 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 				loopDepth = a_body1loopBody1cont3(loopDepth);
 			}
 		}
@@ -4945,36 +4945,36 @@ public:
 	}
 	int a_body1loopBody1cont1(int loopDepth) 
 	{
-															#line 406 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 406 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		++RangeForbody1Iterator0;
-															#line 4950 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4950 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		if (loopDepth == 0) return a_body1loopHead1(0);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont3(int loopDepth) 
 	{
-															#line 422 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 422 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(397872);
-															#line 4959 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4959 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont4(Void const& _,int loopDepth) 
 	{
-															#line 412 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 412 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(545437);
-															#line 4968 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4968 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont3(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont4(Void && _,int loopDepth) 
 	{
-															#line 412 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 412 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(545437);
-															#line 4977 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 4977 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont3(loopDepth);
 
 		return loopDepth;
@@ -5042,30 +5042,30 @@ public:
 		fdb_probe_actor_exit("actorFuzz16", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 398 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 398 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	FutureStream<int> inputStream;
-															#line 398 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 398 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	PromiseStream<int> outputStream;
-															#line 398 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 398 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	Future<Void> error;
-															#line 399 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 399 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	int ifstate;
-															#line 402 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 402 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	std::vector<int> list811122;
-															#line 406 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 406 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	decltype(std::begin(std::declval<std::vector<int>>())) RangeForbody1Iterator0;
-															#line 415 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 415 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	int i120459;
-															#line 427 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 427 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	std::vector<int> list226908;
-															#line 436 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 436 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	int i753710;
-															#line 5063 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5063 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 };
 // This generated class is to be used only via actorFuzz16()
-															#line 398 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 398 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz16Actor final : public Actor<int>, public ActorCallback< ActorFuzz16Actor, 0, Void >, public FastAllocated<ActorFuzz16Actor>, public ActorFuzz16ActorState<ActorFuzz16Actor> {
-															#line 5068 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5068 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
 	using FastAllocated<ActorFuzz16Actor>::operator new;
 	using FastAllocated<ActorFuzz16Actor>::operator delete;
@@ -5074,9 +5074,9 @@ public:
 	void destroy() override { ((Actor<int>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< ActorFuzz16Actor, 0, Void >;
-															#line 398 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 398 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz16Actor(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 5079 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5079 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		 : Actor<int>(),
 		   ActorFuzz16ActorState<ActorFuzz16Actor>(inputStream, outputStream, error)
 	{
@@ -5100,38 +5100,38 @@ friend struct ActorCallback< ActorFuzz16Actor, 0, Void >;
 	}
 };
 }
-															#line 398 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 398 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 [[nodiscard]] Future<int> actorFuzz16( FutureStream<int> const& inputStream, PromiseStream<int> const& outputStream, Future<Void> const& error ) {
-															#line 398 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 398 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	return Future<int>(new ActorFuzz16Actor(inputStream, outputStream, error));
-															#line 5107 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5107 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 }
 
-#line 449 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+#line 449 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 
-															#line 5112 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5112 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 namespace {
 // This generated class is to be used only via actorFuzz17()
-															#line 450 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 450 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 template <class ActorFuzz17Actor>
-															#line 450 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 450 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz17ActorState {
-															#line 5119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5119 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
-															#line 450 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 450 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz17ActorState(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 450 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
-															#line 450 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 450 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
+															#line 450 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		 : inputStream(inputStream),
-															#line 450 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 450 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   outputStream(outputStream),
-															#line 450 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 450 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   error(error),
-															#line 451 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 451 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   ifstate(0),
-															#line 452 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 452 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   list522792()
-															#line 5134 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5134 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 	{
 		fdb_probe_actor_create("actorFuzz17", reinterpret_cast<unsigned long>(this));
 
@@ -5144,15 +5144,15 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 453 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 453 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			list522792.push_back(1);
-															#line 454 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 454 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			list522792.push_back(2);
-															#line 455 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 455 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			list522792.push_back(3);
-															#line 456 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 456 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			RangeForbody1Iterator0 = std::begin(list522792);
-															#line 5155 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5155 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -5173,9 +5173,9 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 483 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 483 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if (!static_cast<ActorFuzz17Actor*>(this)->SAV<int>::futures) { (void)(299183); this->~ActorFuzz17ActorState(); static_cast<ActorFuzz17Actor*>(this)->destroy(); return 0; }
-															#line 5178 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5178 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		new (&static_cast<ActorFuzz17Actor*>(this)->SAV< int >::value()) int(299183);
 		this->~ActorFuzz17ActorState();
 		static_cast<ActorFuzz17Actor*>(this)->finishSendAndDelPromiseRef();
@@ -5192,25 +5192,25 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 456 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 456 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if (!(RangeForbody1Iterator0 != std::end(list522792)))
-															#line 5197 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5197 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		{
 			return a_body1break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 456 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 456 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		auto i = *RangeForbody1Iterator0;
-															#line 5203 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5203 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		{
-															#line 457 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 457 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			(void)i;
-															#line 458 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 458 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(249436);
-															#line 5209 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5209 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			try {
-															#line 460 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 460 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(416782);
-															#line 5213 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5213 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 				return a_body1continue1(loopDepth); // continue
 			}
 			catch (Error& error) {
@@ -5237,37 +5237,37 @@ public:
 	}
 	int a_body1continue1(int loopDepth) 
 	{
-															#line 456 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 456 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		++RangeForbody1Iterator0;
-															#line 5242 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5242 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		if (loopDepth == 0) return a_body1loopHead1(0);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont1(int loopDepth) 
 	{
-															#line 456 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 456 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		++RangeForbody1Iterator0;
-															#line 5251 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5251 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		if (loopDepth == 0) return a_body1loopHead1(0);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont3(int loopDepth) 
 	{
-															#line 470 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 470 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(670490);
-															#line 471 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 471 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if ((++ifstate & 1) == 0)
-															#line 5262 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5262 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		{
-															#line 472 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 472 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(264281);
-															#line 5266 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5266 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			try {
-															#line 474 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 474 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(830283);
-															#line 5270 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5270 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 				return a_body1continue1(loopDepth); // continue
 			}
 			catch (Error& error) {
@@ -5286,18 +5286,18 @@ public:
 	int a_body1loopBody1Catch1(const Error& __current_error,int loopDepth=0) 
 	{
 		try {
-															#line 463 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 463 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(237787);
-															#line 464 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 464 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			for(;;) {
-															#line 465 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 465 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(438476);
-															#line 5295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5295 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 				break;
 			}
-															#line 468 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 468 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(939594);
-															#line 5300 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5300 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			loopDepth = a_body1loopBody1cont3(loopDepth);
 		}
 		catch (Error& error) {
@@ -5310,9 +5310,9 @@ public:
 	}
 	int a_body1loopBody1cont5(int loopDepth) 
 	{
-															#line 481 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 481 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(990392);
-															#line 5315 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5315 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont1(loopDepth);
 
 		return loopDepth;
@@ -5320,9 +5320,9 @@ public:
 	int a_body1loopBody1cont3Catch1(const Error& __current_error,int loopDepth=0) 
 	{
 		try {
-															#line 477 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 477 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(157517);
-															#line 5325 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5325 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			return a_body1continue1(loopDepth); // continue
 		}
 		catch (Error& error) {
@@ -5333,24 +5333,24 @@ public:
 
 		return loopDepth;
 	}
-															#line 450 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 450 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	FutureStream<int> inputStream;
-															#line 450 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 450 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	PromiseStream<int> outputStream;
-															#line 450 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 450 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	Future<Void> error;
-															#line 451 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 451 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	int ifstate;
-															#line 452 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 452 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	std::vector<int> list522792;
-															#line 456 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 456 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	decltype(std::begin(std::declval<std::vector<int>>())) RangeForbody1Iterator0;
-															#line 5348 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5348 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 };
 // This generated class is to be used only via actorFuzz17()
-															#line 450 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 450 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz17Actor final : public Actor<int>, public FastAllocated<ActorFuzz17Actor>, public ActorFuzz17ActorState<ActorFuzz17Actor> {
-															#line 5353 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5353 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
 	using FastAllocated<ActorFuzz17Actor>::operator new;
 	using FastAllocated<ActorFuzz17Actor>::operator delete;
@@ -5358,9 +5358,9 @@ public:
 #pragma clang diagnostic ignored "-Wdelete-non-virtual-dtor"
 	void destroy() override { ((Actor<int>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
-															#line 450 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 450 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz17Actor(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 5363 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5363 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		 : Actor<int>(),
 		   ActorFuzz17ActorState<ActorFuzz17Actor>(inputStream, outputStream, error)
 	{
@@ -5383,36 +5383,36 @@ public:
 	}
 };
 }
-															#line 450 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 450 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 [[nodiscard]] Future<int> actorFuzz17( FutureStream<int> const& inputStream, PromiseStream<int> const& outputStream, Future<Void> const& error ) {
-															#line 450 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 450 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	return Future<int>(new ActorFuzz17Actor(inputStream, outputStream, error));
-															#line 5390 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5390 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 }
 
-#line 485 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+#line 485 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 
-															#line 5395 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5395 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 namespace {
 // This generated class is to be used only via actorFuzz18()
-															#line 486 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 486 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 template <class ActorFuzz18Actor>
-															#line 486 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 486 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz18ActorState {
-															#line 5402 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5402 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
-															#line 486 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 486 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz18ActorState(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 486 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
-															#line 486 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 486 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
+															#line 486 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		 : inputStream(inputStream),
-															#line 486 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 486 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   outputStream(outputStream),
-															#line 486 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 486 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   error(error),
-															#line 487 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 487 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   ifstate(0)
-															#line 5415 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5415 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 	{
 		fdb_probe_actor_create("actorFuzz18", reinterpret_cast<unsigned long>(this));
 
@@ -5426,20 +5426,20 @@ public:
 	{
 		try {
 			try {
-															#line 489 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 489 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(337649);
-															#line 490 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 490 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				i910140 = int();
-															#line 491 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 491 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				for(i910140 = 0;i910140 < 5;i910140++) {
-															#line 492 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 492 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 					outputStream.send(395297);
-															#line 5437 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5437 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 					break;
 				}
-															#line 495 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 495 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(807261);
-															#line 5442 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5442 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 				loopDepth = a_body1cont4(loopDepth);
 			}
 			catch (Error& error) {
@@ -5466,9 +5466,9 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 538 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 538 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if (!static_cast<ActorFuzz18Actor*>(this)->SAV<int>::futures) { (void)(517901); this->~ActorFuzz18ActorState(); static_cast<ActorFuzz18Actor*>(this)->destroy(); return 0; }
-															#line 5471 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5471 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		new (&static_cast<ActorFuzz18Actor*>(this)->SAV< int >::value()) int(517901);
 		this->~ActorFuzz18ActorState();
 		static_cast<ActorFuzz18Actor*>(this)->finishSendAndDelPromiseRef();
@@ -5479,15 +5479,15 @@ public:
 	int a_body1Catch2(const Error& __current_error,int loopDepth=0) 
 	{
 		try {
-															#line 497 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 497 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(628394);
-															#line 5484 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5484 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			try {
-															#line 499 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 499 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(658059);
-															#line 500 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 500 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				return a_body1Catch2Catch1(operation_failed(), loopDepth);
-															#line 5490 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5490 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			}
 			catch (Error& error) {
 				loopDepth = a_body1Catch2Catch1(error, loopDepth);
@@ -5518,9 +5518,9 @@ public:
 	}
 	int a_body1Catch2cont1(int loopDepth) 
 	{
-															#line 536 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 536 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(764202);
-															#line 5523 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5523 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1cont1(loopDepth);
 
 		return loopDepth;
@@ -5528,55 +5528,55 @@ public:
 	int a_body1Catch2Catch1(const Error& __current_error,int loopDepth=0) 
 	{
 		try {
-															#line 502 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 502 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(787535);
-															#line 503 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 503 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			if ((++ifstate & 1) == 1)
-															#line 5535 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5535 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			{
-															#line 504 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 504 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(945855);
-															#line 505 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 505 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				FutureStream<int> __when_expr_0 = inputStream;
-															#line 505 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 505 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				if (static_cast<ActorFuzz18Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 5543 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5543 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 				if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1Catch2Catch1when1(__when_expr_0.pop(), loopDepth); };
 				static_cast<ActorFuzz18Actor*>(this)->actor_wait_state = 1;
-															#line 505 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 505 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				__when_expr_0.addCallbackAndClear(static_cast<ActorSingleCallback< ActorFuzz18Actor, 0, int >*>(static_cast<ActorFuzz18Actor*>(this)));
-															#line 5548 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5548 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 				loopDepth = 0;
 			}
 			else
 			{
-															#line 509 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 509 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(705433);
-															#line 5555 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5555 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 				try {
-															#line 511 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 511 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 					outputStream.send(110258);
-															#line 512 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 512 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 					list917536 = std::vector<int>();
-															#line 513 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 513 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 					list917536.push_back(1);
-															#line 514 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 514 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 					list917536.push_back(2);
-															#line 515 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 515 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 					list917536.push_back(3);
-															#line 516 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 516 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 					for( auto i : list917536 ) {
-															#line 517 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 517 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 						(void)i;
-															#line 518 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 518 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 						outputStream.send(539878);
-															#line 519 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 519 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 						return a_body1Catch2Catch1Catch1(operation_failed(), loopDepth);
-															#line 5575 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5575 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 					}
-															#line 521 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 521 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 					outputStream.send(265595);
-															#line 5579 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5579 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 					loopDepth = a_body1Catch2Catch1cont7(loopDepth);
 				}
 				catch (Error& error) {
@@ -5596,31 +5596,31 @@ public:
 	}
 	int a_body1Catch2Catch1cont1(int loopDepth) 
 	{
-															#line 534 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 534 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(365388);
-															#line 5601 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5601 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1Catch2cont1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1Catch2Catch1cont2(int const& input,int loopDepth) 
 	{
-															#line 506 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 506 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(input + 401313);
-															#line 507 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 507 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(483948);
-															#line 5612 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5612 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1Catch2Catch1cont1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1Catch2Catch1cont2(int && input,int loopDepth) 
 	{
-															#line 506 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 506 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(input + 401313);
-															#line 507 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 507 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(483948);
-															#line 5623 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5623 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1Catch2Catch1cont1(loopDepth);
 
 		return loopDepth;
@@ -5690,9 +5690,9 @@ public:
 	}
 	int a_body1Catch2Catch1cont4(int loopDepth) 
 	{
-															#line 532 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 532 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(954545);
-															#line 5695 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5695 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1Catch2Catch1cont1(loopDepth);
 
 		return loopDepth;
@@ -5700,15 +5700,15 @@ public:
 	int a_body1Catch2Catch1Catch1(const Error& __current_error,int loopDepth=0) 
 	{
 		try {
-															#line 523 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 523 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(919259);
-															#line 5705 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5705 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			try {
-															#line 525 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 525 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(770240);
-															#line 526 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 526 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				return a_body1Catch2Catch1Catch1Catch1(operation_failed(), loopDepth);
-															#line 5711 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5711 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			}
 			catch (Error& error) {
 				loopDepth = a_body1Catch2Catch1Catch1Catch1(error, loopDepth);
@@ -5740,11 +5740,11 @@ public:
 	int a_body1Catch2Catch1Catch1Catch1(const Error& __current_error,int loopDepth=0) 
 	{
 		try {
-															#line 528 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 528 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(383788);
-															#line 529 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 529 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			return a_body1Catch1(operation_failed(), loopDepth);
-															#line 5747 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5747 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		}
 		catch (Error& error) {
 			loopDepth = a_body1Catch1(error, loopDepth);
@@ -5754,24 +5754,24 @@ public:
 
 		return loopDepth;
 	}
-															#line 486 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 486 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	FutureStream<int> inputStream;
-															#line 486 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 486 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	PromiseStream<int> outputStream;
-															#line 486 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 486 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	Future<Void> error;
-															#line 487 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 487 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	int ifstate;
-															#line 490 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 490 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	int i910140;
-															#line 512 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 512 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	std::vector<int> list917536;
-															#line 5769 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5769 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 };
 // This generated class is to be used only via actorFuzz18()
-															#line 486 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 486 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz18Actor final : public Actor<int>, public ActorSingleCallback< ActorFuzz18Actor, 0, int >, public FastAllocated<ActorFuzz18Actor>, public ActorFuzz18ActorState<ActorFuzz18Actor> {
-															#line 5774 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5774 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
 	using FastAllocated<ActorFuzz18Actor>::operator new;
 	using FastAllocated<ActorFuzz18Actor>::operator delete;
@@ -5780,9 +5780,9 @@ public:
 	void destroy() override { ((Actor<int>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorSingleCallback< ActorFuzz18Actor, 0, int >;
-															#line 486 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 486 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz18Actor(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 5785 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5785 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		 : Actor<int>(),
 		   ActorFuzz18ActorState<ActorFuzz18Actor>(inputStream, outputStream, error)
 	{
@@ -5806,38 +5806,38 @@ friend struct ActorSingleCallback< ActorFuzz18Actor, 0, int >;
 	}
 };
 }
-															#line 486 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 486 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 [[nodiscard]] Future<int> actorFuzz18( FutureStream<int> const& inputStream, PromiseStream<int> const& outputStream, Future<Void> const& error ) {
-															#line 486 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 486 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	return Future<int>(new ActorFuzz18Actor(inputStream, outputStream, error));
-															#line 5813 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5813 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 }
 
-#line 540 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+#line 540 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 
-															#line 5818 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5818 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 namespace {
 // This generated class is to be used only via actorFuzz19()
-															#line 541 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 541 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 template <class ActorFuzz19Actor>
-															#line 541 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 541 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz19ActorState {
-															#line 5825 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5825 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
-															#line 541 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 541 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz19ActorState(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 541 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
-															#line 541 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 541 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
+															#line 541 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		 : inputStream(inputStream),
-															#line 541 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 541 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   outputStream(outputStream),
-															#line 541 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 541 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   error(error),
-															#line 542 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 542 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   ifstate(0),
-															#line 543 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 543 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   list476707()
-															#line 5840 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5840 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 	{
 		fdb_probe_actor_create("actorFuzz19", reinterpret_cast<unsigned long>(this));
 
@@ -5850,15 +5850,15 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 544 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 544 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			list476707.push_back(1);
-															#line 545 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 545 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			list476707.push_back(2);
-															#line 546 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 546 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			list476707.push_back(3);
-															#line 547 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 547 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			RangeForbody1Iterator0 = std::begin(list476707);
-															#line 5861 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5861 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -5879,9 +5879,9 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 554 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 554 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if (!static_cast<ActorFuzz19Actor*>(this)->SAV<int>::futures) { (void)(592919); this->~ActorFuzz19ActorState(); static_cast<ActorFuzz19Actor*>(this)->destroy(); return 0; }
-															#line 5884 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5884 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		new (&static_cast<ActorFuzz19Actor*>(this)->SAV< int >::value()) int(592919);
 		this->~ActorFuzz19ActorState();
 		static_cast<ActorFuzz19Actor*>(this)->finishSendAndDelPromiseRef();
@@ -5898,30 +5898,30 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 547 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 547 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if (!(RangeForbody1Iterator0 != std::end(list476707)))
-															#line 5903 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5903 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		{
 			return a_body1break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 547 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 547 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		auto i = *RangeForbody1Iterator0;
-															#line 5909 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5909 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		{
-															#line 548 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 548 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			(void)i;
-															#line 549 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 549 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(492598);
-															#line 550 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 550 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			FutureStream<int> __when_expr_0 = inputStream;
-															#line 550 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 550 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			if (static_cast<ActorFuzz19Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 5919 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5919 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.pop(), loopDepth); };
 			static_cast<ActorFuzz19Actor*>(this)->actor_wait_state = 1;
-															#line 550 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 550 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorSingleCallback< ActorFuzz19Actor, 0, int >*>(static_cast<ActorFuzz19Actor*>(this)));
-															#line 5924 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5924 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			loopDepth = 0;
 		}
 
@@ -5942,31 +5942,31 @@ public:
 	}
 	int a_body1loopBody1cont1(int loopDepth) 
 	{
-															#line 547 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 547 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		++RangeForbody1Iterator0;
-															#line 5947 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5947 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		if (loopDepth == 0) return a_body1loopHead1(0);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont3(int const& input,int loopDepth) 
 	{
-															#line 551 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 551 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(input + 138186);
-															#line 552 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 552 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(742053);
-															#line 5958 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5958 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont3(int && input,int loopDepth) 
 	{
-															#line 551 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 551 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(input + 138186);
-															#line 552 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 552 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(742053);
-															#line 5969 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 5969 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont1(loopDepth);
 
 		return loopDepth;
@@ -6034,24 +6034,24 @@ public:
 		fdb_probe_actor_exit("actorFuzz19", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 541 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 541 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	FutureStream<int> inputStream;
-															#line 541 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 541 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	PromiseStream<int> outputStream;
-															#line 541 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 541 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	Future<Void> error;
-															#line 542 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 542 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	int ifstate;
-															#line 543 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 543 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	std::vector<int> list476707;
-															#line 547 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 547 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	decltype(std::begin(std::declval<std::vector<int>>())) RangeForbody1Iterator0;
-															#line 6049 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6049 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 };
 // This generated class is to be used only via actorFuzz19()
-															#line 541 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 541 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz19Actor final : public Actor<int>, public ActorSingleCallback< ActorFuzz19Actor, 0, int >, public FastAllocated<ActorFuzz19Actor>, public ActorFuzz19ActorState<ActorFuzz19Actor> {
-															#line 6054 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6054 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
 	using FastAllocated<ActorFuzz19Actor>::operator new;
 	using FastAllocated<ActorFuzz19Actor>::operator delete;
@@ -6060,9 +6060,9 @@ public:
 	void destroy() override { ((Actor<int>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorSingleCallback< ActorFuzz19Actor, 0, int >;
-															#line 541 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 541 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz19Actor(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 6065 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6065 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		 : Actor<int>(),
 		   ActorFuzz19ActorState<ActorFuzz19Actor>(inputStream, outputStream, error)
 	{
@@ -6086,36 +6086,36 @@ friend struct ActorSingleCallback< ActorFuzz19Actor, 0, int >;
 	}
 };
 }
-															#line 541 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 541 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 [[nodiscard]] Future<int> actorFuzz19( FutureStream<int> const& inputStream, PromiseStream<int> const& outputStream, Future<Void> const& error ) {
-															#line 541 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 541 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	return Future<int>(new ActorFuzz19Actor(inputStream, outputStream, error));
-															#line 6093 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6093 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 }
 
-#line 556 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+#line 556 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 
-															#line 6098 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6098 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 namespace {
 // This generated class is to be used only via actorFuzz20()
-															#line 557 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 557 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 template <class ActorFuzz20Actor>
-															#line 557 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 557 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz20ActorState {
-															#line 6105 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6105 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
-															#line 557 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 557 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz20ActorState(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 557 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
-															#line 557 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 557 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
+															#line 557 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		 : inputStream(inputStream),
-															#line 557 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 557 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   outputStream(outputStream),
-															#line 557 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 557 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   error(error),
-															#line 558 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 558 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   ifstate(0)
-															#line 6118 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6118 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 	{
 		fdb_probe_actor_create("actorFuzz20", reinterpret_cast<unsigned long>(this));
 
@@ -6128,31 +6128,31 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 559 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 559 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			if ((++ifstate & 1) == 0)
-															#line 6133 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6133 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			{
-															#line 560 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 560 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(751400);
-															#line 561 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 561 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				FutureStream<int> __when_expr_0 = inputStream;
-															#line 561 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 561 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				if (static_cast<ActorFuzz20Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 6141 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6141 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 				if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.pop(), loopDepth); };
 				static_cast<ActorFuzz20Actor*>(this)->actor_wait_state = 1;
-															#line 561 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 561 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				__when_expr_0.addCallbackAndClear(static_cast<ActorSingleCallback< ActorFuzz20Actor, 0, int >*>(static_cast<ActorFuzz20Actor*>(this)));
-															#line 6146 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6146 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 				loopDepth = 0;
 			}
 			else
 			{
-															#line 565 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 565 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(760082);
-															#line 566 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 566 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				return a_body1Catch1(operation_failed(), loopDepth);
-															#line 6155 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6155 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			}
 		}
 		catch (Error& error) {
@@ -6173,9 +6173,9 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 568 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 568 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if (!static_cast<ActorFuzz20Actor*>(this)->SAV<int>::futures) { (void)(705285); this->~ActorFuzz20ActorState(); static_cast<ActorFuzz20Actor*>(this)->destroy(); return 0; }
-															#line 6178 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6178 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		new (&static_cast<ActorFuzz20Actor*>(this)->SAV< int >::value()) int(705285);
 		this->~ActorFuzz20ActorState();
 		static_cast<ActorFuzz20Actor*>(this)->finishSendAndDelPromiseRef();
@@ -6185,22 +6185,22 @@ public:
 	}
 	int a_body1cont2(int const& input,int loopDepth) 
 	{
-															#line 562 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 562 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(input + 106231);
-															#line 563 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 563 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(139622);
-															#line 6192 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6192 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1cont1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1cont2(int && input,int loopDepth) 
 	{
-															#line 562 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 562 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(input + 106231);
-															#line 563 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 563 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(139622);
-															#line 6203 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6203 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1cont1(loopDepth);
 
 		return loopDepth;
@@ -6268,20 +6268,20 @@ public:
 		fdb_probe_actor_exit("actorFuzz20", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 557 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 557 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	FutureStream<int> inputStream;
-															#line 557 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 557 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	PromiseStream<int> outputStream;
-															#line 557 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 557 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	Future<Void> error;
-															#line 558 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 558 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	int ifstate;
-															#line 6279 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6279 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 };
 // This generated class is to be used only via actorFuzz20()
-															#line 557 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 557 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz20Actor final : public Actor<int>, public ActorSingleCallback< ActorFuzz20Actor, 0, int >, public FastAllocated<ActorFuzz20Actor>, public ActorFuzz20ActorState<ActorFuzz20Actor> {
-															#line 6284 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6284 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
 	using FastAllocated<ActorFuzz20Actor>::operator new;
 	using FastAllocated<ActorFuzz20Actor>::operator delete;
@@ -6290,9 +6290,9 @@ public:
 	void destroy() override { ((Actor<int>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorSingleCallback< ActorFuzz20Actor, 0, int >;
-															#line 557 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 557 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz20Actor(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 6295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6295 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		 : Actor<int>(),
 		   ActorFuzz20ActorState<ActorFuzz20Actor>(inputStream, outputStream, error)
 	{
@@ -6316,36 +6316,36 @@ friend struct ActorSingleCallback< ActorFuzz20Actor, 0, int >;
 	}
 };
 }
-															#line 557 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 557 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 [[nodiscard]] Future<int> actorFuzz20( FutureStream<int> const& inputStream, PromiseStream<int> const& outputStream, Future<Void> const& error ) {
-															#line 557 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 557 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	return Future<int>(new ActorFuzz20Actor(inputStream, outputStream, error));
-															#line 6323 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6323 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 }
 
-#line 570 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+#line 570 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 
-															#line 6328 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6328 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 namespace {
 // This generated class is to be used only via actorFuzz21()
-															#line 571 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 571 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 template <class ActorFuzz21Actor>
-															#line 571 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 571 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz21ActorState {
-															#line 6335 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6335 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
-															#line 571 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 571 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz21ActorState(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 571 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
-															#line 571 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 571 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
+															#line 571 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		 : inputStream(inputStream),
-															#line 571 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 571 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   outputStream(outputStream),
-															#line 571 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 571 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   error(error),
-															#line 572 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 572 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   ifstate(0)
-															#line 6348 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6348 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 	{
 		fdb_probe_actor_create("actorFuzz21", reinterpret_cast<unsigned long>(this));
 
@@ -6358,9 +6358,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 573 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 573 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			if (!static_cast<ActorFuzz21Actor*>(this)->SAV<int>::futures) { (void)(806394); this->~ActorFuzz21ActorState(); static_cast<ActorFuzz21Actor*>(this)->destroy(); return 0; }
-															#line 6363 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6363 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			new (&static_cast<ActorFuzz21Actor*>(this)->SAV< int >::value()) int(806394);
 			this->~ActorFuzz21ActorState();
 			static_cast<ActorFuzz21Actor*>(this)->finishSendAndDelPromiseRef();
@@ -6382,20 +6382,20 @@ public:
 
 		return loopDepth;
 	}
-															#line 571 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 571 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	FutureStream<int> inputStream;
-															#line 571 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 571 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	PromiseStream<int> outputStream;
-															#line 571 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 571 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	Future<Void> error;
-															#line 572 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 572 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	int ifstate;
-															#line 6393 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6393 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 };
 // This generated class is to be used only via actorFuzz21()
-															#line 571 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 571 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz21Actor final : public Actor<int>, public FastAllocated<ActorFuzz21Actor>, public ActorFuzz21ActorState<ActorFuzz21Actor> {
-															#line 6398 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6398 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
 	using FastAllocated<ActorFuzz21Actor>::operator new;
 	using FastAllocated<ActorFuzz21Actor>::operator delete;
@@ -6403,9 +6403,9 @@ public:
 #pragma clang diagnostic ignored "-Wdelete-non-virtual-dtor"
 	void destroy() override { ((Actor<int>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
-															#line 571 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 571 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz21Actor(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 6408 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6408 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		 : Actor<int>(),
 		   ActorFuzz21ActorState<ActorFuzz21Actor>(inputStream, outputStream, error)
 	{
@@ -6428,36 +6428,36 @@ public:
 	}
 };
 }
-															#line 571 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 571 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 [[nodiscard]] Future<int> actorFuzz21( FutureStream<int> const& inputStream, PromiseStream<int> const& outputStream, Future<Void> const& error ) {
-															#line 571 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 571 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	return Future<int>(new ActorFuzz21Actor(inputStream, outputStream, error));
-															#line 6435 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6435 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 }
 
-#line 575 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+#line 575 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 
-															#line 6440 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6440 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 namespace {
 // This generated class is to be used only via actorFuzz22()
-															#line 576 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 576 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 template <class ActorFuzz22Actor>
-															#line 576 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 576 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz22ActorState {
-															#line 6447 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6447 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
-															#line 576 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 576 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz22ActorState(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 576 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
-															#line 576 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 576 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
+															#line 576 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		 : inputStream(inputStream),
-															#line 576 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 576 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   outputStream(outputStream),
-															#line 576 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 576 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   error(error),
-															#line 577 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 577 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   ifstate(0)
-															#line 6460 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6460 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 	{
 		fdb_probe_actor_create("actorFuzz22", reinterpret_cast<unsigned long>(this));
 
@@ -6471,15 +6471,15 @@ public:
 	{
 		try {
 			try {
-															#line 579 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 579 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(722878);
-															#line 6476 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6476 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 				try {
-															#line 581 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 581 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 					outputStream.send(369302);
-															#line 582 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 582 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 					if (!static_cast<ActorFuzz22Actor*>(this)->SAV<int>::futures) { (void)(416748); this->~ActorFuzz22ActorState(); static_cast<ActorFuzz22Actor*>(this)->destroy(); return 0; }
-															#line 6482 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6482 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 					new (&static_cast<ActorFuzz22Actor*>(this)->SAV< int >::value()) int(416748);
 					this->~ActorFuzz22ActorState();
 					static_cast<ActorFuzz22Actor*>(this)->finishSendAndDelPromiseRef();
@@ -6515,19 +6515,19 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 618 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 618 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(646039);
-															#line 619 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 619 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		list700360 = std::vector<int>();
-															#line 620 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 620 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		list700360.push_back(1);
-															#line 621 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 621 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		list700360.push_back(2);
-															#line 622 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 622 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		list700360.push_back(3);
-															#line 623 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 623 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		RangeForbody1cont1Iterator0 = std::begin(list700360);
-															#line 6530 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6530 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1cont1loopHead1(loopDepth);
 
 		return loopDepth;
@@ -6535,22 +6535,22 @@ public:
 	int a_body1Catch2(const Error& __current_error,int loopDepth=0) 
 	{
 		try {
-															#line 602 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 602 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(208944);
-															#line 6540 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6540 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			try {
-															#line 604 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 604 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(205829);
-															#line 605 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 605 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				FutureStream<int> __when_expr_0 = inputStream;
-															#line 605 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 605 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				if (static_cast<ActorFuzz22Actor*>(this)->actor_wait_state < 0) return a_body1Catch2Catch1(actor_cancelled(), loopDepth);
-															#line 6548 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6548 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 				if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch2Catch1(__when_expr_0.getError(), loopDepth); else return a_body1Catch2when1(__when_expr_0.pop(), loopDepth); };
 				static_cast<ActorFuzz22Actor*>(this)->actor_wait_state = 1;
-															#line 605 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 605 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				__when_expr_0.addCallbackAndClear(static_cast<ActorSingleCallback< ActorFuzz22Actor, 0, int >*>(static_cast<ActorFuzz22Actor*>(this)));
-															#line 6553 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6553 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 				loopDepth = 0;
 			}
 			catch (Error& error) {
@@ -6569,9 +6569,9 @@ public:
 	}
 	int a_body1cont2(int loopDepth) 
 	{
-															#line 600 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 600 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(456449);
-															#line 6574 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6574 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1cont5(loopDepth);
 
 		return loopDepth;
@@ -6579,43 +6579,43 @@ public:
 	int a_body1Catch3(const Error& __current_error,int loopDepth=0) 
 	{
 		try {
-															#line 584 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 584 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(568306);
-															#line 585 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 585 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			list504461 = std::vector<int>();
-															#line 586 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 586 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			list504461.push_back(1);
-															#line 587 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 587 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			list504461.push_back(2);
-															#line 588 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 588 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			list504461.push_back(3);
-															#line 589 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 589 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			for( auto i : list504461 ) {
-															#line 590 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 590 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				(void)i;
-															#line 591 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 591 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(827088);
-															#line 592 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 592 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				if ((++ifstate & 1) == 0)
-															#line 6600 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6600 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 				{
-															#line 593 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 593 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 					outputStream.send(909504);
-															#line 594 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 594 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 					if (!static_cast<ActorFuzz22Actor*>(this)->SAV<int>::futures) { (void)(528584); this->~ActorFuzz22ActorState(); static_cast<ActorFuzz22Actor*>(this)->destroy(); return 0; }
-															#line 6606 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6606 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 					new (&static_cast<ActorFuzz22Actor*>(this)->SAV< int >::value()) int(528584);
 					this->~ActorFuzz22ActorState();
 					static_cast<ActorFuzz22Actor*>(this)->finishSendAndDelPromiseRef();
 					return 0;
 				}
-															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 596 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(275831);
-															#line 6614 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6614 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			}
-															#line 598 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 598 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(739194);
-															#line 6618 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6618 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			loopDepth = a_body1cont2(loopDepth);
 		}
 		catch (Error& error) {
@@ -6641,9 +6641,9 @@ public:
 	}
 	int a_body1Catch2cont1(int loopDepth) 
 	{
-															#line 616 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 616 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(803123);
-															#line 6646 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6646 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1cont1(loopDepth);
 
 		return loopDepth;
@@ -6651,25 +6651,25 @@ public:
 	int a_body1Catch2Catch1(const Error& __current_error,int loopDepth=0) 
 	{
 		try {
-															#line 609 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 609 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(666594);
-															#line 610 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 610 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			if ((++ifstate & 1) == 1)
-															#line 6658 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6658 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			{
-															#line 611 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 611 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(153749);
-															#line 612 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 612 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				if (!static_cast<ActorFuzz22Actor*>(this)->SAV<int>::futures) { (void)(657441); this->~ActorFuzz22ActorState(); static_cast<ActorFuzz22Actor*>(this)->destroy(); return 0; }
-															#line 6664 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6664 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 				new (&static_cast<ActorFuzz22Actor*>(this)->SAV< int >::value()) int(657441);
 				this->~ActorFuzz22ActorState();
 				static_cast<ActorFuzz22Actor*>(this)->finishSendAndDelPromiseRef();
 				return 0;
 			}
-															#line 614 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 614 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(312545);
-															#line 6672 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6672 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			loopDepth = a_body1Catch2cont1(loopDepth);
 		}
 		catch (Error& error) {
@@ -6682,22 +6682,22 @@ public:
 	}
 	int a_body1Catch2cont2(int const& input,int loopDepth) 
 	{
-															#line 606 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 606 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(input + 539161);
-															#line 607 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 607 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(820020);
-															#line 6689 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6689 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1Catch2cont4(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1Catch2cont2(int && input,int loopDepth) 
 	{
-															#line 606 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 606 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(input + 539161);
-															#line 607 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 607 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(820020);
-															#line 6700 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6700 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1Catch2cont4(loopDepth);
 
 		return loopDepth;
@@ -6780,9 +6780,9 @@ public:
 	}
 	int a_body1cont6(int loopDepth) 
 	{
-															#line 649 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 649 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if (!static_cast<ActorFuzz22Actor*>(this)->SAV<int>::futures) { (void)(888702); this->~ActorFuzz22ActorState(); static_cast<ActorFuzz22Actor*>(this)->destroy(); return 0; }
-															#line 6785 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6785 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		new (&static_cast<ActorFuzz22Actor*>(this)->SAV< int >::value()) int(888702);
 		this->~ActorFuzz22ActorState();
 		static_cast<ActorFuzz22Actor*>(this)->finishSendAndDelPromiseRef();
@@ -6799,25 +6799,25 @@ public:
 	}
 	int a_body1cont1loopBody1(int loopDepth) 
 	{
-															#line 623 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 623 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if (!(RangeForbody1cont1Iterator0 != std::end(list700360)))
-															#line 6804 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6804 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		{
 			return a_body1cont1break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 623 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 623 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		auto i = *RangeForbody1cont1Iterator0;
-															#line 6810 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6810 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		{
-															#line 624 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 624 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			(void)i;
-															#line 625 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 625 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(434654);
-															#line 6816 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6816 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			try {
-															#line 627 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 627 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(292762);
-															#line 6820 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6820 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 				return a_body1cont1break1(loopDepth==0?0:loopDepth-1); // break
 			}
 			catch (Error& error) {
@@ -6844,18 +6844,18 @@ public:
 	}
 	int a_body1cont1loopBody1cont1(int loopDepth) 
 	{
-															#line 623 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 623 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		++RangeForbody1cont1Iterator0;
-															#line 6849 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6849 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		if (loopDepth == 0) return a_body1cont1loopHead1(0);
 
 		return loopDepth;
 	}
 	int a_body1cont1loopBody1cont3(int loopDepth) 
 	{
-															#line 647 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 647 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(893732);
-															#line 6858 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6858 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1cont1loopBody1cont1(loopDepth);
 
 		return loopDepth;
@@ -6863,24 +6863,24 @@ public:
 	int a_body1cont1loopBody1Catch1(const Error& __current_error,int loopDepth=0) 
 	{
 		try {
-															#line 630 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 630 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(540935);
-															#line 6868 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6868 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			try {
-															#line 632 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 632 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(202527);
-															#line 633 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 633 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				i246439 = int();
-															#line 634 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 634 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				for(i246439 = 0;i246439 < 5;i246439++) {
-															#line 635 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 635 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 					outputStream.send(141484);
-															#line 6878 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6878 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 					continue;
 				}
-															#line 638 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 638 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(265555);
-															#line 6883 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6883 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 				loopDepth = a_body1cont1loopBody1Catch1cont4(loopDepth);
 			}
 			catch (Error& error) {
@@ -6899,9 +6899,9 @@ public:
 	}
 	int a_body1cont1loopBody1Catch1cont1(int loopDepth) 
 	{
-															#line 645 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 645 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(957345);
-															#line 6904 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6904 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1cont1loopBody1cont3(loopDepth);
 
 		return loopDepth;
@@ -6909,18 +6909,18 @@ public:
 	int a_body1cont1loopBody1Catch1Catch1(const Error& __current_error,int loopDepth=0) 
 	{
 		try {
-															#line 640 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 640 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(506444);
-															#line 641 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 641 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			FutureStream<int> __when_expr_1 = inputStream;
-															#line 641 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 641 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			if (static_cast<ActorFuzz22Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 6918 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6918 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), std::max(0, loopDepth - 1)); else return a_body1cont1loopBody1Catch1Catch1when1(__when_expr_1.pop(), loopDepth); };
 			static_cast<ActorFuzz22Actor*>(this)->actor_wait_state = 2;
-															#line 641 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 641 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			__when_expr_1.addCallbackAndClear(static_cast<ActorSingleCallback< ActorFuzz22Actor, 1, int >*>(static_cast<ActorFuzz22Actor*>(this)));
-															#line 6923 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6923 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -6946,22 +6946,22 @@ public:
 	}
 	int a_body1cont1loopBody1Catch1Catch1cont1(int const& input,int loopDepth) 
 	{
-															#line 642 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 642 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(input + 279285);
-															#line 643 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 643 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(926817);
-															#line 6953 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6953 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1cont1loopBody1Catch1cont1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1cont1loopBody1Catch1Catch1cont1(int && input,int loopDepth) 
 	{
-															#line 642 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 642 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(input + 279285);
-															#line 643 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 643 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(926817);
-															#line 6964 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 6964 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1cont1loopBody1Catch1cont1(loopDepth);
 
 		return loopDepth;
@@ -7029,28 +7029,28 @@ public:
 		fdb_probe_actor_exit("actorFuzz22", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 576 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 576 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	FutureStream<int> inputStream;
-															#line 576 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 576 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	PromiseStream<int> outputStream;
-															#line 576 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 576 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	Future<Void> error;
-															#line 577 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 577 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	int ifstate;
-															#line 585 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 585 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	std::vector<int> list504461;
-															#line 619 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 619 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	std::vector<int> list700360;
-															#line 623 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 623 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	decltype(std::begin(std::declval<std::vector<int>>())) RangeForbody1cont1Iterator0;
-															#line 633 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 633 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	int i246439;
-															#line 7048 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7048 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 };
 // This generated class is to be used only via actorFuzz22()
-															#line 576 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 576 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz22Actor final : public Actor<int>, public ActorSingleCallback< ActorFuzz22Actor, 0, int >, public ActorSingleCallback< ActorFuzz22Actor, 1, int >, public FastAllocated<ActorFuzz22Actor>, public ActorFuzz22ActorState<ActorFuzz22Actor> {
-															#line 7053 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7053 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
 	using FastAllocated<ActorFuzz22Actor>::operator new;
 	using FastAllocated<ActorFuzz22Actor>::operator delete;
@@ -7060,9 +7060,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorSingleCallback< ActorFuzz22Actor, 0, int >;
 friend struct ActorSingleCallback< ActorFuzz22Actor, 1, int >;
-															#line 576 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 576 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz22Actor(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 7065 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7065 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		 : Actor<int>(),
 		   ActorFuzz22ActorState<ActorFuzz22Actor>(inputStream, outputStream, error)
 	{
@@ -7087,38 +7087,38 @@ friend struct ActorSingleCallback< ActorFuzz22Actor, 1, int >;
 	}
 };
 }
-															#line 576 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 576 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 [[nodiscard]] Future<int> actorFuzz22( FutureStream<int> const& inputStream, PromiseStream<int> const& outputStream, Future<Void> const& error ) {
-															#line 576 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 576 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	return Future<int>(new ActorFuzz22Actor(inputStream, outputStream, error));
-															#line 7094 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7094 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 }
 
-#line 651 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+#line 651 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 
-															#line 7099 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7099 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 namespace {
 // This generated class is to be used only via actorFuzz23()
-															#line 652 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 652 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 template <class ActorFuzz23Actor>
-															#line 652 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 652 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz23ActorState {
-															#line 7106 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7106 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
-															#line 652 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 652 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz23ActorState(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 652 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
-															#line 652 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 652 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
+															#line 652 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		 : inputStream(inputStream),
-															#line 652 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 652 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   outputStream(outputStream),
-															#line 652 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 652 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   error(error),
-															#line 653 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 653 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   ifstate(0),
-															#line 654 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 654 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   list316142()
-															#line 7121 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7121 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 	{
 		fdb_probe_actor_create("actorFuzz23", reinterpret_cast<unsigned long>(this));
 
@@ -7131,29 +7131,29 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 655 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 655 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			list316142.push_back(1);
-															#line 656 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 656 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			list316142.push_back(2);
-															#line 657 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 657 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			list316142.push_back(3);
-															#line 658 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 658 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			for( auto i : list316142 ) {
-															#line 659 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 659 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				(void)i;
-															#line 660 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 660 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(562792);
-															#line 661 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 661 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				if (!static_cast<ActorFuzz23Actor*>(this)->SAV<int>::futures) { (void)(231437); this->~ActorFuzz23ActorState(); static_cast<ActorFuzz23Actor*>(this)->destroy(); return 0; }
-															#line 7148 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7148 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 				new (&static_cast<ActorFuzz23Actor*>(this)->SAV< int >::value()) int(231437);
 				this->~ActorFuzz23ActorState();
 				static_cast<ActorFuzz23Actor*>(this)->finishSendAndDelPromiseRef();
 				return 0;
 			}
-															#line 663 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 663 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			if (!static_cast<ActorFuzz23Actor*>(this)->SAV<int>::futures) { (void)(226698); this->~ActorFuzz23ActorState(); static_cast<ActorFuzz23Actor*>(this)->destroy(); return 0; }
-															#line 7156 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7156 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			new (&static_cast<ActorFuzz23Actor*>(this)->SAV< int >::value()) int(226698);
 			this->~ActorFuzz23ActorState();
 			static_cast<ActorFuzz23Actor*>(this)->finishSendAndDelPromiseRef();
@@ -7175,22 +7175,22 @@ public:
 
 		return loopDepth;
 	}
-															#line 652 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 652 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	FutureStream<int> inputStream;
-															#line 652 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 652 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	PromiseStream<int> outputStream;
-															#line 652 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 652 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	Future<Void> error;
-															#line 653 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 653 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	int ifstate;
-															#line 654 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 654 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	std::vector<int> list316142;
-															#line 7188 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7188 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 };
 // This generated class is to be used only via actorFuzz23()
-															#line 652 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 652 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz23Actor final : public Actor<int>, public FastAllocated<ActorFuzz23Actor>, public ActorFuzz23ActorState<ActorFuzz23Actor> {
-															#line 7193 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7193 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
 	using FastAllocated<ActorFuzz23Actor>::operator new;
 	using FastAllocated<ActorFuzz23Actor>::operator delete;
@@ -7198,9 +7198,9 @@ public:
 #pragma clang diagnostic ignored "-Wdelete-non-virtual-dtor"
 	void destroy() override { ((Actor<int>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
-															#line 652 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 652 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz23Actor(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 7203 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7203 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		 : Actor<int>(),
 		   ActorFuzz23ActorState<ActorFuzz23Actor>(inputStream, outputStream, error)
 	{
@@ -7223,36 +7223,36 @@ public:
 	}
 };
 }
-															#line 652 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 652 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 [[nodiscard]] Future<int> actorFuzz23( FutureStream<int> const& inputStream, PromiseStream<int> const& outputStream, Future<Void> const& error ) {
-															#line 652 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 652 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	return Future<int>(new ActorFuzz23Actor(inputStream, outputStream, error));
-															#line 7230 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7230 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 }
 
-#line 665 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+#line 665 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 
-															#line 7235 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7235 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 namespace {
 // This generated class is to be used only via actorFuzz24()
-															#line 666 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 666 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 template <class ActorFuzz24Actor>
-															#line 666 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 666 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz24ActorState {
-															#line 7242 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7242 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
-															#line 666 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 666 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz24ActorState(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 666 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
-															#line 666 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 666 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
+															#line 666 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		 : inputStream(inputStream),
-															#line 666 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 666 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   outputStream(outputStream),
-															#line 666 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 666 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   error(error),
-															#line 667 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 667 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   ifstate(0)
-															#line 7255 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7255 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 	{
 		fdb_probe_actor_create("actorFuzz24", reinterpret_cast<unsigned long>(this));
 
@@ -7265,16 +7265,16 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 668 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 668 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			FutureStream<int> __when_expr_0 = inputStream;
-															#line 668 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 668 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			if (static_cast<ActorFuzz24Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 7272 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7272 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.pop(), loopDepth); };
 			static_cast<ActorFuzz24Actor*>(this)->actor_wait_state = 1;
-															#line 668 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 668 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorSingleCallback< ActorFuzz24Actor, 0, int >*>(static_cast<ActorFuzz24Actor*>(this)));
-															#line 7277 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7277 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -7295,11 +7295,11 @@ public:
 	}
 	int a_body1cont1(int const& input,int loopDepth) 
 	{
-															#line 669 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 669 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(input + 846672);
-															#line 670 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 670 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if (!static_cast<ActorFuzz24Actor*>(this)->SAV<int>::futures) { (void)(835175); this->~ActorFuzz24ActorState(); static_cast<ActorFuzz24Actor*>(this)->destroy(); return 0; }
-															#line 7302 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7302 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		new (&static_cast<ActorFuzz24Actor*>(this)->SAV< int >::value()) int(835175);
 		this->~ActorFuzz24ActorState();
 		static_cast<ActorFuzz24Actor*>(this)->finishSendAndDelPromiseRef();
@@ -7309,11 +7309,11 @@ public:
 	}
 	int a_body1cont1(int && input,int loopDepth) 
 	{
-															#line 669 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 669 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(input + 846672);
-															#line 670 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 670 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if (!static_cast<ActorFuzz24Actor*>(this)->SAV<int>::futures) { (void)(835175); this->~ActorFuzz24ActorState(); static_cast<ActorFuzz24Actor*>(this)->destroy(); return 0; }
-															#line 7316 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7316 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		new (&static_cast<ActorFuzz24Actor*>(this)->SAV< int >::value()) int(835175);
 		this->~ActorFuzz24ActorState();
 		static_cast<ActorFuzz24Actor*>(this)->finishSendAndDelPromiseRef();
@@ -7384,20 +7384,20 @@ public:
 		fdb_probe_actor_exit("actorFuzz24", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 666 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 666 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	FutureStream<int> inputStream;
-															#line 666 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 666 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	PromiseStream<int> outputStream;
-															#line 666 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 666 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	Future<Void> error;
-															#line 667 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 667 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	int ifstate;
-															#line 7395 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7395 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 };
 // This generated class is to be used only via actorFuzz24()
-															#line 666 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 666 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz24Actor final : public Actor<int>, public ActorSingleCallback< ActorFuzz24Actor, 0, int >, public FastAllocated<ActorFuzz24Actor>, public ActorFuzz24ActorState<ActorFuzz24Actor> {
-															#line 7400 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7400 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
 	using FastAllocated<ActorFuzz24Actor>::operator new;
 	using FastAllocated<ActorFuzz24Actor>::operator delete;
@@ -7406,9 +7406,9 @@ public:
 	void destroy() override { ((Actor<int>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorSingleCallback< ActorFuzz24Actor, 0, int >;
-															#line 666 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 666 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz24Actor(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 7411 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7411 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		 : Actor<int>(),
 		   ActorFuzz24ActorState<ActorFuzz24Actor>(inputStream, outputStream, error)
 	{
@@ -7432,36 +7432,36 @@ friend struct ActorSingleCallback< ActorFuzz24Actor, 0, int >;
 	}
 };
 }
-															#line 666 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 666 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 [[nodiscard]] Future<int> actorFuzz24( FutureStream<int> const& inputStream, PromiseStream<int> const& outputStream, Future<Void> const& error ) {
-															#line 666 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 666 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	return Future<int>(new ActorFuzz24Actor(inputStream, outputStream, error));
-															#line 7439 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7439 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 }
 
-#line 672 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+#line 672 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 
-															#line 7444 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7444 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 namespace {
 // This generated class is to be used only via actorFuzz25()
-															#line 673 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 673 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 template <class ActorFuzz25Actor>
-															#line 673 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 673 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz25ActorState {
-															#line 7451 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7451 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
-															#line 673 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 673 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz25ActorState(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 673 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
-															#line 673 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 673 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
+															#line 673 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		 : inputStream(inputStream),
-															#line 673 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 673 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   outputStream(outputStream),
-															#line 673 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 673 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   error(error),
-															#line 674 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 674 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   ifstate(0)
-															#line 7464 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7464 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 	{
 		fdb_probe_actor_create("actorFuzz25", reinterpret_cast<unsigned long>(this));
 
@@ -7475,38 +7475,38 @@ public:
 	{
 		try {
 			try {
-															#line 676 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 676 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(843261);
-															#line 677 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 677 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				if ((++ifstate & 1) == 0)
-															#line 7482 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7482 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 				{
-															#line 678 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 678 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 					outputStream.send(166067);
-															#line 679 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 679 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 					if ((++ifstate & 1) == 1)
-															#line 7488 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7488 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 					{
-															#line 680 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 680 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 						outputStream.send(135307);
-															#line 681 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 681 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 						return a_body1Catch2(operation_failed(), loopDepth);
-															#line 7494 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7494 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 					}
 					else
 					{
-															#line 683 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 683 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 						outputStream.send(150379);
-															#line 684 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 684 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 						FutureStream<int> __when_expr_0 = inputStream;
-															#line 684 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 684 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 						if (static_cast<ActorFuzz25Actor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), loopDepth);
-															#line 7504 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7504 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 						if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch2(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.pop(), loopDepth); };
 						static_cast<ActorFuzz25Actor*>(this)->actor_wait_state = 1;
-															#line 684 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 684 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 						__when_expr_0.addCallbackAndClear(static_cast<ActorSingleCallback< ActorFuzz25Actor, 0, int >*>(static_cast<ActorFuzz25Actor*>(this)));
-															#line 7509 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7509 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 						loopDepth = 0;
 					}
 				}
@@ -7539,9 +7539,9 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 700 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 700 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if (!static_cast<ActorFuzz25Actor*>(this)->SAV<int>::futures) { (void)(592398); this->~ActorFuzz25ActorState(); static_cast<ActorFuzz25Actor*>(this)->destroy(); return 0; }
-															#line 7544 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7544 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		new (&static_cast<ActorFuzz25Actor*>(this)->SAV< int >::value()) int(592398);
 		this->~ActorFuzz25ActorState();
 		static_cast<ActorFuzz25Actor*>(this)->finishSendAndDelPromiseRef();
@@ -7552,23 +7552,23 @@ public:
 	int a_body1Catch2(const Error& __current_error,int loopDepth=0) 
 	{
 		try {
-															#line 692 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 692 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(573810);
-															#line 693 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 693 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			if ((++ifstate & 1) == 0)
-															#line 7559 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7559 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			{
-															#line 694 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 694 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(313835);
-															#line 695 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 695 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				throw_operation_failed();
-															#line 696 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 696 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(749685);
-															#line 7567 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7567 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			}
-															#line 698 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 698 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(706935);
-															#line 7571 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7571 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			loopDepth = a_body1cont1(loopDepth);
 		}
 		catch (Error& error) {
@@ -7581,40 +7581,40 @@ public:
 	}
 	int a_body1cont2(int loopDepth) 
 	{
-															#line 690 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 690 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(327560);
-															#line 7586 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7586 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1cont9(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1cont3(int loopDepth) 
 	{
-															#line 688 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 688 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(908760);
-															#line 7595 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7595 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1cont2(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1cont5(int const& input,int loopDepth) 
 	{
-															#line 685 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 685 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(input + 234945);
-															#line 686 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 686 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(806946);
-															#line 7606 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7606 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1cont3(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1cont5(int && input,int loopDepth) 
 	{
-															#line 685 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 685 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(input + 234945);
-															#line 686 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 686 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(806946);
-															#line 7617 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7617 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1cont3(loopDepth);
 
 		return loopDepth;
@@ -7695,20 +7695,20 @@ public:
 
 		return loopDepth;
 	}
-															#line 673 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 673 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	FutureStream<int> inputStream;
-															#line 673 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 673 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	PromiseStream<int> outputStream;
-															#line 673 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 673 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	Future<Void> error;
-															#line 674 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 674 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	int ifstate;
-															#line 7706 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7706 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 };
 // This generated class is to be used only via actorFuzz25()
-															#line 673 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 673 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz25Actor final : public Actor<int>, public ActorSingleCallback< ActorFuzz25Actor, 0, int >, public FastAllocated<ActorFuzz25Actor>, public ActorFuzz25ActorState<ActorFuzz25Actor> {
-															#line 7711 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7711 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
 	using FastAllocated<ActorFuzz25Actor>::operator new;
 	using FastAllocated<ActorFuzz25Actor>::operator delete;
@@ -7717,9 +7717,9 @@ public:
 	void destroy() override { ((Actor<int>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorSingleCallback< ActorFuzz25Actor, 0, int >;
-															#line 673 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 673 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz25Actor(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 7722 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7722 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		 : Actor<int>(),
 		   ActorFuzz25ActorState<ActorFuzz25Actor>(inputStream, outputStream, error)
 	{
@@ -7743,36 +7743,36 @@ friend struct ActorSingleCallback< ActorFuzz25Actor, 0, int >;
 	}
 };
 }
-															#line 673 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 673 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 [[nodiscard]] Future<int> actorFuzz25( FutureStream<int> const& inputStream, PromiseStream<int> const& outputStream, Future<Void> const& error ) {
-															#line 673 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 673 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	return Future<int>(new ActorFuzz25Actor(inputStream, outputStream, error));
-															#line 7750 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7750 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 }
 
-#line 702 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+#line 702 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 
-															#line 7755 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7755 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 namespace {
 // This generated class is to be used only via actorFuzz26()
-															#line 703 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 703 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 template <class ActorFuzz26Actor>
-															#line 703 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 703 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz26ActorState {
-															#line 7762 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7762 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
-															#line 703 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 703 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz26ActorState(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 703 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
-															#line 703 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 703 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
+															#line 703 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		 : inputStream(inputStream),
-															#line 703 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 703 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   outputStream(outputStream),
-															#line 703 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 703 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   error(error),
-															#line 704 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 704 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   ifstate(0)
-															#line 7775 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7775 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 	{
 		fdb_probe_actor_create("actorFuzz26", reinterpret_cast<unsigned long>(this));
 
@@ -7785,26 +7785,26 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 705 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 705 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			if ((++ifstate & 1) == 1)
-															#line 7790 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7790 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			{
-															#line 706 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 706 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(520263);
-															#line 7794 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7794 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 				try {
-															#line 708 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 708 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 					outputStream.send(306397);
-															#line 709 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 709 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 					FutureStream<int> __when_expr_0 = inputStream;
-															#line 709 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 709 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 					if (static_cast<ActorFuzz26Actor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), loopDepth);
-															#line 7802 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7802 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 					if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch2(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.pop(), loopDepth); };
 					static_cast<ActorFuzz26Actor*>(this)->actor_wait_state = 1;
-															#line 709 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 709 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 					__when_expr_0.addCallbackAndClear(static_cast<ActorSingleCallback< ActorFuzz26Actor, 0, int >*>(static_cast<ActorFuzz26Actor*>(this)));
-															#line 7807 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7807 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 					loopDepth = 0;
 				}
 				catch (Error& error) {
@@ -7815,53 +7815,53 @@ public:
 			}
 			else
 			{
-															#line 758 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 758 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(398083);
-															#line 759 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 759 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				if ((++ifstate & 1) == 1)
-															#line 7822 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7822 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 				{
-															#line 760 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 760 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 					outputStream.send(396069);
-															#line 761 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 761 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 					list327297 = std::vector<int>();
-															#line 762 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 762 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 					list327297.push_back(1);
-															#line 763 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 763 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 					list327297.push_back(2);
-															#line 764 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 764 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 					list327297.push_back(3);
-															#line 765 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 765 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 					for( auto i : list327297 ) {
-															#line 766 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 766 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 						(void)i;
-															#line 767 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 767 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 						outputStream.send(571919);
-															#line 768 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 768 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 						if ((++ifstate & 1) == 0)
-															#line 7842 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7842 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 						{
-															#line 769 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 769 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 							outputStream.send(620625);
-															#line 770 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 770 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 							if (!static_cast<ActorFuzz26Actor*>(this)->SAV<int>::futures) { (void)(270285); this->~ActorFuzz26ActorState(); static_cast<ActorFuzz26Actor*>(this)->destroy(); return 0; }
-															#line 7848 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7848 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 							new (&static_cast<ActorFuzz26Actor*>(this)->SAV< int >::value()) int(270285);
 							this->~ActorFuzz26ActorState();
 							static_cast<ActorFuzz26Actor*>(this)->finishSendAndDelPromiseRef();
 							return 0;
 						}
-															#line 772 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 772 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 						outputStream.send(892626);
-															#line 7856 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7856 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 					}
-															#line 774 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 774 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 					outputStream.send(564398);
-															#line 7860 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7860 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 				}
-															#line 776 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 776 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(614487);
-															#line 7864 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7864 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 				loopDepth = a_body1cont1(loopDepth);
 			}
 		}
@@ -7883,9 +7883,9 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 778 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 778 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if (!static_cast<ActorFuzz26Actor*>(this)->SAV<int>::futures) { (void)(568400); this->~ActorFuzz26ActorState(); static_cast<ActorFuzz26Actor*>(this)->destroy(); return 0; }
-															#line 7888 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7888 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		new (&static_cast<ActorFuzz26Actor*>(this)->SAV< int >::value()) int(568400);
 		this->~ActorFuzz26ActorState();
 		static_cast<ActorFuzz26Actor*>(this)->finishSendAndDelPromiseRef();
@@ -7895,9 +7895,9 @@ public:
 	}
 	int a_body1cont2(int loopDepth) 
 	{
-															#line 756 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 756 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(414082);
-															#line 7900 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7900 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1cont1(loopDepth);
 
 		return loopDepth;
@@ -7905,22 +7905,22 @@ public:
 	int a_body1Catch2(const Error& __current_error,int loopDepth=0) 
 	{
 		try {
-															#line 727 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 727 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(936386);
-															#line 7910 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7910 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			try {
-															#line 729 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 729 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(259652);
-															#line 730 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 730 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				FutureStream<int> __when_expr_1 = inputStream;
-															#line 730 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 730 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				if (static_cast<ActorFuzz26Actor*>(this)->actor_wait_state < 0) return a_body1Catch2Catch1(actor_cancelled(), loopDepth);
-															#line 7918 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7918 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 				if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch2Catch1(__when_expr_1.getError(), loopDepth); else return a_body1Catch2when1(__when_expr_1.pop(), loopDepth); };
 				static_cast<ActorFuzz26Actor*>(this)->actor_wait_state = 2;
-															#line 730 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 730 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				__when_expr_1.addCallbackAndClear(static_cast<ActorSingleCallback< ActorFuzz26Actor, 1, int >*>(static_cast<ActorFuzz26Actor*>(this)));
-															#line 7923 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7923 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 				loopDepth = 0;
 			}
 			catch (Error& error) {
@@ -7939,90 +7939,90 @@ public:
 	}
 	int a_body1cont3(int const& input,int loopDepth) 
 	{
-															#line 710 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 710 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(input + 943232);
-															#line 711 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 711 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(366272);
-															#line 712 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 712 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if ((++ifstate & 1) == 0)
-															#line 7948 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7948 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		{
-															#line 713 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 713 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(700651);
-															#line 714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 714 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			list649823 = std::vector<int>();
-															#line 715 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 715 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			list649823.push_back(1);
-															#line 716 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 716 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			list649823.push_back(2);
-															#line 717 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 717 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			list649823.push_back(3);
-															#line 718 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 718 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			for( auto i : list649823 ) {
-															#line 719 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 719 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				(void)i;
-															#line 720 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 720 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(146918);
-															#line 721 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 721 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				if (!static_cast<ActorFuzz26Actor*>(this)->SAV<int>::futures) { (void)(191890); this->~ActorFuzz26ActorState(); static_cast<ActorFuzz26Actor*>(this)->destroy(); return 0; }
-															#line 7968 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7968 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 				new (&static_cast<ActorFuzz26Actor*>(this)->SAV< int >::value()) int(191890);
 				this->~ActorFuzz26ActorState();
 				static_cast<ActorFuzz26Actor*>(this)->finishSendAndDelPromiseRef();
 				return 0;
 			}
-															#line 723 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 723 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(987155);
-															#line 7976 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7976 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		}
-															#line 725 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 725 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(499733);
-															#line 7980 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7980 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1cont7(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1cont3(int && input,int loopDepth) 
 	{
-															#line 710 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 710 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(input + 943232);
-															#line 711 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 711 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(366272);
-															#line 712 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 712 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if ((++ifstate & 1) == 0)
-															#line 7993 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 7993 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		{
-															#line 713 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 713 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(700651);
-															#line 714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 714 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			list649823 = std::vector<int>();
-															#line 715 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 715 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			list649823.push_back(1);
-															#line 716 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 716 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			list649823.push_back(2);
-															#line 717 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 717 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			list649823.push_back(3);
-															#line 718 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 718 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			for( auto i : list649823 ) {
-															#line 719 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 719 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				(void)i;
-															#line 720 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 720 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(146918);
-															#line 721 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 721 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				if (!static_cast<ActorFuzz26Actor*>(this)->SAV<int>::futures) { (void)(191890); this->~ActorFuzz26ActorState(); static_cast<ActorFuzz26Actor*>(this)->destroy(); return 0; }
-															#line 8013 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 8013 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 				new (&static_cast<ActorFuzz26Actor*>(this)->SAV< int >::value()) int(191890);
 				this->~ActorFuzz26ActorState();
 				static_cast<ActorFuzz26Actor*>(this)->finishSendAndDelPromiseRef();
 				return 0;
 			}
-															#line 723 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 723 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(987155);
-															#line 8021 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 8021 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		}
-															#line 725 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 725 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(499733);
-															#line 8025 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 8025 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1cont7(loopDepth);
 
 		return loopDepth;
@@ -8105,9 +8105,9 @@ public:
 	}
 	int a_body1Catch2cont1(int loopDepth) 
 	{
-															#line 754 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 754 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(133652);
-															#line 8110 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 8110 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1cont2(loopDepth);
 
 		return loopDepth;
@@ -8115,18 +8115,18 @@ public:
 	int a_body1Catch2Catch1(const Error& __current_error,int loopDepth=0) 
 	{
 		try {
-															#line 749 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 749 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(873214);
-															#line 750 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 750 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			FutureStream<int> __when_expr_2 = inputStream;
-															#line 750 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 750 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			if (static_cast<ActorFuzz26Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 8124 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 8124 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1Catch2Catch1when1(__when_expr_2.pop(), loopDepth); };
 			static_cast<ActorFuzz26Actor*>(this)->actor_wait_state = 3;
-															#line 750 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 750 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			__when_expr_2.addCallbackAndClear(static_cast<ActorSingleCallback< ActorFuzz26Actor, 2, int >*>(static_cast<ActorFuzz26Actor*>(this)));
-															#line 8129 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 8129 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -8139,90 +8139,90 @@ public:
 	}
 	int a_body1Catch2cont2(int const& input,int loopDepth) 
 	{
-															#line 731 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 731 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(input + 247889);
-															#line 732 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 732 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(402174);
-															#line 733 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 733 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		i876439 = int();
-															#line 734 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 734 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		for(i876439 = 0;i876439 < 5;i876439++) {
-															#line 735 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 735 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(909715);
-															#line 736 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 736 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			list905706 = std::vector<int>();
-															#line 737 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 737 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			list905706.push_back(1);
-															#line 738 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 738 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			list905706.push_back(2);
-															#line 739 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 739 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			list905706.push_back(3);
-															#line 740 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 740 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			for( auto i : list905706 ) {
-															#line 741 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 741 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				(void)i;
-															#line 742 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 742 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(558855);
-															#line 743 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 743 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				if (!static_cast<ActorFuzz26Actor*>(this)->SAV<int>::futures) { (void)(784546); this->~ActorFuzz26ActorState(); static_cast<ActorFuzz26Actor*>(this)->destroy(); return 0; }
-															#line 8168 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 8168 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 				new (&static_cast<ActorFuzz26Actor*>(this)->SAV< int >::value()) int(784546);
 				this->~ActorFuzz26ActorState();
 				static_cast<ActorFuzz26Actor*>(this)->finishSendAndDelPromiseRef();
 				return 0;
 			}
-															#line 745 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 745 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(260752);
-															#line 8176 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 8176 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		}
-															#line 747 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 747 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(438765);
-															#line 8180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 8180 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1Catch2cont6(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1Catch2cont2(int && input,int loopDepth) 
 	{
-															#line 731 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 731 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(input + 247889);
-															#line 732 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 732 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(402174);
-															#line 733 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 733 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		i876439 = int();
-															#line 734 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 734 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		for(i876439 = 0;i876439 < 5;i876439++) {
-															#line 735 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 735 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(909715);
-															#line 736 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 736 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			list905706 = std::vector<int>();
-															#line 737 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 737 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			list905706.push_back(1);
-															#line 738 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 738 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			list905706.push_back(2);
-															#line 739 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 739 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			list905706.push_back(3);
-															#line 740 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 740 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			for( auto i : list905706 ) {
-															#line 741 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 741 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				(void)i;
-															#line 742 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 742 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(558855);
-															#line 743 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 743 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				if (!static_cast<ActorFuzz26Actor*>(this)->SAV<int>::futures) { (void)(784546); this->~ActorFuzz26ActorState(); static_cast<ActorFuzz26Actor*>(this)->destroy(); return 0; }
-															#line 8213 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 8213 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 				new (&static_cast<ActorFuzz26Actor*>(this)->SAV< int >::value()) int(784546);
 				this->~ActorFuzz26ActorState();
 				static_cast<ActorFuzz26Actor*>(this)->finishSendAndDelPromiseRef();
 				return 0;
 			}
-															#line 745 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 745 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			outputStream.send(260752);
-															#line 8221 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 8221 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		}
-															#line 747 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 747 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(438765);
-															#line 8225 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 8225 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1Catch2cont6(loopDepth);
 
 		return loopDepth;
@@ -8305,22 +8305,22 @@ public:
 	}
 	int a_body1Catch2Catch1cont1(int const& input,int loopDepth) 
 	{
-															#line 751 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 751 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(input + 980301);
-															#line 752 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 752 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(265293);
-															#line 8312 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 8312 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1Catch2cont1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1Catch2Catch1cont1(int && input,int loopDepth) 
 	{
-															#line 751 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 751 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(input + 980301);
-															#line 752 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 752 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(265293);
-															#line 8323 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 8323 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = a_body1Catch2cont1(loopDepth);
 
 		return loopDepth;
@@ -8388,28 +8388,28 @@ public:
 		fdb_probe_actor_exit("actorFuzz26", reinterpret_cast<unsigned long>(this), 2);
 
 	}
-															#line 703 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 703 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	FutureStream<int> inputStream;
-															#line 703 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 703 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	PromiseStream<int> outputStream;
-															#line 703 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 703 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	Future<Void> error;
-															#line 704 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 704 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	int ifstate;
-															#line 714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 714 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	std::vector<int> list649823;
-															#line 733 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 733 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	int i876439;
-															#line 736 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 736 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	std::vector<int> list905706;
-															#line 761 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 761 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	std::vector<int> list327297;
-															#line 8407 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 8407 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 };
 // This generated class is to be used only via actorFuzz26()
-															#line 703 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 703 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz26Actor final : public Actor<int>, public ActorSingleCallback< ActorFuzz26Actor, 0, int >, public ActorSingleCallback< ActorFuzz26Actor, 1, int >, public ActorSingleCallback< ActorFuzz26Actor, 2, int >, public FastAllocated<ActorFuzz26Actor>, public ActorFuzz26ActorState<ActorFuzz26Actor> {
-															#line 8412 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 8412 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
 	using FastAllocated<ActorFuzz26Actor>::operator new;
 	using FastAllocated<ActorFuzz26Actor>::operator delete;
@@ -8420,9 +8420,9 @@ public:
 friend struct ActorSingleCallback< ActorFuzz26Actor, 0, int >;
 friend struct ActorSingleCallback< ActorFuzz26Actor, 1, int >;
 friend struct ActorSingleCallback< ActorFuzz26Actor, 2, int >;
-															#line 703 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 703 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz26Actor(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 8425 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 8425 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		 : Actor<int>(),
 		   ActorFuzz26ActorState<ActorFuzz26Actor>(inputStream, outputStream, error)
 	{
@@ -8448,36 +8448,36 @@ friend struct ActorSingleCallback< ActorFuzz26Actor, 2, int >;
 	}
 };
 }
-															#line 703 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 703 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 [[nodiscard]] Future<int> actorFuzz26( FutureStream<int> const& inputStream, PromiseStream<int> const& outputStream, Future<Void> const& error ) {
-															#line 703 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 703 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	return Future<int>(new ActorFuzz26Actor(inputStream, outputStream, error));
-															#line 8455 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 8455 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 }
 
-#line 780 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+#line 780 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 
-															#line 8460 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 8460 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 namespace {
 // This generated class is to be used only via actorFuzz27()
-															#line 781 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 781 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 template <class ActorFuzz27Actor>
-															#line 781 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 781 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz27ActorState {
-															#line 8467 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 8467 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
-															#line 781 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 781 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz27ActorState(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 781 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
-															#line 781 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 781 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
+															#line 781 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		 : inputStream(inputStream),
-															#line 781 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 781 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   outputStream(outputStream),
-															#line 781 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 781 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   error(error),
-															#line 782 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 782 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   ifstate(0)
-															#line 8480 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 8480 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 	{
 		fdb_probe_actor_create("actorFuzz27", reinterpret_cast<unsigned long>(this));
 
@@ -8490,16 +8490,16 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 783 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 783 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			FutureStream<int> __when_expr_0 = inputStream;
-															#line 783 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 783 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			if (static_cast<ActorFuzz27Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 8497 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 8497 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.pop(), loopDepth); };
 			static_cast<ActorFuzz27Actor*>(this)->actor_wait_state = 1;
-															#line 783 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 783 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorSingleCallback< ActorFuzz27Actor, 0, int >*>(static_cast<ActorFuzz27Actor*>(this)));
-															#line 8502 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 8502 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -8520,11 +8520,11 @@ public:
 	}
 	int a_body1cont1(int const& input,int loopDepth) 
 	{
-															#line 784 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 784 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(input + 312322);
-															#line 785 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 785 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if (!static_cast<ActorFuzz27Actor*>(this)->SAV<int>::futures) { (void)(196907); this->~ActorFuzz27ActorState(); static_cast<ActorFuzz27Actor*>(this)->destroy(); return 0; }
-															#line 8527 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 8527 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		new (&static_cast<ActorFuzz27Actor*>(this)->SAV< int >::value()) int(196907);
 		this->~ActorFuzz27ActorState();
 		static_cast<ActorFuzz27Actor*>(this)->finishSendAndDelPromiseRef();
@@ -8534,11 +8534,11 @@ public:
 	}
 	int a_body1cont1(int && input,int loopDepth) 
 	{
-															#line 784 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 784 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(input + 312322);
-															#line 785 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 785 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if (!static_cast<ActorFuzz27Actor*>(this)->SAV<int>::futures) { (void)(196907); this->~ActorFuzz27ActorState(); static_cast<ActorFuzz27Actor*>(this)->destroy(); return 0; }
-															#line 8541 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 8541 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		new (&static_cast<ActorFuzz27Actor*>(this)->SAV< int >::value()) int(196907);
 		this->~ActorFuzz27ActorState();
 		static_cast<ActorFuzz27Actor*>(this)->finishSendAndDelPromiseRef();
@@ -8609,20 +8609,20 @@ public:
 		fdb_probe_actor_exit("actorFuzz27", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 781 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 781 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	FutureStream<int> inputStream;
-															#line 781 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 781 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	PromiseStream<int> outputStream;
-															#line 781 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 781 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	Future<Void> error;
-															#line 782 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 782 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	int ifstate;
-															#line 8620 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 8620 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 };
 // This generated class is to be used only via actorFuzz27()
-															#line 781 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 781 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz27Actor final : public Actor<int>, public ActorSingleCallback< ActorFuzz27Actor, 0, int >, public FastAllocated<ActorFuzz27Actor>, public ActorFuzz27ActorState<ActorFuzz27Actor> {
-															#line 8625 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 8625 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
 	using FastAllocated<ActorFuzz27Actor>::operator new;
 	using FastAllocated<ActorFuzz27Actor>::operator delete;
@@ -8631,9 +8631,9 @@ public:
 	void destroy() override { ((Actor<int>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorSingleCallback< ActorFuzz27Actor, 0, int >;
-															#line 781 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 781 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz27Actor(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 8636 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 8636 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		 : Actor<int>(),
 		   ActorFuzz27ActorState<ActorFuzz27Actor>(inputStream, outputStream, error)
 	{
@@ -8657,38 +8657,38 @@ friend struct ActorSingleCallback< ActorFuzz27Actor, 0, int >;
 	}
 };
 }
-															#line 781 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 781 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 [[nodiscard]] Future<int> actorFuzz27( FutureStream<int> const& inputStream, PromiseStream<int> const& outputStream, Future<Void> const& error ) {
-															#line 781 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 781 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	return Future<int>(new ActorFuzz27Actor(inputStream, outputStream, error));
-															#line 8664 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 8664 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 }
 
-#line 787 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+#line 787 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 
-															#line 8669 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 8669 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 namespace {
 // This generated class is to be used only via actorFuzz28()
-															#line 788 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 788 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 template <class ActorFuzz28Actor>
-															#line 788 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 788 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz28ActorState {
-															#line 8676 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 8676 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
-															#line 788 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 788 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz28ActorState(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 788 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
-															#line 788 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 788 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
+															#line 788 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		 : inputStream(inputStream),
-															#line 788 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 788 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   outputStream(outputStream),
-															#line 788 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 788 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   error(error),
-															#line 789 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 789 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   ifstate(0),
-															#line 790 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 790 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   i223839()
-															#line 8691 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 8691 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 	{
 		fdb_probe_actor_create("actorFuzz28", reinterpret_cast<unsigned long>(this));
 
@@ -8701,34 +8701,34 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 791 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 791 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			for(i223839 = 0;i223839 < 5;i223839++) {
-															#line 792 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 792 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(715827);
-															#line 793 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 793 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				list555985 = std::vector<int>();
-															#line 794 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 794 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				list555985.push_back(1);
-															#line 795 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 795 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				list555985.push_back(2);
-															#line 796 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 796 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				list555985.push_back(3);
-															#line 797 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 797 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				for( auto i : list555985 ) {
-															#line 798 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 798 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 					(void)i;
-															#line 799 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 799 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 					outputStream.send(529509);
-															#line 8722 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 8722 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 					break;
 				}
-															#line 802 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 802 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 				outputStream.send(449273);
-															#line 8727 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 8727 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			}
-															#line 804 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 804 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			if (!static_cast<ActorFuzz28Actor*>(this)->SAV<int>::futures) { (void)(743922); this->~ActorFuzz28ActorState(); static_cast<ActorFuzz28Actor*>(this)->destroy(); return 0; }
-															#line 8731 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 8731 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			new (&static_cast<ActorFuzz28Actor*>(this)->SAV< int >::value()) int(743922);
 			this->~ActorFuzz28ActorState();
 			static_cast<ActorFuzz28Actor*>(this)->finishSendAndDelPromiseRef();
@@ -8750,24 +8750,24 @@ public:
 
 		return loopDepth;
 	}
-															#line 788 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 788 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	FutureStream<int> inputStream;
-															#line 788 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 788 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	PromiseStream<int> outputStream;
-															#line 788 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 788 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	Future<Void> error;
-															#line 789 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 789 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	int ifstate;
-															#line 790 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 790 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	int i223839;
-															#line 793 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 793 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	std::vector<int> list555985;
-															#line 8765 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 8765 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 };
 // This generated class is to be used only via actorFuzz28()
-															#line 788 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 788 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz28Actor final : public Actor<int>, public FastAllocated<ActorFuzz28Actor>, public ActorFuzz28ActorState<ActorFuzz28Actor> {
-															#line 8770 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 8770 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
 	using FastAllocated<ActorFuzz28Actor>::operator new;
 	using FastAllocated<ActorFuzz28Actor>::operator delete;
@@ -8775,9 +8775,9 @@ public:
 #pragma clang diagnostic ignored "-Wdelete-non-virtual-dtor"
 	void destroy() override { ((Actor<int>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
-															#line 788 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 788 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz28Actor(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 8780 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 8780 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		 : Actor<int>(),
 		   ActorFuzz28ActorState<ActorFuzz28Actor>(inputStream, outputStream, error)
 	{
@@ -8800,38 +8800,38 @@ public:
 	}
 };
 }
-															#line 788 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 788 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 [[nodiscard]] Future<int> actorFuzz28( FutureStream<int> const& inputStream, PromiseStream<int> const& outputStream, Future<Void> const& error ) {
-															#line 788 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 788 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	return Future<int>(new ActorFuzz28Actor(inputStream, outputStream, error));
-															#line 8807 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 8807 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 }
 
-#line 806 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+#line 806 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 
-															#line 8812 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 8812 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 namespace {
 // This generated class is to be used only via actorFuzz29()
-															#line 807 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 807 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 template <class ActorFuzz29Actor>
-															#line 807 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 807 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz29ActorState {
-															#line 8819 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 8819 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
-															#line 807 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 807 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz29ActorState(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 807 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
-															#line 807 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 807 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
+															#line 807 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		 : inputStream(inputStream),
-															#line 807 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 807 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   outputStream(outputStream),
-															#line 807 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 807 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   error(error),
-															#line 808 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 808 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   ifstate(0),
-															#line 809 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 809 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		   i797447()
-															#line 8834 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 8834 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 	{
 		fdb_probe_actor_create("actorFuzz29", reinterpret_cast<unsigned long>(this));
 
@@ -8844,9 +8844,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 810 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 810 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 			i797447 = 0;
-															#line 8849 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 8849 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -8867,9 +8867,9 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 816 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 816 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if (!static_cast<ActorFuzz29Actor*>(this)->SAV<int>::futures) { (void)(560881); this->~ActorFuzz29ActorState(); static_cast<ActorFuzz29Actor*>(this)->destroy(); return 0; }
-															#line 8872 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 8872 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		new (&static_cast<ActorFuzz29Actor*>(this)->SAV< int >::value()) int(560881);
 		this->~ActorFuzz29ActorState();
 		static_cast<ActorFuzz29Actor*>(this)->finishSendAndDelPromiseRef();
@@ -8886,24 +8886,24 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 810 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 810 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if (!(i797447 < 5))
-															#line 8891 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 8891 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		{
 			return a_body1break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 811 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 811 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(821092);
-															#line 812 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 812 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		FutureStream<int> __when_expr_0 = inputStream;
-															#line 812 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 812 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		if (static_cast<ActorFuzz29Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 8901 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 8901 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.pop(), loopDepth); };
 		static_cast<ActorFuzz29Actor*>(this)->actor_wait_state = 1;
-															#line 812 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 812 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		__when_expr_0.addCallbackAndClear(static_cast<ActorSingleCallback< ActorFuzz29Actor, 0, int >*>(static_cast<ActorFuzz29Actor*>(this)));
-															#line 8906 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 8906 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -8923,26 +8923,26 @@ public:
 	}
 	int a_body1loopBody1cont1(int const& input,int loopDepth) 
 	{
-															#line 813 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 813 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(input + 900028);
-															#line 814 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 814 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(617942);
-															#line 810 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 810 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		i797447++;
-															#line 8932 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 8932 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		if (loopDepth == 0) return a_body1loopHead1(0);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont1(int && input,int loopDepth) 
 	{
-															#line 813 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 813 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(input + 900028);
-															#line 814 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 814 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		outputStream.send(617942);
-															#line 810 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 810 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 		i797447++;
-															#line 8945 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 8945 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		if (loopDepth == 0) return a_body1loopHead1(0);
 
 		return loopDepth;
@@ -9010,22 +9010,22 @@ public:
 		fdb_probe_actor_exit("actorFuzz29", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 807 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 807 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	FutureStream<int> inputStream;
-															#line 807 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 807 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	PromiseStream<int> outputStream;
-															#line 807 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 807 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	Future<Void> error;
-															#line 808 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 808 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	int ifstate;
-															#line 809 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 809 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	int i797447;
-															#line 9023 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 9023 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 };
 // This generated class is to be used only via actorFuzz29()
-															#line 807 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 807 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 class ActorFuzz29Actor final : public Actor<int>, public ActorSingleCallback< ActorFuzz29Actor, 0, int >, public FastAllocated<ActorFuzz29Actor>, public ActorFuzz29ActorState<ActorFuzz29Actor> {
-															#line 9028 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 9028 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 public:
 	using FastAllocated<ActorFuzz29Actor>::operator new;
 	using FastAllocated<ActorFuzz29Actor>::operator delete;
@@ -9034,9 +9034,9 @@ public:
 	void destroy() override { ((Actor<int>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorSingleCallback< ActorFuzz29Actor, 0, int >;
-															#line 807 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 807 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	ActorFuzz29Actor(FutureStream<int> const& inputStream,PromiseStream<int> const& outputStream,Future<Void> const& error) 
-															#line 9039 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 9039 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 		 : Actor<int>(),
 		   ActorFuzz29ActorState<ActorFuzz29Actor>(inputStream, outputStream, error)
 	{
@@ -9060,14 +9060,14 @@ friend struct ActorSingleCallback< ActorFuzz29Actor, 0, int >;
 	}
 };
 }
-															#line 807 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 807 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 [[nodiscard]] Future<int> actorFuzz29( FutureStream<int> const& inputStream, PromiseStream<int> const& outputStream, Future<Void> const& error ) {
-															#line 807 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+															#line 807 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 	return Future<int>(new ActorFuzz29Actor(inputStream, outputStream, error));
-															#line 9067 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.g.cpp"
+															#line 9067 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.g.cpp"
 }
 
-#line 818 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/ActorFuzz.actor.cpp"
+#line 818 "/usr/src/libfdb_c/fdbrpc/ActorFuzz.actor.cpp"
 
 std::pair<int, int> actorFuzzTests() {
 	int testsOK = 0;

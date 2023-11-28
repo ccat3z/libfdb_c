@@ -1,5 +1,5 @@
 #define POST_ACTOR_COMPILER 1
-#line 1 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+#line 1 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 /*
  * RunTransaction.actor.h
  *
@@ -36,25 +36,25 @@
 #include "fdbclient/ReadYourWrites.h"
 #include "flow/actorcompiler.h" // This must be the last #include.
 
-															#line 39 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.g.h"
+															#line 39 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.g.h"
 namespace {
 // This generated class is to be used only via runRYWTransaction()
-															#line 37 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 37 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 template <class Function, class RunRYWTransactionActor>
-															#line 37 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 37 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 class RunRYWTransactionActorState {
-															#line 46 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.g.h"
+															#line 46 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.g.h"
 public:
-															#line 37 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 37 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 	RunRYWTransactionActorState(Database const& cx,Function const& func) 
-															#line 37 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
-															#line 37 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 37 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
+															#line 37 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 		 : cx(cx),
-															#line 37 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 37 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 		   func(func),
-															#line 41 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 41 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 		   tr(new ReadYourWritesTransaction(cx))
-															#line 57 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.g.h"
+															#line 57 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.g.h"
 	{
 		fdb_probe_actor_create("runRYWTransaction", reinterpret_cast<unsigned long>(this));
 
@@ -67,9 +67,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 42 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 42 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 			;
-															#line 72 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.g.h"
+															#line 72 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.g.h"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -98,16 +98,16 @@ public:
 	int a_body1loopBody1(int loopDepth) 
 	{
 		try {
-															#line 45 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 45 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 			StrictFuture<decltype(std::declval<Function>()(Reference<ReadYourWritesTransaction>()).getValue())> __when_expr_0 = func(tr);
-															#line 45 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 45 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 			if (static_cast<RunRYWTransactionActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 105 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.g.h"
+															#line 105 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.g.h"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1loopBody1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<RunRYWTransactionActor*>(this)->actor_wait_state = 1;
-															#line 45 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 45 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< RunRYWTransactionActor, 0, decltype(std::declval<Function>()(Reference<ReadYourWritesTransaction>()).getValue()) >*>(static_cast<RunRYWTransactionActor*>(this)));
-															#line 110 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.g.h"
+															#line 110 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.g.h"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -127,16 +127,16 @@ public:
 	int a_body1loopBody1Catch1(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 50 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 50 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 			StrictFuture<Void> __when_expr_2 = tr->onError(e);
-															#line 50 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 50 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 			if (static_cast<RunRYWTransactionActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 134 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.g.h"
+															#line 134 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.g.h"
 			if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1Catch1when1(__when_expr_2.get(), loopDepth); };
 			static_cast<RunRYWTransactionActor*>(this)->actor_wait_state = 3;
-															#line 50 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 50 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 			__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< RunRYWTransactionActor, 2, Void >*>(static_cast<RunRYWTransactionActor*>(this)));
-															#line 139 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.g.h"
+															#line 139 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.g.h"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -149,25 +149,25 @@ public:
 	}
 	int a_body1loopBody1cont2(int loopDepth) 
 	{
-															#line 47 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 47 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 		StrictFuture<Void> __when_expr_1 = tr->commit();
-															#line 47 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 47 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 		if (static_cast<RunRYWTransactionActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 156 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.g.h"
+															#line 156 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.g.h"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1loopBody1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1loopBody1cont2when1(__when_expr_1.get(), loopDepth); };
 		static_cast<RunRYWTransactionActor*>(this)->actor_wait_state = 2;
-															#line 47 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 47 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< RunRYWTransactionActor, 1, Void >*>(static_cast<RunRYWTransactionActor*>(this)));
-															#line 161 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.g.h"
+															#line 161 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.g.h"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1loopBody1when1(decltype(std::declval<Function>()(Reference<ReadYourWritesTransaction>()).getValue()) const& __result,int loopDepth) 
 	{
-															#line 45 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 45 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 		result = __result;
-															#line 170 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.g.h"
+															#line 170 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.g.h"
 		loopDepth = a_body1loopBody1cont2(loopDepth);
 
 		return loopDepth;
@@ -232,9 +232,9 @@ public:
 	}
 	int a_body1loopBody1cont3(Void const& _,int loopDepth) 
 	{
-															#line 48 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 48 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 		if (!static_cast<RunRYWTransactionActor*>(this)->SAV<decltype(std::declval<Function>()(Reference<ReadYourWritesTransaction>()).getValue())>::futures) { (void)(result); this->~RunRYWTransactionActorState(); static_cast<RunRYWTransactionActor*>(this)->destroy(); return 0; }
-															#line 237 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.g.h"
+															#line 237 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.g.h"
 		new (&static_cast<RunRYWTransactionActor*>(this)->SAV< decltype(std::declval<Function>()(Reference<ReadYourWritesTransaction>()).getValue()) >::value()) decltype(std::declval<Function>()(Reference<ReadYourWritesTransaction>()).getValue())(std::move(result)); // state_var_RVO
 		this->~RunRYWTransactionActorState();
 		static_cast<RunRYWTransactionActor*>(this)->finishSendAndDelPromiseRef();
@@ -244,9 +244,9 @@ public:
 	}
 	int a_body1loopBody1cont3(Void && _,int loopDepth) 
 	{
-															#line 48 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 48 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 		if (!static_cast<RunRYWTransactionActor*>(this)->SAV<decltype(std::declval<Function>()(Reference<ReadYourWritesTransaction>()).getValue())>::futures) { (void)(result); this->~RunRYWTransactionActorState(); static_cast<RunRYWTransactionActor*>(this)->destroy(); return 0; }
-															#line 249 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.g.h"
+															#line 249 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.g.h"
 		new (&static_cast<RunRYWTransactionActor*>(this)->SAV< decltype(std::declval<Function>()(Reference<ReadYourWritesTransaction>()).getValue()) >::value()) decltype(std::declval<Function>()(Reference<ReadYourWritesTransaction>()).getValue())(std::move(result)); // state_var_RVO
 		this->~RunRYWTransactionActorState();
 		static_cast<RunRYWTransactionActor*>(this)->finishSendAndDelPromiseRef();
@@ -392,22 +392,22 @@ public:
 		fdb_probe_actor_exit("runRYWTransaction", reinterpret_cast<unsigned long>(this), 2);
 
 	}
-															#line 37 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 37 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 	Database cx;
-															#line 37 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 37 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 	Function func;
-															#line 41 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 41 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 	Reference<ReadYourWritesTransaction> tr;
-															#line 45 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 45 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 	decltype(std::declval<Function>()(Reference<ReadYourWritesTransaction>()).getValue()) result;
-															#line 403 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.g.h"
+															#line 403 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.g.h"
 };
 // This generated class is to be used only via runRYWTransaction()
-															#line 37 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 37 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 template <class Function>
-															#line 37 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 37 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 class RunRYWTransactionActor final : public Actor<decltype(std::declval<Function>()(Reference<ReadYourWritesTransaction>()).getValue())>, public ActorCallback< RunRYWTransactionActor<Function>, 0, decltype(std::declval<Function>()(Reference<ReadYourWritesTransaction>()).getValue()) >, public ActorCallback< RunRYWTransactionActor<Function>, 1, Void >, public ActorCallback< RunRYWTransactionActor<Function>, 2, Void >, public FastAllocated<RunRYWTransactionActor<Function>>, public RunRYWTransactionActorState<Function, RunRYWTransactionActor<Function>> {
-															#line 410 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.g.h"
+															#line 410 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.g.h"
 public:
 	using FastAllocated<RunRYWTransactionActor<Function>>::operator new;
 	using FastAllocated<RunRYWTransactionActor<Function>>::operator delete;
@@ -418,9 +418,9 @@ public:
 friend struct ActorCallback< RunRYWTransactionActor<Function>, 0, decltype(std::declval<Function>()(Reference<ReadYourWritesTransaction>()).getValue()) >;
 friend struct ActorCallback< RunRYWTransactionActor<Function>, 1, Void >;
 friend struct ActorCallback< RunRYWTransactionActor<Function>, 2, Void >;
-															#line 37 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 37 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 	RunRYWTransactionActor(Database const& cx,Function const& func) 
-															#line 423 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.g.h"
+															#line 423 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.g.h"
 		 : Actor<decltype(std::declval<Function>()(Reference<ReadYourWritesTransaction>()).getValue())>(),
 		   RunRYWTransactionActorState<Function, RunRYWTransactionActor<Function>>(cx, func)
 	{
@@ -446,36 +446,36 @@ friend struct ActorCallback< RunRYWTransactionActor<Function>, 2, Void >;
 	}
 };
 }
-															#line 37 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 37 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 template <class Function>
-															#line 37 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 37 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 [[nodiscard]] Future<decltype(std::declval<Function>()(Reference<ReadYourWritesTransaction>()).getValue())> runRYWTransaction( Database const& cx, Function const& func ) {
-															#line 37 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 37 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 	return Future<decltype(std::declval<Function>()(Reference<ReadYourWritesTransaction>()).getValue())>(new RunRYWTransactionActor<Function>(cx, func));
-															#line 455 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.g.h"
+															#line 455 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.g.h"
 }
 
-#line 54 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+#line 54 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 
-															#line 460 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.g.h"
+															#line 460 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.g.h"
 namespace {
 // This generated class is to be used only via runRYWTransactionFailIfLocked()
-															#line 55 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 55 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 template <class Function, class RunRYWTransactionFailIfLockedActor>
-															#line 55 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 55 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 class RunRYWTransactionFailIfLockedActorState {
-															#line 467 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.g.h"
+															#line 467 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.g.h"
 public:
-															#line 55 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 55 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 	RunRYWTransactionFailIfLockedActorState(Database const& cx,Function const& func) 
-															#line 55 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
-															#line 55 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 55 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
+															#line 55 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 		 : cx(cx),
-															#line 55 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 55 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 		   func(func),
-															#line 58 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 58 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 		   tr(new ReadYourWritesTransaction(cx))
-															#line 478 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.g.h"
+															#line 478 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.g.h"
 	{
 		fdb_probe_actor_create("runRYWTransactionFailIfLocked", reinterpret_cast<unsigned long>(this));
 
@@ -488,9 +488,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 59 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 59 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 			;
-															#line 493 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.g.h"
+															#line 493 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.g.h"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -519,16 +519,16 @@ public:
 	int a_body1loopBody1(int loopDepth) 
 	{
 		try {
-															#line 61 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 61 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 			StrictFuture<decltype(std::declval<Function>()(Reference<ReadYourWritesTransaction>()).getValue())> __when_expr_0 = func(tr);
-															#line 61 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 61 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 			if (static_cast<RunRYWTransactionFailIfLockedActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 526 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.g.h"
+															#line 526 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.g.h"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1loopBody1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<RunRYWTransactionFailIfLockedActor*>(this)->actor_wait_state = 1;
-															#line 61 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 61 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< RunRYWTransactionFailIfLockedActor, 0, decltype(std::declval<Function>()(Reference<ReadYourWritesTransaction>()).getValue()) >*>(static_cast<RunRYWTransactionFailIfLockedActor*>(this)));
-															#line 531 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.g.h"
+															#line 531 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.g.h"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -548,24 +548,24 @@ public:
 	int a_body1loopBody1Catch1(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 66 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 66 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 			if (e.code() == error_code_database_locked)
-															#line 553 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.g.h"
+															#line 553 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.g.h"
 			{
-															#line 67 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 67 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 				return a_body1Catch1(e, std::max(0, loopDepth - 1));
-															#line 557 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.g.h"
+															#line 557 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.g.h"
 			}
-															#line 68 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 68 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 			StrictFuture<Void> __when_expr_2 = tr->onError(e);
-															#line 68 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 68 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 			if (static_cast<RunRYWTransactionFailIfLockedActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 563 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.g.h"
+															#line 563 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.g.h"
 			if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1Catch1when1(__when_expr_2.get(), loopDepth); };
 			static_cast<RunRYWTransactionFailIfLockedActor*>(this)->actor_wait_state = 3;
-															#line 68 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 68 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 			__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< RunRYWTransactionFailIfLockedActor, 2, Void >*>(static_cast<RunRYWTransactionFailIfLockedActor*>(this)));
-															#line 568 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.g.h"
+															#line 568 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.g.h"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -578,25 +578,25 @@ public:
 	}
 	int a_body1loopBody1cont2(int loopDepth) 
 	{
-															#line 63 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 63 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 		StrictFuture<Void> __when_expr_1 = tr->commit();
-															#line 63 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 63 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 		if (static_cast<RunRYWTransactionFailIfLockedActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 585 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.g.h"
+															#line 585 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.g.h"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1loopBody1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1loopBody1cont2when1(__when_expr_1.get(), loopDepth); };
 		static_cast<RunRYWTransactionFailIfLockedActor*>(this)->actor_wait_state = 2;
-															#line 63 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 63 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< RunRYWTransactionFailIfLockedActor, 1, Void >*>(static_cast<RunRYWTransactionFailIfLockedActor*>(this)));
-															#line 590 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.g.h"
+															#line 590 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.g.h"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1loopBody1when1(decltype(std::declval<Function>()(Reference<ReadYourWritesTransaction>()).getValue()) const& __result,int loopDepth) 
 	{
-															#line 61 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 61 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 		result = __result;
-															#line 599 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.g.h"
+															#line 599 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.g.h"
 		loopDepth = a_body1loopBody1cont2(loopDepth);
 
 		return loopDepth;
@@ -661,9 +661,9 @@ public:
 	}
 	int a_body1loopBody1cont3(Void const& _,int loopDepth) 
 	{
-															#line 64 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 64 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 		if (!static_cast<RunRYWTransactionFailIfLockedActor*>(this)->SAV<decltype(std::declval<Function>()(Reference<ReadYourWritesTransaction>()).getValue())>::futures) { (void)(result); this->~RunRYWTransactionFailIfLockedActorState(); static_cast<RunRYWTransactionFailIfLockedActor*>(this)->destroy(); return 0; }
-															#line 666 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.g.h"
+															#line 666 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.g.h"
 		new (&static_cast<RunRYWTransactionFailIfLockedActor*>(this)->SAV< decltype(std::declval<Function>()(Reference<ReadYourWritesTransaction>()).getValue()) >::value()) decltype(std::declval<Function>()(Reference<ReadYourWritesTransaction>()).getValue())(std::move(result)); // state_var_RVO
 		this->~RunRYWTransactionFailIfLockedActorState();
 		static_cast<RunRYWTransactionFailIfLockedActor*>(this)->finishSendAndDelPromiseRef();
@@ -673,9 +673,9 @@ public:
 	}
 	int a_body1loopBody1cont3(Void && _,int loopDepth) 
 	{
-															#line 64 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 64 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 		if (!static_cast<RunRYWTransactionFailIfLockedActor*>(this)->SAV<decltype(std::declval<Function>()(Reference<ReadYourWritesTransaction>()).getValue())>::futures) { (void)(result); this->~RunRYWTransactionFailIfLockedActorState(); static_cast<RunRYWTransactionFailIfLockedActor*>(this)->destroy(); return 0; }
-															#line 678 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.g.h"
+															#line 678 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.g.h"
 		new (&static_cast<RunRYWTransactionFailIfLockedActor*>(this)->SAV< decltype(std::declval<Function>()(Reference<ReadYourWritesTransaction>()).getValue()) >::value()) decltype(std::declval<Function>()(Reference<ReadYourWritesTransaction>()).getValue())(std::move(result)); // state_var_RVO
 		this->~RunRYWTransactionFailIfLockedActorState();
 		static_cast<RunRYWTransactionFailIfLockedActor*>(this)->finishSendAndDelPromiseRef();
@@ -821,22 +821,22 @@ public:
 		fdb_probe_actor_exit("runRYWTransactionFailIfLocked", reinterpret_cast<unsigned long>(this), 2);
 
 	}
-															#line 55 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 55 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 	Database cx;
-															#line 55 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 55 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 	Function func;
-															#line 58 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 58 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 	Reference<ReadYourWritesTransaction> tr;
-															#line 61 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 61 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 	decltype(std::declval<Function>()(Reference<ReadYourWritesTransaction>()).getValue()) result;
-															#line 832 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.g.h"
+															#line 832 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.g.h"
 };
 // This generated class is to be used only via runRYWTransactionFailIfLocked()
-															#line 55 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 55 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 template <class Function>
-															#line 55 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 55 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 class RunRYWTransactionFailIfLockedActor final : public Actor<decltype(std::declval<Function>()(Reference<ReadYourWritesTransaction>()).getValue())>, public ActorCallback< RunRYWTransactionFailIfLockedActor<Function>, 0, decltype(std::declval<Function>()(Reference<ReadYourWritesTransaction>()).getValue()) >, public ActorCallback< RunRYWTransactionFailIfLockedActor<Function>, 1, Void >, public ActorCallback< RunRYWTransactionFailIfLockedActor<Function>, 2, Void >, public FastAllocated<RunRYWTransactionFailIfLockedActor<Function>>, public RunRYWTransactionFailIfLockedActorState<Function, RunRYWTransactionFailIfLockedActor<Function>> {
-															#line 839 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.g.h"
+															#line 839 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.g.h"
 public:
 	using FastAllocated<RunRYWTransactionFailIfLockedActor<Function>>::operator new;
 	using FastAllocated<RunRYWTransactionFailIfLockedActor<Function>>::operator delete;
@@ -847,9 +847,9 @@ public:
 friend struct ActorCallback< RunRYWTransactionFailIfLockedActor<Function>, 0, decltype(std::declval<Function>()(Reference<ReadYourWritesTransaction>()).getValue()) >;
 friend struct ActorCallback< RunRYWTransactionFailIfLockedActor<Function>, 1, Void >;
 friend struct ActorCallback< RunRYWTransactionFailIfLockedActor<Function>, 2, Void >;
-															#line 55 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 55 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 	RunRYWTransactionFailIfLockedActor(Database const& cx,Function const& func) 
-															#line 852 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.g.h"
+															#line 852 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.g.h"
 		 : Actor<decltype(std::declval<Function>()(Reference<ReadYourWritesTransaction>()).getValue())>(),
 		   RunRYWTransactionFailIfLockedActorState<Function, RunRYWTransactionFailIfLockedActor<Function>>(cx, func)
 	{
@@ -875,36 +875,36 @@ friend struct ActorCallback< RunRYWTransactionFailIfLockedActor<Function>, 2, Vo
 	}
 };
 }
-															#line 55 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 55 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 template <class Function>
-															#line 55 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 55 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 [[nodiscard]] Future<decltype(std::declval<Function>()(Reference<ReadYourWritesTransaction>()).getValue())> runRYWTransactionFailIfLocked( Database const& cx, Function const& func ) {
-															#line 55 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 55 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 	return Future<decltype(std::declval<Function>()(Reference<ReadYourWritesTransaction>()).getValue())>(new RunRYWTransactionFailIfLockedActor<Function>(cx, func));
-															#line 884 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.g.h"
+															#line 884 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.g.h"
 }
 
-#line 72 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+#line 72 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 
-															#line 889 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.g.h"
+															#line 889 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.g.h"
 namespace {
 // This generated class is to be used only via runRYWTransactionNoRetry()
-															#line 73 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 73 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 template <class Function, class RunRYWTransactionNoRetryActor>
-															#line 73 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 73 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 class RunRYWTransactionNoRetryActorState {
-															#line 896 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.g.h"
+															#line 896 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.g.h"
 public:
-															#line 73 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 73 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 	RunRYWTransactionNoRetryActorState(Database const& cx,Function const& func) 
-															#line 73 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
-															#line 73 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 73 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
+															#line 73 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 		 : cx(cx),
-															#line 73 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 73 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 		   func(func),
-															#line 77 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 77 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 		   tr(new ReadYourWritesTransaction(cx))
-															#line 907 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.g.h"
+															#line 907 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.g.h"
 	{
 		fdb_probe_actor_create("runRYWTransactionNoRetry", reinterpret_cast<unsigned long>(this));
 
@@ -917,16 +917,16 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 78 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 78 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 			StrictFuture<decltype(std::declval<Function>()(Reference<ReadYourWritesTransaction>()).getValue())> __when_expr_0 = func(tr);
-															#line 78 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 78 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 			if (static_cast<RunRYWTransactionNoRetryActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 924 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.g.h"
+															#line 924 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.g.h"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<RunRYWTransactionNoRetryActor*>(this)->actor_wait_state = 1;
-															#line 78 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 78 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< RunRYWTransactionNoRetryActor, 0, decltype(std::declval<Function>()(Reference<ReadYourWritesTransaction>()).getValue()) >*>(static_cast<RunRYWTransactionNoRetryActor*>(this)));
-															#line 929 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.g.h"
+															#line 929 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.g.h"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -947,25 +947,25 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 79 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 79 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 		StrictFuture<Void> __when_expr_1 = tr->commit();
-															#line 79 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 79 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 		if (static_cast<RunRYWTransactionNoRetryActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 954 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.g.h"
+															#line 954 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.g.h"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<RunRYWTransactionNoRetryActor*>(this)->actor_wait_state = 2;
-															#line 79 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 79 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< RunRYWTransactionNoRetryActor, 1, Void >*>(static_cast<RunRYWTransactionNoRetryActor*>(this)));
-															#line 959 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.g.h"
+															#line 959 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.g.h"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1when1(decltype(std::declval<Function>()(Reference<ReadYourWritesTransaction>()).getValue()) const& __result,int loopDepth) 
 	{
-															#line 78 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 78 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 		result = __result;
-															#line 968 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.g.h"
+															#line 968 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.g.h"
 		loopDepth = a_body1cont1(loopDepth);
 
 		return loopDepth;
@@ -1030,9 +1030,9 @@ public:
 	}
 	int a_body1cont2(Void const& _,int loopDepth) 
 	{
-															#line 80 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 80 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 		if (!static_cast<RunRYWTransactionNoRetryActor*>(this)->SAV<decltype(std::declval<Function>()(Reference<ReadYourWritesTransaction>()).getValue())>::futures) { (void)(result); this->~RunRYWTransactionNoRetryActorState(); static_cast<RunRYWTransactionNoRetryActor*>(this)->destroy(); return 0; }
-															#line 1035 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.g.h"
+															#line 1035 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.g.h"
 		new (&static_cast<RunRYWTransactionNoRetryActor*>(this)->SAV< decltype(std::declval<Function>()(Reference<ReadYourWritesTransaction>()).getValue()) >::value()) decltype(std::declval<Function>()(Reference<ReadYourWritesTransaction>()).getValue())(std::move(result)); // state_var_RVO
 		this->~RunRYWTransactionNoRetryActorState();
 		static_cast<RunRYWTransactionNoRetryActor*>(this)->finishSendAndDelPromiseRef();
@@ -1042,9 +1042,9 @@ public:
 	}
 	int a_body1cont2(Void && _,int loopDepth) 
 	{
-															#line 80 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 80 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 		if (!static_cast<RunRYWTransactionNoRetryActor*>(this)->SAV<decltype(std::declval<Function>()(Reference<ReadYourWritesTransaction>()).getValue())>::futures) { (void)(result); this->~RunRYWTransactionNoRetryActorState(); static_cast<RunRYWTransactionNoRetryActor*>(this)->destroy(); return 0; }
-															#line 1047 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.g.h"
+															#line 1047 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.g.h"
 		new (&static_cast<RunRYWTransactionNoRetryActor*>(this)->SAV< decltype(std::declval<Function>()(Reference<ReadYourWritesTransaction>()).getValue()) >::value()) decltype(std::declval<Function>()(Reference<ReadYourWritesTransaction>()).getValue())(std::move(result)); // state_var_RVO
 		this->~RunRYWTransactionNoRetryActorState();
 		static_cast<RunRYWTransactionNoRetryActor*>(this)->finishSendAndDelPromiseRef();
@@ -1115,22 +1115,22 @@ public:
 		fdb_probe_actor_exit("runRYWTransactionNoRetry", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 73 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 73 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 	Database cx;
-															#line 73 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 73 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 	Function func;
-															#line 77 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 77 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 	Reference<ReadYourWritesTransaction> tr;
-															#line 78 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 78 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 	decltype(std::declval<Function>()(Reference<ReadYourWritesTransaction>()).getValue()) result;
-															#line 1126 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.g.h"
+															#line 1126 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.g.h"
 };
 // This generated class is to be used only via runRYWTransactionNoRetry()
-															#line 73 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 73 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 template <class Function>
-															#line 73 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 73 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 class RunRYWTransactionNoRetryActor final : public Actor<decltype(std::declval<Function>()(Reference<ReadYourWritesTransaction>()).getValue())>, public ActorCallback< RunRYWTransactionNoRetryActor<Function>, 0, decltype(std::declval<Function>()(Reference<ReadYourWritesTransaction>()).getValue()) >, public ActorCallback< RunRYWTransactionNoRetryActor<Function>, 1, Void >, public FastAllocated<RunRYWTransactionNoRetryActor<Function>>, public RunRYWTransactionNoRetryActorState<Function, RunRYWTransactionNoRetryActor<Function>> {
-															#line 1133 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.g.h"
+															#line 1133 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.g.h"
 public:
 	using FastAllocated<RunRYWTransactionNoRetryActor<Function>>::operator new;
 	using FastAllocated<RunRYWTransactionNoRetryActor<Function>>::operator delete;
@@ -1140,9 +1140,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< RunRYWTransactionNoRetryActor<Function>, 0, decltype(std::declval<Function>()(Reference<ReadYourWritesTransaction>()).getValue()) >;
 friend struct ActorCallback< RunRYWTransactionNoRetryActor<Function>, 1, Void >;
-															#line 73 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 73 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 	RunRYWTransactionNoRetryActor(Database const& cx,Function const& func) 
-															#line 1145 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.g.h"
+															#line 1145 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.g.h"
 		 : Actor<decltype(std::declval<Function>()(Reference<ReadYourWritesTransaction>()).getValue())>(),
 		   RunRYWTransactionNoRetryActorState<Function, RunRYWTransactionNoRetryActor<Function>>(cx, func)
 	{
@@ -1167,16 +1167,16 @@ friend struct ActorCallback< RunRYWTransactionNoRetryActor<Function>, 1, Void >;
 	}
 };
 }
-															#line 73 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 73 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 template <class Function>
-															#line 73 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 73 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 [[nodiscard]] Future<decltype(std::declval<Function>()(Reference<ReadYourWritesTransaction>()).getValue())> runRYWTransactionNoRetry( Database const& cx, Function const& func ) {
-															#line 73 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+															#line 73 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 	return Future<decltype(std::declval<Function>()(Reference<ReadYourWritesTransaction>()).getValue())>(new RunRYWTransactionNoRetryActor<Function>(cx, func));
-															#line 1176 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.g.h"
+															#line 1176 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.g.h"
 }
 
-#line 82 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/RunTransaction.actor.h"
+#line 82 "/usr/src/libfdb_c/fdbclient/RunTransaction.actor.h"
 
 #include "flow/unactorcompiler.h"
 #endif

@@ -1,5 +1,5 @@
 #define POST_ACTOR_COMPILER 1
-#line 1 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.cpp"
+#line 1 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.cpp"
 /*
  * AsyncFileNonDurable.actor.cpp
  *
@@ -25,25 +25,25 @@
 
 std::map<std::string, Future<Void>> AsyncFileNonDurable::filesBeingDeleted;
 
-															#line 28 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.g.cpp"
+															#line 28 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.g.cpp"
 namespace {
 // This generated class is to be used only via sendOnProcess()
-															#line 26 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.cpp"
+															#line 26 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.cpp"
 template <class SendOnProcessActor>
-															#line 26 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.cpp"
+															#line 26 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.cpp"
 class SendOnProcessActorState {
-															#line 35 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.g.cpp"
+															#line 35 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.g.cpp"
 public:
-															#line 26 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.cpp"
+															#line 26 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.cpp"
 	SendOnProcessActorState(ISimulator::ProcessInfo* const& process,Promise<Void> const& promise,TaskPriority const& taskID) 
-															#line 26 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.cpp"
-															#line 26 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.cpp"
+															#line 26 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.cpp"
+															#line 26 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.cpp"
 		 : process(process),
-															#line 26 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.cpp"
+															#line 26 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.cpp"
 		   promise(promise),
-															#line 26 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.cpp"
+															#line 26 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.cpp"
 		   taskID(taskID)
-															#line 46 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.g.cpp"
+															#line 46 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.g.cpp"
 	{
 		fdb_probe_actor_create("sendOnProcess", reinterpret_cast<unsigned long>(this));
 
@@ -56,16 +56,16 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 27 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.cpp"
+															#line 27 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.cpp"
 			StrictFuture<Void> __when_expr_0 = g_simulator.onProcess(process, taskID);
-															#line 27 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.cpp"
+															#line 27 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.cpp"
 			if (static_cast<SendOnProcessActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 63 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.g.cpp"
+															#line 63 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<SendOnProcessActor*>(this)->actor_wait_state = 1;
-															#line 27 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.cpp"
+															#line 27 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< SendOnProcessActor, 0, Void >*>(static_cast<SendOnProcessActor*>(this)));
-															#line 68 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.g.cpp"
+															#line 68 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -86,11 +86,11 @@ public:
 	}
 	int a_body1cont1(Void const& _,int loopDepth) 
 	{
-															#line 28 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.cpp"
+															#line 28 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.cpp"
 		promise.send(Void());
-															#line 29 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.cpp"
+															#line 29 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.cpp"
 		if (!static_cast<SendOnProcessActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~SendOnProcessActorState(); static_cast<SendOnProcessActor*>(this)->destroy(); return 0; }
-															#line 93 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.g.cpp"
+															#line 93 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.g.cpp"
 		new (&static_cast<SendOnProcessActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~SendOnProcessActorState();
 		static_cast<SendOnProcessActor*>(this)->finishSendAndDelPromiseRef();
@@ -100,11 +100,11 @@ public:
 	}
 	int a_body1cont1(Void && _,int loopDepth) 
 	{
-															#line 28 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.cpp"
+															#line 28 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.cpp"
 		promise.send(Void());
-															#line 29 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.cpp"
+															#line 29 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.cpp"
 		if (!static_cast<SendOnProcessActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~SendOnProcessActorState(); static_cast<SendOnProcessActor*>(this)->destroy(); return 0; }
-															#line 107 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.g.cpp"
+															#line 107 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.g.cpp"
 		new (&static_cast<SendOnProcessActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~SendOnProcessActorState();
 		static_cast<SendOnProcessActor*>(this)->finishSendAndDelPromiseRef();
@@ -175,18 +175,18 @@ public:
 		fdb_probe_actor_exit("sendOnProcess", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 26 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.cpp"
+															#line 26 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.cpp"
 	ISimulator::ProcessInfo* process;
-															#line 26 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.cpp"
+															#line 26 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.cpp"
 	Promise<Void> promise;
-															#line 26 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.cpp"
+															#line 26 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.cpp"
 	TaskPriority taskID;
-															#line 184 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.g.cpp"
+															#line 184 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.g.cpp"
 };
 // This generated class is to be used only via sendOnProcess()
-															#line 26 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.cpp"
+															#line 26 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.cpp"
 class SendOnProcessActor final : public Actor<Void>, public ActorCallback< SendOnProcessActor, 0, Void >, public FastAllocated<SendOnProcessActor>, public SendOnProcessActorState<SendOnProcessActor> {
-															#line 189 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.g.cpp"
+															#line 189 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.g.cpp"
 public:
 	using FastAllocated<SendOnProcessActor>::operator new;
 	using FastAllocated<SendOnProcessActor>::operator delete;
@@ -195,9 +195,9 @@ public:
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< SendOnProcessActor, 0, Void >;
-															#line 26 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.cpp"
+															#line 26 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.cpp"
 	SendOnProcessActor(ISimulator::ProcessInfo* const& process,Promise<Void> const& promise,TaskPriority const& taskID) 
-															#line 200 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.g.cpp"
+															#line 200 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.g.cpp"
 		 : Actor<Void>(),
 		   SendOnProcessActorState<SendOnProcessActor>(process, promise, taskID)
 	{
@@ -221,36 +221,36 @@ friend struct ActorCallback< SendOnProcessActor, 0, Void >;
 	}
 };
 }
-															#line 26 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.cpp"
+															#line 26 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.cpp"
 [[nodiscard]] Future<Void> sendOnProcess( ISimulator::ProcessInfo* const& process, Promise<Void> const& promise, TaskPriority const& taskID ) {
-															#line 26 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.cpp"
+															#line 26 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.cpp"
 	return Future<Void>(new SendOnProcessActor(process, promise, taskID));
-															#line 228 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.g.cpp"
+															#line 228 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.g.cpp"
 }
 
-#line 31 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.cpp"
+#line 31 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.cpp"
 
-															#line 233 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.g.cpp"
+															#line 233 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.g.cpp"
 namespace {
 // This generated class is to be used only via sendErrorOnProcess()
-															#line 32 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.cpp"
+															#line 32 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.cpp"
 template <class SendErrorOnProcessActor>
-															#line 32 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.cpp"
+															#line 32 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.cpp"
 class SendErrorOnProcessActorState {
-															#line 240 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.g.cpp"
+															#line 240 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.g.cpp"
 public:
-															#line 32 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.cpp"
+															#line 32 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.cpp"
 	SendErrorOnProcessActorState(ISimulator::ProcessInfo* const& process,Promise<Void> const& promise,Error const& e,TaskPriority const& taskID) 
-															#line 32 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.cpp"
-															#line 32 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.cpp"
+															#line 32 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.cpp"
+															#line 32 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.cpp"
 		 : process(process),
-															#line 32 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.cpp"
+															#line 32 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.cpp"
 		   promise(promise),
-															#line 32 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.cpp"
+															#line 32 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.cpp"
 		   e(e),
-															#line 32 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.cpp"
+															#line 32 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.cpp"
 		   taskID(taskID)
-															#line 253 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.g.cpp"
+															#line 253 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.g.cpp"
 	{
 		fdb_probe_actor_create("sendErrorOnProcess", reinterpret_cast<unsigned long>(this));
 
@@ -263,16 +263,16 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 36 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.cpp"
+															#line 36 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.cpp"
 			StrictFuture<Void> __when_expr_0 = g_simulator.onProcess(process, taskID);
-															#line 36 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.cpp"
+															#line 36 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.cpp"
 			if (static_cast<SendErrorOnProcessActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 270 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.g.cpp"
+															#line 270 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<SendErrorOnProcessActor*>(this)->actor_wait_state = 1;
-															#line 36 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.cpp"
+															#line 36 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< SendErrorOnProcessActor, 0, Void >*>(static_cast<SendErrorOnProcessActor*>(this)));
-															#line 275 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.g.cpp"
+															#line 275 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -293,11 +293,11 @@ public:
 	}
 	int a_body1cont1(Void const& _,int loopDepth) 
 	{
-															#line 37 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.cpp"
+															#line 37 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.cpp"
 		promise.sendError(e);
-															#line 38 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.cpp"
+															#line 38 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.cpp"
 		if (!static_cast<SendErrorOnProcessActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~SendErrorOnProcessActorState(); static_cast<SendErrorOnProcessActor*>(this)->destroy(); return 0; }
-															#line 300 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.g.cpp"
+															#line 300 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.g.cpp"
 		new (&static_cast<SendErrorOnProcessActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~SendErrorOnProcessActorState();
 		static_cast<SendErrorOnProcessActor*>(this)->finishSendAndDelPromiseRef();
@@ -307,11 +307,11 @@ public:
 	}
 	int a_body1cont1(Void && _,int loopDepth) 
 	{
-															#line 37 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.cpp"
+															#line 37 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.cpp"
 		promise.sendError(e);
-															#line 38 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.cpp"
+															#line 38 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.cpp"
 		if (!static_cast<SendErrorOnProcessActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~SendErrorOnProcessActorState(); static_cast<SendErrorOnProcessActor*>(this)->destroy(); return 0; }
-															#line 314 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.g.cpp"
+															#line 314 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.g.cpp"
 		new (&static_cast<SendErrorOnProcessActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~SendErrorOnProcessActorState();
 		static_cast<SendErrorOnProcessActor*>(this)->finishSendAndDelPromiseRef();
@@ -382,20 +382,20 @@ public:
 		fdb_probe_actor_exit("sendErrorOnProcess", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 32 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.cpp"
+															#line 32 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.cpp"
 	ISimulator::ProcessInfo* process;
-															#line 32 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.cpp"
+															#line 32 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.cpp"
 	Promise<Void> promise;
-															#line 32 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.cpp"
+															#line 32 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.cpp"
 	Error e;
-															#line 32 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.cpp"
+															#line 32 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.cpp"
 	TaskPriority taskID;
-															#line 393 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.g.cpp"
+															#line 393 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.g.cpp"
 };
 // This generated class is to be used only via sendErrorOnProcess()
-															#line 32 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.cpp"
+															#line 32 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.cpp"
 class SendErrorOnProcessActor final : public Actor<Void>, public ActorCallback< SendErrorOnProcessActor, 0, Void >, public FastAllocated<SendErrorOnProcessActor>, public SendErrorOnProcessActorState<SendErrorOnProcessActor> {
-															#line 398 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.g.cpp"
+															#line 398 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.g.cpp"
 public:
 	using FastAllocated<SendErrorOnProcessActor>::operator new;
 	using FastAllocated<SendErrorOnProcessActor>::operator delete;
@@ -404,9 +404,9 @@ public:
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< SendErrorOnProcessActor, 0, Void >;
-															#line 32 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.cpp"
+															#line 32 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.cpp"
 	SendErrorOnProcessActor(ISimulator::ProcessInfo* const& process,Promise<Void> const& promise,Error const& e,TaskPriority const& taskID) 
-															#line 409 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.g.cpp"
+															#line 409 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.g.cpp"
 		 : Actor<Void>(),
 		   SendErrorOnProcessActorState<SendErrorOnProcessActor>(process, promise, e, taskID)
 	{
@@ -430,11 +430,11 @@ friend struct ActorCallback< SendErrorOnProcessActor, 0, Void >;
 	}
 };
 }
-															#line 32 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.cpp"
+															#line 32 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.cpp"
 [[nodiscard]] Future<Void> sendErrorOnProcess( ISimulator::ProcessInfo* const& process, Promise<Void> const& promise, Error const& e, TaskPriority const& taskID ) {
-															#line 32 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.cpp"
+															#line 32 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.cpp"
 	return Future<Void>(new SendErrorOnProcessActor(process, promise, e, taskID));
-															#line 437 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.g.cpp"
+															#line 437 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.g.cpp"
 }
 
-#line 40 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileNonDurable.actor.cpp"
+#line 40 "/usr/src/libfdb_c/fdbrpc/AsyncFileNonDurable.actor.cpp"

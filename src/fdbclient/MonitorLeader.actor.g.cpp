@@ -1,5 +1,5 @@
 #define POST_ACTOR_COMPILER 1
-#line 1 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+#line 1 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 /*
  * MonitorLeader.actor.cpp
  *
@@ -128,23 +128,23 @@ ClusterConnectionString::ClusterConnectionString(const std::string& connectionSt
 	ASSERT((coords.size() + hostnames.size()) > 0);
 }
 
-															#line 131 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 131 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 namespace {
 // This generated class is to be used only via flowTestCase129()
-															#line 129 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 129 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 template <class FlowTestCase129Actor>
-															#line 129 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 129 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 class FlowTestCase129ActorState {
-															#line 138 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 138 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 public:
-															#line 129 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 129 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	FlowTestCase129ActorState(UnitTestParameters const& params) 
-															#line 129 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
-															#line 129 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 129 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
+															#line 129 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		 : params(params),
-															#line 130 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 130 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		   input()
-															#line 147 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 147 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 	{
 		fdb_probe_actor_create("flowTestCase129", reinterpret_cast<unsigned long>(this));
 
@@ -158,22 +158,22 @@ public:
 	{
 		try {
 			{
-															#line 133 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 133 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				input = "asdf:2345@1.1.1.1:345";
-															#line 134 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 134 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				ClusterConnectionString cs(input);
-															#line 135 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 135 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				ASSERT(input == cs.toString());
-															#line 167 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 167 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			}
 			{
-															#line 139 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 139 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				input = "asdf:2345@1.1.1.1:345,1.1.1.1:345";
-															#line 172 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 172 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 				try {
-															#line 141 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 141 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 					ClusterConnectionString cs(input);
-															#line 176 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 176 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 					loopDepth = a_body1cont5(loopDepth);
 				}
 				catch (Error& error) {
@@ -202,68 +202,68 @@ public:
 	int a_body1cont1(int loopDepth) 
 	{
 		{
-															#line 148 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 148 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			input = "0xxdeadbeef:100100100@1.1.1.1:34534,5.1.5.3:23443";
-															#line 149 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 149 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			ClusterConnectionString cs(input);
-															#line 150 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 150 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			ASSERT(input == cs.toString());
-															#line 211 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 211 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		}
 		{
-															#line 154 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 154 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			input = "0xxdeadbeef:100100100@1.1.1.1:34534,5.1.5.3:23443";
-															#line 155 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 155 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			std::string commented("#start of comment\n");
-															#line 156 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 156 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			commented += input;
-															#line 157 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 157 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			commented += "\n";
-															#line 158 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 158 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			commented += "# asdfasdf ##";
-															#line 160 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 160 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			ClusterConnectionString cs(commented);
-															#line 161 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 161 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			ASSERT(input == cs.toString());
-															#line 228 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 228 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		}
 		{
-															#line 165 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 165 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			input = "0xxdeadbeef:100100100@[::1]:1234,[::1]:1235";
-															#line 166 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 166 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			std::string commented("#start of comment\n");
-															#line 167 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 167 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			commented += input;
-															#line 168 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 168 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			commented += "\n";
-															#line 169 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 169 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			commented += "# asdfasdf ##";
-															#line 171 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 171 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			ClusterConnectionString cs(commented);
-															#line 172 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 172 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			ASSERT(input == cs.toString());
-															#line 245 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 245 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		}
 		{
-															#line 176 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 176 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			input = "0xxdeadbeef:100100100@[abcd:dcba::1]:1234,[abcd:dcba::abcd:1]:1234";
-															#line 177 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 177 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			std::string commented("#start of comment\n");
-															#line 178 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 178 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			commented += input;
-															#line 179 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 179 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			commented += "\n";
-															#line 180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 180 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			commented += "# asdfasdf ##";
-															#line 182 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 182 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			ClusterConnectionString cs(commented);
-															#line 183 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 183 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			ASSERT(input == cs.toString());
-															#line 262 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 262 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		}
-															#line 186 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 186 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		if (!static_cast<FlowTestCase129Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~FlowTestCase129ActorState(); static_cast<FlowTestCase129Actor*>(this)->destroy(); return 0; }
-															#line 266 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 266 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		new (&static_cast<FlowTestCase129Actor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~FlowTestCase129ActorState();
 		static_cast<FlowTestCase129Actor*>(this)->finishSendAndDelPromiseRef();
@@ -280,9 +280,9 @@ public:
 	int a_body1Catch2(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 143 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 143 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			ASSERT(e.code() == error_code_connection_string_invalid);
-															#line 285 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 285 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			loopDepth = a_body1cont3(loopDepth);
 		}
 		catch (Error& error) {
@@ -306,16 +306,16 @@ public:
 
 		return loopDepth;
 	}
-															#line 129 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 129 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	UnitTestParameters params;
-															#line 130 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 130 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	std::string input;
-															#line 313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 313 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 };
 // This generated class is to be used only via flowTestCase129()
-															#line 129 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 129 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 class FlowTestCase129Actor final : public Actor<Void>, public FastAllocated<FlowTestCase129Actor>, public FlowTestCase129ActorState<FlowTestCase129Actor> {
-															#line 318 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 318 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 public:
 	using FastAllocated<FlowTestCase129Actor>::operator new;
 	using FastAllocated<FlowTestCase129Actor>::operator delete;
@@ -323,9 +323,9 @@ public:
 #pragma clang diagnostic ignored "-Wdelete-non-virtual-dtor"
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
-															#line 129 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 129 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	FlowTestCase129Actor(UnitTestParameters const& params) 
-															#line 328 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 328 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		 : Actor<Void>(),
 		   FlowTestCase129ActorState<FlowTestCase129Actor>(params)
 	{
@@ -348,33 +348,33 @@ public:
 	}
 };
 }
-															#line 129 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 129 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 static Future<Void> flowTestCase129( UnitTestParameters const& params ) {
-															#line 129 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 129 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	return Future<Void>(new FlowTestCase129Actor(params));
-															#line 355 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 355 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 }
 ACTOR_TEST_CASE(flowTestCase129, "/fdbclient/MonitorLeader/parseConnectionString/addresses")
 
-#line 188 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+#line 188 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 
-															#line 361 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 361 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 namespace {
 // This generated class is to be used only via flowTestCase189()
-															#line 189 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 189 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 template <class FlowTestCase189Actor>
-															#line 189 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 189 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 class FlowTestCase189ActorState {
-															#line 368 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 368 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 public:
-															#line 189 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 189 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	FlowTestCase189ActorState(UnitTestParameters const& params) 
-															#line 189 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
-															#line 189 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 189 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
+															#line 189 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		 : params(params),
-															#line 190 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 190 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		   input()
-															#line 377 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 377 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 	{
 		fdb_probe_actor_create("flowTestCase189", reinterpret_cast<unsigned long>(this));
 
@@ -388,24 +388,24 @@ public:
 	{
 		try {
 			{
-															#line 193 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 193 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				input = "asdf:2345@localhost:1234";
-															#line 194 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 194 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				ClusterConnectionString cs(input);
-															#line 195 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 195 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				ASSERT(cs.hostnames.size() == 1);
-															#line 196 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 196 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				ASSERT(input == cs.toString());
-															#line 399 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 399 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			}
 			{
-															#line 200 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 200 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				input = "asdf:2345@localhost:1234,localhost:1234";
-															#line 404 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 404 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 				try {
-															#line 202 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 202 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 					ClusterConnectionString cs(input);
-															#line 408 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 408 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 					loopDepth = a_body1cont5(loopDepth);
 				}
 				catch (Error& error) {
@@ -434,57 +434,57 @@ public:
 	int a_body1cont1(int loopDepth) 
 	{
 		{
-															#line 209 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 209 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			input = "0xxdeadbeef:100100100@localhost:34534,host-name:23443";
-															#line 210 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 210 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			ClusterConnectionString cs(input);
-															#line 211 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 211 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			ASSERT(cs.hostnames.size() == 2);
-															#line 212 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 212 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			ASSERT(input == cs.toString());
-															#line 445 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 445 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		}
 		{
-															#line 216 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 216 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			input = "0xxdeadbeef:100100100@localhost:34534,host-name:23443";
-															#line 217 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 217 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			std::string commented("#start of comment\n");
-															#line 218 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 218 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			commented += input;
-															#line 219 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 219 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			commented += "\n";
-															#line 220 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 220 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			commented += "# asdfasdf ##";
-															#line 222 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 222 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			ClusterConnectionString cs(commented);
-															#line 223 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 223 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			ASSERT(cs.hostnames.size() == 2);
-															#line 224 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 224 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			ASSERT(input == cs.toString());
-															#line 464 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 464 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		}
 		{
-															#line 228 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 228 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			input = "0xxdeadbeef:100100100@localhost:34534,host-name_part1.host-name_part2:1234:tls";
-															#line 229 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 229 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			std::string commented("#start of comment\n");
-															#line 230 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 230 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			commented += input;
-															#line 231 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 231 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			commented += "\n";
-															#line 232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 232 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			commented += "# asdfasdf ##";
-															#line 234 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 234 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			ClusterConnectionString cs(commented);
-															#line 235 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 235 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			ASSERT(cs.hostnames.size() == 2);
-															#line 236 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 236 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			ASSERT(input == cs.toString());
-															#line 483 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 483 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		}
-															#line 239 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 239 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		if (!static_cast<FlowTestCase189Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~FlowTestCase189ActorState(); static_cast<FlowTestCase189Actor*>(this)->destroy(); return 0; }
-															#line 487 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 487 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		new (&static_cast<FlowTestCase189Actor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~FlowTestCase189ActorState();
 		static_cast<FlowTestCase189Actor*>(this)->finishSendAndDelPromiseRef();
@@ -501,9 +501,9 @@ public:
 	int a_body1Catch2(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 204 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 204 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			ASSERT(e.code() == error_code_connection_string_invalid);
-															#line 506 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 506 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			loopDepth = a_body1cont3(loopDepth);
 		}
 		catch (Error& error) {
@@ -527,16 +527,16 @@ public:
 
 		return loopDepth;
 	}
-															#line 189 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 189 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	UnitTestParameters params;
-															#line 190 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 190 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	std::string input;
-															#line 534 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 534 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 };
 // This generated class is to be used only via flowTestCase189()
-															#line 189 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 189 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 class FlowTestCase189Actor final : public Actor<Void>, public FastAllocated<FlowTestCase189Actor>, public FlowTestCase189ActorState<FlowTestCase189Actor> {
-															#line 539 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 539 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 public:
 	using FastAllocated<FlowTestCase189Actor>::operator new;
 	using FastAllocated<FlowTestCase189Actor>::operator delete;
@@ -544,9 +544,9 @@ public:
 #pragma clang diagnostic ignored "-Wdelete-non-virtual-dtor"
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
-															#line 189 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 189 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	FlowTestCase189Actor(UnitTestParameters const& params) 
-															#line 549 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 549 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		 : Actor<Void>(),
 		   FlowTestCase189ActorState<FlowTestCase189Actor>(params)
 	{
@@ -569,31 +569,31 @@ public:
 	}
 };
 }
-															#line 189 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 189 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 static Future<Void> flowTestCase189( UnitTestParameters const& params ) {
-															#line 189 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 189 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	return Future<Void>(new FlowTestCase189Actor(params));
-															#line 576 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 576 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 }
 ACTOR_TEST_CASE(flowTestCase189, "/fdbclient/MonitorLeader/parseConnectionString/hostnames")
 
-#line 241 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+#line 241 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 
-															#line 582 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 582 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 namespace {
 // This generated class is to be used only via flowTestCase242()
-															#line 242 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 242 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 template <class FlowTestCase242Actor>
-															#line 242 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 242 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 class FlowTestCase242ActorState {
-															#line 589 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 589 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 public:
-															#line 242 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 242 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	FlowTestCase242ActorState(UnitTestParameters const& params) 
-															#line 242 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
-															#line 242 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 242 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
+															#line 242 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		 : params(params)
-															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 596 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 	{
 		fdb_probe_actor_create("flowTestCase242", reinterpret_cast<unsigned long>(this));
 
@@ -606,40 +606,40 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 243 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 243 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			std::string connectionString = "TestCluster:0@localhost:1234,host-name:5678";
-															#line 244 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 244 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			std::string hn1 = "localhost", port1 = "1234", hn2 = "host-name", port2 = "5678";
-															#line 245 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 245 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			std::vector<Hostname> hostnames;
-															#line 615 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 615 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			{
-															#line 248 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 248 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				hostnames.push_back(Hostname::parse(hn1 + ":" + port1));
-															#line 249 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 249 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				hostnames.push_back(Hostname::parse(hn2 + ":" + port2));
-															#line 251 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 251 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				ClusterConnectionString cs(hostnames, LiteralStringRef("TestCluster:0"));
-															#line 252 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 252 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				ASSERT(cs.hostnames.size() == 2);
-															#line 253 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 253 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				ASSERT(cs.coords.size() == 0);
-															#line 254 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 254 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				ASSERT(cs.toString() == connectionString);
-															#line 629 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 629 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			}
 			{
-															#line 258 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 258 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				hostnames.clear();
-															#line 259 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 259 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				hostnames.push_back(Hostname::parse(hn1 + ":" + port1));
-															#line 260 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 260 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				hostnames.push_back(Hostname::parse(hn1 + ":" + port1));
-															#line 638 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 638 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 				try {
-															#line 262 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 262 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 					ClusterConnectionString cs(hostnames, LiteralStringRef("TestCluster:0"));
-															#line 642 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 642 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 					loopDepth = a_body1cont5(loopDepth);
 				}
 				catch (Error& error) {
@@ -667,9 +667,9 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 268 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 268 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		if (!static_cast<FlowTestCase242Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~FlowTestCase242ActorState(); static_cast<FlowTestCase242Actor*>(this)->destroy(); return 0; }
-															#line 672 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 672 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		new (&static_cast<FlowTestCase242Actor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~FlowTestCase242ActorState();
 		static_cast<FlowTestCase242Actor*>(this)->finishSendAndDelPromiseRef();
@@ -686,9 +686,9 @@ public:
 	int a_body1Catch2(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 264 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 264 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			ASSERT(e.code() == error_code_connection_string_invalid);
-															#line 691 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 691 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			loopDepth = a_body1cont3(loopDepth);
 		}
 		catch (Error& error) {
@@ -712,14 +712,14 @@ public:
 
 		return loopDepth;
 	}
-															#line 242 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 242 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	UnitTestParameters params;
-															#line 717 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 717 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 };
 // This generated class is to be used only via flowTestCase242()
-															#line 242 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 242 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 class FlowTestCase242Actor final : public Actor<Void>, public FastAllocated<FlowTestCase242Actor>, public FlowTestCase242ActorState<FlowTestCase242Actor> {
-															#line 722 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 722 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 public:
 	using FastAllocated<FlowTestCase242Actor>::operator new;
 	using FastAllocated<FlowTestCase242Actor>::operator delete;
@@ -727,9 +727,9 @@ public:
 #pragma clang diagnostic ignored "-Wdelete-non-virtual-dtor"
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
-															#line 242 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 242 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	FlowTestCase242Actor(UnitTestParameters const& params) 
-															#line 732 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 732 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		 : Actor<Void>(),
 		   FlowTestCase242ActorState<FlowTestCase242Actor>(params)
 	{
@@ -752,33 +752,33 @@ public:
 	}
 };
 }
-															#line 242 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 242 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 static Future<Void> flowTestCase242( UnitTestParameters const& params ) {
-															#line 242 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 242 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	return Future<Void>(new FlowTestCase242Actor(params));
-															#line 759 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 759 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 }
 ACTOR_TEST_CASE(flowTestCase242, "/fdbclient/MonitorLeader/ConnectionString/hostname")
 
-#line 270 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+#line 270 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 
-															#line 765 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 765 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 namespace {
 // This generated class is to be used only via tryResolveHostnamesImpl()
-															#line 271 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 271 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 template <class TryResolveHostnamesImplActor>
-															#line 271 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 271 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 class TryResolveHostnamesImplActorState {
-															#line 772 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 772 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 public:
-															#line 271 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 271 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	TryResolveHostnamesImplActorState(ClusterConnectionString* const& self) 
-															#line 271 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
-															#line 271 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 271 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
+															#line 271 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		 : self(self),
-															#line 272 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 272 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		   allCoordinatorsSet()
-															#line 781 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 781 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 	{
 		fdb_probe_actor_create("tryResolveHostnamesImpl", reinterpret_cast<unsigned long>(this));
 
@@ -791,30 +791,30 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 273 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 273 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			for( const auto& coord : self->coords ) {
-															#line 274 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 274 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				allCoordinatorsSet.insert(coord);
-															#line 798 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 798 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			}
-															#line 276 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 276 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			std::vector<Future<Void>> fs;
-															#line 277 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 277 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			for( auto& hostname : self->hostnames ) {
-															#line 278 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 278 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				fs.push_back(map(hostname.resolve(), [&](Optional<NetworkAddress> const& addr) -> Void { if (addr.present()) { allCoordinatorsSet.insert(addr.get()); } return Void(); }));
-															#line 806 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 806 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			}
-															#line 285 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 285 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			StrictFuture<Void> __when_expr_0 = waitForAll(fs);
-															#line 285 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 285 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			if (static_cast<TryResolveHostnamesImplActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 812 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 812 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<TryResolveHostnamesImplActor*>(this)->actor_wait_state = 1;
-															#line 285 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 285 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< TryResolveHostnamesImplActor, 0, Void >*>(static_cast<TryResolveHostnamesImplActor*>(this)));
-															#line 817 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 817 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -835,13 +835,13 @@ public:
 	}
 	int a_body1cont1(Void const& _,int loopDepth) 
 	{
-															#line 286 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 286 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		std::vector<NetworkAddress> allCoordinators(allCoordinatorsSet.begin(), allCoordinatorsSet.end());
-															#line 287 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 287 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		std::sort(allCoordinators.begin(), allCoordinators.end());
-															#line 288 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 288 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		if (!static_cast<TryResolveHostnamesImplActor*>(this)->SAV<std::vector<NetworkAddress>>::futures) { (void)(allCoordinators); this->~TryResolveHostnamesImplActorState(); static_cast<TryResolveHostnamesImplActor*>(this)->destroy(); return 0; }
-															#line 844 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 844 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		new (&static_cast<TryResolveHostnamesImplActor*>(this)->SAV< std::vector<NetworkAddress> >::value()) std::vector<NetworkAddress>(allCoordinators);
 		this->~TryResolveHostnamesImplActorState();
 		static_cast<TryResolveHostnamesImplActor*>(this)->finishSendAndDelPromiseRef();
@@ -851,13 +851,13 @@ public:
 	}
 	int a_body1cont1(Void && _,int loopDepth) 
 	{
-															#line 286 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 286 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		std::vector<NetworkAddress> allCoordinators(allCoordinatorsSet.begin(), allCoordinatorsSet.end());
-															#line 287 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 287 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		std::sort(allCoordinators.begin(), allCoordinators.end());
-															#line 288 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 288 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		if (!static_cast<TryResolveHostnamesImplActor*>(this)->SAV<std::vector<NetworkAddress>>::futures) { (void)(allCoordinators); this->~TryResolveHostnamesImplActorState(); static_cast<TryResolveHostnamesImplActor*>(this)->destroy(); return 0; }
-															#line 860 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 860 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		new (&static_cast<TryResolveHostnamesImplActor*>(this)->SAV< std::vector<NetworkAddress> >::value()) std::vector<NetworkAddress>(allCoordinators);
 		this->~TryResolveHostnamesImplActorState();
 		static_cast<TryResolveHostnamesImplActor*>(this)->finishSendAndDelPromiseRef();
@@ -928,16 +928,16 @@ public:
 		fdb_probe_actor_exit("tryResolveHostnamesImpl", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 271 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 271 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	ClusterConnectionString* self;
-															#line 272 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 272 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	std::set<NetworkAddress> allCoordinatorsSet;
-															#line 935 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 935 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 };
 // This generated class is to be used only via tryResolveHostnamesImpl()
-															#line 271 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 271 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 class TryResolveHostnamesImplActor final : public Actor<std::vector<NetworkAddress>>, public ActorCallback< TryResolveHostnamesImplActor, 0, Void >, public FastAllocated<TryResolveHostnamesImplActor>, public TryResolveHostnamesImplActorState<TryResolveHostnamesImplActor> {
-															#line 940 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 940 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 public:
 	using FastAllocated<TryResolveHostnamesImplActor>::operator new;
 	using FastAllocated<TryResolveHostnamesImplActor>::operator delete;
@@ -946,9 +946,9 @@ public:
 	void destroy() override { ((Actor<std::vector<NetworkAddress>>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< TryResolveHostnamesImplActor, 0, Void >;
-															#line 271 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 271 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	TryResolveHostnamesImplActor(ClusterConnectionString* const& self) 
-															#line 951 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 951 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		 : Actor<std::vector<NetworkAddress>>(),
 		   TryResolveHostnamesImplActorState<TryResolveHostnamesImplActor>(self)
 	{
@@ -972,34 +972,34 @@ friend struct ActorCallback< TryResolveHostnamesImplActor, 0, Void >;
 	}
 };
 }
-															#line 271 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 271 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 [[nodiscard]] Future<std::vector<NetworkAddress>> tryResolveHostnamesImpl( ClusterConnectionString* const& self ) {
-															#line 271 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 271 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	return Future<std::vector<NetworkAddress>>(new TryResolveHostnamesImplActor(self));
-															#line 979 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 979 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 }
 
-#line 290 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+#line 290 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 
 Future<std::vector<NetworkAddress>> ClusterConnectionString::tryResolveHostnames() {
 	return tryResolveHostnamesImpl(this);
 }
 
-															#line 988 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 988 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 namespace {
 // This generated class is to be used only via flowTestCase295()
-															#line 295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 295 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 template <class FlowTestCase295Actor>
-															#line 295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 295 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 class FlowTestCase295ActorState {
-															#line 995 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 995 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 public:
-															#line 295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 295 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	FlowTestCase295ActorState(UnitTestParameters const& params) 
-															#line 295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
-															#line 295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 295 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
+															#line 295 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		 : params(params)
-															#line 1002 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1002 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 	{
 		fdb_probe_actor_create("flowTestCase295", reinterpret_cast<unsigned long>(this));
 
@@ -1012,26 +1012,26 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 296 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 296 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			std::string connectionString = "TestCluster:0@host.name:1234,host-name:5678";
-															#line 297 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 297 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			std::string hn = "host-name", port = "5678";
-															#line 299 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 299 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			address = NetworkAddress::parse("1.0.0.0:5678");
-															#line 301 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 301 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			INetworkConnections::net()->addMockTCPEndpoint(hn, port, { address });
-															#line 303 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 303 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			ClusterConnectionString cs(connectionString);
-															#line 304 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 304 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			StrictFuture<std::vector<NetworkAddress>> __when_expr_0 = cs.tryResolveHostnames();
-															#line 304 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 304 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			if (static_cast<FlowTestCase295Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 1029 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1029 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<FlowTestCase295Actor*>(this)->actor_wait_state = 1;
-															#line 304 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 304 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase295Actor, 0, std::vector<NetworkAddress> >*>(static_cast<FlowTestCase295Actor*>(this)));
-															#line 1034 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1034 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -1052,11 +1052,11 @@ public:
 	}
 	int a_body1cont1(std::vector<NetworkAddress> const& allCoordinators,int loopDepth) 
 	{
-															#line 305 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 305 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		ASSERT(allCoordinators.size() == 1 && std::find(allCoordinators.begin(), allCoordinators.end(), address) != allCoordinators.end());
-															#line 308 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 308 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		if (!static_cast<FlowTestCase295Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~FlowTestCase295ActorState(); static_cast<FlowTestCase295Actor*>(this)->destroy(); return 0; }
-															#line 1059 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1059 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		new (&static_cast<FlowTestCase295Actor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~FlowTestCase295ActorState();
 		static_cast<FlowTestCase295Actor*>(this)->finishSendAndDelPromiseRef();
@@ -1066,11 +1066,11 @@ public:
 	}
 	int a_body1cont1(std::vector<NetworkAddress> && allCoordinators,int loopDepth) 
 	{
-															#line 305 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 305 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		ASSERT(allCoordinators.size() == 1 && std::find(allCoordinators.begin(), allCoordinators.end(), address) != allCoordinators.end());
-															#line 308 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 308 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		if (!static_cast<FlowTestCase295Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~FlowTestCase295ActorState(); static_cast<FlowTestCase295Actor*>(this)->destroy(); return 0; }
-															#line 1073 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1073 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		new (&static_cast<FlowTestCase295Actor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~FlowTestCase295ActorState();
 		static_cast<FlowTestCase295Actor*>(this)->finishSendAndDelPromiseRef();
@@ -1141,16 +1141,16 @@ public:
 		fdb_probe_actor_exit("flowTestCase295", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 295 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	UnitTestParameters params;
-															#line 299 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 299 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	NetworkAddress address;
-															#line 1148 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1148 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 };
 // This generated class is to be used only via flowTestCase295()
-															#line 295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 295 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 class FlowTestCase295Actor final : public Actor<Void>, public ActorCallback< FlowTestCase295Actor, 0, std::vector<NetworkAddress> >, public FastAllocated<FlowTestCase295Actor>, public FlowTestCase295ActorState<FlowTestCase295Actor> {
-															#line 1153 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1153 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 public:
 	using FastAllocated<FlowTestCase295Actor>::operator new;
 	using FastAllocated<FlowTestCase295Actor>::operator delete;
@@ -1159,9 +1159,9 @@ public:
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< FlowTestCase295Actor, 0, std::vector<NetworkAddress> >;
-															#line 295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 295 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	FlowTestCase295Actor(UnitTestParameters const& params) 
-															#line 1164 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1164 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		 : Actor<Void>(),
 		   FlowTestCase295ActorState<FlowTestCase295Actor>(params)
 	{
@@ -1185,31 +1185,31 @@ friend struct ActorCallback< FlowTestCase295Actor, 0, std::vector<NetworkAddress
 	}
 };
 }
-															#line 295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 295 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 static Future<Void> flowTestCase295( UnitTestParameters const& params ) {
-															#line 295 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 295 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	return Future<Void>(new FlowTestCase295Actor(params));
-															#line 1192 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1192 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 }
 ACTOR_TEST_CASE(flowTestCase295, "/fdbclient/MonitorLeader/PartialResolve")
 
-#line 310 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+#line 310 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 
-															#line 1198 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1198 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 namespace {
 // This generated class is to be used only via flowTestCase311()
-															#line 311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 311 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 template <class FlowTestCase311Actor>
-															#line 311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 311 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 class FlowTestCase311ActorState {
-															#line 1205 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1205 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 public:
-															#line 311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 311 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	FlowTestCase311ActorState(UnitTestParameters const& params) 
-															#line 311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
-															#line 311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 311 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
+															#line 311 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		 : params(params)
-															#line 1212 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1212 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 	{
 		fdb_probe_actor_create("flowTestCase311", reinterpret_cast<unsigned long>(this));
 
@@ -1223,97 +1223,97 @@ public:
 	{
 		try {
 			{
-															#line 313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 313 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				LeaderInfo in;
-															#line 314 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 314 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				LeaderInfo out;
-															#line 315 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 315 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				in.forward = deterministicRandom()->coinflip();
-															#line 316 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 316 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				in.changeID = deterministicRandom()->randomUniqueID();
-															#line 1234 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1234 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 				{
-															#line 318 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 318 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 					std::string rndString(deterministicRandom()->randomInt(10, 400), 'x');
-															#line 319 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 319 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 					for( auto& c : rndString ) {
-															#line 320 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 320 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 						c = deterministicRandom()->randomAlphaNumeric();
-															#line 1242 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1242 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 					}
-															#line 322 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 322 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 					in.serializedInfo = rndString;
-															#line 1246 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1246 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 				}
-															#line 324 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 324 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				ObjectWriter writer(IncludeVersion());
-															#line 325 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 325 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				writer.serialize(in);
-															#line 326 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 326 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				Standalone<StringRef> copy = writer.toStringRef();
-															#line 327 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 327 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				ArenaObjectReader reader(copy.arena(), copy, IncludeVersion());
-															#line 328 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 328 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				reader.deserialize(out);
-															#line 329 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 329 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				ASSERT(in.forward == out.forward);
-															#line 330 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 330 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				ASSERT(in.changeID == out.changeID);
-															#line 331 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 331 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				ASSERT(in.serializedInfo == out.serializedInfo);
-															#line 1264 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1264 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			}
-															#line 333 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 333 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			LeaderInfo leaderInfo;
-															#line 334 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 334 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			leaderInfo.forward = deterministicRandom()->coinflip();
-															#line 335 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 335 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			leaderInfo.changeID = deterministicRandom()->randomUniqueID();
-															#line 1272 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1272 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			{
-															#line 337 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 337 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				std::string rndString(deterministicRandom()->randomInt(10, 400), 'x');
-															#line 338 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 338 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				for( auto& c : rndString ) {
-															#line 339 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 339 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 					c = deterministicRandom()->randomAlphaNumeric();
-															#line 1280 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1280 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 				}
-															#line 341 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 341 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				leaderInfo.serializedInfo = rndString;
-															#line 1284 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1284 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			}
-															#line 343 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 343 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			ErrorOr<EnsureTable<Optional<LeaderInfo>>> objIn(leaderInfo);
-															#line 344 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 344 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			ErrorOr<EnsureTable<Optional<LeaderInfo>>> objOut;
-															#line 345 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 345 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			Standalone<StringRef> copy;
-															#line 346 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 346 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			ObjectWriter writer(IncludeVersion());
-															#line 347 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 347 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			writer.serialize(objIn);
-															#line 348 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 348 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			copy = writer.toStringRef();
-															#line 349 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 349 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			ArenaObjectReader reader(copy.arena(), copy, IncludeVersion());
-															#line 350 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 350 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			reader.deserialize(objOut);
-															#line 352 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 352 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			ASSERT(!objOut.isError());
-															#line 353 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 353 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			ASSERT(objOut.get().asUnderlyingType().present());
-															#line 354 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 354 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			LeaderInfo outLeader = objOut.get().asUnderlyingType().get();
-															#line 355 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 355 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			ASSERT(outLeader.changeID == leaderInfo.changeID);
-															#line 356 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 356 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			ASSERT(outLeader.forward == leaderInfo.forward);
-															#line 357 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 357 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			ASSERT(outLeader.serializedInfo == leaderInfo.serializedInfo);
-															#line 358 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 358 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			if (!static_cast<FlowTestCase311Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~FlowTestCase311ActorState(); static_cast<FlowTestCase311Actor*>(this)->destroy(); return 0; }
-															#line 1316 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1316 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			new (&static_cast<FlowTestCase311Actor*>(this)->SAV< Void >::value()) Void(Void());
 			this->~FlowTestCase311ActorState();
 			static_cast<FlowTestCase311Actor*>(this)->finishSendAndDelPromiseRef();
@@ -1335,14 +1335,14 @@ public:
 
 		return loopDepth;
 	}
-															#line 311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 311 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	UnitTestParameters params;
-															#line 1340 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1340 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 };
 // This generated class is to be used only via flowTestCase311()
-															#line 311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 311 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 class FlowTestCase311Actor final : public Actor<Void>, public FastAllocated<FlowTestCase311Actor>, public FlowTestCase311ActorState<FlowTestCase311Actor> {
-															#line 1345 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1345 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 public:
 	using FastAllocated<FlowTestCase311Actor>::operator new;
 	using FastAllocated<FlowTestCase311Actor>::operator delete;
@@ -1350,9 +1350,9 @@ public:
 #pragma clang diagnostic ignored "-Wdelete-non-virtual-dtor"
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
-															#line 311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 311 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	FlowTestCase311Actor(UnitTestParameters const& params) 
-															#line 1355 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1355 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		 : Actor<Void>(),
 		   FlowTestCase311ActorState<FlowTestCase311Actor>(params)
 	{
@@ -1375,31 +1375,31 @@ public:
 	}
 };
 }
-															#line 311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 311 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 static Future<Void> flowTestCase311( UnitTestParameters const& params ) {
-															#line 311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 311 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	return Future<Void>(new FlowTestCase311Actor(params));
-															#line 1382 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1382 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 }
 ACTOR_TEST_CASE(flowTestCase311, "/flow/FlatBuffers/LeaderInfo")
 
-#line 360 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+#line 360 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 
-															#line 1388 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1388 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 namespace {
 // This generated class is to be used only via flowTestCase361()
-															#line 361 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 361 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 template <class FlowTestCase361Actor>
-															#line 361 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 361 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 class FlowTestCase361ActorState {
-															#line 1395 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1395 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 public:
-															#line 361 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 361 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	FlowTestCase361ActorState(UnitTestParameters const& params) 
-															#line 361 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
-															#line 361 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 361 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
+															#line 361 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		 : params(params)
-															#line 1402 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1402 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 	{
 		fdb_probe_actor_create("flowTestCase361", reinterpret_cast<unsigned long>(this));
 
@@ -1412,62 +1412,62 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 364 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 364 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			std::string connectionString = "0xxdeadbeef:100100100@1.1.1.1:34534,5.1.5.3:23443";
-															#line 365 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 365 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			for(int i = 0;i < 10000;i++) {
-															#line 366 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 366 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				std::string output("");
-															#line 367 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 367 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				auto c = connectionString.begin();
-															#line 368 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 368 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				for(;c != connectionString.end();) {
-															#line 369 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 369 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 					if (deterministicRandom()->random01() < 0.1)
-															#line 1427 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1427 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 					{
-															#line 370 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 370 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 						output += deterministicRandom()->randomChoice(LiteralStringRef(" \t\n\r"));
-															#line 1431 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1431 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 					}
-															#line 371 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 371 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 					if (deterministicRandom()->random01() < 0.5)
-															#line 1435 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1435 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 					{
-															#line 372 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 372 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 						output += *c;
-															#line 373 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 373 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 						++c;
-															#line 1441 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1441 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 					}
-															#line 375 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 375 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 					if (deterministicRandom()->random01() < 0.1)
-															#line 1445 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1445 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 					{
-															#line 376 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 376 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 						output += "#";
-															#line 377 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 377 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 						int charCount = deterministicRandom()->randomInt(0, 20);
-															#line 378 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 378 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 						for(int i = 0;i < charCount;i++) {
-															#line 379 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 379 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 							output += deterministicRandom()->randomChoice(LiteralStringRef("asdfzxcv123345:!@#$#$&()<\"\' \t"));
-															#line 1455 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1455 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 						}
-															#line 381 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 381 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 						output += deterministicRandom()->randomChoice(LiteralStringRef("\n\r"));
-															#line 1459 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1459 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 					}
 				}
-															#line 385 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 385 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				ClusterConnectionString cs(output);
-															#line 386 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 386 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				ASSERT(connectionString == cs.toString());
-															#line 1466 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1466 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			}
-															#line 388 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 388 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			if (!static_cast<FlowTestCase361Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~FlowTestCase361ActorState(); static_cast<FlowTestCase361Actor*>(this)->destroy(); return 0; }
-															#line 1470 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1470 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			new (&static_cast<FlowTestCase361Actor*>(this)->SAV< Void >::value()) Void(Void());
 			this->~FlowTestCase361ActorState();
 			static_cast<FlowTestCase361Actor*>(this)->finishSendAndDelPromiseRef();
@@ -1489,14 +1489,14 @@ public:
 
 		return loopDepth;
 	}
-															#line 361 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 361 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	UnitTestParameters params;
-															#line 1494 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1494 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 };
 // This generated class is to be used only via flowTestCase361()
-															#line 361 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 361 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 class FlowTestCase361Actor final : public Actor<Void>, public FastAllocated<FlowTestCase361Actor>, public FlowTestCase361ActorState<FlowTestCase361Actor> {
-															#line 1499 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1499 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 public:
 	using FastAllocated<FlowTestCase361Actor>::operator new;
 	using FastAllocated<FlowTestCase361Actor>::operator delete;
@@ -1504,9 +1504,9 @@ public:
 #pragma clang diagnostic ignored "-Wdelete-non-virtual-dtor"
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
-															#line 361 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 361 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	FlowTestCase361Actor(UnitTestParameters const& params) 
-															#line 1509 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1509 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		 : Actor<Void>(),
 		   FlowTestCase361ActorState<FlowTestCase361Actor>(params)
 	{
@@ -1529,15 +1529,15 @@ public:
 	}
 };
 }
-															#line 361 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 361 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 static Future<Void> flowTestCase361( UnitTestParameters const& params ) {
-															#line 361 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 361 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	return Future<Void>(new FlowTestCase361Actor(params));
-															#line 1536 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1536 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 }
 ACTOR_TEST_CASE(flowTestCase361, "/fdbclient/MonitorLeader/parseConnectionString/fuzz")
 
-#line 390 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+#line 390 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 
 ClusterConnectionString::ClusterConnectionString(const std::vector<NetworkAddress>& servers, Key key)
   : coords(servers) {
@@ -1638,27 +1638,27 @@ ClientLeaderRegInterface::ClientLeaderRegInterface(INetwork* local) {
 
 // Nominee is the worker among all workers that are considered as leader by one coordinator
 // This function contacts a coordinator coord to ask who is its nominee.
-															#line 1641 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1641 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 namespace {
 // This generated class is to be used only via monitorNominee()
-															#line 490 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 490 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 template <class MonitorNomineeActor>
-															#line 490 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 490 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 class MonitorNomineeActorState {
-															#line 1648 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1648 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 public:
-															#line 490 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 490 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	MonitorNomineeActorState(Key const& key,ClientLeaderRegInterface const& coord,AsyncTrigger* const& nomineeChange,Optional<LeaderInfo>* const& info) 
-															#line 490 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
-															#line 490 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 490 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
+															#line 490 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		 : key(key),
-															#line 490 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 490 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		   coord(coord),
-															#line 490 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 490 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		   nomineeChange(nomineeChange),
-															#line 490 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 490 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		   info(info)
-															#line 1661 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1661 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 	{
 		fdb_probe_actor_create("monitorNominee", reinterpret_cast<unsigned long>(this));
 
@@ -1671,9 +1671,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 494 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 494 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			;
-															#line 1676 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1676 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -1701,36 +1701,36 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 495 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 495 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		li = Optional<LeaderInfo>();
-															#line 496 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 496 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		if (coord.hostname.present())
-															#line 1708 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1708 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		{
-															#line 497 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 497 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			StrictFuture<Void> __when_expr_0 = store(li, retryGetReplyFromHostname(GetLeaderRequest(key, info->present() ? info->get().changeID : UID()), coord.hostname.get(), WLTOKEN_CLIENTLEADERREG_GETLEADER, TaskPriority::CoordinationReply));
-															#line 497 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 497 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			if (static_cast<MonitorNomineeActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 1714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1714 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<MonitorNomineeActor*>(this)->actor_wait_state = 1;
-															#line 497 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 497 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< MonitorNomineeActor, 0, Void >*>(static_cast<MonitorNomineeActor*>(this)));
-															#line 1719 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1719 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			loopDepth = 0;
 		}
 		else
 		{
-															#line 503 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 503 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			StrictFuture<Void> __when_expr_1 = store(li, retryBrokenPromise(coord.getLeader, GetLeaderRequest(key, info->present() ? info->get().changeID : UID()), TaskPriority::CoordinationReply));
-															#line 503 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 503 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			if (static_cast<MonitorNomineeActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 1728 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1728 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when2(__when_expr_1.get(), loopDepth); };
 			static_cast<MonitorNomineeActor*>(this)->actor_wait_state = 2;
-															#line 503 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 503 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< MonitorNomineeActor, 1, Void >*>(static_cast<MonitorNomineeActor*>(this)));
-															#line 1733 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1733 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			loopDepth = 0;
 		}
 
@@ -1738,16 +1738,16 @@ public:
 	}
 	int a_body1loopBody1cont1(int loopDepth) 
 	{
-															#line 509 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 509 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		StrictFuture<Void> __when_expr_2 = Future<Void>(Void());
-															#line 509 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 509 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		if (static_cast<MonitorNomineeActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 1745 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1745 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1cont1when1(__when_expr_2.get(), loopDepth); };
 		static_cast<MonitorNomineeActor*>(this)->actor_wait_state = 3;
-															#line 509 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 509 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< MonitorNomineeActor, 2, Void >*>(static_cast<MonitorNomineeActor*>(this)));
-															#line 1750 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1750 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -1904,30 +1904,30 @@ public:
 	}
 	int a_body1loopBody1cont4(Void const& _,int loopDepth) 
 	{
-															#line 511 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 511 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		TraceEvent("GetLeaderReply") .suppressFor(1.0) .detail("Coordinator", coord.hostname.present() ? coord.hostname.get().toString() : coord.getLeader.getEndpoint().getPrimaryAddress().toString()) .detail("Nominee", li.present() ? li.get().changeID : UID()) .detail("ClusterKey", key.printable());
-															#line 519 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 519 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		if (li != *info)
-															#line 1911 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1911 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		{
-															#line 520 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 520 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			*info = li;
-															#line 521 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 521 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			nomineeChange->trigger();
-															#line 523 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 523 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			if (li.present() && li.get().forward)
-															#line 1919 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1919 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			{
-															#line 524 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 524 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				StrictFuture<Void> __when_expr_3 = Future<Void>(Never());
-															#line 524 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 524 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				if (static_cast<MonitorNomineeActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 1925 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1925 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 				if (__when_expr_3.isReady()) { if (__when_expr_3.isError()) return a_body1Catch1(__when_expr_3.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1cont4when1(__when_expr_3.get(), loopDepth); };
 				static_cast<MonitorNomineeActor*>(this)->actor_wait_state = 4;
-															#line 524 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 524 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				__when_expr_3.addCallbackAndClear(static_cast<ActorCallback< MonitorNomineeActor, 3, Void >*>(static_cast<MonitorNomineeActor*>(this)));
-															#line 1930 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1930 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 				loopDepth = 0;
 			}
 			else
@@ -1944,30 +1944,30 @@ public:
 	}
 	int a_body1loopBody1cont4(Void && _,int loopDepth) 
 	{
-															#line 511 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 511 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		TraceEvent("GetLeaderReply") .suppressFor(1.0) .detail("Coordinator", coord.hostname.present() ? coord.hostname.get().toString() : coord.getLeader.getEndpoint().getPrimaryAddress().toString()) .detail("Nominee", li.present() ? li.get().changeID : UID()) .detail("ClusterKey", key.printable());
-															#line 519 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 519 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		if (li != *info)
-															#line 1951 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1951 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		{
-															#line 520 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 520 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			*info = li;
-															#line 521 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 521 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			nomineeChange->trigger();
-															#line 523 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 523 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			if (li.present() && li.get().forward)
-															#line 1959 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1959 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			{
-															#line 524 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 524 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				StrictFuture<Void> __when_expr_3 = Future<Void>(Never());
-															#line 524 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 524 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				if (static_cast<MonitorNomineeActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 1965 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1965 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 				if (__when_expr_3.isReady()) { if (__when_expr_3.isError()) return a_body1Catch1(__when_expr_3.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1cont4when1(__when_expr_3.get(), loopDepth); };
 				static_cast<MonitorNomineeActor*>(this)->actor_wait_state = 4;
-															#line 524 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 524 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				__when_expr_3.addCallbackAndClear(static_cast<ActorCallback< MonitorNomineeActor, 3, Void >*>(static_cast<MonitorNomineeActor*>(this)));
-															#line 1970 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 1970 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 				loopDepth = 0;
 			}
 			else
@@ -2132,22 +2132,22 @@ public:
 		fdb_probe_actor_exit("monitorNominee", reinterpret_cast<unsigned long>(this), 3);
 
 	}
-															#line 490 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 490 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	Key key;
-															#line 490 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 490 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	ClientLeaderRegInterface coord;
-															#line 490 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 490 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	AsyncTrigger* nomineeChange;
-															#line 490 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 490 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	Optional<LeaderInfo>* info;
-															#line 495 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 495 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	Optional<LeaderInfo> li;
-															#line 2145 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 2145 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 };
 // This generated class is to be used only via monitorNominee()
-															#line 490 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 490 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 class MonitorNomineeActor final : public Actor<Void>, public ActorCallback< MonitorNomineeActor, 0, Void >, public ActorCallback< MonitorNomineeActor, 1, Void >, public ActorCallback< MonitorNomineeActor, 2, Void >, public ActorCallback< MonitorNomineeActor, 3, Void >, public FastAllocated<MonitorNomineeActor>, public MonitorNomineeActorState<MonitorNomineeActor> {
-															#line 2150 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 2150 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 public:
 	using FastAllocated<MonitorNomineeActor>::operator new;
 	using FastAllocated<MonitorNomineeActor>::operator delete;
@@ -2159,9 +2159,9 @@ friend struct ActorCallback< MonitorNomineeActor, 0, Void >;
 friend struct ActorCallback< MonitorNomineeActor, 1, Void >;
 friend struct ActorCallback< MonitorNomineeActor, 2, Void >;
 friend struct ActorCallback< MonitorNomineeActor, 3, Void >;
-															#line 490 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 490 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	MonitorNomineeActor(Key const& key,ClientLeaderRegInterface const& coord,AsyncTrigger* const& nomineeChange,Optional<LeaderInfo>* const& info) 
-															#line 2164 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 2164 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		 : Actor<Void>(),
 		   MonitorNomineeActorState<MonitorNomineeActor>(key, coord, nomineeChange, info)
 	{
@@ -2188,14 +2188,14 @@ friend struct ActorCallback< MonitorNomineeActor, 3, Void >;
 	}
 };
 }
-															#line 490 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 490 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 [[nodiscard]] Future<Void> monitorNominee( Key const& key, ClientLeaderRegInterface const& coord, AsyncTrigger* const& nomineeChange, Optional<LeaderInfo>* const& info ) {
-															#line 490 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 490 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	return Future<Void>(new MonitorNomineeActor(key, coord, nomineeChange, info));
-															#line 2195 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 2195 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 }
 
-#line 528 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+#line 528 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 
 // Also used in fdbserver/LeaderElection.actor.cpp!
 // bool represents if the LeaderInfo is a majority answer or not.
@@ -2245,33 +2245,33 @@ Optional<std::pair<LeaderInfo, bool>> getLeader(const std::vector<Optional<Leade
 }
 
 // Leader is the process that will be elected by coordinators as the cluster controller
-															#line 2248 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 2248 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 namespace {
 // This generated class is to be used only via monitorLeaderOneGeneration()
-															#line 577 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 577 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 template <class MonitorLeaderOneGenerationActor>
-															#line 577 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 577 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 class MonitorLeaderOneGenerationActorState {
-															#line 2255 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 2255 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 public:
-															#line 577 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 577 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	MonitorLeaderOneGenerationActorState(Reference<IClusterConnectionRecord> const& connRecord,Reference<AsyncVar<Value>> const& outSerializedLeaderInfo,MonitorLeaderInfo const& info) 
-															#line 577 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
-															#line 577 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 577 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
+															#line 577 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		 : connRecord(connRecord),
-															#line 577 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 577 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		   outSerializedLeaderInfo(outSerializedLeaderInfo),
-															#line 577 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 577 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		   info(info),
-															#line 580 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 580 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		   coordinators(info.intermediateConnRecord),
-															#line 581 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 581 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		   nomineeChange(),
-															#line 582 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 582 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		   nominees(),
-															#line 583 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 583 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		   allActors()
-															#line 2274 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 2274 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 	{
 		fdb_probe_actor_create("monitorLeaderOneGeneration", reinterpret_cast<unsigned long>(this));
 
@@ -2284,23 +2284,23 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 585 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 585 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			nominees.resize(coordinators.clientLeaderServers.size());
-															#line 587 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 587 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			actors = std::vector<Future<Void>>();
-															#line 589 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 589 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			actors.reserve(coordinators.clientLeaderServers.size());
-															#line 590 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 590 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			for(int i = 0;i < coordinators.clientLeaderServers.size();i++) {
-															#line 591 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 591 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				actors.push_back( monitorNominee(coordinators.clusterKey, coordinators.clientLeaderServers[i], &nomineeChange, &nominees[i]));
-															#line 2297 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 2297 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			}
-															#line 594 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 594 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			allActors = waitForAll(actors);
-															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 596 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			;
-															#line 2303 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 2303 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -2328,66 +2328,66 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 597 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 597 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		Optional<std::pair<LeaderInfo, bool>> leader = getLeader(nominees);
-															#line 598 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 598 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		TraceEvent("MonitorLeaderChange") .detail("NewLeader", leader.present() ? leader.get().first.changeID : UID(1, 1));
-															#line 600 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 600 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		if (leader.present())
-															#line 2337 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 2337 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		{
-															#line 601 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 601 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			if (leader.get().first.forward)
-															#line 2341 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 2341 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			{
-															#line 602 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 602 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				TraceEvent("MonitorLeaderForwarding") .detail("NewConnStr", leader.get().first.serializedInfo.toString()) .detail("OldConnStr", info.intermediateConnRecord->getConnectionString().toString()) .trackLatest("MonitorLeaderForwarding");
-															#line 606 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 606 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				info.intermediateConnRecord = connRecord->makeIntermediateRecord( ClusterConnectionString(leader.get().first.serializedInfo.toString()));
-															#line 608 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 608 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				if (!static_cast<MonitorLeaderOneGenerationActor*>(this)->SAV<MonitorLeaderInfo>::futures) { (void)(info); this->~MonitorLeaderOneGenerationActorState(); static_cast<MonitorLeaderOneGenerationActor*>(this)->destroy(); return 0; }
-															#line 2349 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 2349 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 				new (&static_cast<MonitorLeaderOneGenerationActor*>(this)->SAV< MonitorLeaderInfo >::value()) MonitorLeaderInfo(std::move(info)); // state_var_RVO
 				this->~MonitorLeaderOneGenerationActorState();
 				static_cast<MonitorLeaderOneGenerationActor*>(this)->finishSendAndDelPromiseRef();
 				return 0;
 			}
-															#line 610 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 610 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			if (connRecord != info.intermediateConnRecord)
-															#line 2357 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 2357 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			{
-															#line 611 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 611 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				if (!info.hasConnected)
-															#line 2361 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 2361 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 				{
-															#line 612 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 612 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 					TraceEvent(SevWarnAlways, "IncorrectClusterFileContentsAtConnection") .detail("ClusterFile", connRecord->toString()) .detail("StoredConnectionString", connRecord->getConnectionString().toString()) .detail("CurrentConnectionString", info.intermediateConnRecord->getConnectionString().toString());
-															#line 2365 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 2365 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 				}
-															#line 618 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 618 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				connRecord->setAndPersistConnectionString(info.intermediateConnRecord->getConnectionString());
-															#line 619 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 619 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				info.intermediateConnRecord = connRecord;
-															#line 2371 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 2371 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			}
-															#line 622 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 622 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			info.hasConnected = true;
-															#line 623 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 623 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			connRecord->notifyConnected();
-															#line 625 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 625 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			outSerializedLeaderInfo->set(leader.get().first.serializedInfo);
-															#line 2379 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 2379 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		}
-															#line 627 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 627 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		StrictFuture<Void> __when_expr_0 = nomineeChange.onTrigger() || allActors;
-															#line 627 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 627 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		if (static_cast<MonitorLeaderOneGenerationActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 2385 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 2385 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 		static_cast<MonitorLeaderOneGenerationActor*>(this)->actor_wait_state = 1;
-															#line 627 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 627 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< MonitorLeaderOneGenerationActor, 0, Void >*>(static_cast<MonitorLeaderOneGenerationActor*>(this)));
-															#line 2390 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 2390 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -2467,28 +2467,28 @@ public:
 		fdb_probe_actor_exit("monitorLeaderOneGeneration", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 577 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 577 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	Reference<IClusterConnectionRecord> connRecord;
-															#line 577 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 577 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	Reference<AsyncVar<Value>> outSerializedLeaderInfo;
-															#line 577 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 577 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	MonitorLeaderInfo info;
-															#line 580 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 580 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	ClientCoordinators coordinators;
-															#line 581 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 581 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	AsyncTrigger nomineeChange;
-															#line 582 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 582 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	std::vector<Optional<LeaderInfo>> nominees;
-															#line 583 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 583 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	Future<Void> allActors;
-															#line 587 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 587 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	std::vector<Future<Void>> actors;
-															#line 2486 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 2486 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 };
 // This generated class is to be used only via monitorLeaderOneGeneration()
-															#line 577 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 577 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 class MonitorLeaderOneGenerationActor final : public Actor<MonitorLeaderInfo>, public ActorCallback< MonitorLeaderOneGenerationActor, 0, Void >, public FastAllocated<MonitorLeaderOneGenerationActor>, public MonitorLeaderOneGenerationActorState<MonitorLeaderOneGenerationActor> {
-															#line 2491 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 2491 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 public:
 	using FastAllocated<MonitorLeaderOneGenerationActor>::operator new;
 	using FastAllocated<MonitorLeaderOneGenerationActor>::operator delete;
@@ -2497,9 +2497,9 @@ public:
 	void destroy() override { ((Actor<MonitorLeaderInfo>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< MonitorLeaderOneGenerationActor, 0, Void >;
-															#line 577 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 577 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	MonitorLeaderOneGenerationActor(Reference<IClusterConnectionRecord> const& connRecord,Reference<AsyncVar<Value>> const& outSerializedLeaderInfo,MonitorLeaderInfo const& info) 
-															#line 2502 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 2502 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		 : Actor<MonitorLeaderInfo>(),
 		   MonitorLeaderOneGenerationActorState<MonitorLeaderOneGenerationActor>(connRecord, outSerializedLeaderInfo, info)
 	{
@@ -2523,34 +2523,34 @@ friend struct ActorCallback< MonitorLeaderOneGenerationActor, 0, Void >;
 	}
 };
 }
-															#line 577 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 577 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 [[nodiscard]] Future<MonitorLeaderInfo> monitorLeaderOneGeneration( Reference<IClusterConnectionRecord> const& connRecord, Reference<AsyncVar<Value>> const& outSerializedLeaderInfo, MonitorLeaderInfo const& info ) {
-															#line 577 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 577 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	return Future<MonitorLeaderInfo>(new MonitorLeaderOneGenerationActor(connRecord, outSerializedLeaderInfo, info));
-															#line 2530 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 2530 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 }
 
-#line 630 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+#line 630 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 
-															#line 2535 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 2535 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 namespace {
 // This generated class is to be used only via monitorLeaderInternal()
-															#line 631 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 631 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 template <class MonitorLeaderInternalActor>
-															#line 631 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 631 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 class MonitorLeaderInternalActorState {
-															#line 2542 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 2542 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 public:
-															#line 631 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 631 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	MonitorLeaderInternalActorState(Reference<IClusterConnectionRecord> const& connRecord,Reference<AsyncVar<Value>> const& outSerializedLeaderInfo) 
-															#line 631 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
-															#line 631 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 631 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
+															#line 631 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		 : connRecord(connRecord),
-															#line 631 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 631 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		   outSerializedLeaderInfo(outSerializedLeaderInfo),
-															#line 633 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 633 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		   info(connRecord)
-															#line 2553 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 2553 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 	{
 		fdb_probe_actor_create("monitorLeaderInternal", reinterpret_cast<unsigned long>(this));
 
@@ -2563,9 +2563,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 634 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 634 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			;
-															#line 2568 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 2568 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -2593,34 +2593,34 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 635 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 635 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		StrictFuture<MonitorLeaderInfo> __when_expr_0 = monitorLeaderOneGeneration(connRecord, outSerializedLeaderInfo, info);
-															#line 635 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 635 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		if (static_cast<MonitorLeaderInternalActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 2600 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 2600 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 		static_cast<MonitorLeaderInternalActor*>(this)->actor_wait_state = 1;
-															#line 635 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 635 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< MonitorLeaderInternalActor, 0, MonitorLeaderInfo >*>(static_cast<MonitorLeaderInternalActor*>(this)));
-															#line 2605 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 2605 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont1(MonitorLeaderInfo const& _info,int loopDepth) 
 	{
-															#line 636 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 636 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		info = _info;
-															#line 2614 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 2614 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		if (loopDepth == 0) return a_body1loopHead1(0);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont1(MonitorLeaderInfo && _info,int loopDepth) 
 	{
-															#line 636 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 636 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		info = _info;
-															#line 2623 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 2623 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		if (loopDepth == 0) return a_body1loopHead1(0);
 
 		return loopDepth;
@@ -2688,18 +2688,18 @@ public:
 		fdb_probe_actor_exit("monitorLeaderInternal", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 631 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 631 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	Reference<IClusterConnectionRecord> connRecord;
-															#line 631 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 631 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	Reference<AsyncVar<Value>> outSerializedLeaderInfo;
-															#line 633 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 633 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	MonitorLeaderInfo info;
-															#line 2697 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 2697 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 };
 // This generated class is to be used only via monitorLeaderInternal()
-															#line 631 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 631 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 class MonitorLeaderInternalActor final : public Actor<Void>, public ActorCallback< MonitorLeaderInternalActor, 0, MonitorLeaderInfo >, public FastAllocated<MonitorLeaderInternalActor>, public MonitorLeaderInternalActorState<MonitorLeaderInternalActor> {
-															#line 2702 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 2702 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 public:
 	using FastAllocated<MonitorLeaderInternalActor>::operator new;
 	using FastAllocated<MonitorLeaderInternalActor>::operator delete;
@@ -2708,9 +2708,9 @@ public:
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< MonitorLeaderInternalActor, 0, MonitorLeaderInfo >;
-															#line 631 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 631 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	MonitorLeaderInternalActor(Reference<IClusterConnectionRecord> const& connRecord,Reference<AsyncVar<Value>> const& outSerializedLeaderInfo) 
-															#line 2713 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 2713 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		 : Actor<Void>(),
 		   MonitorLeaderInternalActorState<MonitorLeaderInternalActor>(connRecord, outSerializedLeaderInfo)
 	{
@@ -2734,36 +2734,36 @@ friend struct ActorCallback< MonitorLeaderInternalActor, 0, MonitorLeaderInfo >;
 	}
 };
 }
-															#line 631 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 631 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 [[nodiscard]] Future<Void> monitorLeaderInternal( Reference<IClusterConnectionRecord> const& connRecord, Reference<AsyncVar<Value>> const& outSerializedLeaderInfo ) {
-															#line 631 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 631 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	return Future<Void>(new MonitorLeaderInternalActor(connRecord, outSerializedLeaderInfo));
-															#line 2741 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 2741 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 }
 
-#line 639 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+#line 639 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 
-															#line 2746 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 2746 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 namespace {
 // This generated class is to be used only via asyncDeserializeClusterInterface()
-															#line 640 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 640 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 template <class AsyncDeserializeClusterInterfaceActor>
-															#line 640 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 640 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 class AsyncDeserializeClusterInterfaceActorState {
-															#line 2753 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 2753 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 public:
-															#line 640 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 640 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	AsyncDeserializeClusterInterfaceActorState(Reference<AsyncVar<Value>> const& serializedInfo,Reference<AsyncVar<Optional<ClusterInterface>>> const& outKnownLeader) 
-															#line 640 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
-															#line 640 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 640 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
+															#line 640 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		 : serializedInfo(serializedInfo),
-															#line 640 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 640 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		   outKnownLeader(outKnownLeader),
-															#line 642 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 642 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		   knownLeader(new AsyncVar<Optional<ClusterControllerClientInterface>>{}),
-															#line 644 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 644 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		   deserializer(asyncDeserialize(serializedInfo, knownLeader))
-															#line 2766 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 2766 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 	{
 		fdb_probe_actor_create("asyncDeserializeClusterInterface", reinterpret_cast<unsigned long>(this));
 
@@ -2776,9 +2776,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 645 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 645 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			;
-															#line 2781 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 2781 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -2806,22 +2806,22 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 647 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 647 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		StrictFuture<Void> __when_expr_0 = deserializer;
-															#line 646 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 646 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		if (static_cast<AsyncDeserializeClusterInterfaceActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 2813 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 2813 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
-															#line 650 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 650 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = knownLeader->onChange();
-															#line 2817 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 2817 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when2(__when_expr_1.get(), loopDepth); };
 		static_cast<AsyncDeserializeClusterInterfaceActor*>(this)->actor_wait_state = 1;
-															#line 647 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 647 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< AsyncDeserializeClusterInterfaceActor, 0, Void >*>(static_cast<AsyncDeserializeClusterInterfaceActor*>(this)));
-															#line 650 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 650 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< AsyncDeserializeClusterInterfaceActor, 1, Void >*>(static_cast<AsyncDeserializeClusterInterfaceActor*>(this)));
-															#line 2824 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 2824 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -2834,37 +2834,37 @@ public:
 	}
 	int a_body1loopBody1when1(Void const& _,int loopDepth) 
 	{
-															#line 648 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 648 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		UNSTOPPABLE_ASSERT(false);
-															#line 2839 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 2839 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1when1(Void && _,int loopDepth) 
 	{
-															#line 648 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 648 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		UNSTOPPABLE_ASSERT(false);
-															#line 2848 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 2848 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1when2(Void const& _,int loopDepth) 
 	{
-															#line 651 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 651 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		if (knownLeader->get().present())
-															#line 2857 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 2857 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		{
-															#line 652 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 652 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			outKnownLeader->set(knownLeader->get().get().clientInterface);
-															#line 2861 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 2861 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		}
 		else
 		{
-															#line 654 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 654 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			outKnownLeader->set(Optional<ClusterInterface>{});
-															#line 2867 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 2867 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		}
 		loopDepth = a_body1loopBody1cont1(loopDepth);
 
@@ -2872,19 +2872,19 @@ public:
 	}
 	int a_body1loopBody1when2(Void && _,int loopDepth) 
 	{
-															#line 651 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 651 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		if (knownLeader->get().present())
-															#line 2877 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 2877 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		{
-															#line 652 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 652 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			outKnownLeader->set(knownLeader->get().get().clientInterface);
-															#line 2881 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 2881 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		}
 		else
 		{
-															#line 654 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 654 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			outKnownLeader->set(Optional<ClusterInterface>{});
-															#line 2887 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 2887 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		}
 		loopDepth = a_body1loopBody1cont1(loopDepth);
 
@@ -2987,20 +2987,20 @@ public:
 		fdb_probe_actor_exit("asyncDeserializeClusterInterface", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 640 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 640 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	Reference<AsyncVar<Value>> serializedInfo;
-															#line 640 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 640 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	Reference<AsyncVar<Optional<ClusterInterface>>> outKnownLeader;
-															#line 642 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 642 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	Reference<AsyncVar<Optional<ClusterControllerClientInterface>>> knownLeader;
-															#line 644 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 644 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	Future<Void> deserializer;
-															#line 2998 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 2998 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 };
 // This generated class is to be used only via asyncDeserializeClusterInterface()
-															#line 640 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 640 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 class AsyncDeserializeClusterInterfaceActor final : public Actor<Void>, public ActorCallback< AsyncDeserializeClusterInterfaceActor, 0, Void >, public ActorCallback< AsyncDeserializeClusterInterfaceActor, 1, Void >, public FastAllocated<AsyncDeserializeClusterInterfaceActor>, public AsyncDeserializeClusterInterfaceActorState<AsyncDeserializeClusterInterfaceActor> {
-															#line 3003 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 3003 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 public:
 	using FastAllocated<AsyncDeserializeClusterInterfaceActor>::operator new;
 	using FastAllocated<AsyncDeserializeClusterInterfaceActor>::operator delete;
@@ -3010,9 +3010,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< AsyncDeserializeClusterInterfaceActor, 0, Void >;
 friend struct ActorCallback< AsyncDeserializeClusterInterfaceActor, 1, Void >;
-															#line 640 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 640 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	AsyncDeserializeClusterInterfaceActor(Reference<AsyncVar<Value>> const& serializedInfo,Reference<AsyncVar<Optional<ClusterInterface>>> const& outKnownLeader) 
-															#line 3015 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 3015 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		 : Actor<Void>(),
 		   AsyncDeserializeClusterInterfaceActorState<AsyncDeserializeClusterInterfaceActor>(serializedInfo, outKnownLeader)
 	{
@@ -3036,14 +3036,14 @@ friend struct ActorCallback< AsyncDeserializeClusterInterfaceActor, 1, Void >;
 	}
 };
 }
-															#line 640 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 640 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 [[nodiscard]] Future<Void> asyncDeserializeClusterInterface( Reference<AsyncVar<Value>> const& serializedInfo, Reference<AsyncVar<Optional<ClusterInterface>>> const& outKnownLeader ) {
-															#line 640 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 640 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	return Future<Void>(new AsyncDeserializeClusterInterfaceActor(serializedInfo, outKnownLeader));
-															#line 3043 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 3043 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 }
 
-#line 660 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+#line 660 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 
 struct ClientStatusStats {
 	int count;
@@ -3112,23 +3112,23 @@ OpenDatabaseRequest ClientData::getRequest() {
 	return req;
 }
 
-															#line 3115 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 3115 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 namespace {
 // This generated class is to be used only via getClientInfoFromLeader()
-															#line 728 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 728 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 template <class GetClientInfoFromLeaderActor>
-															#line 728 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 728 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 class GetClientInfoFromLeaderActorState {
-															#line 3122 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 3122 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 public:
-															#line 728 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 728 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	GetClientInfoFromLeaderActorState(Reference<AsyncVar<Optional<ClusterControllerClientInterface>>> const& knownLeader,ClientData* const& clientData) 
-															#line 728 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
-															#line 728 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 728 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
+															#line 728 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		 : knownLeader(knownLeader),
-															#line 728 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 728 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		   clientData(clientData)
-															#line 3131 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 3131 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 	{
 		fdb_probe_actor_create("getClientInfoFromLeader", reinterpret_cast<unsigned long>(this));
 
@@ -3141,9 +3141,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 730 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 730 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			;
-															#line 3146 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 3146 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -3164,13 +3164,13 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 734 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 734 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		lastRequestTime = now();
-															#line 735 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 735 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		req = clientData->getRequest();
-															#line 737 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 737 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		;
-															#line 3173 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 3173 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		loopDepth = a_body1cont1loopHead1(loopDepth);
 
 		return loopDepth;
@@ -3184,22 +3184,22 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 730 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 730 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		if (!(!knownLeader->get().present()))
-															#line 3189 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 3189 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		{
 			return a_body1break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 731 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 731 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		StrictFuture<Void> __when_expr_0 = knownLeader->onChange();
-															#line 731 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 731 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		if (static_cast<GetClientInfoFromLeaderActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 3197 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 3197 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 		static_cast<GetClientInfoFromLeaderActor*>(this)->actor_wait_state = 1;
-															#line 731 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 731 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< GetClientInfoFromLeaderActor, 0, Void >*>(static_cast<GetClientInfoFromLeaderActor*>(this)));
-															#line 3202 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 3202 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -3301,40 +3301,40 @@ public:
 	}
 	int a_body1cont1loopBody1(int loopDepth) 
 	{
-															#line 738 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 738 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		if (now() - lastRequestTime > CLIENT_KNOBS->MAX_CLIENT_STATUS_AGE)
-															#line 3306 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 3306 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		{
-															#line 739 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 739 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			lastRequestTime = now();
-															#line 740 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 740 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			req = clientData->getRequest();
-															#line 3312 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 3312 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		}
 		else
 		{
-															#line 742 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 742 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			resetReply(req);
-															#line 3318 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 3318 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		}
-															#line 744 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 744 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		req.knownClientInfoID = clientData->clientInfo->get().read().id;
-															#line 746 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 746 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		StrictFuture<ClientDBInfo> __when_expr_1 = brokenPromiseToNever(knownLeader->get().get().clientInterface.openDatabase.getReply(req));
-															#line 745 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 745 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		if (static_cast<GetClientInfoFromLeaderActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 3326 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 3326 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), std::max(0, loopDepth - 1)); else return a_body1cont1loopBody1when1(__when_expr_1.get(), loopDepth); };
-															#line 754 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 754 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		StrictFuture<Void> __when_expr_2 = knownLeader->onChange();
-															#line 3330 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 3330 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), std::max(0, loopDepth - 1)); else return a_body1cont1loopBody1when2(__when_expr_2.get(), loopDepth); };
 		static_cast<GetClientInfoFromLeaderActor*>(this)->actor_wait_state = 2;
-															#line 746 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 746 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< GetClientInfoFromLeaderActor, 1, ClientDBInfo >*>(static_cast<GetClientInfoFromLeaderActor*>(this)));
-															#line 754 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 754 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< GetClientInfoFromLeaderActor, 2, Void >*>(static_cast<GetClientInfoFromLeaderActor*>(this)));
-															#line 3337 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 3337 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -3347,22 +3347,22 @@ public:
 	}
 	int a_body1cont1loopBody1when1(ClientDBInfo const& ni,int loopDepth) 
 	{
-															#line 748 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 748 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		TraceEvent("GetClientInfoFromLeaderGotClientInfo", knownLeader->get().get().clientInterface.id()) .detail("CommitProxy0", ni.commitProxies.size() ? ni.commitProxies[0].address().toString() : "") .detail("GrvProxy0", ni.grvProxies.size() ? ni.grvProxies[0].address().toString() : "") .detail("ClientID", ni.id);
-															#line 752 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 752 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		clientData->clientInfo->set(CachedSerialization<ClientDBInfo>(ni));
-															#line 3354 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 3354 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		loopDepth = a_body1cont1loopBody1cont1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1cont1loopBody1when1(ClientDBInfo && ni,int loopDepth) 
 	{
-															#line 748 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 748 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		TraceEvent("GetClientInfoFromLeaderGotClientInfo", knownLeader->get().get().clientInterface.id()) .detail("CommitProxy0", ni.commitProxies.size() ? ni.commitProxies[0].address().toString() : "") .detail("GrvProxy0", ni.grvProxies.size() ? ni.grvProxies[0].address().toString() : "") .detail("ClientID", ni.id);
-															#line 752 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 752 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		clientData->clientInfo->set(CachedSerialization<ClientDBInfo>(ni));
-															#line 3365 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 3365 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		loopDepth = a_body1cont1loopBody1cont1(loopDepth);
 
 		return loopDepth;
@@ -3476,20 +3476,20 @@ public:
 		fdb_probe_actor_exit("getClientInfoFromLeader", reinterpret_cast<unsigned long>(this), 2);
 
 	}
-															#line 728 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 728 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	Reference<AsyncVar<Optional<ClusterControllerClientInterface>>> knownLeader;
-															#line 728 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 728 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	ClientData* clientData;
-															#line 734 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 734 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	double lastRequestTime;
-															#line 735 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 735 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	OpenDatabaseRequest req;
-															#line 3487 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 3487 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 };
 // This generated class is to be used only via getClientInfoFromLeader()
-															#line 728 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 728 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 class GetClientInfoFromLeaderActor final : public Actor<Void>, public ActorCallback< GetClientInfoFromLeaderActor, 0, Void >, public ActorCallback< GetClientInfoFromLeaderActor, 1, ClientDBInfo >, public ActorCallback< GetClientInfoFromLeaderActor, 2, Void >, public FastAllocated<GetClientInfoFromLeaderActor>, public GetClientInfoFromLeaderActorState<GetClientInfoFromLeaderActor> {
-															#line 3492 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 3492 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 public:
 	using FastAllocated<GetClientInfoFromLeaderActor>::operator new;
 	using FastAllocated<GetClientInfoFromLeaderActor>::operator delete;
@@ -3500,9 +3500,9 @@ public:
 friend struct ActorCallback< GetClientInfoFromLeaderActor, 0, Void >;
 friend struct ActorCallback< GetClientInfoFromLeaderActor, 1, ClientDBInfo >;
 friend struct ActorCallback< GetClientInfoFromLeaderActor, 2, Void >;
-															#line 728 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 728 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	GetClientInfoFromLeaderActor(Reference<AsyncVar<Optional<ClusterControllerClientInterface>>> const& knownLeader,ClientData* const& clientData) 
-															#line 3505 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 3505 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		 : Actor<Void>(),
 		   GetClientInfoFromLeaderActorState<GetClientInfoFromLeaderActor>(knownLeader, clientData)
 	{
@@ -3527,48 +3527,48 @@ friend struct ActorCallback< GetClientInfoFromLeaderActor, 2, Void >;
 	}
 };
 }
-															#line 728 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 728 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 [[nodiscard]] Future<Void> getClientInfoFromLeader( Reference<AsyncVar<Optional<ClusterControllerClientInterface>>> const& knownLeader, ClientData* const& clientData ) {
-															#line 728 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 728 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	return Future<Void>(new GetClientInfoFromLeaderActor(knownLeader, clientData));
-															#line 3534 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 3534 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 }
 
-#line 758 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+#line 758 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 
-															#line 3539 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 3539 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 namespace {
 // This generated class is to be used only via monitorLeaderAndGetClientInfo()
-															#line 759 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 759 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 template <class MonitorLeaderAndGetClientInfoActor>
-															#line 759 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 759 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 class MonitorLeaderAndGetClientInfoActorState {
-															#line 3546 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 3546 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 public:
-															#line 759 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 759 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	MonitorLeaderAndGetClientInfoActorState(Key const& clusterKey,std::vector<Hostname> const& hostnames,std::vector<NetworkAddress> const& coordinators,ClientData* const& clientData,Reference<AsyncVar<Optional<LeaderInfo>>> const& leaderInfo) 
-															#line 759 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
-															#line 759 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 759 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
+															#line 759 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		 : clusterKey(clusterKey),
-															#line 759 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 759 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		   hostnames(hostnames),
-															#line 759 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 759 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		   coordinators(coordinators),
-															#line 759 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 759 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		   clientData(clientData),
-															#line 759 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 759 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		   leaderInfo(leaderInfo),
-															#line 764 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 764 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		   clientLeaderServers(),
-															#line 765 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 765 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		   nomineeChange(),
-															#line 766 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 766 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		   nominees(),
-															#line 767 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 767 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		   allActors(),
-															#line 768 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 768 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		   knownLeader(new AsyncVar<Optional<ClusterControllerClientInterface>>{})
-															#line 3571 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 3571 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 	{
 		fdb_probe_actor_create("monitorLeaderAndGetClientInfo", reinterpret_cast<unsigned long>(this));
 
@@ -3581,39 +3581,39 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 771 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 771 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			clientLeaderServers.reserve(hostnames.size() + coordinators.size());
-															#line 772 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 772 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			for( auto h : hostnames ) {
-															#line 773 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 773 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				clientLeaderServers.push_back(ClientLeaderRegInterface(h));
-															#line 3590 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 3590 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			}
-															#line 775 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 775 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			for( auto s : coordinators ) {
-															#line 776 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 776 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				clientLeaderServers.push_back(ClientLeaderRegInterface(s));
-															#line 3596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 3596 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			}
-															#line 779 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 779 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			nominees.resize(clientLeaderServers.size());
-															#line 781 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 781 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			std::vector<Future<Void>> actors;
-															#line 783 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 783 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			actors.reserve(clientLeaderServers.size());
-															#line 784 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 784 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			for(int i = 0;i < clientLeaderServers.size();i++) {
-															#line 785 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 785 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				actors.push_back(monitorNominee(clusterKey, clientLeaderServers[i], &nomineeChange, &nominees[i]));
-															#line 3608 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 3608 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			}
-															#line 787 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 787 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			actors.push_back(getClientInfoFromLeader(knownLeader, clientData));
-															#line 788 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 788 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			allActors = waitForAll(actors);
-															#line 790 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 790 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			;
-															#line 3616 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 3616 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -3641,65 +3641,65 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 791 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 791 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		Optional<std::pair<LeaderInfo, bool>> leader = getLeader(nominees);
-															#line 792 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 792 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		TraceEvent("MonitorLeaderAndGetClientInfoLeaderChange") .detail("NewLeader", leader.present() ? leader.get().first.changeID : UID(1, 1)) .detail("Key", clusterKey.printable());
-															#line 795 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 795 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		if (leader.present())
-															#line 3650 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 3650 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		{
-															#line 796 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 796 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			if (leader.get().first.forward)
-															#line 3654 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 3654 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			{
-															#line 797 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 797 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				ClientDBInfo outInfo;
-															#line 798 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 798 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				outInfo.id = deterministicRandom()->randomUniqueID();
-															#line 799 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 799 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				outInfo.forward = leader.get().first.serializedInfo;
-															#line 800 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 800 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				clientData->clientInfo->set(CachedSerialization<ClientDBInfo>(outInfo));
-															#line 801 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 801 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				leaderInfo->set(leader.get().first);
-															#line 802 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 802 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				TraceEvent("MonitorLeaderAndGetClientInfoForwarding") .detail("NewConnStr", leader.get().first.serializedInfo.toString());
-															#line 804 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 804 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				if (!static_cast<MonitorLeaderAndGetClientInfoActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~MonitorLeaderAndGetClientInfoActorState(); static_cast<MonitorLeaderAndGetClientInfoActor*>(this)->destroy(); return 0; }
-															#line 3670 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 3670 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 				new (&static_cast<MonitorLeaderAndGetClientInfoActor*>(this)->SAV< Void >::value()) Void(Void());
 				this->~MonitorLeaderAndGetClientInfoActorState();
 				static_cast<MonitorLeaderAndGetClientInfoActor*>(this)->finishSendAndDelPromiseRef();
 				return 0;
 			}
-															#line 807 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 807 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			if (leader.get().first.serializedInfo.size())
-															#line 3678 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 3678 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			{
-															#line 808 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 808 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				ObjectReader reader(leader.get().first.serializedInfo.begin(), IncludeVersion());
-															#line 809 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 809 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				ClusterControllerClientInterface res;
-															#line 810 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 810 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				reader.deserialize(res);
-															#line 811 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 811 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				knownLeader->set(res);
-															#line 812 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 812 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				leaderInfo->set(leader.get().first);
-															#line 3690 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 3690 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			}
 		}
-															#line 815 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 815 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		StrictFuture<Void> __when_expr_0 = nomineeChange.onTrigger() || allActors;
-															#line 815 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 815 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		if (static_cast<MonitorLeaderAndGetClientInfoActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 3697 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 3697 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 		static_cast<MonitorLeaderAndGetClientInfoActor*>(this)->actor_wait_state = 1;
-															#line 815 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 815 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< MonitorLeaderAndGetClientInfoActor, 0, Void >*>(static_cast<MonitorLeaderAndGetClientInfoActor*>(this)));
-															#line 3702 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 3702 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -3779,32 +3779,32 @@ public:
 		fdb_probe_actor_exit("monitorLeaderAndGetClientInfo", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 759 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 759 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	Key clusterKey;
-															#line 759 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 759 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	std::vector<Hostname> hostnames;
-															#line 759 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 759 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	std::vector<NetworkAddress> coordinators;
-															#line 759 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 759 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	ClientData* clientData;
-															#line 759 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 759 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	Reference<AsyncVar<Optional<LeaderInfo>>> leaderInfo;
-															#line 764 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 764 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	std::vector<ClientLeaderRegInterface> clientLeaderServers;
-															#line 765 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 765 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	AsyncTrigger nomineeChange;
-															#line 766 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 766 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	std::vector<Optional<LeaderInfo>> nominees;
-															#line 767 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 767 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	Future<Void> allActors;
-															#line 768 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 768 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	Reference<AsyncVar<Optional<ClusterControllerClientInterface>>> knownLeader;
-															#line 3802 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 3802 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 };
 // This generated class is to be used only via monitorLeaderAndGetClientInfo()
-															#line 759 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 759 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 class MonitorLeaderAndGetClientInfoActor final : public Actor<Void>, public ActorCallback< MonitorLeaderAndGetClientInfoActor, 0, Void >, public FastAllocated<MonitorLeaderAndGetClientInfoActor>, public MonitorLeaderAndGetClientInfoActorState<MonitorLeaderAndGetClientInfoActor> {
-															#line 3807 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 3807 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 public:
 	using FastAllocated<MonitorLeaderAndGetClientInfoActor>::operator new;
 	using FastAllocated<MonitorLeaderAndGetClientInfoActor>::operator delete;
@@ -3813,9 +3813,9 @@ public:
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< MonitorLeaderAndGetClientInfoActor, 0, Void >;
-															#line 759 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 759 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	MonitorLeaderAndGetClientInfoActor(Key const& clusterKey,std::vector<Hostname> const& hostnames,std::vector<NetworkAddress> const& coordinators,ClientData* const& clientData,Reference<AsyncVar<Optional<LeaderInfo>>> const& leaderInfo) 
-															#line 3818 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 3818 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		 : Actor<Void>(),
 		   MonitorLeaderAndGetClientInfoActorState<MonitorLeaderAndGetClientInfoActor>(clusterKey, hostnames, coordinators, clientData, leaderInfo)
 	{
@@ -3839,14 +3839,14 @@ friend struct ActorCallback< MonitorLeaderAndGetClientInfoActor, 0, Void >;
 	}
 };
 }
-															#line 759 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 759 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 [[nodiscard]] Future<Void> monitorLeaderAndGetClientInfo( Key const& clusterKey, std::vector<Hostname> const& hostnames, std::vector<NetworkAddress> const& coordinators, ClientData* const& clientData, Reference<AsyncVar<Optional<LeaderInfo>>> const& leaderInfo ) {
-															#line 759 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 759 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	return Future<Void>(new MonitorLeaderAndGetClientInfoActor(clusterKey, hostnames, coordinators, clientData, leaderInfo));
-															#line 3846 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 3846 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 }
 
-#line 818 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+#line 818 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 
 void shrinkProxyList(ClientDBInfo& ni,
                      std::vector<UID>& lastCommitProxyUIDs,
@@ -3888,53 +3888,53 @@ void shrinkProxyList(ClientDBInfo& ni,
 	}
 }
 
-															#line 3891 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 3891 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 namespace {
 // This generated class is to be used only via monitorProxiesOneGeneration()
-															#line 859 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 859 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 template <class MonitorProxiesOneGenerationActor>
-															#line 859 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 859 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 class MonitorProxiesOneGenerationActorState {
-															#line 3898 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 3898 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 public:
-															#line 859 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 859 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	MonitorProxiesOneGenerationActorState(Reference<IClusterConnectionRecord> const& connRecord,Reference<AsyncVar<ClientDBInfo>> const& clientInfo,Reference<AsyncVar<Optional<ClientLeaderRegInterface>>> const& coordinator,MonitorLeaderInfo const& info,Reference<ReferencedObject<Standalone<VectorRef<ClientVersionRef>>>> const& supportedVersions,Key const& traceLogGroup,IsInternal const& internal) 
-															#line 859 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
-															#line 859 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 859 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
+															#line 859 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		 : connRecord(connRecord),
-															#line 859 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 859 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		   clientInfo(clientInfo),
-															#line 859 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 859 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		   coordinator(coordinator),
-															#line 859 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 859 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		   info(info),
-															#line 859 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 859 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		   supportedVersions(supportedVersions),
-															#line 859 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 859 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		   traceLogGroup(traceLogGroup),
-															#line 859 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 859 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		   internal(internal),
-															#line 867 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 867 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		   cs(info.intermediateConnRecord->getConnectionString()),
-															#line 868 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 868 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		   coordinatorsSize(cs.hostnames.size() + cs.coords.size()),
-															#line 869 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 869 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		   index(0),
-															#line 870 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 870 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		   successIndex(0),
-															#line 871 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 871 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		   incorrectTime(),
-															#line 872 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 872 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		   lastCommitProxyUIDs(),
-															#line 873 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 873 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		   lastCommitProxies(),
-															#line 874 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 874 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		   lastGrvProxyUIDs(),
-															#line 875 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 875 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		   lastGrvProxies(),
-															#line 876 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 876 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		   clientLeaderServers()
-															#line 3937 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 3937 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 	{
 		fdb_probe_actor_create("monitorProxiesOneGeneration", reinterpret_cast<unsigned long>(this));
 
@@ -3947,25 +3947,25 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 878 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 878 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			clientLeaderServers.reserve(coordinatorsSize);
-															#line 879 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 879 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			for( const auto& h : cs.hostnames ) {
-															#line 880 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 880 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				clientLeaderServers.push_back(ClientLeaderRegInterface(h));
-															#line 3956 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 3956 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			}
-															#line 882 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 882 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			for( const auto& c : cs.coords ) {
-															#line 883 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 883 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				clientLeaderServers.push_back(ClientLeaderRegInterface(c));
-															#line 3962 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 3962 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			}
-															#line 886 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 886 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			deterministicRandom()->randomShuffle(clientLeaderServers);
-															#line 888 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 888 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			;
-															#line 3968 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 3968 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -3993,47 +3993,47 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 889 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 889 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		clientLeaderServer = clientLeaderServers[index];
-															#line 890 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 890 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		req = OpenDatabaseCoordRequest();
-															#line 892 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 892 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		req.clusterKey = cs.clusterKey();
-															#line 893 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 893 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		req.hostnames = cs.hostnames;
-															#line 894 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 894 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		req.coordinators = cs.coords;
-															#line 895 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 895 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		req.knownClientInfoID = clientInfo->get().id;
-															#line 896 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 896 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		req.supportedVersions = supportedVersions->get();
-															#line 897 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 897 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		req.traceLogGroup = traceLogGroup;
-															#line 898 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 898 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		req.internal = internal;
-															#line 900 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 900 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		storedConnectionString = ClusterConnectionString();
-															#line 901 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 901 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		if (connRecord)
-															#line 4018 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 4018 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		{
-															#line 902 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 902 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			StrictFuture<bool> __when_expr_0 = connRecord->upToDate(storedConnectionString);
-															#line 902 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 902 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			if (static_cast<MonitorProxiesOneGenerationActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 4024 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 4024 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<MonitorProxiesOneGenerationActor*>(this)->actor_wait_state = 1;
-															#line 902 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 902 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< MonitorProxiesOneGenerationActor, 0, bool >*>(static_cast<MonitorProxiesOneGenerationActor*>(this)));
-															#line 4029 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 4029 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			loopDepth = 0;
 		}
 		else
 		{
-															#line 920 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 920 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			incorrectTime = Optional<double>();
-															#line 4036 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 4036 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			loopDepth = a_body1loopBody1cont1(loopDepth);
 		}
 
@@ -4041,65 +4041,65 @@ public:
 	}
 	int a_body1loopBody1cont1(int loopDepth) 
 	{
-															#line 923 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 923 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		repFuture = Future<ErrorOr<CachedSerialization<ClientDBInfo>>>();
-															#line 924 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 924 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		if (clientLeaderServer.hostname.present())
-															#line 4048 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 4048 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		{
-															#line 925 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 925 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			repFuture = tryGetReplyFromHostname(req, clientLeaderServer.hostname.get(), WLTOKEN_CLIENTLEADERREG_OPENDATABASE, TaskPriority::CoordinationReply);
-															#line 4052 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 4052 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		}
 		else
 		{
-															#line 930 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 930 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			repFuture = clientLeaderServer.openDatabase.tryGetReply(req, TaskPriority::CoordinationReply);
-															#line 4058 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 4058 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		}
-															#line 939 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 939 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		coordinator->setUnconditional(clientLeaderServer);
-															#line 941 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 941 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		StrictFuture<ErrorOr<CachedSerialization<ClientDBInfo>>> __when_expr_1 = repFuture;
-															#line 941 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 941 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		if (static_cast<MonitorProxiesOneGenerationActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 4066 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 4066 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1cont1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<MonitorProxiesOneGenerationActor*>(this)->actor_wait_state = 2;
-															#line 941 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 941 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< MonitorProxiesOneGenerationActor, 1, ErrorOr<CachedSerialization<ClientDBInfo>> >*>(static_cast<MonitorProxiesOneGenerationActor*>(this)));
-															#line 4071 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 4071 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont2(bool const& upToDate,int loopDepth) 
 	{
-															#line 903 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 903 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		if (!upToDate)
-															#line 4080 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 4080 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		{
-															#line 904 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 904 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			req.issues.push_back_deep(req.issues.arena(), LiteralStringRef("incorrect_cluster_file_contents"));
-															#line 905 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 905 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			std::string connectionString = connRecord->getConnectionString().toString();
-															#line 906 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 906 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			if (!incorrectTime.present())
-															#line 4088 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 4088 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			{
-															#line 907 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 907 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				incorrectTime = now();
-															#line 4092 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 4092 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			}
-															#line 912 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 912 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			TraceEvent(now() - incorrectTime.get() > 300 ? SevWarnAlways : SevWarn, "IncorrectClusterFileContents") .detail("ClusterFile", connRecord->toString()) .detail("StoredConnectionString", storedConnectionString.toString()) .detail("CurrentConnectionString", connectionString);
-															#line 4096 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 4096 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		}
 		else
 		{
-															#line 917 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 917 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			incorrectTime = Optional<double>();
-															#line 4102 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 4102 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		}
 		loopDepth = a_body1loopBody1cont1(loopDepth);
 
@@ -4107,31 +4107,31 @@ public:
 	}
 	int a_body1loopBody1cont2(bool && upToDate,int loopDepth) 
 	{
-															#line 903 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 903 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		if (!upToDate)
-															#line 4112 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 4112 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		{
-															#line 904 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 904 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			req.issues.push_back_deep(req.issues.arena(), LiteralStringRef("incorrect_cluster_file_contents"));
-															#line 905 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 905 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			std::string connectionString = connRecord->getConnectionString().toString();
-															#line 906 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 906 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			if (!incorrectTime.present())
-															#line 4120 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 4120 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			{
-															#line 907 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 907 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				incorrectTime = now();
-															#line 4124 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 4124 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			}
-															#line 912 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 912 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			TraceEvent(now() - incorrectTime.get() > 300 ? SevWarnAlways : SevWarn, "IncorrectClusterFileContents") .detail("ClusterFile", connRecord->toString()) .detail("StoredConnectionString", storedConnectionString.toString()) .detail("CurrentConnectionString", connectionString);
-															#line 4128 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 4128 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		}
 		else
 		{
-															#line 917 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 917 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			incorrectTime = Optional<double>();
-															#line 4134 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 4134 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		}
 		loopDepth = a_body1loopBody1cont1(loopDepth);
 
@@ -4202,81 +4202,81 @@ public:
 	}
 	int a_body1loopBody1cont8(int loopDepth) 
 	{
-															#line 943 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 943 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		if (rep.present())
-															#line 4207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 4207 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		{
-															#line 944 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 944 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			if (rep.get().read().forward.present())
-															#line 4211 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 4211 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			{
-															#line 945 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 945 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				TraceEvent("MonitorProxiesForwarding") .detail("NewConnStr", rep.get().read().forward.get().toString()) .detail("OldConnStr", info.intermediateConnRecord->getConnectionString().toString());
-															#line 948 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 948 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				info.intermediateConnRecord = connRecord->makeIntermediateRecord( ClusterConnectionString(rep.get().read().forward.get().toString()));
-															#line 950 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 950 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				if (!static_cast<MonitorProxiesOneGenerationActor*>(this)->SAV<MonitorLeaderInfo>::futures) { (void)(info); this->~MonitorProxiesOneGenerationActorState(); static_cast<MonitorProxiesOneGenerationActor*>(this)->destroy(); return 0; }
-															#line 4219 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 4219 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 				new (&static_cast<MonitorProxiesOneGenerationActor*>(this)->SAV< MonitorLeaderInfo >::value()) MonitorLeaderInfo(std::move(info)); // state_var_RVO
 				this->~MonitorProxiesOneGenerationActorState();
 				static_cast<MonitorProxiesOneGenerationActor*>(this)->finishSendAndDelPromiseRef();
 				return 0;
 			}
-															#line 952 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 952 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			if (connRecord != info.intermediateConnRecord)
-															#line 4227 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 4227 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			{
-															#line 953 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 953 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				if (!info.hasConnected)
-															#line 4231 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 4231 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 				{
-															#line 954 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 954 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 					TraceEvent(SevWarnAlways, "IncorrectClusterFileContentsAtConnection") .detail("ClusterFile", connRecord->toString()) .detail("StoredConnectionString", connRecord->getConnectionString().toString()) .detail("CurrentConnectionString", info.intermediateConnRecord->getConnectionString().toString());
-															#line 4235 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 4235 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 				}
-															#line 960 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 960 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				connRecord->setAndPersistConnectionString(info.intermediateConnRecord->getConnectionString());
-															#line 961 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 961 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				info.intermediateConnRecord = connRecord;
-															#line 4241 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 4241 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			}
-															#line 964 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 964 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			info.hasConnected = true;
-															#line 965 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 965 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			connRecord->notifyConnected();
-															#line 967 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 967 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			auto& ni = rep.get().mutate();
-															#line 968 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 968 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			shrinkProxyList(ni, lastCommitProxyUIDs, lastCommitProxies, lastGrvProxyUIDs, lastGrvProxies);
-															#line 969 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 969 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			clientInfo->setUnconditional(ni);
-															#line 970 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 970 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			successIndex = index;
-															#line 4255 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 4255 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			loopDepth = a_body1loopBody1cont11(loopDepth);
 		}
 		else
 		{
-															#line 972 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 972 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			TEST(rep.getError().code() == error_code_failed_to_progress);
-															#line 973 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 973 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			TEST(rep.getError().code() == error_code_lookup_failed);
-															#line 974 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 974 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			index = (index + 1) % coordinatorsSize;
-															#line 975 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 975 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			if (index == successIndex)
-															#line 4268 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 4268 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			{
-															#line 976 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 976 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				StrictFuture<Void> __when_expr_2 = delay(CLIENT_KNOBS->COORDINATOR_RECONNECTION_DELAY);
-															#line 976 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 976 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				if (static_cast<MonitorProxiesOneGenerationActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 4274 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 4274 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 				if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1cont8when1(__when_expr_2.get(), loopDepth); };
 				static_cast<MonitorProxiesOneGenerationActor*>(this)->actor_wait_state = 3;
-															#line 976 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 976 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 				__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< MonitorProxiesOneGenerationActor, 2, Void >*>(static_cast<MonitorProxiesOneGenerationActor*>(this)));
-															#line 4279 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 4279 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 				loopDepth = 0;
 			}
 			else
@@ -4289,9 +4289,9 @@ public:
 	}
 	int a_body1loopBody1cont1when1(ErrorOr<CachedSerialization<ClientDBInfo>> const& __rep,int loopDepth) 
 	{
-															#line 941 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 941 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		rep = __rep;
-															#line 4294 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 4294 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont8(loopDepth);
 
 		return loopDepth;
@@ -4441,56 +4441,56 @@ public:
 		fdb_probe_actor_exit("monitorProxiesOneGeneration", reinterpret_cast<unsigned long>(this), 2);
 
 	}
-															#line 859 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 859 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	Reference<IClusterConnectionRecord> connRecord;
-															#line 859 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 859 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	Reference<AsyncVar<ClientDBInfo>> clientInfo;
-															#line 859 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 859 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	Reference<AsyncVar<Optional<ClientLeaderRegInterface>>> coordinator;
-															#line 859 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 859 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	MonitorLeaderInfo info;
-															#line 859 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 859 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	Reference<ReferencedObject<Standalone<VectorRef<ClientVersionRef>>>> supportedVersions;
-															#line 859 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 859 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	Key traceLogGroup;
-															#line 859 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 859 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	IsInternal internal;
-															#line 867 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 867 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	ClusterConnectionString cs;
-															#line 868 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 868 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	int coordinatorsSize;
-															#line 869 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 869 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	int index;
-															#line 870 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 870 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	int successIndex;
-															#line 871 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 871 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	Optional<double> incorrectTime;
-															#line 872 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 872 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	std::vector<UID> lastCommitProxyUIDs;
-															#line 873 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 873 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	std::vector<CommitProxyInterface> lastCommitProxies;
-															#line 874 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 874 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	std::vector<UID> lastGrvProxyUIDs;
-															#line 875 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 875 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	std::vector<GrvProxyInterface> lastGrvProxies;
-															#line 876 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 876 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	std::vector<ClientLeaderRegInterface> clientLeaderServers;
-															#line 889 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 889 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	ClientLeaderRegInterface clientLeaderServer;
-															#line 890 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 890 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	OpenDatabaseCoordRequest req;
-															#line 900 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 900 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	ClusterConnectionString storedConnectionString;
-															#line 923 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 923 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	Future<ErrorOr<CachedSerialization<ClientDBInfo>>> repFuture;
-															#line 941 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 941 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	ErrorOr<CachedSerialization<ClientDBInfo>> rep;
-															#line 4488 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 4488 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 };
 // This generated class is to be used only via monitorProxiesOneGeneration()
-															#line 859 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 859 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 class MonitorProxiesOneGenerationActor final : public Actor<MonitorLeaderInfo>, public ActorCallback< MonitorProxiesOneGenerationActor, 0, bool >, public ActorCallback< MonitorProxiesOneGenerationActor, 1, ErrorOr<CachedSerialization<ClientDBInfo>> >, public ActorCallback< MonitorProxiesOneGenerationActor, 2, Void >, public FastAllocated<MonitorProxiesOneGenerationActor>, public MonitorProxiesOneGenerationActorState<MonitorProxiesOneGenerationActor> {
-															#line 4493 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 4493 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 public:
 	using FastAllocated<MonitorProxiesOneGenerationActor>::operator new;
 	using FastAllocated<MonitorProxiesOneGenerationActor>::operator delete;
@@ -4501,9 +4501,9 @@ public:
 friend struct ActorCallback< MonitorProxiesOneGenerationActor, 0, bool >;
 friend struct ActorCallback< MonitorProxiesOneGenerationActor, 1, ErrorOr<CachedSerialization<ClientDBInfo>> >;
 friend struct ActorCallback< MonitorProxiesOneGenerationActor, 2, Void >;
-															#line 859 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 859 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	MonitorProxiesOneGenerationActor(Reference<IClusterConnectionRecord> const& connRecord,Reference<AsyncVar<ClientDBInfo>> const& clientInfo,Reference<AsyncVar<Optional<ClientLeaderRegInterface>>> const& coordinator,MonitorLeaderInfo const& info,Reference<ReferencedObject<Standalone<VectorRef<ClientVersionRef>>>> const& supportedVersions,Key const& traceLogGroup,IsInternal const& internal) 
-															#line 4506 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 4506 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		 : Actor<MonitorLeaderInfo>(),
 		   MonitorProxiesOneGenerationActorState<MonitorProxiesOneGenerationActor>(connRecord, clientInfo, coordinator, info, supportedVersions, traceLogGroup, internal)
 	{
@@ -4529,42 +4529,42 @@ friend struct ActorCallback< MonitorProxiesOneGenerationActor, 2, Void >;
 	}
 };
 }
-															#line 859 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 859 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 [[nodiscard]] Future<MonitorLeaderInfo> monitorProxiesOneGeneration( Reference<IClusterConnectionRecord> const& connRecord, Reference<AsyncVar<ClientDBInfo>> const& clientInfo, Reference<AsyncVar<Optional<ClientLeaderRegInterface>>> const& coordinator, MonitorLeaderInfo const& info, Reference<ReferencedObject<Standalone<VectorRef<ClientVersionRef>>>> const& supportedVersions, Key const& traceLogGroup, IsInternal const& internal ) {
-															#line 859 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 859 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	return Future<MonitorLeaderInfo>(new MonitorProxiesOneGenerationActor(connRecord, clientInfo, coordinator, info, supportedVersions, traceLogGroup, internal));
-															#line 4536 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 4536 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 }
 
-#line 981 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+#line 981 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 
-															#line 4541 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 4541 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 namespace {
 // This generated class is to be used only via monitorProxies()
-															#line 982 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 982 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 template <class MonitorProxiesActor>
-															#line 982 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 982 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 class MonitorProxiesActorState {
-															#line 4548 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 4548 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 public:
-															#line 982 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 982 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	MonitorProxiesActorState(Reference<AsyncVar<Reference<IClusterConnectionRecord>>> const& connRecord,Reference<AsyncVar<ClientDBInfo>> const& clientInfo,Reference<AsyncVar<Optional<ClientLeaderRegInterface>>> const& coordinator,Reference<ReferencedObject<Standalone<VectorRef<ClientVersionRef>>>> const& supportedVersions,Key const& traceLogGroup,IsInternal const& internal) 
-															#line 982 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
-															#line 982 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 982 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
+															#line 982 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		 : connRecord(connRecord),
-															#line 982 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 982 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		   clientInfo(clientInfo),
-															#line 982 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 982 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		   coordinator(coordinator),
-															#line 982 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 982 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		   supportedVersions(supportedVersions),
-															#line 982 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 982 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		   traceLogGroup(traceLogGroup),
-															#line 982 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 982 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		   internal(internal),
-															#line 989 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 989 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		   info(connRecord->get())
-															#line 4567 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 4567 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 	{
 		fdb_probe_actor_create("monitorProxies", reinterpret_cast<unsigned long>(this));
 
@@ -4577,9 +4577,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 990 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 990 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 			;
-															#line 4582 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 4582 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -4607,22 +4607,22 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 992 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 992 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		StrictFuture<MonitorLeaderInfo> __when_expr_0 = monitorProxiesOneGeneration( connRecord->get(), clientInfo, coordinator, info, supportedVersions, traceLogGroup, internal);
-															#line 991 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 991 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		if (static_cast<MonitorProxiesActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 4614 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 4614 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
-															#line 996 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 996 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = connRecord->onChange();
-															#line 4618 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 4618 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when2(__when_expr_1.get(), loopDepth); };
 		static_cast<MonitorProxiesActor*>(this)->actor_wait_state = 1;
-															#line 992 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 992 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< MonitorProxiesActor, 0, MonitorLeaderInfo >*>(static_cast<MonitorProxiesActor*>(this)));
-															#line 996 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 996 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< MonitorProxiesActor, 1, Void >*>(static_cast<MonitorProxiesActor*>(this)));
-															#line 4625 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 4625 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -4635,40 +4635,40 @@ public:
 	}
 	int a_body1loopBody1when1(MonitorLeaderInfo const& _info,int loopDepth) 
 	{
-															#line 994 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 994 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		info = _info;
-															#line 4640 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 4640 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1when1(MonitorLeaderInfo && _info,int loopDepth) 
 	{
-															#line 994 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 994 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		info = _info;
-															#line 4649 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 4649 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1when2(Void const& _,int loopDepth) 
 	{
-															#line 997 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 997 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		info.hasConnected = false;
-															#line 998 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 998 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		info.intermediateConnRecord = connRecord->get();
-															#line 4660 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 4660 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1loopBody1when2(Void && _,int loopDepth) 
 	{
-															#line 997 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 997 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		info.hasConnected = false;
-															#line 998 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 998 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 		info.intermediateConnRecord = connRecord->get();
-															#line 4671 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 4671 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont1(loopDepth);
 
 		return loopDepth;
@@ -4770,26 +4770,26 @@ public:
 		fdb_probe_actor_exit("monitorProxies", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 982 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 982 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	Reference<AsyncVar<Reference<IClusterConnectionRecord>>> connRecord;
-															#line 982 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 982 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	Reference<AsyncVar<ClientDBInfo>> clientInfo;
-															#line 982 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 982 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	Reference<AsyncVar<Optional<ClientLeaderRegInterface>>> coordinator;
-															#line 982 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 982 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	Reference<ReferencedObject<Standalone<VectorRef<ClientVersionRef>>>> supportedVersions;
-															#line 982 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 982 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	Key traceLogGroup;
-															#line 982 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 982 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	IsInternal internal;
-															#line 989 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 989 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	MonitorLeaderInfo info;
-															#line 4787 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 4787 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 };
 // This generated class is to be used only via monitorProxies()
-															#line 982 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 982 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 class MonitorProxiesActor final : public Actor<Void>, public ActorCallback< MonitorProxiesActor, 0, MonitorLeaderInfo >, public ActorCallback< MonitorProxiesActor, 1, Void >, public FastAllocated<MonitorProxiesActor>, public MonitorProxiesActorState<MonitorProxiesActor> {
-															#line 4792 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 4792 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 public:
 	using FastAllocated<MonitorProxiesActor>::operator new;
 	using FastAllocated<MonitorProxiesActor>::operator delete;
@@ -4799,9 +4799,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< MonitorProxiesActor, 0, MonitorLeaderInfo >;
 friend struct ActorCallback< MonitorProxiesActor, 1, Void >;
-															#line 982 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 982 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	MonitorProxiesActor(Reference<AsyncVar<Reference<IClusterConnectionRecord>>> const& connRecord,Reference<AsyncVar<ClientDBInfo>> const& clientInfo,Reference<AsyncVar<Optional<ClientLeaderRegInterface>>> const& coordinator,Reference<ReferencedObject<Standalone<VectorRef<ClientVersionRef>>>> const& supportedVersions,Key const& traceLogGroup,IsInternal const& internal) 
-															#line 4804 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 4804 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 		 : Actor<Void>(),
 		   MonitorProxiesActorState<MonitorProxiesActor>(connRecord, clientInfo, coordinator, supportedVersions, traceLogGroup, internal)
 	{
@@ -4825,11 +4825,11 @@ friend struct ActorCallback< MonitorProxiesActor, 1, Void >;
 	}
 };
 }
-															#line 982 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 982 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 [[nodiscard]] Future<Void> monitorProxies( Reference<AsyncVar<Reference<IClusterConnectionRecord>>> const& connRecord, Reference<AsyncVar<ClientDBInfo>> const& clientInfo, Reference<AsyncVar<Optional<ClientLeaderRegInterface>>> const& coordinator, Reference<ReferencedObject<Standalone<VectorRef<ClientVersionRef>>>> const& supportedVersions, Key const& traceLogGroup, IsInternal const& internal ) {
-															#line 982 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+															#line 982 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"
 	return Future<Void>(new MonitorProxiesActor(connRecord, clientInfo, coordinator, supportedVersions, traceLogGroup, internal));
-															#line 4832 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.g.cpp"
+															#line 4832 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.g.cpp"
 }
 
-#line 1003 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MonitorLeader.actor.cpp"
+#line 1003 "/usr/src/libfdb_c/fdbclient/MonitorLeader.actor.cpp"

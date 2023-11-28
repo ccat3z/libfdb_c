@@ -1,5 +1,5 @@
 #define POST_ACTOR_COMPILER 1
-#line 1 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+#line 1 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 /*
  * ReadYourWrites.actor.cpp
  *
@@ -93,24 +93,24 @@ public:
 	// the given *it to point to the key that was read, so that the corresponding overload of addConflictRange() can
 	// make use of it.
 
-																#line 96 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+																#line 96 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 // This generated class is to be used only via read()
-															#line 94 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 94 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 template <class Iter, class ReadActor>
-															#line 94 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 94 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 class ReadActorState {
-															#line 102 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 102 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 public:
-															#line 94 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 94 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	ReadActorState(ReadYourWritesTransaction* const& ryw,GetValueReq const& read,Iter* const& it) 
-															#line 94 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
-															#line 94 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 94 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
+															#line 94 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		 : ryw(ryw),
-															#line 94 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 94 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   read(read),
-															#line 94 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 94 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   it(it)
-															#line 113 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 113 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 	{
 		fdb_probe_actor_create("read", reinterpret_cast<unsigned long>(this));
 
@@ -123,31 +123,31 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 98 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 98 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (ryw->options.bypassUnreadable)
-															#line 128 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 128 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
-															#line 99 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 99 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				it->bypassUnreadableProtection();
-															#line 132 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 132 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			}
-															#line 101 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 101 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			it->skip(read.key);
-															#line 102 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 102 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			dependent = it->is_dependent();
-															#line 103 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 103 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (it->is_kv())
-															#line 140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 140 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
-															#line 104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 104 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				const KeyValueRef* result = it->kv(ryw->arena);
-															#line 105 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 105 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				if (result != nullptr)
-															#line 146 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 146 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				{
-															#line 106 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 106 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 					if (!static_cast<ReadActor*>(this)->SAV<Optional<Value>>::futures) { (void)(result->value); this->~ReadActorState(); static_cast<ReadActor*>(this)->destroy(); return 0; }
-															#line 150 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 150 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 					new (&static_cast<ReadActor*>(this)->SAV< Optional<Value> >::value()) Optional<Value>(result->value);
 					this->~ReadActorState();
 					static_cast<ReadActor*>(this)->finishSendAndDelPromiseRef();
@@ -155,9 +155,9 @@ public:
 				}
 				else
 				{
-															#line 108 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 108 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 					if (!static_cast<ReadActor*>(this)->SAV<Optional<Value>>::futures) { (void)(Optional<Value>()); this->~ReadActorState(); static_cast<ReadActor*>(this)->destroy(); return 0; }
-															#line 160 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 160 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 					new (&static_cast<ReadActor*>(this)->SAV< Optional<Value> >::value()) Optional<Value>(Optional<Value>());
 					this->~ReadActorState();
 					static_cast<ReadActor*>(this)->finishSendAndDelPromiseRef();
@@ -166,13 +166,13 @@ public:
 			}
 			else
 			{
-															#line 110 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 110 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				if (it->is_empty_range())
-															#line 171 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 171 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				{
-															#line 111 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 111 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 					if (!static_cast<ReadActor*>(this)->SAV<Optional<Value>>::futures) { (void)(Optional<Value>()); this->~ReadActorState(); static_cast<ReadActor*>(this)->destroy(); return 0; }
-															#line 175 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 175 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 					new (&static_cast<ReadActor*>(this)->SAV< Optional<Value> >::value()) Optional<Value>(Optional<Value>());
 					this->~ReadActorState();
 					static_cast<ReadActor*>(this)->finishSendAndDelPromiseRef();
@@ -180,16 +180,16 @@ public:
 				}
 				else
 				{
-															#line 113 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 113 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 					StrictFuture<Optional<Value>> __when_expr_0 = ryw->tr.get(read.key, Snapshot::True);
-															#line 113 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 113 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 					if (static_cast<ReadActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 187 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 187 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 					if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 					static_cast<ReadActor*>(this)->actor_wait_state = 1;
-															#line 113 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 113 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 					__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ReadActor, 0, Optional<Value> >*>(static_cast<ReadActor*>(this)));
-															#line 192 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 192 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 					loopDepth = 0;
 				}
 			}
@@ -212,27 +212,27 @@ public:
 	}
 	int a_body1cont8(Optional<Value> const& res,int loopDepth) 
 	{
-															#line 114 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 114 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		KeyRef k(ryw->arena, read.key);
-															#line 116 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 116 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (res.present())
-															#line 219 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 219 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 117 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 117 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (ryw->cache.insert(k, res.get()))
-															#line 223 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 223 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
-															#line 118 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 118 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				ryw->arena.dependsOn(res.get().arena());
-															#line 227 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 227 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			}
-															#line 119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 119 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (!dependent)
-															#line 231 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 231 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
-															#line 120 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 120 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				if (!static_cast<ReadActor*>(this)->SAV<Optional<Value>>::futures) { (void)(res); this->~ReadActorState(); static_cast<ReadActor*>(this)->destroy(); return 0; }
-															#line 235 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 235 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				new (&static_cast<ReadActor*>(this)->SAV< Optional<Value> >::value()) Optional<Value>(res);
 				this->~ReadActorState();
 				static_cast<ReadActor*>(this)->finishSendAndDelPromiseRef();
@@ -241,34 +241,34 @@ public:
 		}
 		else
 		{
-															#line 122 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 122 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			ryw->cache.insert(k, Optional<ValueRef>());
-															#line 123 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 123 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (!dependent)
-															#line 248 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 248 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
-															#line 124 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 124 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				if (!static_cast<ReadActor*>(this)->SAV<Optional<Value>>::futures) { (void)(Optional<Value>()); this->~ReadActorState(); static_cast<ReadActor*>(this)->destroy(); return 0; }
-															#line 252 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 252 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				new (&static_cast<ReadActor*>(this)->SAV< Optional<Value> >::value()) Optional<Value>(Optional<Value>());
 				this->~ReadActorState();
 				static_cast<ReadActor*>(this)->finishSendAndDelPromiseRef();
 				return 0;
 			}
 		}
-															#line 128 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 128 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		it->skip(k);
-															#line 130 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 130 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		ASSERT(it->is_kv());
-															#line 131 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 131 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		const KeyValueRef* result = it->kv(ryw->arena);
-															#line 132 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 132 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (result != nullptr)
-															#line 267 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 267 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 133 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 133 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (!static_cast<ReadActor*>(this)->SAV<Optional<Value>>::futures) { (void)(result->value); this->~ReadActorState(); static_cast<ReadActor*>(this)->destroy(); return 0; }
-															#line 271 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 271 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			new (&static_cast<ReadActor*>(this)->SAV< Optional<Value> >::value()) Optional<Value>(result->value);
 			this->~ReadActorState();
 			static_cast<ReadActor*>(this)->finishSendAndDelPromiseRef();
@@ -276,9 +276,9 @@ public:
 		}
 		else
 		{
-															#line 135 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 135 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (!static_cast<ReadActor*>(this)->SAV<Optional<Value>>::futures) { (void)(Optional<Value>()); this->~ReadActorState(); static_cast<ReadActor*>(this)->destroy(); return 0; }
-															#line 281 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 281 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			new (&static_cast<ReadActor*>(this)->SAV< Optional<Value> >::value()) Optional<Value>(Optional<Value>());
 			this->~ReadActorState();
 			static_cast<ReadActor*>(this)->finishSendAndDelPromiseRef();
@@ -289,27 +289,27 @@ public:
 	}
 	int a_body1cont8(Optional<Value> && res,int loopDepth) 
 	{
-															#line 114 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 114 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		KeyRef k(ryw->arena, read.key);
-															#line 116 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 116 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (res.present())
-															#line 296 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 296 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 117 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 117 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (ryw->cache.insert(k, res.get()))
-															#line 300 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 300 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
-															#line 118 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 118 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				ryw->arena.dependsOn(res.get().arena());
-															#line 304 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 304 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			}
-															#line 119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 119 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (!dependent)
-															#line 308 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 308 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
-															#line 120 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 120 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				if (!static_cast<ReadActor*>(this)->SAV<Optional<Value>>::futures) { (void)(res); this->~ReadActorState(); static_cast<ReadActor*>(this)->destroy(); return 0; }
-															#line 312 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 312 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				new (&static_cast<ReadActor*>(this)->SAV< Optional<Value> >::value()) Optional<Value>(res);
 				this->~ReadActorState();
 				static_cast<ReadActor*>(this)->finishSendAndDelPromiseRef();
@@ -318,34 +318,34 @@ public:
 		}
 		else
 		{
-															#line 122 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 122 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			ryw->cache.insert(k, Optional<ValueRef>());
-															#line 123 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 123 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (!dependent)
-															#line 325 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 325 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
-															#line 124 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 124 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				if (!static_cast<ReadActor*>(this)->SAV<Optional<Value>>::futures) { (void)(Optional<Value>()); this->~ReadActorState(); static_cast<ReadActor*>(this)->destroy(); return 0; }
-															#line 329 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 329 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				new (&static_cast<ReadActor*>(this)->SAV< Optional<Value> >::value()) Optional<Value>(Optional<Value>());
 				this->~ReadActorState();
 				static_cast<ReadActor*>(this)->finishSendAndDelPromiseRef();
 				return 0;
 			}
 		}
-															#line 128 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 128 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		it->skip(k);
-															#line 130 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 130 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		ASSERT(it->is_kv());
-															#line 131 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 131 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		const KeyValueRef* result = it->kv(ryw->arena);
-															#line 132 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 132 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (result != nullptr)
-															#line 344 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 344 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 133 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 133 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (!static_cast<ReadActor*>(this)->SAV<Optional<Value>>::futures) { (void)(result->value); this->~ReadActorState(); static_cast<ReadActor*>(this)->destroy(); return 0; }
-															#line 348 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 348 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			new (&static_cast<ReadActor*>(this)->SAV< Optional<Value> >::value()) Optional<Value>(result->value);
 			this->~ReadActorState();
 			static_cast<ReadActor*>(this)->finishSendAndDelPromiseRef();
@@ -353,9 +353,9 @@ public:
 		}
 		else
 		{
-															#line 135 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 135 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (!static_cast<ReadActor*>(this)->SAV<Optional<Value>>::futures) { (void)(Optional<Value>()); this->~ReadActorState(); static_cast<ReadActor*>(this)->destroy(); return 0; }
-															#line 358 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 358 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			new (&static_cast<ReadActor*>(this)->SAV< Optional<Value> >::value()) Optional<Value>(Optional<Value>());
 			this->~ReadActorState();
 			static_cast<ReadActor*>(this)->finishSendAndDelPromiseRef();
@@ -427,22 +427,22 @@ public:
 		fdb_probe_actor_exit("read", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 94 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 94 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	ReadYourWritesTransaction* ryw;
-															#line 94 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 94 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	GetValueReq read;
-															#line 94 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 94 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	Iter* it;
-															#line 102 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 102 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	bool dependent;
-															#line 438 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 438 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 };
 // This generated class is to be used only via read()
-															#line 94 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 94 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 template <class Iter>
-															#line 94 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 94 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 class ReadActor final : public Actor<Optional<Value>>, public ActorCallback< ReadActor<Iter>, 0, Optional<Value> >, public FastAllocated<ReadActor<Iter>>, public ReadActorState<Iter, ReadActor<Iter>> {
-															#line 445 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 445 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 public:
 	using FastAllocated<ReadActor<Iter>>::operator new;
 	using FastAllocated<ReadActor<Iter>>::operator delete;
@@ -451,9 +451,9 @@ public:
 	void destroy() override { ((Actor<Optional<Value>>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< ReadActor<Iter>, 0, Optional<Value> >;
-															#line 94 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 94 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	ReadActor(ReadYourWritesTransaction* const& ryw,GetValueReq const& read,Iter* const& it) 
-															#line 456 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 456 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		 : Actor<Optional<Value>>(),
 		   ReadActorState<Iter, ReadActor<Iter>>(ryw, read, it)
 	{
@@ -476,35 +476,35 @@ friend struct ActorCallback< ReadActor<Iter>, 0, Optional<Value> >;
 
 	}
 };
-															#line 94 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 94 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 template <class Iter>
-															#line 94 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 94 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 [[nodiscard]] static Future<Optional<Value>> read( ReadYourWritesTransaction* const& ryw, GetValueReq const& read, Iter* const& it ) {
-															#line 94 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 94 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	return Future<Optional<Value>>(new ReadActor<Iter>(ryw, read, it));
-															#line 485 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 485 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 }
 
-#line 139 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+#line 139 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 
-																#line 490 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+																#line 490 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 // This generated class is to be used only via read()
-															#line 140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 140 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 template <class Iter, class ReadActor1>
-															#line 140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 140 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 class ReadActor1State {
-															#line 496 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 496 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 public:
-															#line 140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 140 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	ReadActor1State(ReadYourWritesTransaction* const& ryw,GetKeyReq const& read,Iter* const& it) 
-															#line 140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
-															#line 140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 140 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
+															#line 140 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		 : ryw(ryw),
-															#line 140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 140 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   read(read),
-															#line 140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 140 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   it(it)
-															#line 507 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 507 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 	{
 		fdb_probe_actor_create("read", reinterpret_cast<unsigned long>(this));
 
@@ -517,36 +517,36 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 142 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 142 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (read.key.offset > 0)
-															#line 522 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 522 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
-															#line 143 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 143 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				StrictFuture<RangeResult> __when_expr_0 = getRangeValue(ryw, read.key, firstGreaterOrEqual(ryw->getMaxReadKey()), GetRangeLimits(1), it);
-															#line 143 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 143 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				if (static_cast<ReadActor1*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 528 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 528 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 				static_cast<ReadActor1*>(this)->actor_wait_state = 1;
-															#line 143 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 143 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ReadActor1, 0, RangeResult >*>(static_cast<ReadActor1*>(this)));
-															#line 533 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 533 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				loopDepth = 0;
 			}
 			else
 			{
-															#line 151 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 151 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				read.key.offset++;
-															#line 152 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 152 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				StrictFuture<RangeResult> __when_expr_1 = getRangeValueBack(ryw, firstGreaterOrEqual(allKeys.begin), read.key, GetRangeLimits(1), it);
-															#line 152 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 152 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				if (static_cast<ReadActor1*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 544 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 544 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1when2(__when_expr_1.get(), loopDepth); };
 				static_cast<ReadActor1*>(this)->actor_wait_state = 2;
-															#line 152 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 152 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< ReadActor1, 1, RangeResult >*>(static_cast<ReadActor1*>(this)));
-															#line 549 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 549 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				loopDepth = 0;
 			}
 		}
@@ -568,33 +568,33 @@ public:
 	}
 	int a_body1cont2(RangeResult const& result,int loopDepth) 
 	{
-															#line 145 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 145 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (result.readToBegin)
-															#line 573 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 573 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 146 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 146 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (!static_cast<ReadActor1*>(this)->SAV<Key>::futures) { (void)(allKeys.begin); this->~ReadActor1State(); static_cast<ReadActor1*>(this)->destroy(); return 0; }
-															#line 577 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 577 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			new (&static_cast<ReadActor1*>(this)->SAV< Key >::value()) Key(allKeys.begin);
 			this->~ReadActor1State();
 			static_cast<ReadActor1*>(this)->finishSendAndDelPromiseRef();
 			return 0;
 		}
-															#line 147 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 147 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (result.readThroughEnd || !result.size())
-															#line 585 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 585 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 148 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 148 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (!static_cast<ReadActor1*>(this)->SAV<Key>::futures) { (void)(ryw->getMaxReadKey()); this->~ReadActor1State(); static_cast<ReadActor1*>(this)->destroy(); return 0; }
-															#line 589 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 589 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			new (&static_cast<ReadActor1*>(this)->SAV< Key >::value()) Key(ryw->getMaxReadKey());
 			this->~ReadActor1State();
 			static_cast<ReadActor1*>(this)->finishSendAndDelPromiseRef();
 			return 0;
 		}
-															#line 149 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 149 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (!static_cast<ReadActor1*>(this)->SAV<Key>::futures) { (void)(result[0].key); this->~ReadActor1State(); static_cast<ReadActor1*>(this)->destroy(); return 0; }
-															#line 597 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 597 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		new (&static_cast<ReadActor1*>(this)->SAV< Key >::value()) Key(result[0].key);
 		this->~ReadActor1State();
 		static_cast<ReadActor1*>(this)->finishSendAndDelPromiseRef();
@@ -604,33 +604,33 @@ public:
 	}
 	int a_body1cont2(RangeResult && result,int loopDepth) 
 	{
-															#line 145 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 145 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (result.readToBegin)
-															#line 609 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 609 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 146 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 146 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (!static_cast<ReadActor1*>(this)->SAV<Key>::futures) { (void)(allKeys.begin); this->~ReadActor1State(); static_cast<ReadActor1*>(this)->destroy(); return 0; }
-															#line 613 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 613 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			new (&static_cast<ReadActor1*>(this)->SAV< Key >::value()) Key(allKeys.begin);
 			this->~ReadActor1State();
 			static_cast<ReadActor1*>(this)->finishSendAndDelPromiseRef();
 			return 0;
 		}
-															#line 147 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 147 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (result.readThroughEnd || !result.size())
-															#line 621 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 621 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 148 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 148 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (!static_cast<ReadActor1*>(this)->SAV<Key>::futures) { (void)(ryw->getMaxReadKey()); this->~ReadActor1State(); static_cast<ReadActor1*>(this)->destroy(); return 0; }
-															#line 625 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 625 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			new (&static_cast<ReadActor1*>(this)->SAV< Key >::value()) Key(ryw->getMaxReadKey());
 			this->~ReadActor1State();
 			static_cast<ReadActor1*>(this)->finishSendAndDelPromiseRef();
 			return 0;
 		}
-															#line 149 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 149 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (!static_cast<ReadActor1*>(this)->SAV<Key>::futures) { (void)(result[0].key); this->~ReadActor1State(); static_cast<ReadActor1*>(this)->destroy(); return 0; }
-															#line 633 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 633 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		new (&static_cast<ReadActor1*>(this)->SAV< Key >::value()) Key(result[0].key);
 		this->~ReadActor1State();
 		static_cast<ReadActor1*>(this)->finishSendAndDelPromiseRef();
@@ -703,33 +703,33 @@ public:
 	}
 	int a_body1cont6(RangeResult const& result,int loopDepth) 
 	{
-															#line 154 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 154 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (result.readThroughEnd)
-															#line 708 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 708 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 155 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 155 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (!static_cast<ReadActor1*>(this)->SAV<Key>::futures) { (void)(ryw->getMaxReadKey()); this->~ReadActor1State(); static_cast<ReadActor1*>(this)->destroy(); return 0; }
-															#line 712 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 712 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			new (&static_cast<ReadActor1*>(this)->SAV< Key >::value()) Key(ryw->getMaxReadKey());
 			this->~ReadActor1State();
 			static_cast<ReadActor1*>(this)->finishSendAndDelPromiseRef();
 			return 0;
 		}
-															#line 156 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 156 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (result.readToBegin || !result.size())
-															#line 720 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 720 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 157 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 157 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (!static_cast<ReadActor1*>(this)->SAV<Key>::futures) { (void)(allKeys.begin); this->~ReadActor1State(); static_cast<ReadActor1*>(this)->destroy(); return 0; }
-															#line 724 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 724 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			new (&static_cast<ReadActor1*>(this)->SAV< Key >::value()) Key(allKeys.begin);
 			this->~ReadActor1State();
 			static_cast<ReadActor1*>(this)->finishSendAndDelPromiseRef();
 			return 0;
 		}
-															#line 158 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 158 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (!static_cast<ReadActor1*>(this)->SAV<Key>::futures) { (void)(result[0].key); this->~ReadActor1State(); static_cast<ReadActor1*>(this)->destroy(); return 0; }
-															#line 732 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 732 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		new (&static_cast<ReadActor1*>(this)->SAV< Key >::value()) Key(result[0].key);
 		this->~ReadActor1State();
 		static_cast<ReadActor1*>(this)->finishSendAndDelPromiseRef();
@@ -739,33 +739,33 @@ public:
 	}
 	int a_body1cont6(RangeResult && result,int loopDepth) 
 	{
-															#line 154 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 154 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (result.readThroughEnd)
-															#line 744 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 744 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 155 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 155 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (!static_cast<ReadActor1*>(this)->SAV<Key>::futures) { (void)(ryw->getMaxReadKey()); this->~ReadActor1State(); static_cast<ReadActor1*>(this)->destroy(); return 0; }
-															#line 748 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 748 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			new (&static_cast<ReadActor1*>(this)->SAV< Key >::value()) Key(ryw->getMaxReadKey());
 			this->~ReadActor1State();
 			static_cast<ReadActor1*>(this)->finishSendAndDelPromiseRef();
 			return 0;
 		}
-															#line 156 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 156 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (result.readToBegin || !result.size())
-															#line 756 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 756 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 157 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 157 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (!static_cast<ReadActor1*>(this)->SAV<Key>::futures) { (void)(allKeys.begin); this->~ReadActor1State(); static_cast<ReadActor1*>(this)->destroy(); return 0; }
-															#line 760 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 760 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			new (&static_cast<ReadActor1*>(this)->SAV< Key >::value()) Key(allKeys.begin);
 			this->~ReadActor1State();
 			static_cast<ReadActor1*>(this)->finishSendAndDelPromiseRef();
 			return 0;
 		}
-															#line 158 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 158 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (!static_cast<ReadActor1*>(this)->SAV<Key>::futures) { (void)(result[0].key); this->~ReadActor1State(); static_cast<ReadActor1*>(this)->destroy(); return 0; }
-															#line 768 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 768 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		new (&static_cast<ReadActor1*>(this)->SAV< Key >::value()) Key(result[0].key);
 		this->~ReadActor1State();
 		static_cast<ReadActor1*>(this)->finishSendAndDelPromiseRef();
@@ -836,20 +836,20 @@ public:
 		fdb_probe_actor_exit("read", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 140 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	ReadYourWritesTransaction* ryw;
-															#line 140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 140 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	GetKeyReq read;
-															#line 140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 140 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	Iter* it;
-															#line 845 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 845 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 };
 // This generated class is to be used only via read()
-															#line 140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 140 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 template <class Iter>
-															#line 140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 140 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 class ReadActor1 final : public Actor<Key>, public ActorCallback< ReadActor1<Iter>, 0, RangeResult >, public ActorCallback< ReadActor1<Iter>, 1, RangeResult >, public FastAllocated<ReadActor1<Iter>>, public ReadActor1State<Iter, ReadActor1<Iter>> {
-															#line 852 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 852 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 public:
 	using FastAllocated<ReadActor1<Iter>>::operator new;
 	using FastAllocated<ReadActor1<Iter>>::operator delete;
@@ -859,9 +859,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< ReadActor1<Iter>, 0, RangeResult >;
 friend struct ActorCallback< ReadActor1<Iter>, 1, RangeResult >;
-															#line 140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 140 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	ReadActor1(ReadYourWritesTransaction* const& ryw,GetKeyReq const& read,Iter* const& it) 
-															#line 864 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 864 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		 : Actor<Key>(),
 		   ReadActor1State<Iter, ReadActor1<Iter>>(ryw, read, it)
 	{
@@ -885,16 +885,16 @@ friend struct ActorCallback< ReadActor1<Iter>, 1, RangeResult >;
 
 	}
 };
-															#line 140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 140 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 template <class Iter>
-															#line 140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 140 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 [[nodiscard]] static Future<Key> read( ReadYourWritesTransaction* const& ryw, GetKeyReq const& read, Iter* const& it ) {
-															#line 140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 140 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	return Future<Key>(new ReadActor1<Iter>(ryw, read, it));
-															#line 894 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 894 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 }
 
-#line 160 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+#line 160 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 
 
 	template <class Iter>
@@ -915,24 +915,24 @@ template <class Iter>
 		return ryw->tr.get(read.key, snapshot);
 	}
 
-																#line 918 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+																#line 918 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 // This generated class is to be used only via readThrough()
-															#line 180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 180 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 template <class ReadThroughActor>
-															#line 180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 180 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 class ReadThroughActorState {
-															#line 924 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 924 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 public:
-															#line 180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 180 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	ReadThroughActorState(ReadYourWritesTransaction* const& ryw,GetKeyReq const& read,Snapshot const& snapshot) 
-															#line 180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
-															#line 180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 180 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
+															#line 180 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		 : ryw(ryw),
-															#line 180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 180 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   read(read),
-															#line 180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 180 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   snapshot(snapshot)
-															#line 935 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 935 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 	{
 		fdb_probe_actor_create("readThrough", reinterpret_cast<unsigned long>(this));
 
@@ -945,16 +945,16 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 181 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 181 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			StrictFuture<Key> __when_expr_0 = ryw->tr.getKey(read.key, snapshot);
-															#line 181 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 181 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (static_cast<ReadThroughActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 952 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 952 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<ReadThroughActor*>(this)->actor_wait_state = 1;
-															#line 181 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 181 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ReadThroughActor, 0, Key >*>(static_cast<ReadThroughActor*>(this)));
-															#line 957 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 957 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -975,21 +975,21 @@ public:
 	}
 	int a_body1cont1(Key const& key,int loopDepth) 
 	{
-															#line 182 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 182 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (ryw->getMaxReadKey() < key)
-															#line 980 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 980 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 183 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 183 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (!static_cast<ReadThroughActor*>(this)->SAV<Key>::futures) { (void)(ryw->getMaxReadKey()); this->~ReadThroughActorState(); static_cast<ReadThroughActor*>(this)->destroy(); return 0; }
-															#line 984 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 984 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			new (&static_cast<ReadThroughActor*>(this)->SAV< Key >::value()) Key(ryw->getMaxReadKey());
 			this->~ReadThroughActorState();
 			static_cast<ReadThroughActor*>(this)->finishSendAndDelPromiseRef();
 			return 0;
 		}
-															#line 184 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 184 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (!static_cast<ReadThroughActor*>(this)->SAV<Key>::futures) { (void)(key); this->~ReadThroughActorState(); static_cast<ReadThroughActor*>(this)->destroy(); return 0; }
-															#line 992 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 992 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		new (&static_cast<ReadThroughActor*>(this)->SAV< Key >::value()) Key(key);
 		this->~ReadThroughActorState();
 		static_cast<ReadThroughActor*>(this)->finishSendAndDelPromiseRef();
@@ -999,21 +999,21 @@ public:
 	}
 	int a_body1cont1(Key && key,int loopDepth) 
 	{
-															#line 182 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 182 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (ryw->getMaxReadKey() < key)
-															#line 1004 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1004 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 183 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 183 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (!static_cast<ReadThroughActor*>(this)->SAV<Key>::futures) { (void)(ryw->getMaxReadKey()); this->~ReadThroughActorState(); static_cast<ReadThroughActor*>(this)->destroy(); return 0; }
-															#line 1008 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1008 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			new (&static_cast<ReadThroughActor*>(this)->SAV< Key >::value()) Key(ryw->getMaxReadKey());
 			this->~ReadThroughActorState();
 			static_cast<ReadThroughActor*>(this)->finishSendAndDelPromiseRef();
 			return 0;
 		}
-															#line 184 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 184 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (!static_cast<ReadThroughActor*>(this)->SAV<Key>::futures) { (void)(key); this->~ReadThroughActorState(); static_cast<ReadThroughActor*>(this)->destroy(); return 0; }
-															#line 1016 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1016 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		new (&static_cast<ReadThroughActor*>(this)->SAV< Key >::value()) Key(key);
 		this->~ReadThroughActorState();
 		static_cast<ReadThroughActor*>(this)->finishSendAndDelPromiseRef();
@@ -1084,18 +1084,18 @@ public:
 		fdb_probe_actor_exit("readThrough", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 180 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	ReadYourWritesTransaction* ryw;
-															#line 180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 180 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	GetKeyReq read;
-															#line 180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 180 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	Snapshot snapshot;
-															#line 1093 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1093 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 };
 // This generated class is to be used only via readThrough()
-															#line 180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 180 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 class ReadThroughActor final : public Actor<Key>, public ActorCallback< ReadThroughActor, 0, Key >, public FastAllocated<ReadThroughActor>, public ReadThroughActorState<ReadThroughActor> {
-															#line 1098 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1098 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 public:
 	using FastAllocated<ReadThroughActor>::operator new;
 	using FastAllocated<ReadThroughActor>::operator delete;
@@ -1104,9 +1104,9 @@ public:
 	void destroy() override { ((Actor<Key>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< ReadThroughActor, 0, Key >;
-															#line 180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 180 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	ReadThroughActor(ReadYourWritesTransaction* const& ryw,GetKeyReq const& read,Snapshot const& snapshot) 
-															#line 1109 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1109 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		 : Actor<Key>(),
 		   ReadThroughActorState<ReadThroughActor>(ryw, read, snapshot)
 	{
@@ -1129,33 +1129,33 @@ friend struct ActorCallback< ReadThroughActor, 0, Key >;
 
 	}
 };
-															#line 180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 180 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 [[nodiscard]] static Future<Key> readThrough( ReadYourWritesTransaction* const& ryw, GetKeyReq const& read, Snapshot const& snapshot ) {
-															#line 180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 180 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	return Future<Key>(new ReadThroughActor(ryw, read, snapshot));
-															#line 1136 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1136 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 }
 
-#line 186 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+#line 186 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 
-																#line 1141 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+																#line 1141 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 // This generated class is to be used only via readThrough()
-															#line 187 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 187 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 template <bool backwards, class ReadThroughActor1>
-															#line 187 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 187 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 class ReadThroughActor1State {
-															#line 1147 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1147 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 public:
-															#line 187 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 187 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	ReadThroughActor1State(ReadYourWritesTransaction* const& ryw,GetRangeReq<backwards> const& read,Snapshot const& snapshot) 
-															#line 187 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
-															#line 187 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 187 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
+															#line 187 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		 : ryw(ryw),
-															#line 187 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 187 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   read(read),
-															#line 187 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 187 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   snapshot(snapshot)
-															#line 1158 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1158 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 	{
 		fdb_probe_actor_create("readThrough", reinterpret_cast<unsigned long>(this));
 
@@ -1168,20 +1168,20 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 191 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 191 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (backwards && read.end.offset > 1)
-															#line 1173 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1173 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
-															#line 194 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 194 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				StrictFuture<Key> __when_expr_0 = ryw->tr.getKey(read.end, snapshot);
-															#line 194 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 194 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				if (static_cast<ReadThroughActor1*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 1179 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1179 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 				static_cast<ReadThroughActor1*>(this)->actor_wait_state = 1;
-															#line 194 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 194 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ReadThroughActor1, 0, Key >*>(static_cast<ReadThroughActor1*>(this)));
-															#line 1184 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1184 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				loopDepth = 0;
 			}
 			else
@@ -1207,35 +1207,35 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 201 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 201 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		StrictFuture<RangeResult> __when_expr_1 = ryw->tr.getRange(read.begin, read.end, read.limits, snapshot, backwards ? Reverse::True : Reverse::False);
-															#line 201 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 201 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (static_cast<ReadThroughActor1*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 1214 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1214 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<ReadThroughActor1*>(this)->actor_wait_state = 2;
-															#line 201 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 201 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< ReadThroughActor1, 1, RangeResult >*>(static_cast<ReadThroughActor1*>(this)));
-															#line 1219 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1219 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont2(Key const& key,int loopDepth) 
 	{
-															#line 195 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 195 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (key > ryw->getMaxReadKey())
-															#line 1228 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1228 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 196 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 196 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			read.end = firstGreaterOrEqual(ryw->getMaxReadKey());
-															#line 1232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1232 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		}
 		else
 		{
-															#line 198 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 198 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			read.end = KeySelector(firstGreaterOrEqual(key), key.arena());
-															#line 1238 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1238 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		}
 		loopDepth = a_body1cont1(loopDepth);
 
@@ -1243,19 +1243,19 @@ public:
 	}
 	int a_body1cont2(Key && key,int loopDepth) 
 	{
-															#line 195 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 195 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (key > ryw->getMaxReadKey())
-															#line 1248 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1248 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 196 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 196 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			read.end = firstGreaterOrEqual(ryw->getMaxReadKey());
-															#line 1252 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1252 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		}
 		else
 		{
-															#line 198 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 198 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			read.end = KeySelector(firstGreaterOrEqual(key), key.arena());
-															#line 1258 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1258 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		}
 		loopDepth = a_body1cont1(loopDepth);
 
@@ -1326,36 +1326,36 @@ public:
 	}
 	int a_body1cont6(RangeResult const& v,int loopDepth) 
 	{
-															#line 203 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 203 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		KeyRef maxKey = ryw->getMaxReadKey();
-															#line 204 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 204 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (v.size() > 0)
-															#line 1333 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1333 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 205 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 205 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (!backwards && v[v.size() - 1].key >= maxKey)
-															#line 1337 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1337 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
-															#line 206 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 206 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				_v = v;
-															#line 207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 207 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				int i = _v.size() - 2;
-															#line 208 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 208 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				for(;i >= 0 && _v[i].key >= maxKey;--i) {
-															#line 1345 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1345 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				}
-															#line 210 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 210 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				if (!static_cast<ReadThroughActor1*>(this)->SAV<RangeResult>::futures) { (void)(RangeResult(RangeResultRef(VectorRef<KeyValueRef>(&_v[0], i + 1), false), _v.arena())); this->~ReadThroughActor1State(); static_cast<ReadThroughActor1*>(this)->destroy(); return 0; }
-															#line 1349 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1349 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				new (&static_cast<ReadThroughActor1*>(this)->SAV< RangeResult >::value()) RangeResult(RangeResult(RangeResultRef(VectorRef<KeyValueRef>(&_v[0], i + 1), false), _v.arena()));
 				this->~ReadThroughActor1State();
 				static_cast<ReadThroughActor1*>(this)->finishSendAndDelPromiseRef();
 				return 0;
 			}
 		}
-															#line 214 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 214 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (!static_cast<ReadThroughActor1*>(this)->SAV<RangeResult>::futures) { (void)(v); this->~ReadThroughActor1State(); static_cast<ReadThroughActor1*>(this)->destroy(); return 0; }
-															#line 1358 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1358 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		new (&static_cast<ReadThroughActor1*>(this)->SAV< RangeResult >::value()) RangeResult(v);
 		this->~ReadThroughActor1State();
 		static_cast<ReadThroughActor1*>(this)->finishSendAndDelPromiseRef();
@@ -1365,36 +1365,36 @@ public:
 	}
 	int a_body1cont6(RangeResult && v,int loopDepth) 
 	{
-															#line 203 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 203 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		KeyRef maxKey = ryw->getMaxReadKey();
-															#line 204 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 204 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (v.size() > 0)
-															#line 1372 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1372 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 205 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 205 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (!backwards && v[v.size() - 1].key >= maxKey)
-															#line 1376 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1376 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
-															#line 206 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 206 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				_v = v;
-															#line 207 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 207 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				int i = _v.size() - 2;
-															#line 208 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 208 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				for(;i >= 0 && _v[i].key >= maxKey;--i) {
-															#line 1384 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1384 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				}
-															#line 210 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 210 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				if (!static_cast<ReadThroughActor1*>(this)->SAV<RangeResult>::futures) { (void)(RangeResult(RangeResultRef(VectorRef<KeyValueRef>(&_v[0], i + 1), false), _v.arena())); this->~ReadThroughActor1State(); static_cast<ReadThroughActor1*>(this)->destroy(); return 0; }
-															#line 1388 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1388 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				new (&static_cast<ReadThroughActor1*>(this)->SAV< RangeResult >::value()) RangeResult(RangeResult(RangeResultRef(VectorRef<KeyValueRef>(&_v[0], i + 1), false), _v.arena()));
 				this->~ReadThroughActor1State();
 				static_cast<ReadThroughActor1*>(this)->finishSendAndDelPromiseRef();
 				return 0;
 			}
 		}
-															#line 214 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 214 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (!static_cast<ReadThroughActor1*>(this)->SAV<RangeResult>::futures) { (void)(v); this->~ReadThroughActor1State(); static_cast<ReadThroughActor1*>(this)->destroy(); return 0; }
-															#line 1397 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1397 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		new (&static_cast<ReadThroughActor1*>(this)->SAV< RangeResult >::value()) RangeResult(v);
 		this->~ReadThroughActor1State();
 		static_cast<ReadThroughActor1*>(this)->finishSendAndDelPromiseRef();
@@ -1465,22 +1465,22 @@ public:
 		fdb_probe_actor_exit("readThrough", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 187 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 187 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	ReadYourWritesTransaction* ryw;
-															#line 187 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 187 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	GetRangeReq<backwards> read;
-															#line 187 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 187 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	Snapshot snapshot;
-															#line 206 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 206 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	RangeResult _v;
-															#line 1476 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1476 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 };
 // This generated class is to be used only via readThrough()
-															#line 187 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 187 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 template <bool backwards>
-															#line 187 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 187 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 class ReadThroughActor1 final : public Actor<RangeResult>, public ActorCallback< ReadThroughActor1<backwards>, 0, Key >, public ActorCallback< ReadThroughActor1<backwards>, 1, RangeResult >, public FastAllocated<ReadThroughActor1<backwards>>, public ReadThroughActor1State<backwards, ReadThroughActor1<backwards>> {
-															#line 1483 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1483 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 public:
 	using FastAllocated<ReadThroughActor1<backwards>>::operator new;
 	using FastAllocated<ReadThroughActor1<backwards>>::operator delete;
@@ -1490,9 +1490,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< ReadThroughActor1<backwards>, 0, Key >;
 friend struct ActorCallback< ReadThroughActor1<backwards>, 1, RangeResult >;
-															#line 187 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 187 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	ReadThroughActor1(ReadYourWritesTransaction* const& ryw,GetRangeReq<backwards> const& read,Snapshot const& snapshot) 
-															#line 1495 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1495 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		 : Actor<RangeResult>(),
 		   ReadThroughActor1State<backwards, ReadThroughActor1<backwards>>(ryw, read, snapshot)
 	{
@@ -1516,16 +1516,16 @@ friend struct ActorCallback< ReadThroughActor1<backwards>, 1, RangeResult >;
 
 	}
 };
-															#line 187 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 187 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 template <bool backwards>
-															#line 187 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 187 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 [[nodiscard]] static Future<RangeResult> readThrough( ReadYourWritesTransaction* const& ryw, GetRangeReq<backwards> const& read, Snapshot const& snapshot ) {
-															#line 187 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 187 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	return Future<RangeResult>(new ReadThroughActor1<backwards>(ryw, read, snapshot));
-															#line 1525 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1525 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 }
 
-#line 216 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+#line 216 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 
 	// addConflictRange(ryw,read,result) is called after a serializable read and is responsible for adding the relevant
 	// conflict range
@@ -1659,24 +1659,24 @@ template <bool backwards>
 		}
 	}
 
-																#line 1662 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+																#line 1662 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 // This generated class is to be used only via readWithConflictRangeThrough()
-															#line 349 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 349 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 template <class Req, class ReadWithConflictRangeThroughActor>
-															#line 349 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 349 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 class ReadWithConflictRangeThroughActorState {
-															#line 1668 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1668 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 public:
-															#line 349 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 349 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	ReadWithConflictRangeThroughActorState(ReadYourWritesTransaction* const& ryw,Req const& req,Snapshot const& snapshot) 
-															#line 349 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
-															#line 349 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 349 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
+															#line 349 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		 : ryw(ryw),
-															#line 349 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 349 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   req(req),
-															#line 349 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 349 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   snapshot(snapshot)
-															#line 1679 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1679 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 	{
 		fdb_probe_actor_create("readWithConflictRangeThrough", reinterpret_cast<unsigned long>(this));
 
@@ -1689,22 +1689,22 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 354 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 354 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			StrictFuture<typename Req::Result> __when_expr_0 = readThrough(ryw, req, snapshot);
-															#line 353 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 353 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (static_cast<ReadWithConflictRangeThroughActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 1696 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1696 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
-															#line 357 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 357 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			StrictFuture<Void> __when_expr_1 = ryw->resetPromise.getFuture();
-															#line 1700 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1700 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1when2(__when_expr_1.get(), loopDepth); };
 			static_cast<ReadWithConflictRangeThroughActor*>(this)->actor_wait_state = 1;
-															#line 354 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 354 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ReadWithConflictRangeThroughActor, 0, typename Req::Result >*>(static_cast<ReadWithConflictRangeThroughActor*>(this)));
-															#line 357 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 357 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< ReadWithConflictRangeThroughActor, 1, Void >*>(static_cast<ReadWithConflictRangeThroughActor*>(this)));
-															#line 1707 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1707 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -1725,9 +1725,9 @@ public:
 	}
 	int a_body1when1(typename Req::Result const& result,int loopDepth) 
 	{
-															#line 355 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 355 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (!static_cast<ReadWithConflictRangeThroughActor*>(this)->SAV<typename Req::Result>::futures) { (void)(result); this->~ReadWithConflictRangeThroughActorState(); static_cast<ReadWithConflictRangeThroughActor*>(this)->destroy(); return 0; }
-															#line 1730 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1730 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		new (&static_cast<ReadWithConflictRangeThroughActor*>(this)->SAV< typename Req::Result >::value()) typename Req::Result(result);
 		this->~ReadWithConflictRangeThroughActorState();
 		static_cast<ReadWithConflictRangeThroughActor*>(this)->finishSendAndDelPromiseRef();
@@ -1737,9 +1737,9 @@ public:
 	}
 	int a_body1when1(typename Req::Result && result,int loopDepth) 
 	{
-															#line 355 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 355 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (!static_cast<ReadWithConflictRangeThroughActor*>(this)->SAV<typename Req::Result>::futures) { (void)(result); this->~ReadWithConflictRangeThroughActorState(); static_cast<ReadWithConflictRangeThroughActor*>(this)->destroy(); return 0; }
-															#line 1742 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1742 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		new (&static_cast<ReadWithConflictRangeThroughActor*>(this)->SAV< typename Req::Result >::value()) typename Req::Result(result);
 		this->~ReadWithConflictRangeThroughActorState();
 		static_cast<ReadWithConflictRangeThroughActor*>(this)->finishSendAndDelPromiseRef();
@@ -1749,17 +1749,17 @@ public:
 	}
 	int a_body1when2(Void const& _,int loopDepth) 
 	{
-															#line 358 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 358 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		return a_body1Catch1(internal_error(), loopDepth);
-															#line 1754 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1754 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 
 		return loopDepth;
 	}
 	int a_body1when2(Void && _,int loopDepth) 
 	{
-															#line 358 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 358 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		return a_body1Catch1(internal_error(), loopDepth);
-															#line 1762 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1762 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 
 		return loopDepth;
 	}
@@ -1860,20 +1860,20 @@ public:
 		fdb_probe_actor_exit("readWithConflictRangeThrough", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 349 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 349 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	ReadYourWritesTransaction* ryw;
-															#line 349 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 349 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	Req req;
-															#line 349 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 349 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	Snapshot snapshot;
-															#line 1869 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1869 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 };
 // This generated class is to be used only via readWithConflictRangeThrough()
-															#line 349 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 349 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 template <class Req>
-															#line 349 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 349 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 class ReadWithConflictRangeThroughActor final : public Actor<typename Req::Result>, public ActorCallback< ReadWithConflictRangeThroughActor<Req>, 0, typename Req::Result >, public ActorCallback< ReadWithConflictRangeThroughActor<Req>, 1, Void >, public FastAllocated<ReadWithConflictRangeThroughActor<Req>>, public ReadWithConflictRangeThroughActorState<Req, ReadWithConflictRangeThroughActor<Req>> {
-															#line 1876 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1876 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 public:
 	using FastAllocated<ReadWithConflictRangeThroughActor<Req>>::operator new;
 	using FastAllocated<ReadWithConflictRangeThroughActor<Req>>::operator delete;
@@ -1883,9 +1883,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< ReadWithConflictRangeThroughActor<Req>, 0, typename Req::Result >;
 friend struct ActorCallback< ReadWithConflictRangeThroughActor<Req>, 1, Void >;
-															#line 349 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 349 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	ReadWithConflictRangeThroughActor(ReadYourWritesTransaction* const& ryw,Req const& req,Snapshot const& snapshot) 
-															#line 1888 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1888 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		 : Actor<typename Req::Result>(),
 		   ReadWithConflictRangeThroughActorState<Req, ReadWithConflictRangeThroughActor<Req>>(ryw, req, snapshot)
 	{
@@ -1908,34 +1908,34 @@ friend struct ActorCallback< ReadWithConflictRangeThroughActor<Req>, 1, Void >;
 
 	}
 };
-															#line 349 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 349 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 template <class Req>
-															#line 349 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 349 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 [[nodiscard]] static Future<typename Req::Result> readWithConflictRangeThrough( ReadYourWritesTransaction* const& ryw, Req const& req, Snapshot const& snapshot ) {
-															#line 349 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 349 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	return Future<typename Req::Result>(new ReadWithConflictRangeThroughActor<Req>(ryw, req, snapshot));
-															#line 1917 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1917 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 }
 
-#line 362 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
-																#line 1921 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+#line 362 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
+																#line 1921 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 // This generated class is to be used only via readWithConflictRangeSnapshot()
-															#line 362 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 362 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 template <class Req, class ReadWithConflictRangeSnapshotActor>
-															#line 362 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 362 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 class ReadWithConflictRangeSnapshotActorState {
-															#line 1927 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1927 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 public:
-															#line 362 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 362 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	ReadWithConflictRangeSnapshotActorState(ReadYourWritesTransaction* const& ryw,Req const& req) 
-															#line 362 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
-															#line 362 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 362 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
+															#line 362 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		 : ryw(ryw),
-															#line 362 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 362 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   req(req),
-															#line 364 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 364 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   it(&ryw->cache, &ryw->writes)
-															#line 1938 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1938 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 	{
 		fdb_probe_actor_create("readWithConflictRangeSnapshot", reinterpret_cast<unsigned long>(this));
 
@@ -1948,22 +1948,22 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 366 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 366 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			StrictFuture<typename Req::Result> __when_expr_0 = read(ryw, req, &it);
-															#line 365 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 365 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (static_cast<ReadWithConflictRangeSnapshotActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 1955 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1955 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
-															#line 369 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 369 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			StrictFuture<Void> __when_expr_1 = ryw->resetPromise.getFuture();
-															#line 1959 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1959 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1when2(__when_expr_1.get(), loopDepth); };
 			static_cast<ReadWithConflictRangeSnapshotActor*>(this)->actor_wait_state = 1;
-															#line 366 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 366 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ReadWithConflictRangeSnapshotActor, 0, typename Req::Result >*>(static_cast<ReadWithConflictRangeSnapshotActor*>(this)));
-															#line 369 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 369 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< ReadWithConflictRangeSnapshotActor, 1, Void >*>(static_cast<ReadWithConflictRangeSnapshotActor*>(this)));
-															#line 1966 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1966 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -1984,9 +1984,9 @@ public:
 	}
 	int a_body1when1(typename Req::Result const& result,int loopDepth) 
 	{
-															#line 367 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 367 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (!static_cast<ReadWithConflictRangeSnapshotActor*>(this)->SAV<typename Req::Result>::futures) { (void)(result); this->~ReadWithConflictRangeSnapshotActorState(); static_cast<ReadWithConflictRangeSnapshotActor*>(this)->destroy(); return 0; }
-															#line 1989 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 1989 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		new (&static_cast<ReadWithConflictRangeSnapshotActor*>(this)->SAV< typename Req::Result >::value()) typename Req::Result(result);
 		this->~ReadWithConflictRangeSnapshotActorState();
 		static_cast<ReadWithConflictRangeSnapshotActor*>(this)->finishSendAndDelPromiseRef();
@@ -1996,9 +1996,9 @@ public:
 	}
 	int a_body1when1(typename Req::Result && result,int loopDepth) 
 	{
-															#line 367 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 367 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (!static_cast<ReadWithConflictRangeSnapshotActor*>(this)->SAV<typename Req::Result>::futures) { (void)(result); this->~ReadWithConflictRangeSnapshotActorState(); static_cast<ReadWithConflictRangeSnapshotActor*>(this)->destroy(); return 0; }
-															#line 2001 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2001 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		new (&static_cast<ReadWithConflictRangeSnapshotActor*>(this)->SAV< typename Req::Result >::value()) typename Req::Result(result);
 		this->~ReadWithConflictRangeSnapshotActorState();
 		static_cast<ReadWithConflictRangeSnapshotActor*>(this)->finishSendAndDelPromiseRef();
@@ -2008,17 +2008,17 @@ public:
 	}
 	int a_body1when2(Void const& _,int loopDepth) 
 	{
-															#line 370 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 370 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		return a_body1Catch1(internal_error(), loopDepth);
-															#line 2013 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2013 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 
 		return loopDepth;
 	}
 	int a_body1when2(Void && _,int loopDepth) 
 	{
-															#line 370 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 370 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		return a_body1Catch1(internal_error(), loopDepth);
-															#line 2021 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2021 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 
 		return loopDepth;
 	}
@@ -2119,20 +2119,20 @@ public:
 		fdb_probe_actor_exit("readWithConflictRangeSnapshot", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 362 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 362 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	ReadYourWritesTransaction* ryw;
-															#line 362 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 362 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	Req req;
-															#line 364 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 364 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	SnapshotCache::iterator it;
-															#line 2128 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2128 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 };
 // This generated class is to be used only via readWithConflictRangeSnapshot()
-															#line 362 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 362 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 template <class Req>
-															#line 362 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 362 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 class ReadWithConflictRangeSnapshotActor final : public Actor<typename Req::Result>, public ActorCallback< ReadWithConflictRangeSnapshotActor<Req>, 0, typename Req::Result >, public ActorCallback< ReadWithConflictRangeSnapshotActor<Req>, 1, Void >, public FastAllocated<ReadWithConflictRangeSnapshotActor<Req>>, public ReadWithConflictRangeSnapshotActorState<Req, ReadWithConflictRangeSnapshotActor<Req>> {
-															#line 2135 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2135 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 public:
 	using FastAllocated<ReadWithConflictRangeSnapshotActor<Req>>::operator new;
 	using FastAllocated<ReadWithConflictRangeSnapshotActor<Req>>::operator delete;
@@ -2142,9 +2142,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< ReadWithConflictRangeSnapshotActor<Req>, 0, typename Req::Result >;
 friend struct ActorCallback< ReadWithConflictRangeSnapshotActor<Req>, 1, Void >;
-															#line 362 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 362 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	ReadWithConflictRangeSnapshotActor(ReadYourWritesTransaction* const& ryw,Req const& req) 
-															#line 2147 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2147 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		 : Actor<typename Req::Result>(),
 		   ReadWithConflictRangeSnapshotActorState<Req, ReadWithConflictRangeSnapshotActor<Req>>(ryw, req)
 	{
@@ -2167,36 +2167,36 @@ friend struct ActorCallback< ReadWithConflictRangeSnapshotActor<Req>, 1, Void >;
 
 	}
 };
-															#line 362 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 362 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 template <class Req>
-															#line 362 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 362 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 [[nodiscard]] static Future<typename Req::Result> readWithConflictRangeSnapshot( ReadYourWritesTransaction* const& ryw, Req const& req ) {
-															#line 362 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 362 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	return Future<typename Req::Result>(new ReadWithConflictRangeSnapshotActor<Req>(ryw, req));
-															#line 2176 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2176 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 }
 
-#line 374 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
-																#line 2180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+#line 374 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
+																#line 2180 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 // This generated class is to be used only via readWithConflictRangeRYW()
-															#line 374 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 374 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 template <class Req, class ReadWithConflictRangeRYWActor>
-															#line 374 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 374 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 class ReadWithConflictRangeRYWActorState {
-															#line 2186 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2186 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 public:
-															#line 374 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 374 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	ReadWithConflictRangeRYWActorState(ReadYourWritesTransaction* const& ryw,Req const& req,Snapshot const& snapshot) 
-															#line 374 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
-															#line 374 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 374 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
+															#line 374 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		 : ryw(ryw),
-															#line 374 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 374 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   req(req),
-															#line 374 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 374 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   snapshot(snapshot),
-															#line 378 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 378 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   it(&ryw->cache, &ryw->writes)
-															#line 2199 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2199 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 	{
 		fdb_probe_actor_create("readWithConflictRangeRYW", reinterpret_cast<unsigned long>(this));
 
@@ -2209,22 +2209,22 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 380 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 380 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			StrictFuture<typename Req::Result> __when_expr_0 = read(ryw, req, &it);
-															#line 379 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 379 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (static_cast<ReadWithConflictRangeRYWActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 2216 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2216 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
-															#line 387 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 387 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			StrictFuture<Void> __when_expr_1 = ryw->resetPromise.getFuture();
-															#line 2220 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2220 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1when2(__when_expr_1.get(), loopDepth); };
 			static_cast<ReadWithConflictRangeRYWActor*>(this)->actor_wait_state = 1;
-															#line 380 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 380 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ReadWithConflictRangeRYWActor, 0, typename Req::Result >*>(static_cast<ReadWithConflictRangeRYWActor*>(this)));
-															#line 387 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 387 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< ReadWithConflictRangeRYWActor, 1, Void >*>(static_cast<ReadWithConflictRangeRYWActor*>(this)));
-															#line 2227 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2227 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -2245,17 +2245,17 @@ public:
 	}
 	int a_body1when1(typename Req::Result const& result,int loopDepth) 
 	{
-															#line 383 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 383 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (!snapshot)
-															#line 2250 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2250 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 384 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 384 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			addConflictRange(ryw, req, it.extractWriteMapIterator(), result);
-															#line 2254 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2254 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		}
-															#line 385 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 385 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (!static_cast<ReadWithConflictRangeRYWActor*>(this)->SAV<typename Req::Result>::futures) { (void)(result); this->~ReadWithConflictRangeRYWActorState(); static_cast<ReadWithConflictRangeRYWActor*>(this)->destroy(); return 0; }
-															#line 2258 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2258 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		new (&static_cast<ReadWithConflictRangeRYWActor*>(this)->SAV< typename Req::Result >::value()) typename Req::Result(result);
 		this->~ReadWithConflictRangeRYWActorState();
 		static_cast<ReadWithConflictRangeRYWActor*>(this)->finishSendAndDelPromiseRef();
@@ -2265,17 +2265,17 @@ public:
 	}
 	int a_body1when1(typename Req::Result && result,int loopDepth) 
 	{
-															#line 383 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 383 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (!snapshot)
-															#line 2270 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2270 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 384 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 384 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			addConflictRange(ryw, req, it.extractWriteMapIterator(), result);
-															#line 2274 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2274 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		}
-															#line 385 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 385 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (!static_cast<ReadWithConflictRangeRYWActor*>(this)->SAV<typename Req::Result>::futures) { (void)(result); this->~ReadWithConflictRangeRYWActorState(); static_cast<ReadWithConflictRangeRYWActor*>(this)->destroy(); return 0; }
-															#line 2278 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2278 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		new (&static_cast<ReadWithConflictRangeRYWActor*>(this)->SAV< typename Req::Result >::value()) typename Req::Result(result);
 		this->~ReadWithConflictRangeRYWActorState();
 		static_cast<ReadWithConflictRangeRYWActor*>(this)->finishSendAndDelPromiseRef();
@@ -2285,17 +2285,17 @@ public:
 	}
 	int a_body1when2(Void const& _,int loopDepth) 
 	{
-															#line 388 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 388 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		return a_body1Catch1(internal_error(), loopDepth);
-															#line 2290 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2290 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 
 		return loopDepth;
 	}
 	int a_body1when2(Void && _,int loopDepth) 
 	{
-															#line 388 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 388 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		return a_body1Catch1(internal_error(), loopDepth);
-															#line 2298 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2298 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 
 		return loopDepth;
 	}
@@ -2396,22 +2396,22 @@ public:
 		fdb_probe_actor_exit("readWithConflictRangeRYW", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 374 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 374 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	ReadYourWritesTransaction* ryw;
-															#line 374 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 374 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	Req req;
-															#line 374 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 374 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	Snapshot snapshot;
-															#line 378 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 378 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	RYWIterator it;
-															#line 2407 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2407 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 };
 // This generated class is to be used only via readWithConflictRangeRYW()
-															#line 374 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 374 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 template <class Req>
-															#line 374 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 374 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 class ReadWithConflictRangeRYWActor final : public Actor<typename Req::Result>, public ActorCallback< ReadWithConflictRangeRYWActor<Req>, 0, typename Req::Result >, public ActorCallback< ReadWithConflictRangeRYWActor<Req>, 1, Void >, public FastAllocated<ReadWithConflictRangeRYWActor<Req>>, public ReadWithConflictRangeRYWActorState<Req, ReadWithConflictRangeRYWActor<Req>> {
-															#line 2414 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2414 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 public:
 	using FastAllocated<ReadWithConflictRangeRYWActor<Req>>::operator new;
 	using FastAllocated<ReadWithConflictRangeRYWActor<Req>>::operator delete;
@@ -2421,9 +2421,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< ReadWithConflictRangeRYWActor<Req>, 0, typename Req::Result >;
 friend struct ActorCallback< ReadWithConflictRangeRYWActor<Req>, 1, Void >;
-															#line 374 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 374 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	ReadWithConflictRangeRYWActor(ReadYourWritesTransaction* const& ryw,Req const& req,Snapshot const& snapshot) 
-															#line 2426 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2426 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		 : Actor<typename Req::Result>(),
 		   ReadWithConflictRangeRYWActorState<Req, ReadWithConflictRangeRYWActor<Req>>(ryw, req, snapshot)
 	{
@@ -2446,16 +2446,16 @@ friend struct ActorCallback< ReadWithConflictRangeRYWActor<Req>, 1, Void >;
 
 	}
 };
-															#line 374 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 374 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 template <class Req>
-															#line 374 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 374 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 [[nodiscard]] static Future<typename Req::Result> readWithConflictRangeRYW( ReadYourWritesTransaction* const& ryw, Req const& req, Snapshot const& snapshot ) {
-															#line 374 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 374 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	return Future<typename Req::Result>(new ReadWithConflictRangeRYWActor<Req>(ryw, req, snapshot));
-															#line 2455 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2455 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 }
 
-#line 392 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+#line 392 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	template <class Req>
 	static inline Future<typename Req::Result> readWithConflictRange(ReadYourWritesTransaction* ryw,
 	                                                                 Req const& req,
@@ -2653,48 +2653,48 @@ template <class Req>
 	}
 
 	// TODO: read to begin, read through end flags for result
-																#line 2656 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+																#line 2656 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 // This generated class is to be used only via getRangeValue()
-															#line 589 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 589 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 template <class Iter, class GetRangeValueActor>
-															#line 589 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 589 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 class GetRangeValueActorState {
-															#line 2662 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2662 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 public:
-															#line 589 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 589 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	GetRangeValueActorState(ReadYourWritesTransaction* const& ryw,KeySelector const& begin,KeySelector const& end,GetRangeLimits const& limits,Iter* const& pit) 
-															#line 589 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
-															#line 589 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 589 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
+															#line 589 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		 : ryw(ryw),
-															#line 589 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 589 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   begin(begin),
-															#line 589 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 589 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   end(end),
-															#line 589 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 589 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   limits(limits),
-															#line 589 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 589 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   pit(pit),
-															#line 595 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 595 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   it(*pit),
-															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 596 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   itEnd(*pit),
-															#line 597 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 597 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   result(),
-															#line 598 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 598 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   additionalRows(0),
-															#line 599 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 599 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   itemsPastEnd(0),
-															#line 600 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 600 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   requestCount(0),
-															#line 601 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 601 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   readToBegin(false),
-															#line 602 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 602 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   readThroughEnd(false),
-															#line 603 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 603 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   actualBeginOffset(begin.offset),
-															#line 604 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 604 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   actualEndOffset(end.offset)
-															#line 2697 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2697 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 	{
 		fdb_probe_actor_create("getRangeValue", reinterpret_cast<unsigned long>(this));
 
@@ -2707,17 +2707,17 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 607 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 607 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			resolveKeySelectorFromCache(begin, it, ryw->getMaxReadKey(), &readToBegin, &readThroughEnd, &actualBeginOffset);
-															#line 608 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 608 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			resolveKeySelectorFromCache(end, itEnd, ryw->getMaxReadKey(), &readToBegin, &readThroughEnd, &actualEndOffset);
-															#line 610 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 610 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (actualBeginOffset >= actualEndOffset && begin.getKey() >= end.getKey())
-															#line 2716 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2716 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
-															#line 611 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 611 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				if (!static_cast<GetRangeValueActor*>(this)->SAV<RangeResult>::futures) { (void)(RangeResultRef(false, false)); this->~GetRangeValueActorState(); static_cast<GetRangeValueActor*>(this)->destroy(); return 0; }
-															#line 2720 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2720 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				new (&static_cast<GetRangeValueActor*>(this)->SAV< RangeResult >::value()) RangeResult(RangeResultRef(false, false));
 				this->~GetRangeValueActorState();
 				static_cast<GetRangeValueActor*>(this)->finishSendAndDelPromiseRef();
@@ -2725,33 +2725,33 @@ public:
 			}
 			else
 			{
-															#line 612 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 612 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				if ((begin.isFirstGreaterOrEqual() && begin.getKey() == ryw->getMaxReadKey()) || (end.isFirstGreaterOrEqual() && end.getKey() == allKeys.begin))
-															#line 2730 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2730 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				{
-															#line 614 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 614 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 					if (!static_cast<GetRangeValueActor*>(this)->SAV<RangeResult>::futures) { (void)(RangeResultRef(readToBegin, readThroughEnd)); this->~GetRangeValueActorState(); static_cast<GetRangeValueActor*>(this)->destroy(); return 0; }
-															#line 2734 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2734 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 					new (&static_cast<GetRangeValueActor*>(this)->SAV< RangeResult >::value()) RangeResult(RangeResultRef(readToBegin, readThroughEnd));
 					this->~GetRangeValueActorState();
 					static_cast<GetRangeValueActor*>(this)->finishSendAndDelPromiseRef();
 					return 0;
 				}
 			}
-															#line 617 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 617 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (!end.isFirstGreaterOrEqual() && begin.getKey() > end.getKey())
-															#line 2743 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2743 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
-															#line 618 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 618 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				StrictFuture<Key> __when_expr_0 = read(ryw, GetKeyReq(end), pit);
-															#line 618 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 618 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				if (static_cast<GetRangeValueActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 2749 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2749 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 				static_cast<GetRangeValueActor*>(this)->actor_wait_state = 1;
-															#line 618 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 618 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< GetRangeValueActor, 0, Key >*>(static_cast<GetRangeValueActor*>(this)));
-															#line 2754 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2754 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				loopDepth = 0;
 			}
 			else
@@ -2777,38 +2777,38 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 638 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 638 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		;
-															#line 2782 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2782 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		loopDepth = a_body1cont1loopHead1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1cont5(Key const& resolvedEnd,int loopDepth) 
 	{
-															#line 619 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 619 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (resolvedEnd == allKeys.begin)
-															#line 2791 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2791 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 620 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 620 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			readToBegin = true;
-															#line 2795 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2795 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		}
-															#line 621 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 621 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (resolvedEnd == ryw->getMaxReadKey())
-															#line 2799 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2799 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 622 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 622 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			readThroughEnd = true;
-															#line 2803 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2803 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		}
-															#line 624 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 624 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (begin.getKey() >= resolvedEnd && !begin.isBackward())
-															#line 2807 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2807 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 625 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 625 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (!static_cast<GetRangeValueActor*>(this)->SAV<RangeResult>::futures) { (void)(RangeResultRef(false, false)); this->~GetRangeValueActorState(); static_cast<GetRangeValueActor*>(this)->destroy(); return 0; }
-															#line 2811 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2811 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			new (&static_cast<GetRangeValueActor*>(this)->SAV< RangeResult >::value()) RangeResult(RangeResultRef(false, false));
 			this->~GetRangeValueActorState();
 			static_cast<GetRangeValueActor*>(this)->finishSendAndDelPromiseRef();
@@ -2816,53 +2816,53 @@ public:
 		}
 		else
 		{
-															#line 626 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 626 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (resolvedEnd == allKeys.begin)
-															#line 2821 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2821 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
-															#line 627 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 627 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				if (!static_cast<GetRangeValueActor*>(this)->SAV<RangeResult>::futures) { (void)(RangeResultRef(readToBegin, readThroughEnd)); this->~GetRangeValueActorState(); static_cast<GetRangeValueActor*>(this)->destroy(); return 0; }
-															#line 2825 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2825 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				new (&static_cast<GetRangeValueActor*>(this)->SAV< RangeResult >::value()) RangeResult(RangeResultRef(readToBegin, readThroughEnd));
 				this->~GetRangeValueActorState();
 				static_cast<GetRangeValueActor*>(this)->finishSendAndDelPromiseRef();
 				return 0;
 			}
 		}
-															#line 630 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 630 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		resolveKeySelectorFromCache( begin, it, ryw->getMaxReadKey(), &readToBegin, &readThroughEnd, &actualBeginOffset);
-															#line 632 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 632 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		resolveKeySelectorFromCache( end, itEnd, ryw->getMaxReadKey(), &readToBegin, &readThroughEnd, &actualEndOffset);
-															#line 2836 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2836 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		loopDepth = a_body1cont1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1cont5(Key && resolvedEnd,int loopDepth) 
 	{
-															#line 619 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 619 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (resolvedEnd == allKeys.begin)
-															#line 2845 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2845 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 620 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 620 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			readToBegin = true;
-															#line 2849 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2849 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		}
-															#line 621 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 621 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (resolvedEnd == ryw->getMaxReadKey())
-															#line 2853 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2853 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 622 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 622 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			readThroughEnd = true;
-															#line 2857 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2857 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		}
-															#line 624 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 624 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (begin.getKey() >= resolvedEnd && !begin.isBackward())
-															#line 2861 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2861 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 625 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 625 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (!static_cast<GetRangeValueActor*>(this)->SAV<RangeResult>::futures) { (void)(RangeResultRef(false, false)); this->~GetRangeValueActorState(); static_cast<GetRangeValueActor*>(this)->destroy(); return 0; }
-															#line 2865 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2865 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			new (&static_cast<GetRangeValueActor*>(this)->SAV< RangeResult >::value()) RangeResult(RangeResultRef(false, false));
 			this->~GetRangeValueActorState();
 			static_cast<GetRangeValueActor*>(this)->finishSendAndDelPromiseRef();
@@ -2870,24 +2870,24 @@ public:
 		}
 		else
 		{
-															#line 626 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 626 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (resolvedEnd == allKeys.begin)
-															#line 2875 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2875 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
-															#line 627 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 627 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				if (!static_cast<GetRangeValueActor*>(this)->SAV<RangeResult>::futures) { (void)(RangeResultRef(readToBegin, readThroughEnd)); this->~GetRangeValueActorState(); static_cast<GetRangeValueActor*>(this)->destroy(); return 0; }
-															#line 2879 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2879 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				new (&static_cast<GetRangeValueActor*>(this)->SAV< RangeResult >::value()) RangeResult(RangeResultRef(readToBegin, readThroughEnd));
 				this->~GetRangeValueActorState();
 				static_cast<GetRangeValueActor*>(this)->finishSendAndDelPromiseRef();
 				return 0;
 			}
 		}
-															#line 630 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 630 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		resolveKeySelectorFromCache( begin, it, ryw->getMaxReadKey(), &readToBegin, &readThroughEnd, &actualBeginOffset);
-															#line 632 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 632 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		resolveKeySelectorFromCache( end, itEnd, ryw->getMaxReadKey(), &readToBegin, &readThroughEnd, &actualEndOffset);
-															#line 2890 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2890 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		loopDepth = a_body1cont1(loopDepth);
 
 		return loopDepth;
@@ -2957,35 +2957,35 @@ public:
 	}
 	int a_body1cont12(int loopDepth) 
 	{
-															#line 794 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 794 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		result.more = result.more || limits.isReached();
-															#line 796 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 796 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (end.isFirstGreaterOrEqual())
-															#line 2964 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2964 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 797 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 797 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			int keepItems = std::lower_bound(result.begin(), result.end(), end.getKey(), KeyValueRef::OrderByKey()) - result.begin();
-															#line 799 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 799 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (keepItems < result.size())
-															#line 2970 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2970 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
-															#line 800 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 800 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				result.more = false;
-															#line 2974 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2974 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			}
-															#line 801 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 801 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			result.resize(result.arena(), keepItems);
-															#line 2978 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2978 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		}
-															#line 804 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 804 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		result.readToBegin = readToBegin;
-															#line 805 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 805 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		result.readThroughEnd = !result.more && readThroughEnd;
-															#line 806 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 806 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		result.arena().dependsOn(ryw->arena);
-															#line 808 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 808 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (!static_cast<GetRangeValueActor*>(this)->SAV<RangeResult>::futures) { (void)(result); this->~GetRangeValueActorState(); static_cast<GetRangeValueActor*>(this)->destroy(); return 0; }
-															#line 2988 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 2988 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		new (&static_cast<GetRangeValueActor*>(this)->SAV< RangeResult >::value()) RangeResult(std::move(result)); // state_var_RVO
 		this->~GetRangeValueActorState();
 		static_cast<GetRangeValueActor*>(this)->finishSendAndDelPromiseRef();
@@ -3002,56 +3002,56 @@ public:
 	}
 	int a_body1cont1loopBody1(int loopDepth) 
 	{
-															#line 649 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 649 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (!result.size() && actualBeginOffset >= actualEndOffset && begin.getKey() >= end.getKey())
-															#line 3007 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3007 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 650 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 650 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (!static_cast<GetRangeValueActor*>(this)->SAV<RangeResult>::futures) { (void)(RangeResultRef(false, false)); this->~GetRangeValueActorState(); static_cast<GetRangeValueActor*>(this)->destroy(); return 0; }
-															#line 3011 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3011 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			new (&static_cast<GetRangeValueActor*>(this)->SAV< RangeResult >::value()) RangeResult(RangeResultRef(false, false));
 			this->~GetRangeValueActorState();
 			static_cast<GetRangeValueActor*>(this)->finishSendAndDelPromiseRef();
 			return 0;
 		}
-															#line 653 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 653 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (end.offset <= 1 && end.getKey() == allKeys.begin)
-															#line 3019 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3019 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 654 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 654 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (!static_cast<GetRangeValueActor*>(this)->SAV<RangeResult>::futures) { (void)(RangeResultRef(readToBegin, readThroughEnd)); this->~GetRangeValueActorState(); static_cast<GetRangeValueActor*>(this)->destroy(); return 0; }
-															#line 3023 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3023 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			new (&static_cast<GetRangeValueActor*>(this)->SAV< RangeResult >::value()) RangeResult(RangeResultRef(readToBegin, readThroughEnd));
 			this->~GetRangeValueActorState();
 			static_cast<GetRangeValueActor*>(this)->finishSendAndDelPromiseRef();
 			return 0;
 		}
-															#line 657 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 657 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if ((begin.offset >= end.offset && begin.getKey() >= end.getKey()) || (begin.offset >= 1 && begin.getKey() >= ryw->getMaxReadKey()))
-															#line 3031 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3031 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 659 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 659 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (end.isFirstGreaterOrEqual())
-															#line 3035 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3035 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
 				return a_body1cont1break1(loopDepth==0?0:loopDepth-1); // break
 			}
-															#line 661 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 661 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (!result.size())
-															#line 3041 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3041 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
 				return a_body1cont1break1(loopDepth==0?0:loopDepth-1); // break
 			}
-															#line 663 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 663 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			StrictFuture<Key> __when_expr_1 = read(ryw, GetKeyReq(end), pit);
-															#line 663 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 663 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (static_cast<GetRangeValueActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 3049 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3049 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), std::max(0, loopDepth - 1)); else return a_body1cont1loopBody1when1(__when_expr_1.get(), loopDepth); };
 			static_cast<GetRangeValueActor*>(this)->actor_wait_state = 2;
-															#line 663 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 663 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< GetRangeValueActor, 1, Key >*>(static_cast<GetRangeValueActor*>(this)));
-															#line 3054 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3054 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			loopDepth = 0;
 		}
 		else
@@ -3076,235 +3076,235 @@ public:
 	}
 	int a_body1cont1loopBody1cont1(int loopDepth) 
 	{
-															#line 675 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 675 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (!it.is_unreadable() && !it.is_unknown_range() && it.beginKey() > itEnd.beginKey())
-															#line 3081 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3081 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 676 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 676 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (end.isFirstGreaterOrEqual())
-															#line 3085 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3085 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
 				return a_body1cont1break1(loopDepth==0?0:loopDepth-1); // break
 			}
-															#line 678 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 678 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (!static_cast<GetRangeValueActor*>(this)->SAV<RangeResult>::futures) { (void)(RangeResultRef(readToBegin, readThroughEnd)); this->~GetRangeValueActorState(); static_cast<GetRangeValueActor*>(this)->destroy(); return 0; }
-															#line 3091 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3091 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			new (&static_cast<GetRangeValueActor*>(this)->SAV< RangeResult >::value()) RangeResult(RangeResultRef(readToBegin, readThroughEnd));
 			this->~GetRangeValueActorState();
 			static_cast<GetRangeValueActor*>(this)->finishSendAndDelPromiseRef();
 			return 0;
 		}
-															#line 681 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 681 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (limits.isReached() && itemsPastEnd >= 1 - end.offset)
-															#line 3099 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3099 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
 			return a_body1cont1break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 684 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 684 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (it == itEnd && ((!it.is_unreadable() && !it.is_unknown_range()) || (begin.offset > 0 && end.isFirstGreaterOrEqual() && end.getKey() == it.beginKey())))
-															#line 3105 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3105 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
 			return a_body1cont1break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 688 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 688 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (it.is_unknown_range())
-															#line 3111 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3111 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 689 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 689 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (limits.hasByteLimit() && result.size() && itemsPastEnd >= 1 - end.offset)
-															#line 3115 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3115 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
-															#line 690 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 690 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				result.more = true;
-															#line 3119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3119 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				return a_body1cont1break1(loopDepth==0?0:loopDepth-1); // break
 			}
-															#line 694 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 694 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			Iter ucEnd(it);
-															#line 695 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 695 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			int singleClears = 0;
-															#line 696 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 696 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			int clearLimit = requestCount ? 1 << std::min(requestCount, 20) : 0;
-															#line 697 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 697 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (it.beginKey() < itEnd.beginKey())
-															#line 3130 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3130 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
-															#line 698 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 698 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				singleClears = std::min(skipUncached(ucEnd, itEnd, BUGGIFY ? 0 : clearLimit + 100), clearLimit);
-															#line 3134 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3134 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			}
-															#line 700 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 700 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			read_end = KeySelector();
-															#line 701 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 701 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (ucEnd != itEnd)
-															#line 3140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3140 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
-															#line 702 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 702 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				Key k = ucEnd.endKey().toStandaloneStringRef();
-															#line 703 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 703 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				read_end = KeySelector(firstGreaterOrEqual(k), k.arena());
-															#line 704 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 704 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				if (end.offset < 1)
-															#line 3148 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3148 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				{
-															#line 705 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 705 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 					additionalRows += 1 - end.offset;
-															#line 3152 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3152 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				}
 			}
 			else
 			{
-															#line 706 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 706 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				if (end.offset < 1)
-															#line 3159 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3159 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				{
-															#line 707 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 707 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 					read_end = KeySelector(firstGreaterOrEqual(end.getKey()), end.arena());
-															#line 708 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 708 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 					additionalRows += 1 - end.offset;
-															#line 3165 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3165 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				}
 				else
 				{
-															#line 710 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 710 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 					read_end = end;
-															#line 711 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 711 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 					if (end.offset > 1)
-															#line 3173 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3173 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 					{
-															#line 712 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 712 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 						singleClears += countUncached(std::move(ucEnd), ryw->getMaxReadKey(), clearLimit - singleClears);
-															#line 714 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 714 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 						read_end.offset += singleClears;
-															#line 3179 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3179 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 					}
 				}
 			}
-															#line 718 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 718 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			additionalRows += singleClears;
-															#line 720 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 720 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			read_begin = KeySelector();
-															#line 721 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 721 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (begin.isFirstGreaterOrEqual())
-															#line 3189 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3189 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
-															#line 722 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 722 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				Key k = it.beginKey() > begin.getKey() ? it.beginKey().toStandaloneStringRef() : Key(begin.getKey(), begin.arena());
-															#line 724 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 724 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				begin = KeySelector(firstGreaterOrEqual(k), k.arena());
-															#line 725 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 725 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				read_begin = begin;
-															#line 3197 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3197 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			}
 			else
 			{
-															#line 726 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 726 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				if (begin.offset > 1)
-															#line 3203 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3203 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				{
-															#line 727 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 727 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 					read_begin = KeySelector(firstGreaterOrEqual(begin.getKey()), begin.arena());
-															#line 728 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 728 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 					additionalRows += begin.offset - 1;
-															#line 3209 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3209 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				}
 				else
 				{
-															#line 730 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 730 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 					read_begin = begin;
-															#line 731 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 731 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 					ucEnd = it;
-															#line 733 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 733 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 					singleClears = countUncachedBack(std::move(ucEnd), clearLimit);
-															#line 734 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 734 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 					read_begin.offset -= singleClears;
-															#line 735 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 735 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 					additionalRows += singleClears;
-															#line 3223 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3223 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				}
 			}
-															#line 738 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 738 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (read_end.getKey() < read_begin.getKey())
-															#line 3228 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3228 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
-															#line 739 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 739 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				read_end.setKey(read_begin.getKey());
-															#line 740 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 740 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				read_end.arena().dependsOn(read_begin.arena());
-															#line 3234 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3234 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			}
-															#line 743 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 743 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			requestLimit = limits;
-															#line 744 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 744 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			setRequestLimits(requestLimit, additionalRows, 2 - read_begin.offset, requestCount);
-															#line 745 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 745 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			requestCount++;
-															#line 747 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 747 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			ASSERT(!requestLimit.hasRowLimit() || requestLimit.rows > 0);
-															#line 748 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 748 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			ASSERT(requestLimit.hasRowLimit() || requestLimit.hasByteLimit());
-															#line 752 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 752 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			additionalRows = 0;
-															#line 753 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 753 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			StrictFuture<RangeResult> __when_expr_2 = ryw->tr.getRange(read_begin, read_end, requestLimit, Snapshot::True, Reverse::False);
-															#line 753 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 753 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (static_cast<GetRangeValueActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 3252 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3252 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), std::max(0, loopDepth - 1)); else return a_body1cont1loopBody1cont1when1(__when_expr_2.get(), loopDepth); };
 			static_cast<GetRangeValueActor*>(this)->actor_wait_state = 3;
-															#line 753 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 753 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< GetRangeValueActor, 2, RangeResult >*>(static_cast<GetRangeValueActor*>(this)));
-															#line 3257 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3257 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			loopDepth = 0;
 		}
 		else
 		{
-															#line 767 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 767 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (it.is_kv())
-															#line 3264 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3264 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
-															#line 768 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 768 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				KeyValueRef const* start = it.kv(ryw->arena);
-															#line 769 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 769 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				if (start == nullptr)
-															#line 3270 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3270 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				{
-															#line 770 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 770 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 					++it;
-															#line 3274 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3274 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 					return a_body1cont1loopHead1(loopDepth); // continue
 				}
-															#line 773 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 773 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				it.skipContiguous(end.isFirstGreaterOrEqual() ? end.getKey() : ryw->getMaxReadKey());
-															#line 778 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 778 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				int maxCount = it.kv(ryw->arena) - start + 1;
-															#line 779 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 779 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				int count = 0;
-															#line 780 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 780 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				for(;count < maxCount && !limits.isReached();count++) {
-															#line 781 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 781 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 					limits.decrement(start[count]);
-															#line 3287 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3287 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				}
-															#line 784 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 784 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				itemsPastEnd += maxCount - count;
-															#line 787 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 787 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				if (count)
-															#line 3293 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3293 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				{
-															#line 788 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 788 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 					result.append(result.arena(), start, count);
-															#line 3297 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3297 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				}
-															#line 789 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 789 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				++it;
-															#line 3301 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3301 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			}
 			else
 			{
-															#line 791 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 791 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				++it;
-															#line 3307 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3307 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			}
 			loopDepth = a_body1cont1loopBody1cont10(loopDepth);
 		}
@@ -3313,50 +3313,50 @@ public:
 	}
 	int a_body1cont1loopBody1cont4(Key const& resolvedEnd,int loopDepth) 
 	{
-															#line 667 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 667 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (resolvedEnd == allKeys.begin)
-															#line 3318 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3318 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 668 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 668 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			readToBegin = true;
-															#line 3322 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3322 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		}
-															#line 669 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 669 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (resolvedEnd == ryw->getMaxReadKey())
-															#line 3326 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3326 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 670 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 670 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			readThroughEnd = true;
-															#line 3330 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3330 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		}
-															#line 671 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 671 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		end = firstGreaterOrEqual(resolvedEnd);
-															#line 3334 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3334 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		return a_body1cont1break1(loopDepth==0?0:loopDepth-1); // break
 
 		return loopDepth;
 	}
 	int a_body1cont1loopBody1cont4(Key && resolvedEnd,int loopDepth) 
 	{
-															#line 667 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 667 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (resolvedEnd == allKeys.begin)
-															#line 3343 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3343 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 668 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 668 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			readToBegin = true;
-															#line 3347 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3347 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		}
-															#line 669 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 669 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (resolvedEnd == ryw->getMaxReadKey())
-															#line 3351 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3351 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 670 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 670 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			readThroughEnd = true;
-															#line 3355 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3355 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		}
-															#line 671 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 671 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		end = firstGreaterOrEqual(resolvedEnd);
-															#line 3359 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3359 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		return a_body1cont1break1(loopDepth==0?0:loopDepth-1); // break
 
 		return loopDepth;
@@ -3432,42 +3432,42 @@ public:
 	}
 	int a_body1cont1loopBody1cont15(RangeResult const& snapshot_read,int loopDepth) 
 	{
-															#line 755 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 755 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		KeyRangeRef range = getKnownKeyRange(snapshot_read, read_begin, read_end, ryw->arena);
-															#line 759 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 759 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (ryw->cache.insert(range, snapshot_read))
-															#line 3439 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3439 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 760 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 760 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			ryw->arena.dependsOn(snapshot_read.arena());
-															#line 3443 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3443 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		}
-															#line 763 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 763 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		resolveKeySelectorFromCache( begin, it, ryw->getMaxReadKey(), &readToBegin, &readThroughEnd, &actualBeginOffset);
-															#line 765 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 765 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		resolveKeySelectorFromCache( end, itEnd, ryw->getMaxReadKey(), &readToBegin, &readThroughEnd, &actualEndOffset);
-															#line 3449 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3449 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		loopDepth = a_body1cont1loopBody1cont10(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1cont1loopBody1cont15(RangeResult && snapshot_read,int loopDepth) 
 	{
-															#line 755 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 755 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		KeyRangeRef range = getKnownKeyRange(snapshot_read, read_begin, read_end, ryw->arena);
-															#line 759 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 759 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (ryw->cache.insert(range, snapshot_read))
-															#line 3460 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3460 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 760 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 760 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			ryw->arena.dependsOn(snapshot_read.arena());
-															#line 3464 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3464 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		}
-															#line 763 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 763 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		resolveKeySelectorFromCache( begin, it, ryw->getMaxReadKey(), &readToBegin, &readThroughEnd, &actualBeginOffset);
-															#line 765 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 765 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		resolveKeySelectorFromCache( end, itEnd, ryw->getMaxReadKey(), &readToBegin, &readThroughEnd, &actualEndOffset);
-															#line 3470 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3470 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		loopDepth = a_body1cont1loopBody1cont10(loopDepth);
 
 		return loopDepth;
@@ -3535,50 +3535,50 @@ public:
 		fdb_probe_actor_exit("getRangeValue", reinterpret_cast<unsigned long>(this), 2);
 
 	}
-															#line 589 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 589 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	ReadYourWritesTransaction* ryw;
-															#line 589 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 589 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	KeySelector begin;
-															#line 589 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 589 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	KeySelector end;
-															#line 589 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 589 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	GetRangeLimits limits;
-															#line 589 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 589 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	Iter* pit;
-															#line 595 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 595 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	Iter& it;
-															#line 596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 596 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	Iter itEnd;
-															#line 597 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 597 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	RangeResult result;
-															#line 598 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 598 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	int64_t additionalRows;
-															#line 599 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 599 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	int itemsPastEnd;
-															#line 600 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 600 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	int requestCount;
-															#line 601 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 601 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	bool readToBegin;
-															#line 602 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 602 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	bool readThroughEnd;
-															#line 603 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 603 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	int actualBeginOffset;
-															#line 604 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 604 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	int actualEndOffset;
-															#line 700 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 700 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	KeySelector read_end;
-															#line 720 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 720 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	KeySelector read_begin;
-															#line 743 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 743 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	GetRangeLimits requestLimit;
-															#line 3574 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3574 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 };
 // This generated class is to be used only via getRangeValue()
-															#line 589 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 589 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 template <class Iter>
-															#line 589 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 589 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 class GetRangeValueActor final : public Actor<RangeResult>, public ActorCallback< GetRangeValueActor<Iter>, 0, Key >, public ActorCallback< GetRangeValueActor<Iter>, 1, Key >, public ActorCallback< GetRangeValueActor<Iter>, 2, RangeResult >, public FastAllocated<GetRangeValueActor<Iter>>, public GetRangeValueActorState<Iter, GetRangeValueActor<Iter>> {
-															#line 3581 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3581 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 public:
 	using FastAllocated<GetRangeValueActor<Iter>>::operator new;
 	using FastAllocated<GetRangeValueActor<Iter>>::operator delete;
@@ -3589,9 +3589,9 @@ public:
 friend struct ActorCallback< GetRangeValueActor<Iter>, 0, Key >;
 friend struct ActorCallback< GetRangeValueActor<Iter>, 1, Key >;
 friend struct ActorCallback< GetRangeValueActor<Iter>, 2, RangeResult >;
-															#line 589 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 589 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	GetRangeValueActor(ReadYourWritesTransaction* const& ryw,KeySelector const& begin,KeySelector const& end,GetRangeLimits const& limits,Iter* const& pit) 
-															#line 3594 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3594 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		 : Actor<RangeResult>(),
 		   GetRangeValueActorState<Iter, GetRangeValueActor<Iter>>(ryw, begin, end, limits, pit)
 	{
@@ -3616,16 +3616,16 @@ friend struct ActorCallback< GetRangeValueActor<Iter>, 2, RangeResult >;
 
 	}
 };
-															#line 589 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 589 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 template <class Iter>
-															#line 589 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 589 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 [[nodiscard]] static Future<RangeResult> getRangeValue( ReadYourWritesTransaction* const& ryw, KeySelector const& begin, KeySelector const& end, GetRangeLimits const& limits, Iter* const& pit ) {
-															#line 589 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 589 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	return Future<RangeResult>(new GetRangeValueActor<Iter>(ryw, begin, end, limits, pit));
-															#line 3625 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3625 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 }
 
-#line 810 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+#line 810 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 
 	static KeyRangeRef getKnownKeyRangeBack(RangeResultRef data, KeySelector begin, KeySelector end, Arena& arena) {
 		StringRef beginKey = !data.more && begin.offset <= 1 ? begin.getKey() : allKeys.end;
@@ -3707,48 +3707,48 @@ template <class Iter>
 		return singleEmpty;
 	}
 
-																#line 3710 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+																#line 3710 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 // This generated class is to be used only via getRangeValueBack()
-															#line 891 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 891 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 template <class Iter, class GetRangeValueBackActor>
-															#line 891 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 891 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 class GetRangeValueBackActorState {
-															#line 3716 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3716 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 public:
-															#line 891 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 891 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	GetRangeValueBackActorState(ReadYourWritesTransaction* const& ryw,KeySelector const& begin,KeySelector const& end,GetRangeLimits const& limits,Iter* const& pit) 
-															#line 891 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
-															#line 891 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 891 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
+															#line 891 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		 : ryw(ryw),
-															#line 891 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 891 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   begin(begin),
-															#line 891 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 891 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   end(end),
-															#line 891 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 891 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   limits(limits),
-															#line 891 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 891 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   pit(pit),
-															#line 897 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 897 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   it(*pit),
-															#line 898 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 898 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   itEnd(*pit),
-															#line 899 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 899 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   result(),
-															#line 900 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 900 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   additionalRows(0),
-															#line 901 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 901 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   itemsPastBegin(0),
-															#line 902 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 902 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   requestCount(0),
-															#line 903 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 903 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   readToBegin(false),
-															#line 904 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 904 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   readThroughEnd(false),
-															#line 905 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 905 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   actualBeginOffset(begin.offset),
-															#line 906 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 906 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   actualEndOffset(end.offset)
-															#line 3751 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3751 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 	{
 		fdb_probe_actor_create("getRangeValueBack", reinterpret_cast<unsigned long>(this));
 
@@ -3761,17 +3761,17 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 909 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 909 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			resolveKeySelectorFromCache(end, it, ryw->getMaxReadKey(), &readToBegin, &readThroughEnd, &actualEndOffset);
-															#line 910 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 910 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			resolveKeySelectorFromCache( begin, itEnd, ryw->getMaxReadKey(), &readToBegin, &readThroughEnd, &actualBeginOffset);
-															#line 913 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 913 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (actualBeginOffset >= actualEndOffset && begin.getKey() >= end.getKey())
-															#line 3770 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3770 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
-															#line 914 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 914 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				if (!static_cast<GetRangeValueBackActor*>(this)->SAV<RangeResult>::futures) { (void)(RangeResultRef(false, false)); this->~GetRangeValueBackActorState(); static_cast<GetRangeValueBackActor*>(this)->destroy(); return 0; }
-															#line 3774 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3774 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				new (&static_cast<GetRangeValueBackActor*>(this)->SAV< RangeResult >::value()) RangeResult(RangeResultRef(false, false));
 				this->~GetRangeValueBackActorState();
 				static_cast<GetRangeValueBackActor*>(this)->finishSendAndDelPromiseRef();
@@ -3779,33 +3779,33 @@ public:
 			}
 			else
 			{
-															#line 915 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 915 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				if ((begin.isFirstGreaterOrEqual() && begin.getKey() == ryw->getMaxReadKey()) || (end.isFirstGreaterOrEqual() && end.getKey() == allKeys.begin))
-															#line 3784 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3784 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				{
-															#line 917 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 917 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 					if (!static_cast<GetRangeValueBackActor*>(this)->SAV<RangeResult>::futures) { (void)(RangeResultRef(readToBegin, readThroughEnd)); this->~GetRangeValueBackActorState(); static_cast<GetRangeValueBackActor*>(this)->destroy(); return 0; }
-															#line 3788 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3788 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 					new (&static_cast<GetRangeValueBackActor*>(this)->SAV< RangeResult >::value()) RangeResult(RangeResultRef(readToBegin, readThroughEnd));
 					this->~GetRangeValueBackActorState();
 					static_cast<GetRangeValueBackActor*>(this)->finishSendAndDelPromiseRef();
 					return 0;
 				}
 			}
-															#line 920 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 920 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (!begin.isFirstGreaterOrEqual() && begin.getKey() > end.getKey())
-															#line 3797 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3797 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
-															#line 921 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 921 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				StrictFuture<Key> __when_expr_0 = read(ryw, GetKeyReq(begin), pit);
-															#line 921 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 921 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				if (static_cast<GetRangeValueBackActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 3803 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3803 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 				static_cast<GetRangeValueBackActor*>(this)->actor_wait_state = 1;
-															#line 921 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 921 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< GetRangeValueBackActor, 0, Key >*>(static_cast<GetRangeValueBackActor*>(this)));
-															#line 3808 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3808 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				loopDepth = 0;
 			}
 			else
@@ -3831,38 +3831,38 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 940 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 940 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		;
-															#line 3836 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3836 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		loopDepth = a_body1cont1loopHead1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1cont5(Key const& resolvedBegin,int loopDepth) 
 	{
-															#line 922 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 922 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (resolvedBegin == allKeys.begin)
-															#line 3845 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3845 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 923 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 923 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			readToBegin = true;
-															#line 3849 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3849 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		}
-															#line 924 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 924 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (resolvedBegin == ryw->getMaxReadKey())
-															#line 3853 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3853 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 925 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 925 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			readThroughEnd = true;
-															#line 3857 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3857 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		}
-															#line 927 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 927 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (resolvedBegin >= end.getKey() && end.offset <= 1)
-															#line 3861 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3861 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 928 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 928 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (!static_cast<GetRangeValueBackActor*>(this)->SAV<RangeResult>::futures) { (void)(RangeResultRef(false, false)); this->~GetRangeValueBackActorState(); static_cast<GetRangeValueBackActor*>(this)->destroy(); return 0; }
-															#line 3865 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3865 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			new (&static_cast<GetRangeValueBackActor*>(this)->SAV< RangeResult >::value()) RangeResult(RangeResultRef(false, false));
 			this->~GetRangeValueBackActorState();
 			static_cast<GetRangeValueBackActor*>(this)->finishSendAndDelPromiseRef();
@@ -3870,53 +3870,53 @@ public:
 		}
 		else
 		{
-															#line 929 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 929 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (resolvedBegin == ryw->getMaxReadKey())
-															#line 3875 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3875 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
-															#line 930 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 930 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				if (!static_cast<GetRangeValueBackActor*>(this)->SAV<RangeResult>::futures) { (void)(RangeResultRef(readToBegin, readThroughEnd)); this->~GetRangeValueBackActorState(); static_cast<GetRangeValueBackActor*>(this)->destroy(); return 0; }
-															#line 3879 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3879 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				new (&static_cast<GetRangeValueBackActor*>(this)->SAV< RangeResult >::value()) RangeResult(RangeResultRef(readToBegin, readThroughEnd));
 				this->~GetRangeValueBackActorState();
 				static_cast<GetRangeValueBackActor*>(this)->finishSendAndDelPromiseRef();
 				return 0;
 			}
 		}
-															#line 933 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 933 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		resolveKeySelectorFromCache(end, it, ryw->getMaxReadKey(), &readToBegin, &readThroughEnd, &actualEndOffset);
-															#line 934 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 934 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		resolveKeySelectorFromCache( begin, itEnd, ryw->getMaxReadKey(), &readToBegin, &readThroughEnd, &actualBeginOffset);
-															#line 3890 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3890 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		loopDepth = a_body1cont1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1cont5(Key && resolvedBegin,int loopDepth) 
 	{
-															#line 922 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 922 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (resolvedBegin == allKeys.begin)
-															#line 3899 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3899 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 923 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 923 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			readToBegin = true;
-															#line 3903 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3903 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		}
-															#line 924 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 924 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (resolvedBegin == ryw->getMaxReadKey())
-															#line 3907 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3907 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 925 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 925 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			readThroughEnd = true;
-															#line 3911 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3911 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		}
-															#line 927 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 927 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (resolvedBegin >= end.getKey() && end.offset <= 1)
-															#line 3915 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3915 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 928 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 928 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (!static_cast<GetRangeValueBackActor*>(this)->SAV<RangeResult>::futures) { (void)(RangeResultRef(false, false)); this->~GetRangeValueBackActorState(); static_cast<GetRangeValueBackActor*>(this)->destroy(); return 0; }
-															#line 3919 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3919 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			new (&static_cast<GetRangeValueBackActor*>(this)->SAV< RangeResult >::value()) RangeResult(RangeResultRef(false, false));
 			this->~GetRangeValueBackActorState();
 			static_cast<GetRangeValueBackActor*>(this)->finishSendAndDelPromiseRef();
@@ -3924,24 +3924,24 @@ public:
 		}
 		else
 		{
-															#line 929 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 929 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (resolvedBegin == ryw->getMaxReadKey())
-															#line 3929 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3929 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
-															#line 930 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 930 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				if (!static_cast<GetRangeValueBackActor*>(this)->SAV<RangeResult>::futures) { (void)(RangeResultRef(readToBegin, readThroughEnd)); this->~GetRangeValueBackActorState(); static_cast<GetRangeValueBackActor*>(this)->destroy(); return 0; }
-															#line 3933 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3933 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				new (&static_cast<GetRangeValueBackActor*>(this)->SAV< RangeResult >::value()) RangeResult(RangeResultRef(readToBegin, readThroughEnd));
 				this->~GetRangeValueBackActorState();
 				static_cast<GetRangeValueBackActor*>(this)->finishSendAndDelPromiseRef();
 				return 0;
 			}
 		}
-															#line 933 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 933 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		resolveKeySelectorFromCache(end, it, ryw->getMaxReadKey(), &readToBegin, &readThroughEnd, &actualEndOffset);
-															#line 934 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 934 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		resolveKeySelectorFromCache( begin, itEnd, ryw->getMaxReadKey(), &readToBegin, &readThroughEnd, &actualBeginOffset);
-															#line 3944 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 3944 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		loopDepth = a_body1cont1(loopDepth);
 
 		return loopDepth;
@@ -4011,35 +4011,35 @@ public:
 	}
 	int a_body1cont12(int loopDepth) 
 	{
-															#line 1106 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1106 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		result.more = result.more || limits.isReached();
-															#line 1108 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1108 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (begin.isFirstGreaterOrEqual())
-															#line 4018 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4018 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 1109 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1109 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			int keepItems = result.rend() - std::lower_bound(result.rbegin(), result.rend(), begin.getKey(), KeyValueRef::OrderByKey());
-															#line 1111 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1111 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (keepItems < result.size())
-															#line 4024 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4024 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
-															#line 1112 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1112 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				result.more = false;
-															#line 4028 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4028 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			}
-															#line 1114 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1114 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			result.resize(result.arena(), keepItems);
-															#line 4032 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4032 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		}
-															#line 1117 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1117 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		result.readToBegin = !result.more && readToBegin;
-															#line 1118 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1118 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		result.readThroughEnd = readThroughEnd;
-															#line 1119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1119 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		result.arena().dependsOn(ryw->arena);
-															#line 1121 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1121 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (!static_cast<GetRangeValueBackActor*>(this)->SAV<RangeResult>::futures) { (void)(result); this->~GetRangeValueBackActorState(); static_cast<GetRangeValueBackActor*>(this)->destroy(); return 0; }
-															#line 4042 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4042 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		new (&static_cast<GetRangeValueBackActor*>(this)->SAV< RangeResult >::value()) RangeResult(std::move(result)); // state_var_RVO
 		this->~GetRangeValueBackActorState();
 		static_cast<GetRangeValueBackActor*>(this)->finishSendAndDelPromiseRef();
@@ -4056,56 +4056,56 @@ public:
 	}
 	int a_body1cont1loopBody1(int loopDepth) 
 	{
-															#line 952 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 952 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (!result.size() && actualBeginOffset >= actualEndOffset && begin.getKey() >= end.getKey())
-															#line 4061 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4061 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 953 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 953 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (!static_cast<GetRangeValueBackActor*>(this)->SAV<RangeResult>::futures) { (void)(RangeResultRef(false, false)); this->~GetRangeValueBackActorState(); static_cast<GetRangeValueBackActor*>(this)->destroy(); return 0; }
-															#line 4065 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4065 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			new (&static_cast<GetRangeValueBackActor*>(this)->SAV< RangeResult >::value()) RangeResult(RangeResultRef(false, false));
 			this->~GetRangeValueBackActorState();
 			static_cast<GetRangeValueBackActor*>(this)->finishSendAndDelPromiseRef();
 			return 0;
 		}
-															#line 956 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 956 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (!begin.isBackward() && begin.getKey() >= ryw->getMaxReadKey())
-															#line 4073 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4073 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 957 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 957 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (!static_cast<GetRangeValueBackActor*>(this)->SAV<RangeResult>::futures) { (void)(RangeResultRef(readToBegin, readThroughEnd)); this->~GetRangeValueBackActorState(); static_cast<GetRangeValueBackActor*>(this)->destroy(); return 0; }
-															#line 4077 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4077 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			new (&static_cast<GetRangeValueBackActor*>(this)->SAV< RangeResult >::value()) RangeResult(RangeResultRef(readToBegin, readThroughEnd));
 			this->~GetRangeValueBackActorState();
 			static_cast<GetRangeValueBackActor*>(this)->finishSendAndDelPromiseRef();
 			return 0;
 		}
-															#line 960 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 960 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if ((begin.offset >= end.offset && begin.getKey() >= end.getKey()) || (end.offset <= 1 && end.getKey() == allKeys.begin))
-															#line 4085 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4085 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 962 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 962 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (begin.isFirstGreaterOrEqual())
-															#line 4089 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4089 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
 				return a_body1cont1break1(loopDepth==0?0:loopDepth-1); // break
 			}
-															#line 964 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 964 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (!result.size())
-															#line 4095 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4095 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
 				return a_body1cont1break1(loopDepth==0?0:loopDepth-1); // break
 			}
-															#line 966 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 966 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			StrictFuture<Key> __when_expr_1 = read(ryw, GetKeyReq(begin), pit);
-															#line 966 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 966 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (static_cast<GetRangeValueBackActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 4103 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4103 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), std::max(0, loopDepth - 1)); else return a_body1cont1loopBody1when1(__when_expr_1.get(), loopDepth); };
 			static_cast<GetRangeValueBackActor*>(this)->actor_wait_state = 2;
-															#line 966 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 966 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< GetRangeValueBackActor, 1, Key >*>(static_cast<GetRangeValueBackActor*>(this)));
-															#line 4108 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4108 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			loopDepth = 0;
 		}
 		else
@@ -4130,246 +4130,246 @@ public:
 	}
 	int a_body1cont1loopBody1cont1(int loopDepth) 
 	{
-															#line 978 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 978 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (itemsPastBegin >= begin.offset - 1 && !it.is_unreadable() && !it.is_unknown_range() && it.beginKey() < itEnd.beginKey())
-															#line 4135 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4135 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 980 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 980 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (begin.isFirstGreaterOrEqual())
-															#line 4139 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4139 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
 				return a_body1cont1break1(loopDepth==0?0:loopDepth-1); // break
 			}
-															#line 982 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 982 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (!static_cast<GetRangeValueBackActor*>(this)->SAV<RangeResult>::futures) { (void)(RangeResultRef(readToBegin, readThroughEnd)); this->~GetRangeValueBackActorState(); static_cast<GetRangeValueBackActor*>(this)->destroy(); return 0; }
-															#line 4145 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4145 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			new (&static_cast<GetRangeValueBackActor*>(this)->SAV< RangeResult >::value()) RangeResult(RangeResultRef(readToBegin, readThroughEnd));
 			this->~GetRangeValueBackActorState();
 			static_cast<GetRangeValueBackActor*>(this)->finishSendAndDelPromiseRef();
 			return 0;
 		}
-															#line 985 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 985 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (limits.isReached() && itemsPastBegin >= begin.offset - 1)
-															#line 4153 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4153 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
 			return a_body1cont1break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 988 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 988 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (end.isFirstGreaterOrEqual() && end.getKey() == it.beginKey())
-															#line 4159 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4159 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 989 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 989 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (itemsPastBegin >= begin.offset - 1 && it == itEnd)
-															#line 4163 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4163 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
 				return a_body1cont1break1(loopDepth==0?0:loopDepth-1); // break
 			}
-															#line 991 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 991 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			--it;
-															#line 4169 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4169 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		}
-															#line 994 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 994 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (it.is_unknown_range())
-															#line 4173 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4173 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 995 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 995 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (limits.hasByteLimit() && result.size() && itemsPastBegin >= begin.offset - 1)
-															#line 4177 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4177 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
-															#line 996 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 996 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				result.more = true;
-															#line 4181 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4181 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				return a_body1cont1break1(loopDepth==0?0:loopDepth-1); // break
 			}
-															#line 1000 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1000 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			Iter ucEnd(it);
-															#line 1001 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1001 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			int singleClears = 0;
-															#line 1002 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1002 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			int clearLimit = requestCount ? 1 << std::min(requestCount, 20) : 0;
-															#line 1003 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1003 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (it.beginKey() > itEnd.beginKey())
-															#line 4192 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4192 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
-															#line 1004 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1004 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				singleClears = std::min(skipUncachedBack(ucEnd, itEnd, BUGGIFY ? 0 : clearLimit + 100), clearLimit);
-															#line 4196 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4196 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			}
-															#line 1006 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1006 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			read_begin = KeySelector();
-															#line 1007 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1007 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (ucEnd != itEnd)
-															#line 4202 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4202 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
-															#line 1008 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1008 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				Key k = ucEnd.beginKey().toStandaloneStringRef();
-															#line 1009 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1009 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				read_begin = KeySelector(firstGreaterOrEqual(k), k.arena());
-															#line 1010 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1010 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				if (begin.offset > 1)
-															#line 4210 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4210 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				{
-															#line 1011 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1011 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 					additionalRows += begin.offset - 1;
-															#line 4214 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4214 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				}
 			}
 			else
 			{
-															#line 1012 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1012 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				if (begin.offset > 1)
-															#line 4221 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4221 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				{
-															#line 1013 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1013 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 					read_begin = KeySelector(firstGreaterOrEqual(begin.getKey()), begin.arena());
-															#line 1014 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1014 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 					additionalRows += begin.offset - 1;
-															#line 4227 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4227 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				}
 				else
 				{
-															#line 1016 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1016 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 					read_begin = begin;
-															#line 1017 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1017 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 					if (begin.offset < 1)
-															#line 4235 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4235 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 					{
-															#line 1018 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1018 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 						singleClears += countUncachedBack(std::move(ucEnd), clearLimit - singleClears);
-															#line 1019 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1019 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 						read_begin.offset -= singleClears;
-															#line 4241 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4241 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 					}
 				}
 			}
-															#line 1023 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1023 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			additionalRows += singleClears;
-															#line 1025 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1025 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			read_end = KeySelector();
-															#line 1026 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1026 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (end.isFirstGreaterOrEqual())
-															#line 4251 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4251 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
-															#line 1027 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1027 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				Key k = it.endKey() < end.getKey() ? it.endKey().toStandaloneStringRef() : end.getKey();
-															#line 1028 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1028 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				end = KeySelector(firstGreaterOrEqual(k), k.arena());
-															#line 1029 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1029 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				read_end = end;
-															#line 4259 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4259 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			}
 			else
 			{
-															#line 1030 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1030 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				if (end.offset < 1)
-															#line 4265 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4265 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				{
-															#line 1031 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1031 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 					read_end = KeySelector(firstGreaterOrEqual(end.getKey()), end.arena());
-															#line 1032 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1032 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 					additionalRows += 1 - end.offset;
-															#line 4271 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4271 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				}
 				else
 				{
-															#line 1034 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1034 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 					read_end = end;
-															#line 1035 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1035 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 					ucEnd = it;
-															#line 1037 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1037 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 					singleClears = countUncached(std::move(ucEnd), ryw->getMaxReadKey(), clearLimit);
-															#line 1038 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1038 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 					read_end.offset += singleClears;
-															#line 1039 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1039 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 					additionalRows += singleClears;
-															#line 4285 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4285 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				}
 			}
-															#line 1042 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1042 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (read_begin.getKey() > read_end.getKey())
-															#line 4290 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4290 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
-															#line 1043 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1043 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				read_begin.setKey(read_end.getKey());
-															#line 1044 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1044 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				read_begin.arena().dependsOn(read_end.arena());
-															#line 4296 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4296 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			}
-															#line 1047 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1047 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			requestLimit = limits;
-															#line 1048 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1048 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			setRequestLimits(requestLimit, additionalRows, read_end.offset, requestCount);
-															#line 1049 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1049 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			requestCount++;
-															#line 1051 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1051 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			ASSERT(!requestLimit.hasRowLimit() || requestLimit.rows > 0);
-															#line 1052 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1052 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			ASSERT(requestLimit.hasRowLimit() || requestLimit.hasByteLimit());
-															#line 1056 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1056 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			additionalRows = 0;
-															#line 1057 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1057 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			StrictFuture<RangeResult> __when_expr_2 = ryw->tr.getRange(read_begin, read_end, requestLimit, Snapshot::True, Reverse::True);
-															#line 1057 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1057 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (static_cast<GetRangeValueBackActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 4314 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4314 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), std::max(0, loopDepth - 1)); else return a_body1cont1loopBody1cont1when1(__when_expr_2.get(), loopDepth); };
 			static_cast<GetRangeValueBackActor*>(this)->actor_wait_state = 3;
-															#line 1057 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1057 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< GetRangeValueBackActor, 2, RangeResult >*>(static_cast<GetRangeValueBackActor*>(this)));
-															#line 4319 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4319 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			loopDepth = 0;
 		}
 		else
 		{
-															#line 1078 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1078 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			KeyValueRef const* end = it.is_kv() ? it.kv(ryw->arena) : nullptr;
-															#line 1079 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1079 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (end != nullptr)
-															#line 4328 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4328 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
-															#line 1080 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1080 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				it.skipContiguousBack(begin.isFirstGreaterOrEqual() ? begin.getKey() : allKeys.begin);
-															#line 1081 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1081 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				KeyValueRef const* start = it.kv(ryw->arena);
-															#line 1082 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1082 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				ASSERT(start != nullptr);
-															#line 1084 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1084 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				int maxCount = end - start + 1;
-															#line 1085 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1085 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				int count = 0;
-															#line 1086 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1086 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				for(;count < maxCount && !limits.isReached();count++) {
-															#line 1087 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1087 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 					limits.decrement(start[maxCount - count - 1]);
-															#line 4344 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4344 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				}
-															#line 1090 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1090 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				itemsPastBegin += maxCount - count;
-															#line 1092 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1092 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				if (count)
-															#line 4350 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4350 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				{
-															#line 1093 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1093 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 					int size = result.size();
-															#line 1094 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1094 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 					result.resize(result.arena(), size + count);
-															#line 1095 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1095 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 					for(int i = 0;i < count;i++) {
-															#line 1096 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1096 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 						result[size + i] = start[maxCount - i - 1];
-															#line 4360 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4360 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 					}
 				}
 			}
-															#line 1100 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1100 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (it == itEnd)
-															#line 4366 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4366 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
 				return a_body1cont1break1(loopDepth==0?0:loopDepth-1); // break
 			}
-															#line 1102 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1102 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			--it;
-															#line 4372 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4372 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			loopDepth = a_body1cont1loopBody1cont10(loopDepth);
 		}
 
@@ -4377,50 +4377,50 @@ public:
 	}
 	int a_body1cont1loopBody1cont4(Key const& resolvedBegin,int loopDepth) 
 	{
-															#line 970 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 970 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (resolvedBegin == allKeys.begin)
-															#line 4382 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4382 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 971 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 971 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			readToBegin = true;
-															#line 4386 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4386 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		}
-															#line 972 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 972 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (resolvedBegin == ryw->getMaxReadKey())
-															#line 4390 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4390 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 973 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 973 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			readThroughEnd = true;
-															#line 4394 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4394 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		}
-															#line 974 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 974 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		begin = firstGreaterOrEqual(resolvedBegin);
-															#line 4398 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4398 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		return a_body1cont1break1(loopDepth==0?0:loopDepth-1); // break
 
 		return loopDepth;
 	}
 	int a_body1cont1loopBody1cont4(Key && resolvedBegin,int loopDepth) 
 	{
-															#line 970 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 970 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (resolvedBegin == allKeys.begin)
-															#line 4407 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4407 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 971 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 971 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			readToBegin = true;
-															#line 4411 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4411 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		}
-															#line 972 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 972 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (resolvedBegin == ryw->getMaxReadKey())
-															#line 4415 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4415 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 973 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 973 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			readThroughEnd = true;
-															#line 4419 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4419 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		}
-															#line 974 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 974 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		begin = firstGreaterOrEqual(resolvedBegin);
-															#line 4423 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4423 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		return a_body1cont1break1(loopDepth==0?0:loopDepth-1); // break
 
 		return loopDepth;
@@ -4496,62 +4496,62 @@ public:
 	}
 	int a_body1cont1loopBody1cont16(RangeResult const& snapshot_read,int loopDepth) 
 	{
-															#line 1059 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1059 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		KeyRangeRef range = getKnownKeyRangeBack(snapshot_read, read_begin, read_end, ryw->arena);
-															#line 1063 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1063 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		RangeResultRef reversed;
-															#line 1064 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1064 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		reversed.resize(ryw->arena, snapshot_read.size());
-															#line 1065 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1065 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		for(int i = 0;i < snapshot_read.size();i++) {
-															#line 1066 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1066 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			reversed[snapshot_read.size() - i - 1] = snapshot_read[i];
-															#line 4509 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4509 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		}
-															#line 1069 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1069 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (ryw->cache.insert(range, reversed))
-															#line 4513 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4513 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 1070 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1070 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			ryw->arena.dependsOn(snapshot_read.arena());
-															#line 4517 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4517 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		}
-															#line 1073 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1073 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		resolveKeySelectorFromCache( end, it, ryw->getMaxReadKey(), &readToBegin, &readThroughEnd, &actualEndOffset);
-															#line 1075 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1075 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		resolveKeySelectorFromCache( begin, itEnd, ryw->getMaxReadKey(), &readToBegin, &readThroughEnd, &actualBeginOffset);
-															#line 4523 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4523 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		loopDepth = a_body1cont1loopBody1cont10(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1cont1loopBody1cont16(RangeResult && snapshot_read,int loopDepth) 
 	{
-															#line 1059 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1059 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		KeyRangeRef range = getKnownKeyRangeBack(snapshot_read, read_begin, read_end, ryw->arena);
-															#line 1063 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1063 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		RangeResultRef reversed;
-															#line 1064 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1064 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		reversed.resize(ryw->arena, snapshot_read.size());
-															#line 1065 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1065 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		for(int i = 0;i < snapshot_read.size();i++) {
-															#line 1066 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1066 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			reversed[snapshot_read.size() - i - 1] = snapshot_read[i];
-															#line 4540 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4540 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		}
-															#line 1069 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1069 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (ryw->cache.insert(range, reversed))
-															#line 4544 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4544 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 1070 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1070 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			ryw->arena.dependsOn(snapshot_read.arena());
-															#line 4548 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4548 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		}
-															#line 1073 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1073 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		resolveKeySelectorFromCache( end, it, ryw->getMaxReadKey(), &readToBegin, &readThroughEnd, &actualEndOffset);
-															#line 1075 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1075 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		resolveKeySelectorFromCache( begin, itEnd, ryw->getMaxReadKey(), &readToBegin, &readThroughEnd, &actualBeginOffset);
-															#line 4554 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4554 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		loopDepth = a_body1cont1loopBody1cont10(loopDepth);
 
 		return loopDepth;
@@ -4619,50 +4619,50 @@ public:
 		fdb_probe_actor_exit("getRangeValueBack", reinterpret_cast<unsigned long>(this), 2);
 
 	}
-															#line 891 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 891 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	ReadYourWritesTransaction* ryw;
-															#line 891 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 891 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	KeySelector begin;
-															#line 891 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 891 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	KeySelector end;
-															#line 891 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 891 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	GetRangeLimits limits;
-															#line 891 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 891 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	Iter* pit;
-															#line 897 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 897 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	Iter& it;
-															#line 898 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 898 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	Iter itEnd;
-															#line 899 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 899 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	RangeResult result;
-															#line 900 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 900 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	int64_t additionalRows;
-															#line 901 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 901 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	int itemsPastBegin;
-															#line 902 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 902 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	int requestCount;
-															#line 903 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 903 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	bool readToBegin;
-															#line 904 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 904 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	bool readThroughEnd;
-															#line 905 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 905 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	int actualBeginOffset;
-															#line 906 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 906 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	int actualEndOffset;
-															#line 1006 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1006 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	KeySelector read_begin;
-															#line 1025 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1025 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	KeySelector read_end;
-															#line 1047 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1047 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	GetRangeLimits requestLimit;
-															#line 4658 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4658 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 };
 // This generated class is to be used only via getRangeValueBack()
-															#line 891 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 891 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 template <class Iter>
-															#line 891 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 891 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 class GetRangeValueBackActor final : public Actor<RangeResult>, public ActorCallback< GetRangeValueBackActor<Iter>, 0, Key >, public ActorCallback< GetRangeValueBackActor<Iter>, 1, Key >, public ActorCallback< GetRangeValueBackActor<Iter>, 2, RangeResult >, public FastAllocated<GetRangeValueBackActor<Iter>>, public GetRangeValueBackActorState<Iter, GetRangeValueBackActor<Iter>> {
-															#line 4665 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4665 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 public:
 	using FastAllocated<GetRangeValueBackActor<Iter>>::operator new;
 	using FastAllocated<GetRangeValueBackActor<Iter>>::operator delete;
@@ -4673,9 +4673,9 @@ public:
 friend struct ActorCallback< GetRangeValueBackActor<Iter>, 0, Key >;
 friend struct ActorCallback< GetRangeValueBackActor<Iter>, 1, Key >;
 friend struct ActorCallback< GetRangeValueBackActor<Iter>, 2, RangeResult >;
-															#line 891 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 891 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	GetRangeValueBackActor(ReadYourWritesTransaction* const& ryw,KeySelector const& begin,KeySelector const& end,GetRangeLimits const& limits,Iter* const& pit) 
-															#line 4678 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4678 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		 : Actor<RangeResult>(),
 		   GetRangeValueBackActorState<Iter, GetRangeValueBackActor<Iter>>(ryw, begin, end, limits, pit)
 	{
@@ -4700,16 +4700,16 @@ friend struct ActorCallback< GetRangeValueBackActor<Iter>, 2, RangeResult >;
 
 	}
 };
-															#line 891 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 891 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 template <class Iter>
-															#line 891 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 891 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 [[nodiscard]] static Future<RangeResult> getRangeValueBack( ReadYourWritesTransaction* const& ryw, KeySelector const& begin, KeySelector const& end, GetRangeLimits const& limits, Iter* const& pit ) {
-															#line 891 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 891 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	return Future<RangeResult>(new GetRangeValueBackActor<Iter>(ryw, begin, end, limits, pit));
-															#line 4709 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4709 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 }
 
-#line 1123 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+#line 1123 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 
 #ifndef __INTEL_COMPILER
 #pragma region GetMappedRange
@@ -4727,24 +4727,24 @@ template <class Iter>
 		// read.limits, it);
 	};
 
-																#line 4730 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+																#line 4730 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 // This generated class is to be used only via readThrough()
-															#line 1140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1140 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 template <bool backwards, class ReadThroughActor2>
-															#line 1140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1140 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 class ReadThroughActor2State {
-															#line 4736 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4736 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 public:
-															#line 1140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1140 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	ReadThroughActor2State(ReadYourWritesTransaction* const& ryw,GetMappedRangeReq<backwards> const& read,Snapshot const& snapshot) 
-															#line 1140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
-															#line 1140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1140 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1140 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		 : ryw(ryw),
-															#line 1140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1140 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   read(read),
-															#line 1140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1140 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   snapshot(snapshot)
-															#line 4747 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4747 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 	{
 		fdb_probe_actor_create("readThrough", reinterpret_cast<unsigned long>(this));
 
@@ -4757,20 +4757,20 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 1144 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1144 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (backwards && read.end.offset > 1)
-															#line 4762 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4762 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
-															#line 1147 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1147 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				StrictFuture<Key> __when_expr_0 = ryw->tr.getKey(read.end, snapshot);
-															#line 1147 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1147 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				if (static_cast<ReadThroughActor2*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 4768 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4768 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 				static_cast<ReadThroughActor2*>(this)->actor_wait_state = 1;
-															#line 1147 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1147 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ReadThroughActor2, 0, Key >*>(static_cast<ReadThroughActor2*>(this)));
-															#line 4773 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4773 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				loopDepth = 0;
 			}
 			else
@@ -4796,35 +4796,35 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 1154 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1154 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		StrictFuture<MappedRangeResult> __when_expr_1 = ryw->tr.getMappedRange( read.begin, read.end, read.mapper, read.limits, snapshot, backwards ? Reverse::True : Reverse::False);
-															#line 1154 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1154 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (static_cast<ReadThroughActor2*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 4803 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4803 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<ReadThroughActor2*>(this)->actor_wait_state = 2;
-															#line 1154 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1154 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< ReadThroughActor2, 1, MappedRangeResult >*>(static_cast<ReadThroughActor2*>(this)));
-															#line 4808 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4808 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont2(Key const& key,int loopDepth) 
 	{
-															#line 1148 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1148 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (key > ryw->getMaxReadKey())
-															#line 4817 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4817 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 1149 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1149 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			read.end = firstGreaterOrEqual(ryw->getMaxReadKey());
-															#line 4821 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4821 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		}
 		else
 		{
-															#line 1151 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1151 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			read.end = KeySelector(firstGreaterOrEqual(key), key.arena());
-															#line 4827 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4827 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		}
 		loopDepth = a_body1cont1(loopDepth);
 
@@ -4832,19 +4832,19 @@ public:
 	}
 	int a_body1cont2(Key && key,int loopDepth) 
 	{
-															#line 1148 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1148 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (key > ryw->getMaxReadKey())
-															#line 4837 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4837 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 1149 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1149 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			read.end = firstGreaterOrEqual(ryw->getMaxReadKey());
-															#line 4841 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4841 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		}
 		else
 		{
-															#line 1151 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1151 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			read.end = KeySelector(firstGreaterOrEqual(key), key.arena());
-															#line 4847 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4847 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		}
 		loopDepth = a_body1cont1(loopDepth);
 
@@ -4915,9 +4915,9 @@ public:
 	}
 	int a_body1cont6(MappedRangeResult const& v,int loopDepth) 
 	{
-															#line 1156 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1156 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (!static_cast<ReadThroughActor2*>(this)->SAV<MappedRangeResult>::futures) { (void)(v); this->~ReadThroughActor2State(); static_cast<ReadThroughActor2*>(this)->destroy(); return 0; }
-															#line 4920 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4920 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		new (&static_cast<ReadThroughActor2*>(this)->SAV< MappedRangeResult >::value()) MappedRangeResult(v);
 		this->~ReadThroughActor2State();
 		static_cast<ReadThroughActor2*>(this)->finishSendAndDelPromiseRef();
@@ -4927,9 +4927,9 @@ public:
 	}
 	int a_body1cont6(MappedRangeResult && v,int loopDepth) 
 	{
-															#line 1156 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1156 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (!static_cast<ReadThroughActor2*>(this)->SAV<MappedRangeResult>::futures) { (void)(v); this->~ReadThroughActor2State(); static_cast<ReadThroughActor2*>(this)->destroy(); return 0; }
-															#line 4932 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 4932 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		new (&static_cast<ReadThroughActor2*>(this)->SAV< MappedRangeResult >::value()) MappedRangeResult(v);
 		this->~ReadThroughActor2State();
 		static_cast<ReadThroughActor2*>(this)->finishSendAndDelPromiseRef();
@@ -5000,20 +5000,20 @@ public:
 		fdb_probe_actor_exit("readThrough", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 1140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1140 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	ReadYourWritesTransaction* ryw;
-															#line 1140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1140 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	GetMappedRangeReq<backwards> read;
-															#line 1140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1140 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	Snapshot snapshot;
-															#line 5009 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 5009 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 };
 // This generated class is to be used only via readThrough()
-															#line 1140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1140 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 template <bool backwards>
-															#line 1140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1140 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 class ReadThroughActor2 final : public Actor<MappedRangeResult>, public ActorCallback< ReadThroughActor2<backwards>, 0, Key >, public ActorCallback< ReadThroughActor2<backwards>, 1, MappedRangeResult >, public FastAllocated<ReadThroughActor2<backwards>>, public ReadThroughActor2State<backwards, ReadThroughActor2<backwards>> {
-															#line 5016 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 5016 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 public:
 	using FastAllocated<ReadThroughActor2<backwards>>::operator new;
 	using FastAllocated<ReadThroughActor2<backwards>>::operator delete;
@@ -5023,9 +5023,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< ReadThroughActor2<backwards>, 0, Key >;
 friend struct ActorCallback< ReadThroughActor2<backwards>, 1, MappedRangeResult >;
-															#line 1140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1140 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	ReadThroughActor2(ReadYourWritesTransaction* const& ryw,GetMappedRangeReq<backwards> const& read,Snapshot const& snapshot) 
-															#line 5028 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 5028 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		 : Actor<MappedRangeResult>(),
 		   ReadThroughActor2State<backwards, ReadThroughActor2<backwards>>(ryw, read, snapshot)
 	{
@@ -5049,16 +5049,16 @@ friend struct ActorCallback< ReadThroughActor2<backwards>, 1, MappedRangeResult 
 
 	}
 };
-															#line 1140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1140 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 template <bool backwards>
-															#line 1140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1140 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 [[nodiscard]] static Future<MappedRangeResult> readThrough( ReadYourWritesTransaction* const& ryw, GetMappedRangeReq<backwards> const& read, Snapshot const& snapshot ) {
-															#line 1140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1140 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	return Future<MappedRangeResult>(new ReadThroughActor2<backwards>(ryw, read, snapshot));
-															#line 5058 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 5058 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 }
 
-#line 1158 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+#line 1158 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 
 	template <bool backwards>
 	static void addConflictRangeAndMustUnmodified(ReadYourWritesTransaction* ryw,
@@ -5092,24 +5092,24 @@ template <bool backwards>
 	}
 
 	// For Snapshot::True and NOT readYourWritesDisabled.
-																#line 5095 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+																#line 5095 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 // This generated class is to be used only via readWithConflictRangeRYW()
-															#line 1191 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1191 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 template <bool backwards, class ReadWithConflictRangeRYWActor1>
-															#line 1191 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1191 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 class ReadWithConflictRangeRYWActor1State {
-															#line 5101 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 5101 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 public:
-															#line 1191 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1191 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	ReadWithConflictRangeRYWActor1State(ReadYourWritesTransaction* const& ryw,GetMappedRangeReq<backwards> const& req,Snapshot const& snapshot) 
-															#line 1191 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
-															#line 1191 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1191 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1191 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		 : ryw(ryw),
-															#line 1191 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1191 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   req(req),
-															#line 1191 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1191 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   snapshot(snapshot)
-															#line 5112 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 5112 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 	{
 		fdb_probe_actor_create("readWithConflictRangeRYW", reinterpret_cast<unsigned long>(this));
 
@@ -5122,22 +5122,22 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 1196 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1196 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			StrictFuture<MappedRangeResult> __when_expr_0 = readThrough(ryw, req, Snapshot::True);
-															#line 1195 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1195 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (static_cast<ReadWithConflictRangeRYWActor1*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 5129 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 5129 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
-															#line 1204 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1204 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			StrictFuture<Void> __when_expr_1 = ryw->resetPromise.getFuture();
-															#line 5133 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 5133 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1when2(__when_expr_1.get(), loopDepth); };
 			static_cast<ReadWithConflictRangeRYWActor1*>(this)->actor_wait_state = 1;
-															#line 1196 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1196 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ReadWithConflictRangeRYWActor1, 0, MappedRangeResult >*>(static_cast<ReadWithConflictRangeRYWActor1*>(this)));
-															#line 1204 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1204 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< ReadWithConflictRangeRYWActor1, 1, Void >*>(static_cast<ReadWithConflictRangeRYWActor1*>(this)));
-															#line 5140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 5140 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -5158,13 +5158,13 @@ public:
 	}
 	int a_body1when1(MappedRangeResult const& result,int loopDepth) 
 	{
-															#line 1200 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1200 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		WriteMap::iterator writes(&ryw->writes);
-															#line 1201 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1201 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		addConflictRangeAndMustUnmodified<backwards>(ryw, req, writes, result);
-															#line 1202 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1202 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (!static_cast<ReadWithConflictRangeRYWActor1*>(this)->SAV<MappedRangeResult>::futures) { (void)(result); this->~ReadWithConflictRangeRYWActor1State(); static_cast<ReadWithConflictRangeRYWActor1*>(this)->destroy(); return 0; }
-															#line 5167 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 5167 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		new (&static_cast<ReadWithConflictRangeRYWActor1*>(this)->SAV< MappedRangeResult >::value()) MappedRangeResult(result);
 		this->~ReadWithConflictRangeRYWActor1State();
 		static_cast<ReadWithConflictRangeRYWActor1*>(this)->finishSendAndDelPromiseRef();
@@ -5174,13 +5174,13 @@ public:
 	}
 	int a_body1when1(MappedRangeResult && result,int loopDepth) 
 	{
-															#line 1200 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1200 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		WriteMap::iterator writes(&ryw->writes);
-															#line 1201 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1201 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		addConflictRangeAndMustUnmodified<backwards>(ryw, req, writes, result);
-															#line 1202 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1202 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (!static_cast<ReadWithConflictRangeRYWActor1*>(this)->SAV<MappedRangeResult>::futures) { (void)(result); this->~ReadWithConflictRangeRYWActor1State(); static_cast<ReadWithConflictRangeRYWActor1*>(this)->destroy(); return 0; }
-															#line 5183 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 5183 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		new (&static_cast<ReadWithConflictRangeRYWActor1*>(this)->SAV< MappedRangeResult >::value()) MappedRangeResult(result);
 		this->~ReadWithConflictRangeRYWActor1State();
 		static_cast<ReadWithConflictRangeRYWActor1*>(this)->finishSendAndDelPromiseRef();
@@ -5190,17 +5190,17 @@ public:
 	}
 	int a_body1when2(Void const& _,int loopDepth) 
 	{
-															#line 1205 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1205 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		return a_body1Catch1(internal_error(), loopDepth);
-															#line 5195 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 5195 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 
 		return loopDepth;
 	}
 	int a_body1when2(Void && _,int loopDepth) 
 	{
-															#line 1205 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1205 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		return a_body1Catch1(internal_error(), loopDepth);
-															#line 5203 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 5203 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 
 		return loopDepth;
 	}
@@ -5301,20 +5301,20 @@ public:
 		fdb_probe_actor_exit("readWithConflictRangeRYW", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 1191 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1191 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	ReadYourWritesTransaction* ryw;
-															#line 1191 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1191 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	GetMappedRangeReq<backwards> req;
-															#line 1191 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1191 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	Snapshot snapshot;
-															#line 5310 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 5310 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 };
 // This generated class is to be used only via readWithConflictRangeRYW()
-															#line 1191 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1191 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 template <bool backwards>
-															#line 1191 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1191 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 class ReadWithConflictRangeRYWActor1 final : public Actor<MappedRangeResult>, public ActorCallback< ReadWithConflictRangeRYWActor1<backwards>, 0, MappedRangeResult >, public ActorCallback< ReadWithConflictRangeRYWActor1<backwards>, 1, Void >, public FastAllocated<ReadWithConflictRangeRYWActor1<backwards>>, public ReadWithConflictRangeRYWActor1State<backwards, ReadWithConflictRangeRYWActor1<backwards>> {
-															#line 5317 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 5317 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 public:
 	using FastAllocated<ReadWithConflictRangeRYWActor1<backwards>>::operator new;
 	using FastAllocated<ReadWithConflictRangeRYWActor1<backwards>>::operator delete;
@@ -5324,9 +5324,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< ReadWithConflictRangeRYWActor1<backwards>, 0, MappedRangeResult >;
 friend struct ActorCallback< ReadWithConflictRangeRYWActor1<backwards>, 1, Void >;
-															#line 1191 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1191 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	ReadWithConflictRangeRYWActor1(ReadYourWritesTransaction* const& ryw,GetMappedRangeReq<backwards> const& req,Snapshot const& snapshot) 
-															#line 5329 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 5329 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		 : Actor<MappedRangeResult>(),
 		   ReadWithConflictRangeRYWActor1State<backwards, ReadWithConflictRangeRYWActor1<backwards>>(ryw, req, snapshot)
 	{
@@ -5349,16 +5349,16 @@ friend struct ActorCallback< ReadWithConflictRangeRYWActor1<backwards>, 1, Void 
 
 	}
 };
-															#line 1191 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1191 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 template <bool backwards>
-															#line 1191 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1191 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 [[nodiscard]] static Future<MappedRangeResult> readWithConflictRangeRYW( ReadYourWritesTransaction* const& ryw, GetMappedRangeReq<backwards> const& req, Snapshot const& snapshot ) {
-															#line 1191 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1191 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	return Future<MappedRangeResult>(new ReadWithConflictRangeRYWActor1<backwards>(ryw, req, snapshot));
-															#line 5358 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 5358 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 }
 
-#line 1209 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+#line 1209 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 
 	template <bool backwards>
 	static inline Future<MappedRangeResult> readWithConflictRangeForGetMappedRange(
@@ -5430,30 +5430,30 @@ template <bool backwards>
 		triggerWatches(ryw, singleKeyRange(key), val, valueKnown);
 	}
 
-																#line 5433 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+																#line 5433 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 // This generated class is to be used only via watch()
-															#line 1280 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1280 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 template <class WatchActor>
-															#line 1280 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1280 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 class WatchActorState {
-															#line 5439 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 5439 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 public:
-															#line 1280 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1280 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	WatchActorState(ReadYourWritesTransaction* const& ryw,Key const& key) 
-															#line 1280 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
-															#line 1280 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1280 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1280 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		 : ryw(ryw),
-															#line 1280 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1280 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   key(key),
-															#line 1281 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1281 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   val(),
-															#line 1282 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1282 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   watchFuture(),
-															#line 1283 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1283 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   watch(new Watch(key)),
-															#line 1284 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1284 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   done()
-															#line 5456 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 5456 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 	{
 		fdb_probe_actor_create("watch", reinterpret_cast<unsigned long>(this));
 
@@ -5466,37 +5466,37 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 1286 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1286 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			ryw->reading.add(done.getFuture());
-															#line 1288 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1288 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (!ryw->options.readYourWritesDisabled)
-															#line 5473 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 5473 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
-															#line 1289 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1289 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				ryw->watchMap[key].push_back(watch);
-															#line 1290 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1290 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				val = readWithConflictRange(ryw, GetValueReq(key), Snapshot::False);
-															#line 5479 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 5479 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			}
 			else
 			{
-															#line 1292 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1292 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				ryw->approximateSize += 2 * key.expectedSize() + 1;
-															#line 1293 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1293 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				val = ryw->tr.get(key);
-															#line 5487 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 5487 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			}
 			try {
-															#line 1297 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1297 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				StrictFuture<Void> __when_expr_0 = ryw->resetPromise.getFuture() || success(val) || watch->onChangeTrigger.getFuture();
-															#line 1297 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1297 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				if (static_cast<WatchActor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), loopDepth);
-															#line 5494 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 5494 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch2(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 				static_cast<WatchActor*>(this)->actor_wait_state = 1;
-															#line 1297 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1297 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< WatchActor, 0, Void >*>(static_cast<WatchActor*>(this)));
-															#line 5499 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 5499 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				loopDepth = 0;
 			}
 			catch (Error& error) {
@@ -5523,52 +5523,52 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 1303 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1303 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (watch->onChangeTrigger.getFuture().isReady())
-															#line 5528 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 5528 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 1304 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1304 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			done.send(Void());
-															#line 1305 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1305 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (watch->onChangeTrigger.getFuture().isError())
-															#line 5534 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 5534 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
-															#line 1306 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1306 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				return a_body1Catch1(watch->onChangeTrigger.getFuture().getError(), loopDepth);
-															#line 5538 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 5538 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			}
-															#line 1307 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1307 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (!static_cast<WatchActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~WatchActorState(); static_cast<WatchActor*>(this)->destroy(); return 0; }
-															#line 5542 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 5542 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			new (&static_cast<WatchActor*>(this)->SAV< Void >::value()) Void(Void());
 			this->~WatchActorState();
 			static_cast<WatchActor*>(this)->finishSendAndDelPromiseRef();
 			return 0;
 		}
-															#line 1310 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1310 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		watch->valuePresent = true;
-															#line 1311 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1311 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		watch->value = val.get();
-															#line 1313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1313 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (watch->setPresent && (watch->setValue.present() != watch->value.present() || (watch->value.present() && watch->setValue.get() != watch->value.get())))
-															#line 5554 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 5554 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 1315 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1315 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			watch->onChangeTrigger.send(Void());
-															#line 1316 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1316 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			done.send(Void());
-															#line 1317 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1317 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (!static_cast<WatchActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~WatchActorState(); static_cast<WatchActor*>(this)->destroy(); return 0; }
-															#line 5562 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 5562 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			new (&static_cast<WatchActor*>(this)->SAV< Void >::value()) Void(Void());
 			this->~WatchActorState();
 			static_cast<WatchActor*>(this)->finishSendAndDelPromiseRef();
 			return 0;
 		}
 		try {
-															#line 1321 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1321 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			watchFuture = ryw->tr.watch(watch);
-															#line 5571 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 5571 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			loopDepth = a_body1cont11(loopDepth);
 		}
 		catch (Error& error) {
@@ -5582,11 +5582,11 @@ public:
 	int a_body1Catch2(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 1299 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1299 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			done.send(Void());
-															#line 1300 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1300 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			return a_body1Catch1(e, loopDepth);
-															#line 5589 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 5589 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		}
 		catch (Error& error) {
 			loopDepth = a_body1Catch1(error, loopDepth);
@@ -5686,18 +5686,18 @@ public:
 	}
 	int a_body1cont6(int loopDepth) 
 	{
-															#line 1326 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1326 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		done.send(Void());
-															#line 1328 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1328 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = watchFuture;
-															#line 1328 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1328 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (static_cast<WatchActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 5695 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 5695 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont6when1(__when_expr_1.get(), loopDepth); };
 		static_cast<WatchActor*>(this)->actor_wait_state = 2;
-															#line 1328 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1328 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< WatchActor, 1, Void >*>(static_cast<WatchActor*>(this)));
-															#line 5700 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 5700 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -5705,11 +5705,11 @@ public:
 	int a_body1cont1Catch1(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 1323 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1323 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			done.send(Void());
-															#line 1324 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1324 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			return a_body1Catch1(e, loopDepth);
-															#line 5712 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 5712 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		}
 		catch (Error& error) {
 			loopDepth = a_body1Catch1(error, loopDepth);
@@ -5734,9 +5734,9 @@ public:
 	}
 	int a_body1cont12(Void const& _,int loopDepth) 
 	{
-															#line 1330 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1330 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (!static_cast<WatchActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~WatchActorState(); static_cast<WatchActor*>(this)->destroy(); return 0; }
-															#line 5739 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 5739 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		new (&static_cast<WatchActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~WatchActorState();
 		static_cast<WatchActor*>(this)->finishSendAndDelPromiseRef();
@@ -5746,9 +5746,9 @@ public:
 	}
 	int a_body1cont12(Void && _,int loopDepth) 
 	{
-															#line 1330 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1330 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (!static_cast<WatchActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~WatchActorState(); static_cast<WatchActor*>(this)->destroy(); return 0; }
-															#line 5751 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 5751 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		new (&static_cast<WatchActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~WatchActorState();
 		static_cast<WatchActor*>(this)->finishSendAndDelPromiseRef();
@@ -5819,24 +5819,24 @@ public:
 		fdb_probe_actor_exit("watch", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 1280 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1280 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	ReadYourWritesTransaction* ryw;
-															#line 1280 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1280 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	Key key;
-															#line 1281 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1281 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	Future<Optional<Value>> val;
-															#line 1282 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1282 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	Future<Void> watchFuture;
-															#line 1283 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1283 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	Reference<Watch> watch;
-															#line 1284 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1284 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	Promise<Void> done;
-															#line 5834 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 5834 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 };
 // This generated class is to be used only via watch()
-															#line 1280 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1280 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 class WatchActor final : public Actor<Void>, public ActorCallback< WatchActor, 0, Void >, public ActorCallback< WatchActor, 1, Void >, public FastAllocated<WatchActor>, public WatchActorState<WatchActor> {
-															#line 5839 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 5839 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 public:
 	using FastAllocated<WatchActor>::operator new;
 	using FastAllocated<WatchActor>::operator delete;
@@ -5846,9 +5846,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< WatchActor, 0, Void >;
 friend struct ActorCallback< WatchActor, 1, Void >;
-															#line 1280 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1280 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	WatchActor(ReadYourWritesTransaction* const& ryw,Key const& key) 
-															#line 5851 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 5851 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		 : Actor<Void>(),
 		   WatchActorState<WatchActor>(ryw, key)
 	{
@@ -5872,31 +5872,31 @@ friend struct ActorCallback< WatchActor, 1, Void >;
 
 	}
 };
-															#line 1280 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1280 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 [[nodiscard]] static Future<Void> watch( ReadYourWritesTransaction* const& ryw, Key const& key ) {
-															#line 1280 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1280 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	return Future<Void>(new WatchActor(ryw, key));
-															#line 5879 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 5879 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 }
 
-#line 1332 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+#line 1332 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 
-																#line 5884 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+																#line 5884 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 // This generated class is to be used only via simulateTimeoutInFlightCommit()
-															#line 1333 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1333 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 template <class SimulateTimeoutInFlightCommitActor>
-															#line 1333 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1333 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 class SimulateTimeoutInFlightCommitActorState {
-															#line 5890 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 5890 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 public:
-															#line 1333 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1333 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	SimulateTimeoutInFlightCommitActorState(ReadYourWritesTransaction* const& ryw_) 
-															#line 1333 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
-															#line 1333 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1333 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1333 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		 : ryw_(ryw_),
-															#line 1334 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1334 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   ryw(Reference<ReadYourWritesTransaction>::addRef(ryw_))
-															#line 5899 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 5899 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 	{
 		fdb_probe_actor_create("simulateTimeoutInFlightCommit", reinterpret_cast<unsigned long>(this));
 
@@ -5909,25 +5909,25 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 1335 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1335 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			ASSERT(ryw->options.timeoutInSeconds > 0);
-															#line 1336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1336 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (!ryw->resetPromise.isSet())
-															#line 5916 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 5916 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
-															#line 1337 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1337 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				ryw->resetPromise.sendError(transaction_timed_out());
-															#line 5920 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 5920 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			}
-															#line 1338 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1338 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			StrictFuture<Void> __when_expr_0 = delay(deterministicRandom()->random01() * 5);
-															#line 1338 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1338 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
-															#line 5926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 5926 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			static_cast<SimulateTimeoutInFlightCommitActor*>(this)->actor_wait_state = 1;
-															#line 1338 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1338 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< SimulateTimeoutInFlightCommitActor, 0, Void >*>(static_cast<SimulateTimeoutInFlightCommitActor*>(this)));
-															#line 5930 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 5930 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -5947,34 +5947,34 @@ public:
 	}
 	int a_body1cont1(Void const& _,int loopDepth) 
 	{
-															#line 1339 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1339 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		TraceEvent("ClientBuggifyInFlightCommit").log();
-															#line 1340 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1340 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = ryw->tr.commit();
-															#line 1340 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1340 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
-															#line 5956 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 5956 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		static_cast<SimulateTimeoutInFlightCommitActor*>(this)->actor_wait_state = 2;
-															#line 1340 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1340 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< SimulateTimeoutInFlightCommitActor, 1, Void >*>(static_cast<SimulateTimeoutInFlightCommitActor*>(this)));
-															#line 5960 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 5960 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont1(Void && _,int loopDepth) 
 	{
-															#line 1339 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1339 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		TraceEvent("ClientBuggifyInFlightCommit").log();
-															#line 1340 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1340 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = ryw->tr.commit();
-															#line 1340 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1340 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
-															#line 5973 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 5973 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		static_cast<SimulateTimeoutInFlightCommitActor*>(this)->actor_wait_state = 2;
-															#line 1340 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1340 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< SimulateTimeoutInFlightCommitActor, 1, Void >*>(static_cast<SimulateTimeoutInFlightCommitActor*>(this)));
-															#line 5977 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 5977 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -6119,23 +6119,23 @@ public:
 	}
 	int a_body1cont4(int loopDepth) 
 	{
-															#line 1333 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1333 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		delete static_cast<SimulateTimeoutInFlightCommitActor*>(this);
-															#line 6124 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6124 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		return 0;
 
 		return loopDepth;
 	}
-															#line 1333 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1333 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	ReadYourWritesTransaction* ryw_;
-															#line 1334 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1334 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	Reference<ReadYourWritesTransaction> ryw;
-															#line 6133 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6133 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 };
 // This generated class is to be used only via simulateTimeoutInFlightCommit()
-															#line 1333 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1333 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 class SimulateTimeoutInFlightCommitActor final : public Actor<void>, public ActorCallback< SimulateTimeoutInFlightCommitActor, 0, Void >, public ActorCallback< SimulateTimeoutInFlightCommitActor, 1, Void >, public FastAllocated<SimulateTimeoutInFlightCommitActor>, public SimulateTimeoutInFlightCommitActorState<SimulateTimeoutInFlightCommitActor> {
-															#line 6138 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6138 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 public:
 	using FastAllocated<SimulateTimeoutInFlightCommitActor>::operator new;
 	using FastAllocated<SimulateTimeoutInFlightCommitActor>::operator delete;
@@ -6145,9 +6145,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< SimulateTimeoutInFlightCommitActor, 0, Void >;
 friend struct ActorCallback< SimulateTimeoutInFlightCommitActor, 1, Void >;
-															#line 1333 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1333 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	SimulateTimeoutInFlightCommitActor(ReadYourWritesTransaction* const& ryw_) 
-															#line 6150 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6150 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		 : Actor<void>(),
 		   SimulateTimeoutInFlightCommitActorState<SimulateTimeoutInFlightCommitActor>(ryw_)
 	{
@@ -6161,29 +6161,29 @@ friend struct ActorCallback< SimulateTimeoutInFlightCommitActor, 1, Void >;
 
 	}
 };
-															#line 1333 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1333 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 static void simulateTimeoutInFlightCommit( ReadYourWritesTransaction* const& ryw_ ) {
-															#line 1333 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1333 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	new SimulateTimeoutInFlightCommitActor(ryw_);
-															#line 6168 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6168 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 }
 
-#line 1342 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+#line 1342 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 
-																#line 6173 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+																#line 6173 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 // This generated class is to be used only via commit()
-															#line 1343 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1343 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 template <class CommitActor>
-															#line 1343 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1343 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 class CommitActorState {
-															#line 6179 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6179 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 public:
-															#line 1343 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1343 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	CommitActorState(ReadYourWritesTransaction* const& ryw) 
-															#line 1343 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
-															#line 1343 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1343 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1343 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		 : ryw(ryw)
-															#line 6186 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6186 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 	{
 		fdb_probe_actor_create("commit", reinterpret_cast<unsigned long>(this));
 
@@ -6197,22 +6197,22 @@ public:
 	{
 		try {
 			try {
-															#line 1345 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1345 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				ryw->commitStarted = true;
-															#line 1347 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1347 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				if (ryw->options.specialKeySpaceChangeConfiguration)
-															#line 6204 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6204 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				{
-															#line 1348 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1348 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 					StrictFuture<Void> __when_expr_0 = ryw->getDatabase()->specialKeySpace->commit(ryw);
-															#line 1348 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1348 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 					if (static_cast<CommitActor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), loopDepth);
-															#line 6210 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6210 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 					if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch2(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 					static_cast<CommitActor*>(this)->actor_wait_state = 1;
-															#line 1348 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1348 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 					__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< CommitActor, 0, Void >*>(static_cast<CommitActor*>(this)));
-															#line 6215 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6215 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 					loopDepth = 0;
 				}
 				else
@@ -6245,26 +6245,26 @@ public:
 	int a_body1Catch2(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 1405 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1405 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (!ryw->tr.apiVersionAtLeast(410))
-															#line 6250 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6250 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
-															#line 1406 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1406 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				ryw->commitStarted = false;
-															#line 1407 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1407 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				if (!ryw->resetPromise.isSet())
-															#line 6256 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6256 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				{
-															#line 1408 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1408 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 					ryw->tr.reset();
-															#line 1409 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1409 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 					ryw->resetRyow();
-															#line 6262 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6262 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				}
 			}
-															#line 1413 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1413 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			return a_body1Catch1(e, loopDepth);
-															#line 6267 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6267 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		}
 		catch (Error& error) {
 			loopDepth = a_body1Catch1(error, loopDepth);
@@ -6276,18 +6276,18 @@ public:
 	}
 	int a_body1cont2(int loopDepth) 
 	{
-															#line 1350 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1350 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		Future<Void> ready = ryw->reading;
-															#line 1351 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1351 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = ryw->resetPromise.getFuture() || ready;
-															#line 1351 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1351 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (static_cast<CommitActor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), loopDepth);
-															#line 6285 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6285 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch2(__when_expr_1.getError(), loopDepth); else return a_body1cont2when1(__when_expr_1.get(), loopDepth); };
 		static_cast<CommitActor*>(this)->actor_wait_state = 2;
-															#line 1351 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1351 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< CommitActor, 1, Void >*>(static_cast<CommitActor*>(this)));
-															#line 6290 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6290 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -6369,53 +6369,53 @@ public:
 	}
 	int a_body1cont4(Void const& _,int loopDepth) 
 	{
-															#line 1353 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1353 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (ryw->options.readYourWritesDisabled)
-															#line 6374 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6374 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 1356 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1356 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			ryw->nativeReadRanges = ryw->tr.readConflictRanges();
-															#line 1357 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1357 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			ryw->nativeWriteRanges = ryw->tr.writeConflictRanges();
-															#line 1358 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1358 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			for( const auto& f : ryw->tr.getExtraReadConflictRanges() ) {
-															#line 1359 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1359 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				if (f.isReady() && f.get().first < f.get().second)
-															#line 6384 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6384 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				{
-															#line 1360 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1360 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 					ryw->nativeReadRanges.push_back( ryw->nativeReadRanges.arena(), KeyRangeRef(f.get().first, f.get().second) .withPrefix(readConflictRangeKeysRange.begin, ryw->nativeReadRanges.arena()));
-															#line 6388 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6388 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				}
 			}
-															#line 1366 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1366 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (ryw->resetPromise.isSet())
-															#line 6393 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6393 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
-															#line 1367 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1367 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				return a_body1Catch2(ryw->resetPromise.getFuture().getError(), loopDepth);
-															#line 6397 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6397 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			}
-															#line 1368 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1368 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (CLIENT_BUGGIFY && ryw->options.timeoutInSeconds > 0)
-															#line 6401 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6401 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
-															#line 1369 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1369 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				simulateTimeoutInFlightCommit(ryw);
-															#line 1370 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1370 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				return a_body1Catch2(transaction_timed_out(), loopDepth);
-															#line 6407 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6407 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			}
-															#line 1372 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1372 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			StrictFuture<Void> __when_expr_2 = ryw->resetPromise.getFuture() || ryw->tr.commit();
-															#line 1372 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1372 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (static_cast<CommitActor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), loopDepth);
-															#line 6413 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6413 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch2(__when_expr_2.getError(), loopDepth); else return a_body1cont4when1(__when_expr_2.get(), loopDepth); };
 			static_cast<CommitActor*>(this)->actor_wait_state = 3;
-															#line 1372 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1372 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< CommitActor, 2, Void >*>(static_cast<CommitActor*>(this)));
-															#line 6418 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6418 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			loopDepth = 0;
 		}
 		else
@@ -6427,53 +6427,53 @@ public:
 	}
 	int a_body1cont4(Void && _,int loopDepth) 
 	{
-															#line 1353 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1353 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (ryw->options.readYourWritesDisabled)
-															#line 6432 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6432 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 1356 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1356 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			ryw->nativeReadRanges = ryw->tr.readConflictRanges();
-															#line 1357 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1357 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			ryw->nativeWriteRanges = ryw->tr.writeConflictRanges();
-															#line 1358 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1358 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			for( const auto& f : ryw->tr.getExtraReadConflictRanges() ) {
-															#line 1359 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1359 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				if (f.isReady() && f.get().first < f.get().second)
-															#line 6442 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6442 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				{
-															#line 1360 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1360 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 					ryw->nativeReadRanges.push_back( ryw->nativeReadRanges.arena(), KeyRangeRef(f.get().first, f.get().second) .withPrefix(readConflictRangeKeysRange.begin, ryw->nativeReadRanges.arena()));
-															#line 6446 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6446 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				}
 			}
-															#line 1366 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1366 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (ryw->resetPromise.isSet())
-															#line 6451 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6451 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
-															#line 1367 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1367 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				return a_body1Catch2(ryw->resetPromise.getFuture().getError(), loopDepth);
-															#line 6455 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6455 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			}
-															#line 1368 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1368 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (CLIENT_BUGGIFY && ryw->options.timeoutInSeconds > 0)
-															#line 6459 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6459 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
-															#line 1369 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1369 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				simulateTimeoutInFlightCommit(ryw);
-															#line 1370 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1370 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				return a_body1Catch2(transaction_timed_out(), loopDepth);
-															#line 6465 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6465 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			}
-															#line 1372 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1372 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			StrictFuture<Void> __when_expr_2 = ryw->resetPromise.getFuture() || ryw->tr.commit();
-															#line 1372 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1372 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (static_cast<CommitActor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), loopDepth);
-															#line 6471 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6471 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch2(__when_expr_2.getError(), loopDepth); else return a_body1cont4when1(__when_expr_2.get(), loopDepth); };
 			static_cast<CommitActor*>(this)->actor_wait_state = 3;
-															#line 1372 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1372 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< CommitActor, 2, Void >*>(static_cast<CommitActor*>(this)));
-															#line 6476 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6476 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			loopDepth = 0;
 		}
 		else
@@ -6548,60 +6548,60 @@ public:
 	}
 	int a_body1cont5(int loopDepth) 
 	{
-															#line 1383 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1383 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		ryw->writeRangeToNativeTransaction(KeyRangeRef(StringRef(), allKeys.end));
-															#line 1385 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1385 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		auto conflictRanges = ryw->readConflicts.ranges();
-															#line 1386 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1386 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		for(auto iter = conflictRanges.begin();iter != conflictRanges.end();++iter) {
-															#line 1387 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1387 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (iter->value())
-															#line 6559 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6559 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
-															#line 1388 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1388 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				ryw->tr.addReadConflictRange(iter->range());
-															#line 6563 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6563 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			}
 		}
-															#line 1392 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1392 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (CLIENT_BUGGIFY && ryw->options.timeoutInSeconds > 0)
-															#line 6568 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6568 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 1393 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1393 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			simulateTimeoutInFlightCommit(ryw);
-															#line 1394 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1394 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			return a_body1Catch2(transaction_timed_out(), loopDepth);
-															#line 6574 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6574 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		}
-															#line 1396 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1396 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		StrictFuture<Void> __when_expr_3 = ryw->resetPromise.getFuture() || ryw->tr.commit();
-															#line 1396 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1396 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (static_cast<CommitActor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), loopDepth);
-															#line 6580 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6580 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		if (__when_expr_3.isReady()) { if (__when_expr_3.isError()) return a_body1Catch2(__when_expr_3.getError(), loopDepth); else return a_body1cont5when1(__when_expr_3.get(), loopDepth); };
 		static_cast<CommitActor*>(this)->actor_wait_state = 4;
-															#line 1396 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1396 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		__when_expr_3.addCallbackAndClear(static_cast<ActorCallback< CommitActor, 3, Void >*>(static_cast<CommitActor*>(this)));
-															#line 6585 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6585 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont6(Void const& _,int loopDepth) 
 	{
-															#line 1374 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1374 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		ryw->debugLogRetries();
-															#line 1376 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1376 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (!ryw->tr.apiVersionAtLeast(410))
-															#line 6596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6596 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 1377 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1377 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			ryw->reset();
-															#line 6600 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6600 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		}
-															#line 1380 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1380 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (!static_cast<CommitActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~CommitActorState(); static_cast<CommitActor*>(this)->destroy(); return 0; }
-															#line 6604 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6604 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		new (&static_cast<CommitActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~CommitActorState();
 		static_cast<CommitActor*>(this)->finishSendAndDelPromiseRef();
@@ -6611,19 +6611,19 @@ public:
 	}
 	int a_body1cont6(Void && _,int loopDepth) 
 	{
-															#line 1374 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1374 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		ryw->debugLogRetries();
-															#line 1376 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1376 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (!ryw->tr.apiVersionAtLeast(410))
-															#line 6618 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6618 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 1377 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1377 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			ryw->reset();
-															#line 6622 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6622 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		}
-															#line 1380 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1380 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (!static_cast<CommitActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~CommitActorState(); static_cast<CommitActor*>(this)->destroy(); return 0; }
-															#line 6626 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6626 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		new (&static_cast<CommitActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~CommitActorState();
 		static_cast<CommitActor*>(this)->finishSendAndDelPromiseRef();
@@ -6696,19 +6696,19 @@ public:
 	}
 	int a_body1cont13(Void const& _,int loopDepth) 
 	{
-															#line 1398 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1398 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		ryw->debugLogRetries();
-															#line 1399 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1399 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (!ryw->tr.apiVersionAtLeast(410))
-															#line 6703 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6703 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 1400 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1400 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			ryw->reset();
-															#line 6707 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6707 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		}
-															#line 1403 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1403 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (!static_cast<CommitActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~CommitActorState(); static_cast<CommitActor*>(this)->destroy(); return 0; }
-															#line 6711 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6711 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		new (&static_cast<CommitActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~CommitActorState();
 		static_cast<CommitActor*>(this)->finishSendAndDelPromiseRef();
@@ -6718,19 +6718,19 @@ public:
 	}
 	int a_body1cont13(Void && _,int loopDepth) 
 	{
-															#line 1398 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1398 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		ryw->debugLogRetries();
-															#line 1399 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1399 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (!ryw->tr.apiVersionAtLeast(410))
-															#line 6725 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6725 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 1400 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1400 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			ryw->reset();
-															#line 6729 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6729 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		}
-															#line 1403 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1403 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (!static_cast<CommitActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~CommitActorState(); static_cast<CommitActor*>(this)->destroy(); return 0; }
-															#line 6733 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6733 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		new (&static_cast<CommitActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~CommitActorState();
 		static_cast<CommitActor*>(this)->finishSendAndDelPromiseRef();
@@ -6801,14 +6801,14 @@ public:
 		fdb_probe_actor_exit("commit", reinterpret_cast<unsigned long>(this), 3);
 
 	}
-															#line 1343 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1343 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	ReadYourWritesTransaction* ryw;
-															#line 6806 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6806 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 };
 // This generated class is to be used only via commit()
-															#line 1343 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1343 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 class CommitActor final : public Actor<Void>, public ActorCallback< CommitActor, 0, Void >, public ActorCallback< CommitActor, 1, Void >, public ActorCallback< CommitActor, 2, Void >, public ActorCallback< CommitActor, 3, Void >, public FastAllocated<CommitActor>, public CommitActorState<CommitActor> {
-															#line 6811 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6811 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 public:
 	using FastAllocated<CommitActor>::operator new;
 	using FastAllocated<CommitActor>::operator delete;
@@ -6820,9 +6820,9 @@ friend struct ActorCallback< CommitActor, 0, Void >;
 friend struct ActorCallback< CommitActor, 1, Void >;
 friend struct ActorCallback< CommitActor, 2, Void >;
 friend struct ActorCallback< CommitActor, 3, Void >;
-															#line 1343 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1343 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	CommitActor(ReadYourWritesTransaction* const& ryw) 
-															#line 6825 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6825 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		 : Actor<Void>(),
 		   CommitActorState<CommitActor>(ryw)
 	{
@@ -6848,31 +6848,31 @@ friend struct ActorCallback< CommitActor, 3, Void >;
 
 	}
 };
-															#line 1343 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1343 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 [[nodiscard]] static Future<Void> commit( ReadYourWritesTransaction* const& ryw ) {
-															#line 1343 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1343 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	return Future<Void>(new CommitActor(ryw));
-															#line 6855 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6855 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 }
 
-#line 1416 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+#line 1416 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 
-																#line 6860 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+																#line 6860 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 // This generated class is to be used only via onError()
-															#line 1417 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1417 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 template <class OnErrorActor>
-															#line 1417 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1417 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 class OnErrorActorState {
-															#line 6866 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6866 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 public:
-															#line 1417 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1417 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	OnErrorActorState(ReadYourWritesTransaction* const& ryw,Error const& e) 
-															#line 1417 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
-															#line 1417 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1417 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1417 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		 : ryw(ryw),
-															#line 1417 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1417 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   e(e)
-															#line 6875 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6875 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 	{
 		fdb_probe_actor_create("onError", reinterpret_cast<unsigned long>(this));
 
@@ -6886,42 +6886,42 @@ public:
 	{
 		try {
 			try {
-															#line 1419 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1419 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				if (ryw->resetPromise.isSet())
-															#line 6891 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6891 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				{
-															#line 1420 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1420 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 					return a_body1Catch2(ryw->resetPromise.getFuture().getError(), loopDepth);
-															#line 6895 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6895 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				}
-															#line 1423 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1423 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				bool retry_limit_hit = ryw->options.maxRetries != -1 && ryw->retries >= ryw->options.maxRetries;
-															#line 1424 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1424 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				if (ryw->retries < std::numeric_limits<int>::max())
-															#line 6901 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6901 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				{
-															#line 1425 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1425 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 					ryw->retries++;
-															#line 6905 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6905 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				}
-															#line 1426 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1426 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				if (retry_limit_hit)
-															#line 6909 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6909 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				{
-															#line 1427 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1427 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 					return a_body1Catch2(e, loopDepth);
-															#line 6913 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6913 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				}
-															#line 1430 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1430 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				StrictFuture<Void> __when_expr_0 = ryw->resetPromise.getFuture() || ryw->tr.onError(e);
-															#line 1430 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1430 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				if (static_cast<OnErrorActor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), loopDepth);
-															#line 6919 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6919 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch2(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 				static_cast<OnErrorActor*>(this)->actor_wait_state = 1;
-															#line 1430 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1430 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< OnErrorActor, 0, Void >*>(static_cast<OnErrorActor*>(this)));
-															#line 6924 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6924 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				loopDepth = 0;
 			}
 			catch (Error& error) {
@@ -6949,36 +6949,36 @@ public:
 	int a_body1Catch2(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 1437 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1437 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (!ryw->resetPromise.isSet())
-															#line 6954 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6954 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
-															#line 1438 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1438 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				if (ryw->tr.apiVersionAtLeast(610))
-															#line 6958 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6958 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				{
-															#line 1439 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1439 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 					ryw->resetPromise.sendError(transaction_cancelled());
-															#line 6962 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6962 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				}
 				else
 				{
-															#line 1441 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1441 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 					ryw->resetRyow();
-															#line 6968 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6968 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 				}
 			}
-															#line 1444 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1444 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (e.code() == error_code_broken_promise)
-															#line 6973 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6973 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			{
-															#line 1445 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1445 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 				return a_body1Catch1(transaction_cancelled(), loopDepth);
-															#line 6977 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6977 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			}
-															#line 1446 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1446 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			return a_body1Catch1(e, loopDepth);
-															#line 6981 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6981 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		}
 		catch (Error& error) {
 			loopDepth = a_body1Catch1(error, loopDepth);
@@ -6990,13 +6990,13 @@ public:
 	}
 	int a_body1cont2(Void const& _,int loopDepth) 
 	{
-															#line 1432 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1432 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		ryw->debugLogRetries(e);
-															#line 1434 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1434 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		ryw->resetRyow();
-															#line 1435 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1435 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (!static_cast<OnErrorActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~OnErrorActorState(); static_cast<OnErrorActor*>(this)->destroy(); return 0; }
-															#line 6999 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 6999 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		new (&static_cast<OnErrorActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~OnErrorActorState();
 		static_cast<OnErrorActor*>(this)->finishSendAndDelPromiseRef();
@@ -7006,13 +7006,13 @@ public:
 	}
 	int a_body1cont2(Void && _,int loopDepth) 
 	{
-															#line 1432 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1432 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		ryw->debugLogRetries(e);
-															#line 1434 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1434 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		ryw->resetRyow();
-															#line 1435 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1435 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (!static_cast<OnErrorActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~OnErrorActorState(); static_cast<OnErrorActor*>(this)->destroy(); return 0; }
-															#line 7015 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7015 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		new (&static_cast<OnErrorActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~OnErrorActorState();
 		static_cast<OnErrorActor*>(this)->finishSendAndDelPromiseRef();
@@ -7083,16 +7083,16 @@ public:
 		fdb_probe_actor_exit("onError", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 1417 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1417 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	ReadYourWritesTransaction* ryw;
-															#line 1417 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1417 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	Error e;
-															#line 7090 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7090 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 };
 // This generated class is to be used only via onError()
-															#line 1417 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1417 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 class OnErrorActor final : public Actor<Void>, public ActorCallback< OnErrorActor, 0, Void >, public FastAllocated<OnErrorActor>, public OnErrorActorState<OnErrorActor> {
-															#line 7095 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7095 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 public:
 	using FastAllocated<OnErrorActor>::operator new;
 	using FastAllocated<OnErrorActor>::operator delete;
@@ -7101,9 +7101,9 @@ public:
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< OnErrorActor, 0, Void >;
-															#line 1417 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1417 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	OnErrorActor(ReadYourWritesTransaction* const& ryw,Error const& e) 
-															#line 7106 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7106 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		 : Actor<Void>(),
 		   OnErrorActorState<OnErrorActor>(ryw, e)
 	{
@@ -7126,29 +7126,29 @@ friend struct ActorCallback< OnErrorActor, 0, Void >;
 
 	}
 };
-															#line 1417 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1417 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 [[nodiscard]] static Future<Void> onError( ReadYourWritesTransaction* const& ryw, Error const& e ) {
-															#line 1417 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1417 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	return Future<Void>(new OnErrorActor(ryw, e));
-															#line 7133 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7133 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 }
 
-#line 1449 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+#line 1449 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 
-																#line 7138 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+																#line 7138 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 // This generated class is to be used only via getReadVersion()
-															#line 1450 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1450 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 template <class GetReadVersionActor>
-															#line 1450 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1450 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 class GetReadVersionActorState {
-															#line 7144 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7144 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 public:
-															#line 1450 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1450 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	GetReadVersionActorState(ReadYourWritesTransaction* const& ryw) 
-															#line 1450 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
-															#line 1450 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1450 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1450 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		 : ryw(ryw)
-															#line 7151 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7151 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 	{
 		fdb_probe_actor_create("getReadVersion", reinterpret_cast<unsigned long>(this));
 
@@ -7161,22 +7161,22 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 1452 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1452 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			StrictFuture<Version> __when_expr_0 = ryw->tr.getReadVersion();
-															#line 1451 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1451 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (static_cast<GetReadVersionActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 7168 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7168 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
-															#line 1456 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1456 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			StrictFuture<Void> __when_expr_1 = ryw->resetPromise.getFuture();
-															#line 7172 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7172 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1when2(__when_expr_1.get(), loopDepth); };
 			static_cast<GetReadVersionActor*>(this)->actor_wait_state = 1;
-															#line 1452 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1452 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< GetReadVersionActor, 0, Version >*>(static_cast<GetReadVersionActor*>(this)));
-															#line 1456 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1456 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< GetReadVersionActor, 1, Void >*>(static_cast<GetReadVersionActor*>(this)));
-															#line 7179 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7179 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -7197,9 +7197,9 @@ public:
 	}
 	int a_body1when1(Version const& v,int loopDepth) 
 	{
-															#line 1453 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1453 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (!static_cast<GetReadVersionActor*>(this)->SAV<Version>::futures) { (void)(v); this->~GetReadVersionActorState(); static_cast<GetReadVersionActor*>(this)->destroy(); return 0; }
-															#line 7202 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7202 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		new (&static_cast<GetReadVersionActor*>(this)->SAV< Version >::value()) Version(v);
 		this->~GetReadVersionActorState();
 		static_cast<GetReadVersionActor*>(this)->finishSendAndDelPromiseRef();
@@ -7209,9 +7209,9 @@ public:
 	}
 	int a_body1when1(Version && v,int loopDepth) 
 	{
-															#line 1453 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1453 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (!static_cast<GetReadVersionActor*>(this)->SAV<Version>::futures) { (void)(v); this->~GetReadVersionActorState(); static_cast<GetReadVersionActor*>(this)->destroy(); return 0; }
-															#line 7214 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7214 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		new (&static_cast<GetReadVersionActor*>(this)->SAV< Version >::value()) Version(v);
 		this->~GetReadVersionActorState();
 		static_cast<GetReadVersionActor*>(this)->finishSendAndDelPromiseRef();
@@ -7221,17 +7221,17 @@ public:
 	}
 	int a_body1when2(Void const& _,int loopDepth) 
 	{
-															#line 1457 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1457 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		return a_body1Catch1(internal_error(), loopDepth);
-															#line 7226 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7226 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 
 		return loopDepth;
 	}
 	int a_body1when2(Void && _,int loopDepth) 
 	{
-															#line 1457 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1457 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		return a_body1Catch1(internal_error(), loopDepth);
-															#line 7234 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7234 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 
 		return loopDepth;
 	}
@@ -7332,14 +7332,14 @@ public:
 		fdb_probe_actor_exit("getReadVersion", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 1450 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1450 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	ReadYourWritesTransaction* ryw;
-															#line 7337 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7337 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 };
 // This generated class is to be used only via getReadVersion()
-															#line 1450 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1450 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 class GetReadVersionActor final : public Actor<Version>, public ActorCallback< GetReadVersionActor, 0, Version >, public ActorCallback< GetReadVersionActor, 1, Void >, public FastAllocated<GetReadVersionActor>, public GetReadVersionActorState<GetReadVersionActor> {
-															#line 7342 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7342 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 public:
 	using FastAllocated<GetReadVersionActor>::operator new;
 	using FastAllocated<GetReadVersionActor>::operator delete;
@@ -7349,9 +7349,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< GetReadVersionActor, 0, Version >;
 friend struct ActorCallback< GetReadVersionActor, 1, Void >;
-															#line 1450 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1450 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	GetReadVersionActor(ReadYourWritesTransaction* const& ryw) 
-															#line 7354 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7354 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		 : Actor<Version>(),
 		   GetReadVersionActorState<GetReadVersionActor>(ryw)
 	{
@@ -7374,14 +7374,14 @@ friend struct ActorCallback< GetReadVersionActor, 1, Void >;
 
 	}
 };
-															#line 1450 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1450 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 [[nodiscard]] static Future<Version> getReadVersion( ReadYourWritesTransaction* const& ryw ) {
-															#line 1450 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1450 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	return Future<Version>(new GetReadVersionActor(ryw));
-															#line 7381 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7381 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 }
 
-#line 1461 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+#line 1461 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 };
 
 ReadYourWritesTransaction::ReadYourWritesTransaction(Database const& cx, Optional<TenantName> tenantName)
@@ -7401,23 +7401,23 @@ void ReadYourWritesTransaction::construct(Database const& cx, TenantName const& 
 	*this = ReadYourWritesTransaction(cx, tenantName);
 }
 
-															#line 7404 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7404 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 namespace {
 // This generated class is to be used only via timebomb()
-															#line 1480 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1480 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 template <class TimebombActor>
-															#line 1480 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1480 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 class TimebombActorState {
-															#line 7411 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7411 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 public:
-															#line 1480 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1480 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	TimebombActorState(double const& endTime,Promise<Void> const& resetPromise) 
-															#line 1480 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
-															#line 1480 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1480 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1480 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		 : endTime(endTime),
-															#line 1480 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1480 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   resetPromise(resetPromise)
-															#line 7420 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7420 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 	{
 		fdb_probe_actor_create("timebomb", reinterpret_cast<unsigned long>(this));
 
@@ -7430,9 +7430,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 1481 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1481 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			;
-															#line 7435 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7435 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -7453,17 +7453,17 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 1484 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1484 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (!resetPromise.isSet())
-															#line 7458 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7458 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
-															#line 1485 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1485 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			resetPromise.sendError(transaction_timed_out());
-															#line 7462 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7462 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		}
-															#line 1486 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1486 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		return a_body1Catch1(transaction_timed_out(), loopDepth);
-															#line 7466 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7466 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 
 		return loopDepth;
 	}
@@ -7476,22 +7476,22 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 1481 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1481 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (!(now() < endTime))
-															#line 7481 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7481 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		{
 			return a_body1break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 1482 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1482 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		StrictFuture<Void> __when_expr_0 = delayUntil(std::min(endTime + 0.0001, now() + CLIENT_KNOBS->TRANSACTION_TIMEOUT_DELAY_INTERVAL));
-															#line 1482 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1482 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (static_cast<TimebombActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 7489 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7489 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 		static_cast<TimebombActor*>(this)->actor_wait_state = 1;
-															#line 1482 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1482 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< TimebombActor, 0, Void >*>(static_cast<TimebombActor*>(this)));
-															#line 7494 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7494 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -7584,16 +7584,16 @@ public:
 		fdb_probe_actor_exit("timebomb", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 1480 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1480 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	double endTime;
-															#line 1480 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1480 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	Promise<Void> resetPromise;
-															#line 7591 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7591 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 };
 // This generated class is to be used only via timebomb()
-															#line 1480 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1480 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 class TimebombActor final : public Actor<Void>, public ActorCallback< TimebombActor, 0, Void >, public FastAllocated<TimebombActor>, public TimebombActorState<TimebombActor> {
-															#line 7596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7596 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 public:
 	using FastAllocated<TimebombActor>::operator new;
 	using FastAllocated<TimebombActor>::operator delete;
@@ -7602,9 +7602,9 @@ public:
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< TimebombActor, 0, Void >;
-															#line 1480 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1480 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	TimebombActor(double const& endTime,Promise<Void> const& resetPromise) 
-															#line 7607 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7607 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		 : Actor<Void>(),
 		   TimebombActorState<TimebombActor>(endTime, resetPromise)
 	{
@@ -7628,14 +7628,14 @@ friend struct ActorCallback< TimebombActor, 0, Void >;
 	}
 };
 }
-															#line 1480 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1480 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 [[nodiscard]] Future<Void> timebomb( double const& endTime, Promise<Void> const& resetPromise ) {
-															#line 1480 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1480 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	return Future<Void>(new TimebombActor(endTime, resetPromise));
-															#line 7635 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7635 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 }
 
-#line 1488 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+#line 1488 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 
 void ReadYourWritesTransaction::resetTimeout() {
 	timeoutActor =
@@ -7662,21 +7662,21 @@ Optional<Value> getValueFromJSON(StatusObject statusObj) {
 	}
 }
 
-															#line 7665 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7665 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 namespace {
 // This generated class is to be used only via getJSON()
-															#line 1514 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1514 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 template <class GetJSONActor>
-															#line 1514 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1514 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 class GetJSONActorState {
-															#line 7672 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7672 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 public:
-															#line 1514 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1514 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	GetJSONActorState(Database const& db) 
-															#line 1514 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
-															#line 1514 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1514 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1514 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		 : db(db)
-															#line 7679 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7679 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 	{
 		fdb_probe_actor_create("getJSON", reinterpret_cast<unsigned long>(this));
 
@@ -7689,16 +7689,16 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 1515 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1515 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			StrictFuture<StatusObject> __when_expr_0 = StatusClient::statusFetcher(db);
-															#line 1515 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1515 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			if (static_cast<GetJSONActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 7696 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7696 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<GetJSONActor*>(this)->actor_wait_state = 1;
-															#line 1515 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1515 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< GetJSONActor, 0, StatusObject >*>(static_cast<GetJSONActor*>(this)));
-															#line 7701 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7701 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -7719,9 +7719,9 @@ public:
 	}
 	int a_body1cont1(StatusObject const& statusObj,int loopDepth) 
 	{
-															#line 1516 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1516 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (!static_cast<GetJSONActor*>(this)->SAV<Optional<Value>>::futures) { (void)(getValueFromJSON(statusObj)); this->~GetJSONActorState(); static_cast<GetJSONActor*>(this)->destroy(); return 0; }
-															#line 7724 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7724 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		new (&static_cast<GetJSONActor*>(this)->SAV< Optional<Value> >::value()) Optional<Value>(getValueFromJSON(statusObj));
 		this->~GetJSONActorState();
 		static_cast<GetJSONActor*>(this)->finishSendAndDelPromiseRef();
@@ -7731,9 +7731,9 @@ public:
 	}
 	int a_body1cont1(StatusObject && statusObj,int loopDepth) 
 	{
-															#line 1516 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1516 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (!static_cast<GetJSONActor*>(this)->SAV<Optional<Value>>::futures) { (void)(getValueFromJSON(statusObj)); this->~GetJSONActorState(); static_cast<GetJSONActor*>(this)->destroy(); return 0; }
-															#line 7736 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7736 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		new (&static_cast<GetJSONActor*>(this)->SAV< Optional<Value> >::value()) Optional<Value>(getValueFromJSON(statusObj));
 		this->~GetJSONActorState();
 		static_cast<GetJSONActor*>(this)->finishSendAndDelPromiseRef();
@@ -7804,14 +7804,14 @@ public:
 		fdb_probe_actor_exit("getJSON", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 1514 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1514 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	Database db;
-															#line 7809 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7809 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 };
 // This generated class is to be used only via getJSON()
-															#line 1514 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1514 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 class GetJSONActor final : public Actor<Optional<Value>>, public ActorCallback< GetJSONActor, 0, StatusObject >, public FastAllocated<GetJSONActor>, public GetJSONActorState<GetJSONActor> {
-															#line 7814 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7814 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 public:
 	using FastAllocated<GetJSONActor>::operator new;
 	using FastAllocated<GetJSONActor>::operator delete;
@@ -7820,9 +7820,9 @@ public:
 	void destroy() override { ((Actor<Optional<Value>>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< GetJSONActor, 0, StatusObject >;
-															#line 1514 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1514 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	GetJSONActor(Database const& db) 
-															#line 7825 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7825 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		 : Actor<Optional<Value>>(),
 		   GetJSONActorState<GetJSONActor>(db)
 	{
@@ -7846,34 +7846,34 @@ friend struct ActorCallback< GetJSONActor, 0, StatusObject >;
 	}
 };
 }
-															#line 1514 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1514 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 [[nodiscard]] Future<Optional<Value>> getJSON( Database const& db ) {
-															#line 1514 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1514 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	return Future<Optional<Value>>(new GetJSONActor(db));
-															#line 7853 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7853 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 }
 
-#line 1518 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+#line 1518 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 
-															#line 7858 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7858 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 namespace {
 // This generated class is to be used only via getWorkerInterfaces()
-															#line 1519 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1519 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 template <class GetWorkerInterfacesActor>
-															#line 1519 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1519 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 class GetWorkerInterfacesActorState {
-															#line 7865 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7865 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 public:
-															#line 1519 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1519 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	GetWorkerInterfacesActorState(Reference<IClusterConnectionRecord> const& connRecord) 
-															#line 1519 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
-															#line 1519 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1519 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1519 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		 : connRecord(connRecord),
-															#line 1520 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1520 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   clusterInterface(new AsyncVar<Optional<ClusterInterface>>),
-															#line 1521 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1521 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		   leaderMon(monitorLeader<ClusterInterface>(connRecord, clusterInterface))
-															#line 7876 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7876 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 	{
 		fdb_probe_actor_create("getWorkerInterfaces", reinterpret_cast<unsigned long>(this));
 
@@ -7886,9 +7886,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 1523 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1523 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			;
-															#line 7891 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7891 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -7916,22 +7916,22 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 1525 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1525 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		StrictFuture<std::vector<ClientWorkerInterface>> __when_expr_0 = clusterInterface->get().present() ? brokenPromiseToNever( clusterInterface->get().get().getClientWorkers.getReply(GetClientWorkersRequest())) : Never();
-															#line 1524 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1524 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (static_cast<GetWorkerInterfacesActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 7923 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7923 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
-															#line 1539 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1539 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = clusterInterface->onChange();
-															#line 7927 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7927 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when2(__when_expr_1.get(), loopDepth); };
 		static_cast<GetWorkerInterfacesActor*>(this)->actor_wait_state = 1;
-															#line 1525 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1525 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< GetWorkerInterfacesActor, 0, std::vector<ClientWorkerInterface> >*>(static_cast<GetWorkerInterfacesActor*>(this)));
-															#line 1539 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1539 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< GetWorkerInterfacesActor, 1, Void >*>(static_cast<GetWorkerInterfacesActor*>(this)));
-															#line 7934 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7934 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -7944,17 +7944,17 @@ public:
 	}
 	int a_body1loopBody1when1(std::vector<ClientWorkerInterface> const& workers,int loopDepth) 
 	{
-															#line 1530 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1530 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		RangeResult result;
-															#line 1531 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1531 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		for( auto& it : workers ) {
-															#line 1532 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1532 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			result.push_back_deep( result.arena(), KeyValueRef(it.address().toString(), BinaryWriter::toValue(it, IncludeVersion())));
-															#line 7953 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7953 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		}
-															#line 1537 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1537 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (!static_cast<GetWorkerInterfacesActor*>(this)->SAV<RangeResult>::futures) { (void)(result); this->~GetWorkerInterfacesActorState(); static_cast<GetWorkerInterfacesActor*>(this)->destroy(); return 0; }
-															#line 7957 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7957 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		new (&static_cast<GetWorkerInterfacesActor*>(this)->SAV< RangeResult >::value()) RangeResult(result);
 		this->~GetWorkerInterfacesActorState();
 		static_cast<GetWorkerInterfacesActor*>(this)->finishSendAndDelPromiseRef();
@@ -7964,17 +7964,17 @@ public:
 	}
 	int a_body1loopBody1when1(std::vector<ClientWorkerInterface> && workers,int loopDepth) 
 	{
-															#line 1530 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1530 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		RangeResult result;
-															#line 1531 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1531 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		for( auto& it : workers ) {
-															#line 1532 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1532 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 			result.push_back_deep( result.arena(), KeyValueRef(it.address().toString(), BinaryWriter::toValue(it, IncludeVersion())));
-															#line 7973 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7973 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		}
-															#line 1537 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1537 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 		if (!static_cast<GetWorkerInterfacesActor*>(this)->SAV<RangeResult>::futures) { (void)(result); this->~GetWorkerInterfacesActorState(); static_cast<GetWorkerInterfacesActor*>(this)->destroy(); return 0; }
-															#line 7977 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 7977 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		new (&static_cast<GetWorkerInterfacesActor*>(this)->SAV< RangeResult >::value()) RangeResult(result);
 		this->~GetWorkerInterfacesActorState();
 		static_cast<GetWorkerInterfacesActor*>(this)->finishSendAndDelPromiseRef();
@@ -8091,18 +8091,18 @@ public:
 		fdb_probe_actor_exit("getWorkerInterfaces", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 1519 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1519 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	Reference<IClusterConnectionRecord> connRecord;
-															#line 1520 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1520 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	Reference<AsyncVar<Optional<ClusterInterface>>> clusterInterface;
-															#line 1521 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1521 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	Future<Void> leaderMon;
-															#line 8100 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 8100 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 };
 // This generated class is to be used only via getWorkerInterfaces()
-															#line 1519 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1519 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 class GetWorkerInterfacesActor final : public Actor<RangeResult>, public ActorCallback< GetWorkerInterfacesActor, 0, std::vector<ClientWorkerInterface> >, public ActorCallback< GetWorkerInterfacesActor, 1, Void >, public FastAllocated<GetWorkerInterfacesActor>, public GetWorkerInterfacesActorState<GetWorkerInterfacesActor> {
-															#line 8105 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 8105 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 public:
 	using FastAllocated<GetWorkerInterfacesActor>::operator new;
 	using FastAllocated<GetWorkerInterfacesActor>::operator delete;
@@ -8112,9 +8112,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< GetWorkerInterfacesActor, 0, std::vector<ClientWorkerInterface> >;
 friend struct ActorCallback< GetWorkerInterfacesActor, 1, Void >;
-															#line 1519 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1519 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	GetWorkerInterfacesActor(Reference<IClusterConnectionRecord> const& connRecord) 
-															#line 8117 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 8117 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 		 : Actor<RangeResult>(),
 		   GetWorkerInterfacesActorState<GetWorkerInterfacesActor>(connRecord)
 	{
@@ -8138,14 +8138,14 @@ friend struct ActorCallback< GetWorkerInterfacesActor, 1, Void >;
 	}
 };
 }
-															#line 1519 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1519 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 [[nodiscard]] Future<RangeResult> getWorkerInterfaces( Reference<IClusterConnectionRecord> const& connRecord ) {
-															#line 1519 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+															#line 1519 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 	return Future<RangeResult>(new GetWorkerInterfacesActor(connRecord));
-															#line 8145 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.g.cpp"
+															#line 8145 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.g.cpp"
 }
 
-#line 1543 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/ReadYourWrites.actor.cpp"
+#line 1543 "/usr/src/libfdb_c/fdbclient/ReadYourWrites.actor.cpp"
 
 Future<Optional<Value>> ReadYourWritesTransaction::get(const Key& key, Snapshot snapshot) {
 	TEST(true); // ReadYourWritesTransaction::get

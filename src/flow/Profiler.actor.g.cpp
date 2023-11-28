@@ -1,5 +1,5 @@
 #define POST_ACTOR_COMPILER 1
-#line 1 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+#line 1 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 /*
  * Profiler.actor.cpp
  *
@@ -182,26 +182,26 @@ struct Profiler {
 		return 0;
 	}
 
-																#line 185 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.g.cpp"
+																#line 185 "/usr/src/libfdb_c/flow/Profiler.actor.g.cpp"
 // This generated class is to be used only via profile()
-															#line 183 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 183 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 template <class ProfileActor>
-															#line 183 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 183 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 class ProfileActorState {
-															#line 191 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.g.cpp"
+															#line 191 "/usr/src/libfdb_c/flow/Profiler.actor.g.cpp"
 public:
-															#line 183 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 183 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 	ProfileActorState(Profiler* const& self,int const& period,std::string const& outfn) 
-															#line 183 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
-															#line 183 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 183 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
+															#line 183 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 		 : self(self),
-															#line 183 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 183 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 		   period(period),
-															#line 183 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 183 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 		   outfn(outfn),
-															#line 185 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 185 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 		   outFile(makeReference<SyncFileForSim>(outfn))
-															#line 204 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.g.cpp"
+															#line 204 "/usr/src/libfdb_c/flow/Profiler.actor.g.cpp"
 	{
 		fdb_probe_actor_create("profile", reinterpret_cast<unsigned long>(this));
 
@@ -214,116 +214,116 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 186 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 186 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 			if (!outFile->isOpen())
-															#line 219 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.g.cpp"
+															#line 219 "/usr/src/libfdb_c/flow/Profiler.actor.g.cpp"
 			{
-															#line 187 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 187 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 				TraceEvent(SevWarn, "FailedToOpenProfilingOutputFile").detail("Filename", outfn).GetLastError();
-															#line 188 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 188 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 				if (!static_cast<ProfileActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~ProfileActorState(); static_cast<ProfileActor*>(this)->destroy(); return 0; }
-															#line 225 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.g.cpp"
+															#line 225 "/usr/src/libfdb_c/flow/Profiler.actor.g.cpp"
 				new (&static_cast<ProfileActor*>(this)->SAV< Void >::value()) Void(Void());
 				this->~ProfileActorState();
 				static_cast<ProfileActor*>(this)->finishSendAndDelPromiseRef();
 				return 0;
 			}
-															#line 193 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 193 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 			platform::raw_backtrace(self->addresses, MAX_STACK_DEPTH);
-															#line 198 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 198 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 			self->environmentInfoWriter << int64_t(0x101) << int64_t(period * 1000);
-															#line 199 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 199 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 			dl_iterate_phdr(phdr_callback, self);
-															#line 200 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 200 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 			self->environmentInfoWriter << int64_t(0);
-															#line 201 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 201 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 			for(;self->environmentInfoWriter.getLength() % sizeof(void*);) {
-															#line 202 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 202 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 				self->environmentInfoWriter << uint8_t(0);
-															#line 243 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.g.cpp"
+															#line 243 "/usr/src/libfdb_c/flow/Profiler.actor.g.cpp"
 			}
-															#line 204 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 204 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 			self->output_buffer = new OutputBuffer;
-															#line 205 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 205 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 			otherBuffer = new OutputBuffer;
-															#line 208 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 208 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 			sigemptyset(&self->profilingSignals);
-															#line 209 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 209 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 			sigaddset(&self->profilingSignals, SIGPROF);
-															#line 212 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 212 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 			struct sigaction act;
-															#line 213 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 213 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 			act.sa_sigaction = SignalClosure::signal_handler;
-															#line 214 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 214 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 			sigemptyset(&act.sa_mask);
-															#line 215 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 215 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 			act.sa_flags = SA_SIGINFO;
-															#line 216 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 216 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 			sigaction(SIGPROF, &act, nullptr);
-															#line 219 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 219 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 			int period_ns = period * 1000;
-															#line 220 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 220 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 			itimerspec tv;
-															#line 221 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 221 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 			tv.it_interval.tv_sec = 0;
-															#line 222 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 222 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 			tv.it_interval.tv_nsec = period_ns;
-															#line 223 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 223 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 			tv.it_value.tv_sec = 0;
-															#line 224 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 224 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 			tv.it_value.tv_nsec = nondeterministicRandom()->randomInt(period_ns / 2, period_ns + 1);
-															#line 226 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 226 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 			sigevent sev;
-															#line 227 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 227 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 			sev.sigev_notify = SIGEV_THREAD_ID;
-															#line 228 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 228 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 			sev.sigev_signo = SIGPROF;
-															#line 229 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 229 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 			sev.sigev_value.sival_ptr = &(self->signalClosure);
-															#line 230 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 230 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 			sev._sigev_un._tid = sys_gettid();
-															#line 231 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 231 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 			if (timer_create(CLOCK_THREAD_CPUTIME_ID, &sev, &self->periodicTimer) != 0)
-															#line 287 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.g.cpp"
+															#line 287 "/usr/src/libfdb_c/flow/Profiler.actor.g.cpp"
 			{
-															#line 232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 232 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 				TraceEvent(SevWarn, "FailedToCreateProfilingTimer").GetLastError();
-															#line 233 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 233 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 				if (!static_cast<ProfileActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~ProfileActorState(); static_cast<ProfileActor*>(this)->destroy(); return 0; }
-															#line 293 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.g.cpp"
+															#line 293 "/usr/src/libfdb_c/flow/Profiler.actor.g.cpp"
 				new (&static_cast<ProfileActor*>(this)->SAV< Void >::value()) Void(Void());
 				this->~ProfileActorState();
 				static_cast<ProfileActor*>(this)->finishSendAndDelPromiseRef();
 				return 0;
 			}
-															#line 235 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 235 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 			self->timerInitialized = true;
-															#line 236 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 236 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 			if (timer_settime(self->periodicTimer, 0, &tv, nullptr) != 0)
-															#line 303 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.g.cpp"
+															#line 303 "/usr/src/libfdb_c/flow/Profiler.actor.g.cpp"
 			{
-															#line 237 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 237 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 				TraceEvent(SevWarn, "FailedToSetProfilingTimer").GetLastError();
-															#line 238 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 238 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 				if (!static_cast<ProfileActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~ProfileActorState(); static_cast<ProfileActor*>(this)->destroy(); return 0; }
-															#line 309 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.g.cpp"
+															#line 309 "/usr/src/libfdb_c/flow/Profiler.actor.g.cpp"
 				new (&static_cast<ProfileActor*>(this)->SAV< Void >::value()) Void(Void());
 				this->~ProfileActorState();
 				static_cast<ProfileActor*>(this)->finishSendAndDelPromiseRef();
 				return 0;
 			}
-															#line 241 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 241 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 			outOffset = 0;
-															#line 242 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 242 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 			StrictFuture<Void> __when_expr_0 = outFile->truncate(outOffset);
-															#line 242 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 242 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 			if (static_cast<ProfileActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 321 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.g.cpp"
+															#line 321 "/usr/src/libfdb_c/flow/Profiler.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<ProfileActor*>(this)->actor_wait_state = 1;
-															#line 242 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 242 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ProfileActor, 0, Void >*>(static_cast<ProfileActor*>(this)));
-															#line 326 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.g.cpp"
+															#line 326 "/usr/src/libfdb_c/flow/Profiler.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -344,32 +344,32 @@ public:
 	}
 	int a_body1cont1(Void const& _,int loopDepth) 
 	{
-															#line 244 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 244 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = outFile->write(self->environmentInfoWriter.getData(), self->environmentInfoWriter.getLength(), outOffset);
-															#line 244 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 244 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 		if (static_cast<ProfileActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 351 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.g.cpp"
+															#line 351 "/usr/src/libfdb_c/flow/Profiler.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<ProfileActor*>(this)->actor_wait_state = 2;
-															#line 244 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 244 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< ProfileActor, 1, Void >*>(static_cast<ProfileActor*>(this)));
-															#line 356 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.g.cpp"
+															#line 356 "/usr/src/libfdb_c/flow/Profiler.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont1(Void && _,int loopDepth) 
 	{
-															#line 244 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 244 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = outFile->write(self->environmentInfoWriter.getData(), self->environmentInfoWriter.getLength(), outOffset);
-															#line 244 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 244 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 		if (static_cast<ProfileActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 367 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.g.cpp"
+															#line 367 "/usr/src/libfdb_c/flow/Profiler.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<ProfileActor*>(this)->actor_wait_state = 2;
-															#line 244 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 244 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< ProfileActor, 1, Void >*>(static_cast<ProfileActor*>(this)));
-															#line 372 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.g.cpp"
+															#line 372 "/usr/src/libfdb_c/flow/Profiler.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -439,22 +439,22 @@ public:
 	}
 	int a_body1cont6(Void const& _,int loopDepth) 
 	{
-															#line 245 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 245 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 		outOffset += self->environmentInfoWriter.getLength();
-															#line 247 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 247 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 		;
-															#line 446 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.g.cpp"
+															#line 446 "/usr/src/libfdb_c/flow/Profiler.actor.g.cpp"
 		loopDepth = a_body1cont6loopHead1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1cont6(Void && _,int loopDepth) 
 	{
-															#line 245 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 245 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 		outOffset += self->environmentInfoWriter.getLength();
-															#line 247 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 247 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 		;
-															#line 457 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.g.cpp"
+															#line 457 "/usr/src/libfdb_c/flow/Profiler.actor.g.cpp"
 		loopDepth = a_body1cont6loopHead1(loopDepth);
 
 		return loopDepth;
@@ -531,60 +531,60 @@ public:
 	}
 	int a_body1cont6loopBody1(int loopDepth) 
 	{
-															#line 248 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 248 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 		StrictFuture<Void> __when_expr_2 = self->network->delay(1.0, TaskPriority::Min) || self->network->delay(2.0, TaskPriority::Max);
-															#line 248 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 248 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 		if (static_cast<ProfileActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 538 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.g.cpp"
+															#line 538 "/usr/src/libfdb_c/flow/Profiler.actor.g.cpp"
 		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), std::max(0, loopDepth - 1)); else return a_body1cont6loopBody1when1(__when_expr_2.get(), loopDepth); };
 		static_cast<ProfileActor*>(this)->actor_wait_state = 3;
-															#line 248 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 248 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 		__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< ProfileActor, 2, Void >*>(static_cast<ProfileActor*>(this)));
-															#line 543 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.g.cpp"
+															#line 543 "/usr/src/libfdb_c/flow/Profiler.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont6loopBody1cont1(Void const& _,int loopDepth) 
 	{
-															#line 250 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 250 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 		self->enableSignal(false);
-															#line 251 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 251 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 		std::swap(self->output_buffer, otherBuffer);
-															#line 252 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 252 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 		self->enableSignal(true);
-															#line 254 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 254 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 		StrictFuture<Void> __when_expr_3 = otherBuffer->writeTo(outFile, outOffset);
-															#line 254 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 254 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 		if (static_cast<ProfileActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 560 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.g.cpp"
+															#line 560 "/usr/src/libfdb_c/flow/Profiler.actor.g.cpp"
 		if (__when_expr_3.isReady()) { if (__when_expr_3.isError()) return a_body1Catch1(__when_expr_3.getError(), std::max(0, loopDepth - 1)); else return a_body1cont6loopBody1cont1when1(__when_expr_3.get(), loopDepth); };
 		static_cast<ProfileActor*>(this)->actor_wait_state = 4;
-															#line 254 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 254 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 		__when_expr_3.addCallbackAndClear(static_cast<ActorCallback< ProfileActor, 3, Void >*>(static_cast<ProfileActor*>(this)));
-															#line 565 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.g.cpp"
+															#line 565 "/usr/src/libfdb_c/flow/Profiler.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont6loopBody1cont1(Void && _,int loopDepth) 
 	{
-															#line 250 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 250 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 		self->enableSignal(false);
-															#line 251 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 251 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 		std::swap(self->output_buffer, otherBuffer);
-															#line 252 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 252 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 		self->enableSignal(true);
-															#line 254 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 254 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 		StrictFuture<Void> __when_expr_3 = otherBuffer->writeTo(outFile, outOffset);
-															#line 254 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 254 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 		if (static_cast<ProfileActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 582 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.g.cpp"
+															#line 582 "/usr/src/libfdb_c/flow/Profiler.actor.g.cpp"
 		if (__when_expr_3.isReady()) { if (__when_expr_3.isError()) return a_body1Catch1(__when_expr_3.getError(), std::max(0, loopDepth - 1)); else return a_body1cont6loopBody1cont1when1(__when_expr_3.get(), loopDepth); };
 		static_cast<ProfileActor*>(this)->actor_wait_state = 4;
-															#line 254 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 254 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 		__when_expr_3.addCallbackAndClear(static_cast<ActorCallback< ProfileActor, 3, Void >*>(static_cast<ProfileActor*>(this)));
-															#line 587 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.g.cpp"
+															#line 587 "/usr/src/libfdb_c/flow/Profiler.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -654,32 +654,32 @@ public:
 	}
 	int a_body1cont6loopBody1cont2(Void const& _,int loopDepth) 
 	{
-															#line 255 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 255 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 		StrictFuture<Void> __when_expr_4 = outFile->flush();
-															#line 255 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 255 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 		if (static_cast<ProfileActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 661 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.g.cpp"
+															#line 661 "/usr/src/libfdb_c/flow/Profiler.actor.g.cpp"
 		if (__when_expr_4.isReady()) { if (__when_expr_4.isError()) return a_body1Catch1(__when_expr_4.getError(), std::max(0, loopDepth - 1)); else return a_body1cont6loopBody1cont2when1(__when_expr_4.get(), loopDepth); };
 		static_cast<ProfileActor*>(this)->actor_wait_state = 5;
-															#line 255 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 255 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 		__when_expr_4.addCallbackAndClear(static_cast<ActorCallback< ProfileActor, 4, Void >*>(static_cast<ProfileActor*>(this)));
-															#line 666 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.g.cpp"
+															#line 666 "/usr/src/libfdb_c/flow/Profiler.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont6loopBody1cont2(Void && _,int loopDepth) 
 	{
-															#line 255 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 255 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 		StrictFuture<Void> __when_expr_4 = outFile->flush();
-															#line 255 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 255 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 		if (static_cast<ProfileActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 677 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.g.cpp"
+															#line 677 "/usr/src/libfdb_c/flow/Profiler.actor.g.cpp"
 		if (__when_expr_4.isReady()) { if (__when_expr_4.isError()) return a_body1Catch1(__when_expr_4.getError(), std::max(0, loopDepth - 1)); else return a_body1cont6loopBody1cont2when1(__when_expr_4.get(), loopDepth); };
 		static_cast<ProfileActor*>(this)->actor_wait_state = 5;
-															#line 255 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 255 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 		__when_expr_4.addCallbackAndClear(static_cast<ActorCallback< ProfileActor, 4, Void >*>(static_cast<ProfileActor*>(this)));
-															#line 682 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.g.cpp"
+															#line 682 "/usr/src/libfdb_c/flow/Profiler.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -749,18 +749,18 @@ public:
 	}
 	int a_body1cont6loopBody1cont3(Void const& _,int loopDepth) 
 	{
-															#line 256 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 256 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 		otherBuffer->clear();
-															#line 754 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.g.cpp"
+															#line 754 "/usr/src/libfdb_c/flow/Profiler.actor.g.cpp"
 		if (loopDepth == 0) return a_body1cont6loopHead1(0);
 
 		return loopDepth;
 	}
 	int a_body1cont6loopBody1cont3(Void && _,int loopDepth) 
 	{
-															#line 256 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 256 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 		otherBuffer->clear();
-															#line 763 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.g.cpp"
+															#line 763 "/usr/src/libfdb_c/flow/Profiler.actor.g.cpp"
 		if (loopDepth == 0) return a_body1cont6loopHead1(0);
 
 		return loopDepth;
@@ -828,24 +828,24 @@ public:
 		fdb_probe_actor_exit("profile", reinterpret_cast<unsigned long>(this), 4);
 
 	}
-															#line 183 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 183 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 	Profiler* self;
-															#line 183 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 183 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 	int period;
-															#line 183 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 183 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 	std::string outfn;
-															#line 185 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 185 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 	Reference<SyncFileForSim> outFile;
-															#line 205 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 205 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 	OutputBuffer* otherBuffer;
-															#line 241 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 241 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 	int64_t outOffset;
-															#line 843 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.g.cpp"
+															#line 843 "/usr/src/libfdb_c/flow/Profiler.actor.g.cpp"
 };
 // This generated class is to be used only via profile()
-															#line 183 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 183 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 class ProfileActor final : public Actor<Void>, public ActorCallback< ProfileActor, 0, Void >, public ActorCallback< ProfileActor, 1, Void >, public ActorCallback< ProfileActor, 2, Void >, public ActorCallback< ProfileActor, 3, Void >, public ActorCallback< ProfileActor, 4, Void >, public FastAllocated<ProfileActor>, public ProfileActorState<ProfileActor> {
-															#line 848 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.g.cpp"
+															#line 848 "/usr/src/libfdb_c/flow/Profiler.actor.g.cpp"
 public:
 	using FastAllocated<ProfileActor>::operator new;
 	using FastAllocated<ProfileActor>::operator delete;
@@ -858,9 +858,9 @@ friend struct ActorCallback< ProfileActor, 1, Void >;
 friend struct ActorCallback< ProfileActor, 2, Void >;
 friend struct ActorCallback< ProfileActor, 3, Void >;
 friend struct ActorCallback< ProfileActor, 4, Void >;
-															#line 183 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 183 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 	ProfileActor(Profiler* const& self,int const& period,std::string const& outfn) 
-															#line 863 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.g.cpp"
+															#line 863 "/usr/src/libfdb_c/flow/Profiler.actor.g.cpp"
 		 : Actor<Void>(),
 		   ProfileActorState<ProfileActor>(self, period, outfn)
 	{
@@ -887,14 +887,14 @@ friend struct ActorCallback< ProfileActor, 4, Void >;
 
 	}
 };
-															#line 183 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 183 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 [[nodiscard]] static Future<Void> profile( Profiler* const& self, int const& period, std::string const& outfn ) {
-															#line 183 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+															#line 183 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 	return Future<Void>(new ProfileActor(self, period, outfn));
-															#line 894 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.g.cpp"
+															#line 894 "/usr/src/libfdb_c/flow/Profiler.actor.g.cpp"
 }
 
-#line 259 "/home/ccat3z/Documents/moqi/foundationdb-client/src/flow/Profiler.actor.cpp"
+#line 259 "/usr/src/libfdb_c/flow/Profiler.actor.cpp"
 };
 
 // Outlives main

@@ -1,5 +1,5 @@
 #define POST_ACTOR_COMPILER 1
-#line 1 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+#line 1 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 /*
  * MultiVersionTransaction.actor.cpp
  *
@@ -1181,23 +1181,23 @@ Optional<TenantName> MultiVersionTransaction::getTenant() {
 
 // Waits for the specified duration and signals the assignment variable with a timed out error
 // This will be canceled if a new timeout is set, in which case the tsav will not be signaled.
-															#line 1184 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 1184 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 namespace {
 // This generated class is to be used only via timeoutImpl()
-															#line 1182 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 1182 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 template <class TimeoutImplActor>
-															#line 1182 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 1182 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 class TimeoutImplActorState {
-															#line 1191 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 1191 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 public:
-															#line 1182 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 1182 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 	TimeoutImplActorState(Reference<ThreadSingleAssignmentVar<Void>> const& tsav,double const& duration) 
-															#line 1182 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
-															#line 1182 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 1182 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 1182 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		 : tsav(tsav),
-															#line 1182 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 1182 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		   duration(duration)
-															#line 1200 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 1200 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 	{
 		fdb_probe_actor_create("timeoutImpl", reinterpret_cast<unsigned long>(this));
 
@@ -1210,16 +1210,16 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 1183 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 1183 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 			StrictFuture<Void> __when_expr_0 = delay(duration);
-															#line 1183 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 1183 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 			if (static_cast<TimeoutImplActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 1217 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 1217 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<TimeoutImplActor*>(this)->actor_wait_state = 1;
-															#line 1183 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 1183 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< TimeoutImplActor, 0, Void >*>(static_cast<TimeoutImplActor*>(this)));
-															#line 1222 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 1222 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -1240,11 +1240,11 @@ public:
 	}
 	int a_body1cont1(Void const& _,int loopDepth) 
 	{
-															#line 1185 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 1185 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		tsav->trySendError(transaction_timed_out());
-															#line 1186 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 1186 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		if (!static_cast<TimeoutImplActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~TimeoutImplActorState(); static_cast<TimeoutImplActor*>(this)->destroy(); return 0; }
-															#line 1247 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 1247 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 		new (&static_cast<TimeoutImplActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~TimeoutImplActorState();
 		static_cast<TimeoutImplActor*>(this)->finishSendAndDelPromiseRef();
@@ -1254,11 +1254,11 @@ public:
 	}
 	int a_body1cont1(Void && _,int loopDepth) 
 	{
-															#line 1185 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 1185 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		tsav->trySendError(transaction_timed_out());
-															#line 1186 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 1186 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		if (!static_cast<TimeoutImplActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~TimeoutImplActorState(); static_cast<TimeoutImplActor*>(this)->destroy(); return 0; }
-															#line 1261 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 1261 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 		new (&static_cast<TimeoutImplActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~TimeoutImplActorState();
 		static_cast<TimeoutImplActor*>(this)->finishSendAndDelPromiseRef();
@@ -1329,16 +1329,16 @@ public:
 		fdb_probe_actor_exit("timeoutImpl", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 1182 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 1182 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 	Reference<ThreadSingleAssignmentVar<Void>> tsav;
-															#line 1182 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 1182 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 	double duration;
-															#line 1336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 1336 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 };
 // This generated class is to be used only via timeoutImpl()
-															#line 1182 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 1182 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 class TimeoutImplActor final : public Actor<Void>, public ActorCallback< TimeoutImplActor, 0, Void >, public FastAllocated<TimeoutImplActor>, public TimeoutImplActorState<TimeoutImplActor> {
-															#line 1341 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 1341 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 public:
 	using FastAllocated<TimeoutImplActor>::operator new;
 	using FastAllocated<TimeoutImplActor>::operator delete;
@@ -1347,9 +1347,9 @@ public:
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< TimeoutImplActor, 0, Void >;
-															#line 1182 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 1182 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 	TimeoutImplActor(Reference<ThreadSingleAssignmentVar<Void>> const& tsav,double const& duration) 
-															#line 1352 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 1352 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 		 : Actor<Void>(),
 		   TimeoutImplActorState<TimeoutImplActor>(tsav, duration)
 	{
@@ -1373,14 +1373,14 @@ friend struct ActorCallback< TimeoutImplActor, 0, Void >;
 	}
 };
 }
-															#line 1182 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 1182 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 [[nodiscard]] Future<Void> timeoutImpl( Reference<ThreadSingleAssignmentVar<Void>> const& tsav, double const& duration ) {
-															#line 1182 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 1182 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 	return Future<Void>(new TimeoutImplActor(tsav, duration));
-															#line 1380 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 1380 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 }
 
-#line 1188 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+#line 1188 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 
 namespace {
 
@@ -2748,21 +2748,21 @@ bool ClientInfo::canReplace(Reference<ClientInfo> other) const {
 }
 
 // UNIT TESTS
-															#line 2751 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 2751 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 namespace {
 // This generated class is to be used only via flowTestCase2555()
-															#line 2555 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2555 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 template <class FlowTestCase2555Actor>
-															#line 2555 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2555 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 class FlowTestCase2555ActorState {
-															#line 2758 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 2758 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 public:
-															#line 2555 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2555 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 	FlowTestCase2555ActorState(UnitTestParameters const& params) 
-															#line 2555 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
-															#line 2555 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2555 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2555 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		 : params(params)
-															#line 2765 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 2765 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 	{
 		fdb_probe_actor_create("flowTestCase2555", reinterpret_cast<unsigned long>(this));
 
@@ -2775,45 +2775,45 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 2556 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2556 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 			auto vals = parseOptionValues("a");
-															#line 2557 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2557 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 			ASSERT(vals.size() == 1 && vals[0] == "a");
-															#line 2559 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2559 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 			vals = parseOptionValues("abcde");
-															#line 2560 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2560 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 			ASSERT(vals.size() == 1 && vals[0] == "abcde");
-															#line 2562 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2562 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 			vals = parseOptionValues("");
-															#line 2563 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2563 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 			ASSERT(vals.size() == 1 && vals[0] == "");
-															#line 2565 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2565 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 			vals = parseOptionValues("a:b:c:d:e");
-															#line 2566 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2566 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 			ASSERT(vals.size() == 5 && vals[0] == "a" && vals[1] == "b" && vals[2] == "c" && vals[3] == "d" && vals[4] == "e");
-															#line 2568 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2568 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 			vals = parseOptionValues("\\\\a\\::\\:b:\\\\");
-															#line 2569 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2569 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 			ASSERT(vals.size() == 3 && vals[0] == "\\a:" && vals[1] == ":b" && vals[2] == "\\");
-															#line 2571 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2571 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 			vals = parseOptionValues("abcd:");
-															#line 2572 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2572 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 			ASSERT(vals.size() == 2 && vals[0] == "abcd" && vals[1] == "");
-															#line 2574 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2574 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 			vals = parseOptionValues(":abcd");
-															#line 2575 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2575 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 			ASSERT(vals.size() == 2 && vals[0] == "" && vals[1] == "abcd");
-															#line 2577 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2577 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 			vals = parseOptionValues(":");
-															#line 2578 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2578 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 			ASSERT(vals.size() == 2 && vals[0] == "" && vals[1] == "");
-															#line 2810 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 2810 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 			try {
-															#line 2581 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2581 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 				vals = parseOptionValues("\\x");
-															#line 2582 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2582 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 				ASSERT(false);
-															#line 2816 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 2816 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 				loopDepth = a_body1cont3(loopDepth);
 			}
 			catch (Error& error) {
@@ -2840,9 +2840,9 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 2587 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2587 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		if (!static_cast<FlowTestCase2555Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~FlowTestCase2555ActorState(); static_cast<FlowTestCase2555Actor*>(this)->destroy(); return 0; }
-															#line 2845 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 2845 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 		new (&static_cast<FlowTestCase2555Actor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~FlowTestCase2555ActorState();
 		static_cast<FlowTestCase2555Actor*>(this)->finishSendAndDelPromiseRef();
@@ -2853,9 +2853,9 @@ public:
 	int a_body1Catch2(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 2584 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2584 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 			ASSERT_EQ(e.code(), error_code_invalid_option_value);
-															#line 2858 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 2858 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 			loopDepth = a_body1cont1(loopDepth);
 		}
 		catch (Error& error) {
@@ -2879,14 +2879,14 @@ public:
 
 		return loopDepth;
 	}
-															#line 2555 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2555 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 	UnitTestParameters params;
-															#line 2884 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 2884 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 };
 // This generated class is to be used only via flowTestCase2555()
-															#line 2555 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2555 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 class FlowTestCase2555Actor final : public Actor<Void>, public FastAllocated<FlowTestCase2555Actor>, public FlowTestCase2555ActorState<FlowTestCase2555Actor> {
-															#line 2889 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 2889 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 public:
 	using FastAllocated<FlowTestCase2555Actor>::operator new;
 	using FastAllocated<FlowTestCase2555Actor>::operator delete;
@@ -2894,9 +2894,9 @@ public:
 #pragma clang diagnostic ignored "-Wdelete-non-virtual-dtor"
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
-															#line 2555 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2555 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 	FlowTestCase2555Actor(UnitTestParameters const& params) 
-															#line 2899 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 2899 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 		 : Actor<Void>(),
 		   FlowTestCase2555ActorState<FlowTestCase2555Actor>(params)
 	{
@@ -2919,15 +2919,15 @@ public:
 	}
 };
 }
-															#line 2555 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2555 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 static Future<Void> flowTestCase2555( UnitTestParameters const& params ) {
-															#line 2555 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2555 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 	return Future<Void>(new FlowTestCase2555Actor(params));
-															#line 2926 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 2926 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 }
 ACTOR_TEST_CASE(flowTestCase2555, "/fdbclient/multiversionclient/EnvironmentVariableParsing")
 
-#line 2589 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+#line 2589 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 
 class ValidateFuture final : public ThreadCallback {
 public:
@@ -3055,27 +3055,27 @@ THREAD_FUNC cancel(void* arg) {
 	THREAD_RETURN;
 }
 
-															#line 3058 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 3058 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 namespace {
 // This generated class is to be used only via checkUndestroyedFutures()
-															#line 2716 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2716 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 template <class CheckUndestroyedFuturesActor>
-															#line 2716 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2716 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 class CheckUndestroyedFuturesActorState {
-															#line 3065 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 3065 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 public:
-															#line 2716 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2716 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 	CheckUndestroyedFuturesActorState(std::vector<ThreadSingleAssignmentVar<int>*> const& undestroyed) 
-															#line 2716 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
-															#line 2716 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2716 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2716 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		 : undestroyed(undestroyed),
-															#line 2717 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2717 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		   fNum(),
-															#line 2718 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2718 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		   f(),
-															#line 2719 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2719 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		   start(now())
-															#line 3078 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 3078 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 	{
 		fdb_probe_actor_create("checkUndestroyedFutures", reinterpret_cast<unsigned long>(this));
 
@@ -3088,9 +3088,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 2721 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2721 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 			fNum = 0;
-															#line 3093 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 3093 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -3111,16 +3111,16 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 2731 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2731 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = delay(1.0);
-															#line 2731 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2731 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		if (static_cast<CheckUndestroyedFuturesActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 3118 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 3118 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<CheckUndestroyedFuturesActor*>(this)->actor_wait_state = 2;
-															#line 2731 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2731 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< CheckUndestroyedFuturesActor, 1, Void >*>(static_cast<CheckUndestroyedFuturesActor*>(this)));
-															#line 3123 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 3123 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -3134,17 +3134,17 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 2721 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2721 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		if (!(fNum < undestroyed.size()))
-															#line 3139 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 3139 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 		{
 			return a_body1break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 2722 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2722 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		f = undestroyed[fNum];
-															#line 2724 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2724 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		;
-															#line 3147 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 3147 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 		loopDepth = a_body1loopBody1loopHead1(loopDepth);
 
 		return loopDepth;
@@ -3164,11 +3164,11 @@ public:
 	}
 	int a_body1loopBody1cont1(int loopDepth) 
 	{
-															#line 2728 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2728 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		ASSERT(f->isReady());
-															#line 2721 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2721 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		++fNum;
-															#line 3171 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 3171 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 		if (loopDepth == 0) return a_body1loopHead1(0);
 
 		return loopDepth;
@@ -3182,22 +3182,22 @@ public:
 	}
 	int a_body1loopBody1loopBody1(int loopDepth) 
 	{
-															#line 2724 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2724 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		if (!(!f->isReady() && start + 5 >= now()))
-															#line 3187 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 3187 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 		{
 			return a_body1loopBody1break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 2725 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2725 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		StrictFuture<Void> __when_expr_0 = delay(1.0);
-															#line 2725 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2725 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		if (static_cast<CheckUndestroyedFuturesActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 2));
-															#line 3195 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 3195 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 		if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 2)); else return a_body1loopBody1loopBody1when1(__when_expr_0.get(), loopDepth); };
 		static_cast<CheckUndestroyedFuturesActor*>(this)->actor_wait_state = 1;
-															#line 2725 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2725 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< CheckUndestroyedFuturesActor, 0, Void >*>(static_cast<CheckUndestroyedFuturesActor*>(this)));
-															#line 3200 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 3200 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -3292,21 +3292,21 @@ public:
 	}
 	int a_body1cont2(Void const& _,int loopDepth) 
 	{
-															#line 2733 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2733 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		for(fNum = 0;fNum < undestroyed.size();++fNum) {
-															#line 2734 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2734 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 			f = undestroyed[fNum];
-															#line 2736 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2736 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 			ASSERT_EQ(f->debugGetReferenceCount(), 1);
-															#line 2737 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2737 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 			ASSERT(f->isReady());
-															#line 2739 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2739 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 			f->cancel();
-															#line 3305 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 3305 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 		}
-															#line 2742 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2742 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		if (!static_cast<CheckUndestroyedFuturesActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~CheckUndestroyedFuturesActorState(); static_cast<CheckUndestroyedFuturesActor*>(this)->destroy(); return 0; }
-															#line 3309 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 3309 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 		new (&static_cast<CheckUndestroyedFuturesActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~CheckUndestroyedFuturesActorState();
 		static_cast<CheckUndestroyedFuturesActor*>(this)->finishSendAndDelPromiseRef();
@@ -3316,21 +3316,21 @@ public:
 	}
 	int a_body1cont2(Void && _,int loopDepth) 
 	{
-															#line 2733 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2733 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		for(fNum = 0;fNum < undestroyed.size();++fNum) {
-															#line 2734 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2734 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 			f = undestroyed[fNum];
-															#line 2736 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2736 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 			ASSERT_EQ(f->debugGetReferenceCount(), 1);
-															#line 2737 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2737 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 			ASSERT(f->isReady());
-															#line 2739 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2739 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 			f->cancel();
-															#line 3329 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 3329 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 		}
-															#line 2742 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2742 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		if (!static_cast<CheckUndestroyedFuturesActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~CheckUndestroyedFuturesActorState(); static_cast<CheckUndestroyedFuturesActor*>(this)->destroy(); return 0; }
-															#line 3333 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 3333 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 		new (&static_cast<CheckUndestroyedFuturesActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~CheckUndestroyedFuturesActorState();
 		static_cast<CheckUndestroyedFuturesActor*>(this)->finishSendAndDelPromiseRef();
@@ -3401,20 +3401,20 @@ public:
 		fdb_probe_actor_exit("checkUndestroyedFutures", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 2716 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2716 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 	std::vector<ThreadSingleAssignmentVar<int>*> undestroyed;
-															#line 2717 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2717 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 	int fNum;
-															#line 2718 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2718 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 	ThreadSingleAssignmentVar<int>* f;
-															#line 2719 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2719 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 	double start;
-															#line 3412 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 3412 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 };
 // This generated class is to be used only via checkUndestroyedFutures()
-															#line 2716 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2716 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 class CheckUndestroyedFuturesActor final : public Actor<Void>, public ActorCallback< CheckUndestroyedFuturesActor, 0, Void >, public ActorCallback< CheckUndestroyedFuturesActor, 1, Void >, public FastAllocated<CheckUndestroyedFuturesActor>, public CheckUndestroyedFuturesActorState<CheckUndestroyedFuturesActor> {
-															#line 3417 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 3417 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 public:
 	using FastAllocated<CheckUndestroyedFuturesActor>::operator new;
 	using FastAllocated<CheckUndestroyedFuturesActor>::operator delete;
@@ -3424,9 +3424,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< CheckUndestroyedFuturesActor, 0, Void >;
 friend struct ActorCallback< CheckUndestroyedFuturesActor, 1, Void >;
-															#line 2716 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2716 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 	CheckUndestroyedFuturesActor(std::vector<ThreadSingleAssignmentVar<int>*> const& undestroyed) 
-															#line 3429 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 3429 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 		 : Actor<Void>(),
 		   CheckUndestroyedFuturesActorState<CheckUndestroyedFuturesActor>(undestroyed)
 	{
@@ -3451,14 +3451,14 @@ friend struct ActorCallback< CheckUndestroyedFuturesActor, 1, Void >;
 	}
 };
 }
-															#line 2716 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2716 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 [[nodiscard]] Future<Void> checkUndestroyedFutures( std::vector<ThreadSingleAssignmentVar<int>*> const& undestroyed ) {
-															#line 2716 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2716 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 	return Future<Void>(new CheckUndestroyedFuturesActor(undestroyed));
-															#line 3458 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 3458 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 }
 
-#line 2744 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+#line 2744 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 
 // Common code for tests of single assignment vars. Tests both correctness and thread safety.
 // T should be a class that has a static method with the following signature:
@@ -3549,25 +3549,25 @@ struct AbortableTest {
 	}
 };
 
-															#line 3552 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 3552 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 namespace {
 // This generated class is to be used only via flowTestCase2834()
-															#line 2834 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2834 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 template <class FlowTestCase2834Actor>
-															#line 2834 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2834 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 class FlowTestCase2834ActorState {
-															#line 3559 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 3559 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 public:
-															#line 2834 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2834 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 	FlowTestCase2834ActorState(UnitTestParameters const& params) 
-															#line 2834 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
-															#line 2834 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2834 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2834 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		 : params(params),
-															#line 2835 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2835 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		   done(false),
-															#line 2836 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2836 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		   thread(g_network->startThread(runSingleAssignmentVarTest<AbortableTest>, (void*)&done))
-															#line 3570 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 3570 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 	{
 		fdb_probe_actor_create("flowTestCase2834", reinterpret_cast<unsigned long>(this));
 
@@ -3580,9 +3580,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 2838 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2838 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 			;
-															#line 3585 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 3585 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -3603,11 +3603,11 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 2842 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2842 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		waitThread(thread);
-															#line 2844 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2844 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		if (!static_cast<FlowTestCase2834Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~FlowTestCase2834ActorState(); static_cast<FlowTestCase2834Actor*>(this)->destroy(); return 0; }
-															#line 3610 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 3610 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 		new (&static_cast<FlowTestCase2834Actor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~FlowTestCase2834ActorState();
 		static_cast<FlowTestCase2834Actor*>(this)->finishSendAndDelPromiseRef();
@@ -3624,22 +3624,22 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 2838 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2838 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		if (!(!done))
-															#line 3629 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 3629 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 		{
 			return a_body1break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 2839 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2839 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		StrictFuture<Void> __when_expr_0 = delay(1.0);
-															#line 2839 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2839 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		if (static_cast<FlowTestCase2834Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 3637 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 3637 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 		if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 		static_cast<FlowTestCase2834Actor*>(this)->actor_wait_state = 1;
-															#line 2839 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2839 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase2834Actor, 0, Void >*>(static_cast<FlowTestCase2834Actor*>(this)));
-															#line 3642 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 3642 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -3732,18 +3732,18 @@ public:
 		fdb_probe_actor_exit("flowTestCase2834", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 2834 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2834 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 	UnitTestParameters params;
-															#line 2835 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2835 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 	volatile bool done;
-															#line 2836 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2836 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 	THREAD_HANDLE thread;
-															#line 3741 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 3741 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 };
 // This generated class is to be used only via flowTestCase2834()
-															#line 2834 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2834 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 class FlowTestCase2834Actor final : public Actor<Void>, public ActorCallback< FlowTestCase2834Actor, 0, Void >, public FastAllocated<FlowTestCase2834Actor>, public FlowTestCase2834ActorState<FlowTestCase2834Actor> {
-															#line 3746 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 3746 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 public:
 	using FastAllocated<FlowTestCase2834Actor>::operator new;
 	using FastAllocated<FlowTestCase2834Actor>::operator delete;
@@ -3752,9 +3752,9 @@ public:
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< FlowTestCase2834Actor, 0, Void >;
-															#line 2834 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2834 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 	FlowTestCase2834Actor(UnitTestParameters const& params) 
-															#line 3757 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 3757 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 		 : Actor<Void>(),
 		   FlowTestCase2834ActorState<FlowTestCase2834Actor>(params)
 	{
@@ -3778,15 +3778,15 @@ friend struct ActorCallback< FlowTestCase2834Actor, 0, Void >;
 	}
 };
 }
-															#line 2834 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2834 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 static Future<Void> flowTestCase2834( UnitTestParameters const& params ) {
-															#line 2834 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2834 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 	return Future<Void>(new FlowTestCase2834Actor(params));
-															#line 3785 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 3785 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 }
 ACTOR_TEST_CASE(flowTestCase2834, "/fdbclient/multiversionclient/AbortableSingleAssignmentVar")
 
-#line 2846 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+#line 2846 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 
 class CAPICallback final : public ThreadCallback {
 public:
@@ -3852,23 +3852,23 @@ struct DLTest {
 	}
 };
 
-															#line 3855 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 3855 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 namespace {
 // This generated class is to be used only via flowTestCase2911()
-															#line 2911 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2911 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 template <class FlowTestCase2911Actor>
-															#line 2911 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2911 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 class FlowTestCase2911ActorState {
-															#line 3862 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 3862 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 public:
-															#line 2911 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2911 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 	FlowTestCase2911ActorState(UnitTestParameters const& params) 
-															#line 2911 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
-															#line 2911 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2911 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2911 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		 : params(params),
-															#line 2912 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2912 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		   done(false)
-															#line 3871 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 3871 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 	{
 		fdb_probe_actor_create("flowTestCase2911", reinterpret_cast<unsigned long>(this));
 
@@ -3881,13 +3881,13 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 2914 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2914 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 			MultiVersionApi::api->callbackOnMainThread = true;
-															#line 2915 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2915 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 			thread = g_network->startThread(runSingleAssignmentVarTest<DLTest>, (void*)&done);
-															#line 2917 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2917 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 			;
-															#line 3890 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 3890 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -3908,17 +3908,17 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 2921 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2921 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		waitThread(thread);
-															#line 2923 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2923 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		done = false;
-															#line 2924 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2924 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		MultiVersionApi::api->callbackOnMainThread = false;
-															#line 2925 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2925 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		thread = g_network->startThread(runSingleAssignmentVarTest<DLTest>, (void*)&done);
-															#line 2927 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2927 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		;
-															#line 3921 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 3921 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 		loopDepth = a_body1cont1loopHead1(loopDepth);
 
 		return loopDepth;
@@ -3932,22 +3932,22 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 2917 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2917 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		if (!(!done))
-															#line 3937 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 3937 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 		{
 			return a_body1break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 2918 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2918 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		StrictFuture<Void> __when_expr_0 = delay(1.0);
-															#line 2918 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2918 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		if (static_cast<FlowTestCase2911Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 3945 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 3945 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 		if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 		static_cast<FlowTestCase2911Actor*>(this)->actor_wait_state = 1;
-															#line 2918 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2918 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase2911Actor, 0, Void >*>(static_cast<FlowTestCase2911Actor*>(this)));
-															#line 3950 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 3950 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -4042,11 +4042,11 @@ public:
 	}
 	int a_body1cont2(int loopDepth) 
 	{
-															#line 2931 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2931 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		waitThread(thread);
-															#line 2933 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2933 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		if (!static_cast<FlowTestCase2911Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~FlowTestCase2911ActorState(); static_cast<FlowTestCase2911Actor*>(this)->destroy(); return 0; }
-															#line 4049 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 4049 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 		new (&static_cast<FlowTestCase2911Actor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~FlowTestCase2911ActorState();
 		static_cast<FlowTestCase2911Actor*>(this)->finishSendAndDelPromiseRef();
@@ -4063,22 +4063,22 @@ public:
 	}
 	int a_body1cont1loopBody1(int loopDepth) 
 	{
-															#line 2927 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2927 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		if (!(!done))
-															#line 4068 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 4068 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 		{
 			return a_body1cont1break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 2928 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2928 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = delay(1.0);
-															#line 2928 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2928 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		if (static_cast<FlowTestCase2911Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 4076 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 4076 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), std::max(0, loopDepth - 1)); else return a_body1cont1loopBody1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<FlowTestCase2911Actor*>(this)->actor_wait_state = 2;
-															#line 2928 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2928 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase2911Actor, 1, Void >*>(static_cast<FlowTestCase2911Actor*>(this)));
-															#line 4081 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 4081 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -4171,18 +4171,18 @@ public:
 		fdb_probe_actor_exit("flowTestCase2911", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 2911 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2911 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 	UnitTestParameters params;
-															#line 2912 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2912 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 	volatile bool done;
-															#line 2915 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2915 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 	THREAD_HANDLE thread;
-															#line 4180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 4180 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 };
 // This generated class is to be used only via flowTestCase2911()
-															#line 2911 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2911 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 class FlowTestCase2911Actor final : public Actor<Void>, public ActorCallback< FlowTestCase2911Actor, 0, Void >, public ActorCallback< FlowTestCase2911Actor, 1, Void >, public FastAllocated<FlowTestCase2911Actor>, public FlowTestCase2911ActorState<FlowTestCase2911Actor> {
-															#line 4185 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 4185 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 public:
 	using FastAllocated<FlowTestCase2911Actor>::operator new;
 	using FastAllocated<FlowTestCase2911Actor>::operator delete;
@@ -4192,9 +4192,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< FlowTestCase2911Actor, 0, Void >;
 friend struct ActorCallback< FlowTestCase2911Actor, 1, Void >;
-															#line 2911 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2911 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 	FlowTestCase2911Actor(UnitTestParameters const& params) 
-															#line 4197 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 4197 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 		 : Actor<Void>(),
 		   FlowTestCase2911ActorState<FlowTestCase2911Actor>(params)
 	{
@@ -4219,15 +4219,15 @@ friend struct ActorCallback< FlowTestCase2911Actor, 1, Void >;
 	}
 };
 }
-															#line 2911 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2911 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 static Future<Void> flowTestCase2911( UnitTestParameters const& params ) {
-															#line 2911 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2911 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 	return Future<Void>(new FlowTestCase2911Actor(params));
-															#line 4226 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 4226 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 }
 ACTOR_TEST_CASE(flowTestCase2911, "/fdbclient/multiversionclient/DLSingleAssignmentVar")
 
-#line 2935 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+#line 2935 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 
 struct MapTest {
 	static FutureInfo createThreadFuture(FutureInfo f) {
@@ -4248,25 +4248,25 @@ struct MapTest {
 	}
 };
 
-															#line 4251 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 4251 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 namespace {
 // This generated class is to be used only via flowTestCase2955()
-															#line 2955 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2955 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 template <class FlowTestCase2955Actor>
-															#line 2955 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2955 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 class FlowTestCase2955ActorState {
-															#line 4258 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 4258 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 public:
-															#line 2955 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2955 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 	FlowTestCase2955ActorState(UnitTestParameters const& params) 
-															#line 2955 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
-															#line 2955 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2955 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2955 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		 : params(params),
-															#line 2956 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2956 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		   done(false),
-															#line 2957 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2957 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		   thread(g_network->startThread(runSingleAssignmentVarTest<MapTest>, (void*)&done))
-															#line 4269 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 4269 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 	{
 		fdb_probe_actor_create("flowTestCase2955", reinterpret_cast<unsigned long>(this));
 
@@ -4279,9 +4279,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 2959 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2959 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 			;
-															#line 4284 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 4284 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -4302,11 +4302,11 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 2963 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2963 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		waitThread(thread);
-															#line 2965 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2965 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		if (!static_cast<FlowTestCase2955Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~FlowTestCase2955ActorState(); static_cast<FlowTestCase2955Actor*>(this)->destroy(); return 0; }
-															#line 4309 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 4309 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 		new (&static_cast<FlowTestCase2955Actor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~FlowTestCase2955ActorState();
 		static_cast<FlowTestCase2955Actor*>(this)->finishSendAndDelPromiseRef();
@@ -4323,22 +4323,22 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 2959 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2959 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		if (!(!done))
-															#line 4328 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 4328 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 		{
 			return a_body1break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 2960 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2960 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		StrictFuture<Void> __when_expr_0 = delay(1.0);
-															#line 2960 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2960 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		if (static_cast<FlowTestCase2955Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 4336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 4336 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 		if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 		static_cast<FlowTestCase2955Actor*>(this)->actor_wait_state = 1;
-															#line 2960 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2960 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase2955Actor, 0, Void >*>(static_cast<FlowTestCase2955Actor*>(this)));
-															#line 4341 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 4341 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -4431,18 +4431,18 @@ public:
 		fdb_probe_actor_exit("flowTestCase2955", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 2955 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2955 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 	UnitTestParameters params;
-															#line 2956 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2956 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 	volatile bool done;
-															#line 2957 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2957 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 	THREAD_HANDLE thread;
-															#line 4440 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 4440 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 };
 // This generated class is to be used only via flowTestCase2955()
-															#line 2955 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2955 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 class FlowTestCase2955Actor final : public Actor<Void>, public ActorCallback< FlowTestCase2955Actor, 0, Void >, public FastAllocated<FlowTestCase2955Actor>, public FlowTestCase2955ActorState<FlowTestCase2955Actor> {
-															#line 4445 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 4445 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 public:
 	using FastAllocated<FlowTestCase2955Actor>::operator new;
 	using FastAllocated<FlowTestCase2955Actor>::operator delete;
@@ -4451,9 +4451,9 @@ public:
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< FlowTestCase2955Actor, 0, Void >;
-															#line 2955 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2955 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 	FlowTestCase2955Actor(UnitTestParameters const& params) 
-															#line 4456 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 4456 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 		 : Actor<Void>(),
 		   FlowTestCase2955ActorState<FlowTestCase2955Actor>(params)
 	{
@@ -4477,15 +4477,15 @@ friend struct ActorCallback< FlowTestCase2955Actor, 0, Void >;
 	}
 };
 }
-															#line 2955 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2955 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 static Future<Void> flowTestCase2955( UnitTestParameters const& params ) {
-															#line 2955 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2955 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 	return Future<Void>(new FlowTestCase2955Actor(params));
-															#line 4484 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 4484 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 }
 ACTOR_TEST_CASE(flowTestCase2955, "/fdbclient/multiversionclient/MapSingleAssignmentVar")
 
-#line 2967 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+#line 2967 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 
 struct FlatMapTest {
 	static FutureInfo createThreadFuture(FutureInfo f) {
@@ -4513,25 +4513,25 @@ struct FlatMapTest {
 	}
 };
 
-															#line 4516 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 4516 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 namespace {
 // This generated class is to be used only via flowTestCase2994()
-															#line 2994 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2994 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 template <class FlowTestCase2994Actor>
-															#line 2994 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2994 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 class FlowTestCase2994ActorState {
-															#line 4523 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 4523 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 public:
-															#line 2994 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2994 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 	FlowTestCase2994ActorState(UnitTestParameters const& params) 
-															#line 2994 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
-															#line 2994 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2994 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2994 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		 : params(params),
-															#line 2995 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2995 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		   done(false),
-															#line 2996 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2996 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		   thread(g_network->startThread(runSingleAssignmentVarTest<FlatMapTest>, (void*)&done))
-															#line 4534 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 4534 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 	{
 		fdb_probe_actor_create("flowTestCase2994", reinterpret_cast<unsigned long>(this));
 
@@ -4544,9 +4544,9 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 2998 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2998 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 			;
-															#line 4549 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 4549 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -4567,11 +4567,11 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 3002 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 3002 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		waitThread(thread);
-															#line 3004 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 3004 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		if (!static_cast<FlowTestCase2994Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~FlowTestCase2994ActorState(); static_cast<FlowTestCase2994Actor*>(this)->destroy(); return 0; }
-															#line 4574 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 4574 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 		new (&static_cast<FlowTestCase2994Actor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~FlowTestCase2994ActorState();
 		static_cast<FlowTestCase2994Actor*>(this)->finishSendAndDelPromiseRef();
@@ -4588,22 +4588,22 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 2998 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2998 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		if (!(!done))
-															#line 4593 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 4593 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 		{
 			return a_body1break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 2999 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2999 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		StrictFuture<Void> __when_expr_0 = delay(1.0);
-															#line 2999 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2999 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		if (static_cast<FlowTestCase2994Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 4601 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 4601 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 		if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 		static_cast<FlowTestCase2994Actor*>(this)->actor_wait_state = 1;
-															#line 2999 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2999 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 		__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase2994Actor, 0, Void >*>(static_cast<FlowTestCase2994Actor*>(this)));
-															#line 4606 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 4606 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -4696,18 +4696,18 @@ public:
 		fdb_probe_actor_exit("flowTestCase2994", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 2994 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2994 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 	UnitTestParameters params;
-															#line 2995 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2995 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 	volatile bool done;
-															#line 2996 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2996 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 	THREAD_HANDLE thread;
-															#line 4705 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 4705 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 };
 // This generated class is to be used only via flowTestCase2994()
-															#line 2994 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2994 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 class FlowTestCase2994Actor final : public Actor<Void>, public ActorCallback< FlowTestCase2994Actor, 0, Void >, public FastAllocated<FlowTestCase2994Actor>, public FlowTestCase2994ActorState<FlowTestCase2994Actor> {
-															#line 4710 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 4710 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 public:
 	using FastAllocated<FlowTestCase2994Actor>::operator new;
 	using FastAllocated<FlowTestCase2994Actor>::operator delete;
@@ -4716,9 +4716,9 @@ public:
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< FlowTestCase2994Actor, 0, Void >;
-															#line 2994 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2994 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 	FlowTestCase2994Actor(UnitTestParameters const& params) 
-															#line 4721 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 4721 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 		 : Actor<Void>(),
 		   FlowTestCase2994ActorState<FlowTestCase2994Actor>(params)
 	{
@@ -4742,12 +4742,12 @@ friend struct ActorCallback< FlowTestCase2994Actor, 0, Void >;
 	}
 };
 }
-															#line 2994 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2994 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 static Future<Void> flowTestCase2994( UnitTestParameters const& params ) {
-															#line 2994 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+															#line 2994 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"
 	return Future<Void>(new FlowTestCase2994Actor(params));
-															#line 4749 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.g.cpp"
+															#line 4749 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.g.cpp"
 }
 ACTOR_TEST_CASE(flowTestCase2994, "/fdbclient/multiversionclient/FlatMapSingleAssignmentVar")
 
-#line 3006 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/MultiVersionTransaction.actor.cpp"
+#line 3006 "/usr/src/libfdb_c/fdbclient/MultiVersionTransaction.actor.cpp"

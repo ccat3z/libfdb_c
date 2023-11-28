@@ -1,5 +1,5 @@
 #define POST_ACTOR_COMPILER 1
-#line 1 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.h"
+#line 1 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.h"
 /*
  * GlobalConfig.actor.h
  *
@@ -165,21 +165,21 @@ private:
 	// of the global configuration keyspace.
 	void erase(KeyRangeRef range);
 
-																#line 168 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.h"
+																#line 168 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.h"
 [[nodiscard]] static Future<Void> migrate( GlobalConfig* const& self );
 template <class> friend class GlobalConfig_MigrateActorState;
 
-#line 167 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.h"
-																#line 173 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.h"
+#line 167 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.h"
+																#line 173 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.h"
 [[nodiscard]] static Future<Void> refresh( GlobalConfig* const& self );
 template <class> friend class GlobalConfig_RefreshActorState;
 
-#line 168 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.h"
-																#line 178 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.g.h"
+#line 168 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.h"
+																#line 178 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.g.h"
 [[nodiscard]] static Future<Void> updater( GlobalConfig* const& self, const ClientDBInfo* const& dbInfo );
 template <class> friend class GlobalConfig_UpdaterActorState;
 
-#line 169 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/GlobalConfig.actor.h"
+#line 169 "/usr/src/libfdb_c/fdbclient/GlobalConfig.actor.h"
 
 	DatabaseContext* cx;
 	AsyncTrigger dbInfoChanged;

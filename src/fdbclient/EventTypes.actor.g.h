@@ -1,5 +1,5 @@
 #define POST_ACTOR_COMPILER 1
-#line 1 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/EventTypes.actor.h"
+#line 1 "/usr/src/libfdb_c/fdbclient/EventTypes.actor.h"
 /*
  * EventTypes.actor.h
  *
@@ -51,7 +51,7 @@ struct GetValueComplete {
 	int64_t latency; // ns
 };
 int64_t Descriptor<GetValueComplete>::latencyDescriptor::get(GetValueComplete& from) { return from.latency; }
-#line 37 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/EventTypes.actor.h"
+#line 37 "/usr/src/libfdb_c/fdbclient/EventTypes.actor.h"
 
 
 #include "flow/unactorcompiler.h"

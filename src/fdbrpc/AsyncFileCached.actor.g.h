@@ -1,5 +1,5 @@
 #define POST_ACTOR_COMPILER 1
-#line 1 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+#line 1 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 /*
  * AsyncFileCached.actor.h
  *
@@ -179,26 +179,26 @@ public:
 		return tag(f, length);
 	}
 
-																#line 182 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+																#line 182 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 // This generated class is to be used only via write_impl()
-															#line 180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 180 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 template <class Write_implActor>
-															#line 180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 180 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 class Write_implActorState {
-															#line 188 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 188 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 public:
-															#line 180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 180 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	Write_implActorState(AsyncFileCached* const& self,void const* const& data,int const& length,int64_t const& offset) 
-															#line 180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
-															#line 180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 180 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
+															#line 180 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		 : self(self),
-															#line 180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 180 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		   data(data),
-															#line 180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 180 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		   length(length),
-															#line 180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 180 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		   offset(offset)
-															#line 201 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 201 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 	{
 		fdb_probe_actor_create("write_impl", reinterpret_cast<unsigned long>(this));
 
@@ -211,20 +211,20 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 183 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 183 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 			if (length + offset > self->currentTruncateSize)
-															#line 216 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 216 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 			{
-															#line 184 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 184 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 				StrictFuture<Void> __when_expr_0 = self->currentTruncate;
-															#line 184 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 184 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 				if (static_cast<Write_implActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 222 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 222 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 				if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 				static_cast<Write_implActor*>(this)->actor_wait_state = 1;
-															#line 184 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 184 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 				__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< Write_implActor, 0, Void >*>(static_cast<Write_implActor*>(this)));
-															#line 227 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 227 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 				loopDepth = 0;
 			}
 			else
@@ -250,32 +250,32 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 185 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 185 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		++self->countFileCacheWrites;
-															#line 186 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 186 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		++self->countCacheWrites;
-															#line 187 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 187 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		Future<Void> f = read_write_impl<true>(self, static_cast<const uint8_t*>(data), length, offset);
-															#line 188 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 188 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		if (!f.isReady())
-															#line 261 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 261 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		{
-															#line 189 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 189 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 			++self->countFileCacheWritesBlocked;
-															#line 190 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 190 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 			++self->countCacheWritesBlocked;
-															#line 267 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 267 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		}
-															#line 192 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 192 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		StrictFuture<Void> __when_expr_1 = f;
-															#line 192 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 192 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		if (static_cast<Write_implActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 273 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 273 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<Write_implActor*>(this)->actor_wait_state = 2;
-															#line 192 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 192 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< Write_implActor, 1, Void >*>(static_cast<Write_implActor*>(this)));
-															#line 278 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 278 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -357,9 +357,9 @@ public:
 	}
 	int a_body1cont3(Void const& _,int loopDepth) 
 	{
-															#line 193 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 193 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		if (!static_cast<Write_implActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~Write_implActorState(); static_cast<Write_implActor*>(this)->destroy(); return 0; }
-															#line 362 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 362 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		new (&static_cast<Write_implActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~Write_implActorState();
 		static_cast<Write_implActor*>(this)->finishSendAndDelPromiseRef();
@@ -369,9 +369,9 @@ public:
 	}
 	int a_body1cont3(Void && _,int loopDepth) 
 	{
-															#line 193 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 193 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		if (!static_cast<Write_implActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~Write_implActorState(); static_cast<Write_implActor*>(this)->destroy(); return 0; }
-															#line 374 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 374 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		new (&static_cast<Write_implActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~Write_implActorState();
 		static_cast<Write_implActor*>(this)->finishSendAndDelPromiseRef();
@@ -442,20 +442,20 @@ public:
 		fdb_probe_actor_exit("write_impl", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 180 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	AsyncFileCached* self;
-															#line 180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 180 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	void const* data;
-															#line 180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 180 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	int length;
-															#line 180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 180 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	int64_t offset;
-															#line 453 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 453 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 };
 // This generated class is to be used only via write_impl()
-															#line 180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 180 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 class Write_implActor final : public Actor<Void>, public ActorCallback< Write_implActor, 0, Void >, public ActorCallback< Write_implActor, 1, Void >, public FastAllocated<Write_implActor>, public Write_implActorState<Write_implActor> {
-															#line 458 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 458 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 public:
 	using FastAllocated<Write_implActor>::operator new;
 	using FastAllocated<Write_implActor>::operator delete;
@@ -465,9 +465,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< Write_implActor, 0, Void >;
 friend struct ActorCallback< Write_implActor, 1, Void >;
-															#line 180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 180 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	Write_implActor(AsyncFileCached* const& self,void const* const& data,int const& length,int64_t const& offset) 
-															#line 470 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 470 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		 : Actor<Void>(),
 		   Write_implActorState<Write_implActor>(self, data, length, offset)
 	{
@@ -491,14 +491,14 @@ friend struct ActorCallback< Write_implActor, 1, Void >;
 
 	}
 };
-															#line 180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 180 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 [[nodiscard]] static Future<Void> write_impl( AsyncFileCached* const& self, void const* const& data, int const& length, int64_t const& offset ) {
-															#line 180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 180 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	return Future<Void>(new Write_implActor(self, data, length, offset));
-															#line 498 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 498 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 }
 
-#line 195 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+#line 195 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 
 	Future<Void> write(void const* data, int length, int64_t offset) override {
 		return write_impl(this, data, length, offset);
@@ -515,22 +515,22 @@ friend struct ActorCallback< Write_implActor, 1, Void >;
 
 	// This wrapper for the actual truncation operation enforces ordering of truncates.
 	// It maintains currentTruncate and currentTruncateSize so writers can wait behind truncates that would affect them.
-																#line 518 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+																#line 518 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 // This generated class is to be used only via truncate_impl()
-															#line 211 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 211 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 template <class Truncate_implActor>
-															#line 211 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 211 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 class Truncate_implActorState {
-															#line 524 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 524 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 public:
-															#line 211 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 211 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	Truncate_implActorState(AsyncFileCached* const& self,int64_t const& size) 
-															#line 211 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
-															#line 211 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 211 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
+															#line 211 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		 : self(self),
-															#line 211 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 211 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		   size(size)
-															#line 533 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 533 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 	{
 		fdb_probe_actor_create("truncate_impl", reinterpret_cast<unsigned long>(this));
 
@@ -543,16 +543,16 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 212 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 212 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 			StrictFuture<Void> __when_expr_0 = self->currentTruncate;
-															#line 212 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 212 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 			if (static_cast<Truncate_implActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 550 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 550 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<Truncate_implActor*>(this)->actor_wait_state = 1;
-															#line 212 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 212 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< Truncate_implActor, 0, Void >*>(static_cast<Truncate_implActor*>(this)));
-															#line 555 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 555 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -573,40 +573,40 @@ public:
 	}
 	int a_body1cont1(Void const& _,int loopDepth) 
 	{
-															#line 213 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 213 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		self->currentTruncateSize = size;
-															#line 214 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 214 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		self->currentTruncate = self->changeFileSize(size);
-															#line 215 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 215 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		StrictFuture<Void> __when_expr_1 = self->currentTruncate;
-															#line 215 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 215 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		if (static_cast<Truncate_implActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 584 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 584 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<Truncate_implActor*>(this)->actor_wait_state = 2;
-															#line 215 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 215 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< Truncate_implActor, 1, Void >*>(static_cast<Truncate_implActor*>(this)));
-															#line 589 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 589 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont1(Void && _,int loopDepth) 
 	{
-															#line 213 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 213 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		self->currentTruncateSize = size;
-															#line 214 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 214 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		self->currentTruncate = self->changeFileSize(size);
-															#line 215 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 215 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		StrictFuture<Void> __when_expr_1 = self->currentTruncate;
-															#line 215 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 215 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		if (static_cast<Truncate_implActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 604 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 604 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<Truncate_implActor*>(this)->actor_wait_state = 2;
-															#line 215 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 215 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< Truncate_implActor, 1, Void >*>(static_cast<Truncate_implActor*>(this)));
-															#line 609 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 609 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -676,9 +676,9 @@ public:
 	}
 	int a_body1cont2(Void const& _,int loopDepth) 
 	{
-															#line 216 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 216 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		if (!static_cast<Truncate_implActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~Truncate_implActorState(); static_cast<Truncate_implActor*>(this)->destroy(); return 0; }
-															#line 681 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 681 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		new (&static_cast<Truncate_implActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~Truncate_implActorState();
 		static_cast<Truncate_implActor*>(this)->finishSendAndDelPromiseRef();
@@ -688,9 +688,9 @@ public:
 	}
 	int a_body1cont2(Void && _,int loopDepth) 
 	{
-															#line 216 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 216 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		if (!static_cast<Truncate_implActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~Truncate_implActorState(); static_cast<Truncate_implActor*>(this)->destroy(); return 0; }
-															#line 693 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 693 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		new (&static_cast<Truncate_implActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~Truncate_implActorState();
 		static_cast<Truncate_implActor*>(this)->finishSendAndDelPromiseRef();
@@ -761,16 +761,16 @@ public:
 		fdb_probe_actor_exit("truncate_impl", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 211 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 211 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	AsyncFileCached* self;
-															#line 211 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 211 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	int64_t size;
-															#line 768 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 768 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 };
 // This generated class is to be used only via truncate_impl()
-															#line 211 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 211 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 class Truncate_implActor final : public Actor<Void>, public ActorCallback< Truncate_implActor, 0, Void >, public ActorCallback< Truncate_implActor, 1, Void >, public FastAllocated<Truncate_implActor>, public Truncate_implActorState<Truncate_implActor> {
-															#line 773 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 773 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 public:
 	using FastAllocated<Truncate_implActor>::operator new;
 	using FastAllocated<Truncate_implActor>::operator delete;
@@ -780,9 +780,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< Truncate_implActor, 0, Void >;
 friend struct ActorCallback< Truncate_implActor, 1, Void >;
-															#line 211 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 211 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	Truncate_implActor(AsyncFileCached* const& self,int64_t const& size) 
-															#line 785 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 785 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		 : Actor<Void>(),
 		   Truncate_implActorState<Truncate_implActor>(self, size)
 	{
@@ -806,14 +806,14 @@ friend struct ActorCallback< Truncate_implActor, 1, Void >;
 
 	}
 };
-															#line 211 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 211 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 [[nodiscard]] static Future<Void> truncate_impl( AsyncFileCached* const& self, int64_t const& size ) {
-															#line 211 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 211 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	return Future<Void>(new Truncate_implActor(self, size));
-															#line 813 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 813 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 }
 
-#line 218 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+#line 218 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 
 	Future<Void> sync() override { return waitAndSync(this, flush()); }
 
@@ -927,26 +927,26 @@ private:
 	static Future<Reference<IAsyncFile>> open_impl(std::string filename, int flags, int mode);
 
 	// Opens a file that uses the FDB in-memory page cache
-																#line 930 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+																#line 930 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 // This generated class is to be used only via open_impl()
-															#line 331 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 331 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 template <class Open_implActor>
-															#line 331 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 331 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 class Open_implActorState {
-															#line 936 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 936 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 public:
-															#line 331 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 331 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	Open_implActorState(std::string const& filename,int const& flags,int const& mode,Reference<EvictablePageCache> const& pageCache) 
-															#line 331 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
-															#line 331 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 331 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
+															#line 331 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		 : filename(filename),
-															#line 331 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 331 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		   flags(flags),
-															#line 331 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 331 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		   mode(mode),
-															#line 331 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 331 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		   pageCache(pageCache)
-															#line 949 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 949 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 	{
 		fdb_probe_actor_create("open_impl", reinterpret_cast<unsigned long>(this));
 
@@ -960,32 +960,32 @@ public:
 	{
 		try {
 			try {
-															#line 336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 336 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 				TraceEvent("AFCUnderlyingOpenBegin").detail("Filename", filename);
-															#line 337 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 337 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 				if (flags & IAsyncFile::OPEN_CACHED_READ_ONLY)
-															#line 967 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 967 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 				{
-															#line 338 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 338 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 					flags = (flags & ~IAsyncFile::OPEN_READWRITE) | IAsyncFile::OPEN_READONLY;
-															#line 971 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 971 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 				}
 				else
 				{
-															#line 340 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 340 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 					flags = (flags & ~IAsyncFile::OPEN_READONLY) | IAsyncFile::OPEN_READWRITE;
-															#line 977 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 977 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 				}
-															#line 341 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 341 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 				StrictFuture<Reference<IAsyncFile>> __when_expr_0 = IAsyncFileSystem::filesystem()->open( filename, flags | IAsyncFile::OPEN_UNCACHED | IAsyncFile::OPEN_UNBUFFERED, mode);
-															#line 341 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 341 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 				if (static_cast<Open_implActor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), loopDepth);
-															#line 983 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 983 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 				if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch2(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 				static_cast<Open_implActor*>(this)->actor_wait_state = 1;
-															#line 341 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 341 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 				__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< Open_implActor, 0, Reference<IAsyncFile> >*>(static_cast<Open_implActor*>(this)));
-															#line 988 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 988 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 				loopDepth = 0;
 			}
 			catch (Error& error) {
@@ -1013,17 +1013,17 @@ public:
 	int a_body1Catch2(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 348 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 348 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 			if (e.code() != error_code_actor_cancelled)
-															#line 1018 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 1018 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 			{
-															#line 349 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 349 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 				openFiles.erase(filename);
-															#line 1022 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 1022 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 			}
-															#line 350 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 350 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 			return a_body1Catch1(e, loopDepth);
-															#line 1026 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 1026 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		}
 		catch (Error& error) {
 			loopDepth = a_body1Catch1(error, loopDepth);
@@ -1035,27 +1035,27 @@ public:
 	}
 	int a_body1cont2(int loopDepth) 
 	{
-															#line 343 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 343 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		TraceEvent("AFCUnderlyingOpenEnd").detail("Filename", filename);
-															#line 344 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 344 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		StrictFuture<int64_t> __when_expr_1 = f->size();
-															#line 344 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 344 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		if (static_cast<Open_implActor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), loopDepth);
-															#line 1044 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 1044 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch2(__when_expr_1.getError(), loopDepth); else return a_body1cont2when1(__when_expr_1.get(), loopDepth); };
 		static_cast<Open_implActor*>(this)->actor_wait_state = 2;
-															#line 344 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 344 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< Open_implActor, 1, int64_t >*>(static_cast<Open_implActor*>(this)));
-															#line 1049 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 1049 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1when1(Reference<IAsyncFile> const& __f,int loopDepth) 
 	{
-															#line 341 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 341 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		f = __f;
-															#line 1058 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 1058 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		loopDepth = a_body1cont2(loopDepth);
 
 		return loopDepth;
@@ -1120,11 +1120,11 @@ public:
 	}
 	int a_body1cont5(int64_t const& l,int loopDepth) 
 	{
-															#line 345 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 345 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		TraceEvent("AFCUnderlyingSize").detail("Filename", filename).detail("Size", l);
-															#line 346 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 346 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		if (!static_cast<Open_implActor*>(this)->SAV<Reference<IAsyncFile>>::futures) { (void)(new AsyncFileCached(f, filename, l, pageCache)); this->~Open_implActorState(); static_cast<Open_implActor*>(this)->destroy(); return 0; }
-															#line 1127 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 1127 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		new (&static_cast<Open_implActor*>(this)->SAV< Reference<IAsyncFile> >::value()) Reference<IAsyncFile>(new AsyncFileCached(f, filename, l, pageCache));
 		this->~Open_implActorState();
 		static_cast<Open_implActor*>(this)->finishSendAndDelPromiseRef();
@@ -1134,11 +1134,11 @@ public:
 	}
 	int a_body1cont5(int64_t && l,int loopDepth) 
 	{
-															#line 345 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 345 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		TraceEvent("AFCUnderlyingSize").detail("Filename", filename).detail("Size", l);
-															#line 346 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 346 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		if (!static_cast<Open_implActor*>(this)->SAV<Reference<IAsyncFile>>::futures) { (void)(new AsyncFileCached(f, filename, l, pageCache)); this->~Open_implActorState(); static_cast<Open_implActor*>(this)->destroy(); return 0; }
-															#line 1141 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 1141 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		new (&static_cast<Open_implActor*>(this)->SAV< Reference<IAsyncFile> >::value()) Reference<IAsyncFile>(new AsyncFileCached(f, filename, l, pageCache));
 		this->~Open_implActorState();
 		static_cast<Open_implActor*>(this)->finishSendAndDelPromiseRef();
@@ -1209,22 +1209,22 @@ public:
 		fdb_probe_actor_exit("open_impl", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 331 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 331 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	std::string filename;
-															#line 331 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 331 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	int flags;
-															#line 331 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 331 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	int mode;
-															#line 331 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 331 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	Reference<EvictablePageCache> pageCache;
-															#line 341 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 341 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	Reference<IAsyncFile> f;
-															#line 1222 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 1222 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 };
 // This generated class is to be used only via open_impl()
-															#line 331 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 331 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 class Open_implActor final : public Actor<Reference<IAsyncFile>>, public ActorCallback< Open_implActor, 0, Reference<IAsyncFile> >, public ActorCallback< Open_implActor, 1, int64_t >, public FastAllocated<Open_implActor>, public Open_implActorState<Open_implActor> {
-															#line 1227 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 1227 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 public:
 	using FastAllocated<Open_implActor>::operator new;
 	using FastAllocated<Open_implActor>::operator delete;
@@ -1234,9 +1234,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< Open_implActor, 0, Reference<IAsyncFile> >;
 friend struct ActorCallback< Open_implActor, 1, int64_t >;
-															#line 331 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 331 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	Open_implActor(std::string const& filename,int const& flags,int const& mode,Reference<EvictablePageCache> const& pageCache) 
-															#line 1239 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 1239 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		 : Actor<Reference<IAsyncFile>>(),
 		   Open_implActorState<Open_implActor>(filename, flags, mode, pageCache)
 	{
@@ -1260,35 +1260,35 @@ friend struct ActorCallback< Open_implActor, 1, int64_t >;
 
 	}
 };
-															#line 331 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 331 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 [[nodiscard]] static Future<Reference<IAsyncFile>> open_impl( std::string const& filename, int const& flags, int const& mode, Reference<EvictablePageCache> const& pageCache ) {
-															#line 331 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 331 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	return Future<Reference<IAsyncFile>>(new Open_implActor(filename, flags, mode, pageCache));
-															#line 1267 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 1267 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 }
 
-#line 353 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+#line 353 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 
 	Future<Void> flush() override;
 
 	Future<Void> quiesce();
 
-																#line 1276 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+																#line 1276 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 // This generated class is to be used only via waitAndSync()
-															#line 358 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 358 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 template <class WaitAndSyncActor>
-															#line 358 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 358 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 class WaitAndSyncActorState {
-															#line 1282 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 1282 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 public:
-															#line 358 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 358 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	WaitAndSyncActorState(AsyncFileCached* const& self,Future<Void> const& flush) 
-															#line 358 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
-															#line 358 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 358 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
+															#line 358 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		 : self(self),
-															#line 358 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 358 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		   flush(flush)
-															#line 1291 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 1291 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 	{
 		fdb_probe_actor_create("waitAndSync", reinterpret_cast<unsigned long>(this));
 
@@ -1301,16 +1301,16 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 359 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 359 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 			StrictFuture<Void> __when_expr_0 = flush;
-															#line 359 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 359 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 			if (static_cast<WaitAndSyncActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 1308 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 1308 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<WaitAndSyncActor*>(this)->actor_wait_state = 1;
-															#line 359 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 359 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< WaitAndSyncActor, 0, Void >*>(static_cast<WaitAndSyncActor*>(this)));
-															#line 1313 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 1313 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -1331,32 +1331,32 @@ public:
 	}
 	int a_body1cont1(Void const& _,int loopDepth) 
 	{
-															#line 360 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 360 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		StrictFuture<Void> __when_expr_1 = self->uncached->sync();
-															#line 360 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 360 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		if (static_cast<WaitAndSyncActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 1338 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 1338 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<WaitAndSyncActor*>(this)->actor_wait_state = 2;
-															#line 360 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 360 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< WaitAndSyncActor, 1, Void >*>(static_cast<WaitAndSyncActor*>(this)));
-															#line 1343 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 1343 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont1(Void && _,int loopDepth) 
 	{
-															#line 360 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 360 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		StrictFuture<Void> __when_expr_1 = self->uncached->sync();
-															#line 360 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 360 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		if (static_cast<WaitAndSyncActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 1354 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 1354 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<WaitAndSyncActor*>(this)->actor_wait_state = 2;
-															#line 360 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 360 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< WaitAndSyncActor, 1, Void >*>(static_cast<WaitAndSyncActor*>(this)));
-															#line 1359 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 1359 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -1426,9 +1426,9 @@ public:
 	}
 	int a_body1cont2(Void const& _,int loopDepth) 
 	{
-															#line 361 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 361 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		if (!static_cast<WaitAndSyncActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~WaitAndSyncActorState(); static_cast<WaitAndSyncActor*>(this)->destroy(); return 0; }
-															#line 1431 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 1431 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		new (&static_cast<WaitAndSyncActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~WaitAndSyncActorState();
 		static_cast<WaitAndSyncActor*>(this)->finishSendAndDelPromiseRef();
@@ -1438,9 +1438,9 @@ public:
 	}
 	int a_body1cont2(Void && _,int loopDepth) 
 	{
-															#line 361 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 361 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		if (!static_cast<WaitAndSyncActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~WaitAndSyncActorState(); static_cast<WaitAndSyncActor*>(this)->destroy(); return 0; }
-															#line 1443 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 1443 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		new (&static_cast<WaitAndSyncActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~WaitAndSyncActorState();
 		static_cast<WaitAndSyncActor*>(this)->finishSendAndDelPromiseRef();
@@ -1511,16 +1511,16 @@ public:
 		fdb_probe_actor_exit("waitAndSync", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 358 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 358 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	AsyncFileCached* self;
-															#line 358 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 358 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	Future<Void> flush;
-															#line 1518 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 1518 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 };
 // This generated class is to be used only via waitAndSync()
-															#line 358 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 358 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 class WaitAndSyncActor final : public Actor<Void>, public ActorCallback< WaitAndSyncActor, 0, Void >, public ActorCallback< WaitAndSyncActor, 1, Void >, public FastAllocated<WaitAndSyncActor>, public WaitAndSyncActorState<WaitAndSyncActor> {
-															#line 1523 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 1523 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 public:
 	using FastAllocated<WaitAndSyncActor>::operator new;
 	using FastAllocated<WaitAndSyncActor>::operator delete;
@@ -1530,9 +1530,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< WaitAndSyncActor, 0, Void >;
 friend struct ActorCallback< WaitAndSyncActor, 1, Void >;
-															#line 358 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 358 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	WaitAndSyncActor(AsyncFileCached* const& self,Future<Void> const& flush) 
-															#line 1535 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 1535 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		 : Actor<Void>(),
 		   WaitAndSyncActorState<WaitAndSyncActor>(self, flush)
 	{
@@ -1556,14 +1556,14 @@ friend struct ActorCallback< WaitAndSyncActor, 1, Void >;
 
 	}
 };
-															#line 358 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 358 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 [[nodiscard]] static Future<Void> waitAndSync( AsyncFileCached* const& self, Future<Void> const& flush ) {
-															#line 358 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 358 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	return Future<Void>(new WaitAndSyncActor(self, flush));
-															#line 1563 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 1563 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 }
 
-#line 363 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+#line 363 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 
 	template <bool writing>
 	static Future<Void> read_write_impl(AsyncFileCached* self,
@@ -1633,26 +1633,26 @@ struct AFCPage : public EvictablePage, public FastAllocated<AFCPage> {
 		return notReading;
 	}
 
-																#line 1636 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+																#line 1636 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 // This generated class is to be used only via waitAndWrite()
-															#line 432 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 432 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 template <class WaitAndWriteActor>
-															#line 432 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 432 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 class WaitAndWriteActorState {
-															#line 1642 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 1642 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 public:
-															#line 432 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 432 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	WaitAndWriteActorState(AFCPage* const& self,void const* const& data,int const& length,int const& offset) 
-															#line 432 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
-															#line 432 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 432 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
+															#line 432 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		 : self(self),
-															#line 432 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 432 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		   data(data),
-															#line 432 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 432 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		   length(length),
-															#line 432 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 432 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		   offset(offset)
-															#line 1655 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 1655 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 	{
 		fdb_probe_actor_create("waitAndWrite", reinterpret_cast<unsigned long>(this));
 
@@ -1665,16 +1665,16 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 433 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 433 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 			StrictFuture<Void> __when_expr_0 = self->notReading;
-															#line 433 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 433 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 			if (static_cast<WaitAndWriteActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 1672 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 1672 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<WaitAndWriteActor*>(this)->actor_wait_state = 1;
-															#line 433 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 433 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< WaitAndWriteActor, 0, Void >*>(static_cast<WaitAndWriteActor*>(this)));
-															#line 1677 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 1677 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -1695,11 +1695,11 @@ public:
 	}
 	int a_body1cont1(Void const& _,int loopDepth) 
 	{
-															#line 434 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 434 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		memcpy(static_cast<uint8_t*>(self->data) + offset, data, length);
-															#line 435 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 435 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		if (!static_cast<WaitAndWriteActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~WaitAndWriteActorState(); static_cast<WaitAndWriteActor*>(this)->destroy(); return 0; }
-															#line 1702 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 1702 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		new (&static_cast<WaitAndWriteActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~WaitAndWriteActorState();
 		static_cast<WaitAndWriteActor*>(this)->finishSendAndDelPromiseRef();
@@ -1709,11 +1709,11 @@ public:
 	}
 	int a_body1cont1(Void && _,int loopDepth) 
 	{
-															#line 434 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 434 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		memcpy(static_cast<uint8_t*>(self->data) + offset, data, length);
-															#line 435 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 435 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		if (!static_cast<WaitAndWriteActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~WaitAndWriteActorState(); static_cast<WaitAndWriteActor*>(this)->destroy(); return 0; }
-															#line 1716 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 1716 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		new (&static_cast<WaitAndWriteActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~WaitAndWriteActorState();
 		static_cast<WaitAndWriteActor*>(this)->finishSendAndDelPromiseRef();
@@ -1784,20 +1784,20 @@ public:
 		fdb_probe_actor_exit("waitAndWrite", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 432 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 432 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	AFCPage* self;
-															#line 432 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 432 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	void const* data;
-															#line 432 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 432 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	int length;
-															#line 432 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 432 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	int offset;
-															#line 1795 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 1795 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 };
 // This generated class is to be used only via waitAndWrite()
-															#line 432 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 432 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 class WaitAndWriteActor final : public Actor<Void>, public ActorCallback< WaitAndWriteActor, 0, Void >, public FastAllocated<WaitAndWriteActor>, public WaitAndWriteActorState<WaitAndWriteActor> {
-															#line 1800 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 1800 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 public:
 	using FastAllocated<WaitAndWriteActor>::operator new;
 	using FastAllocated<WaitAndWriteActor>::operator delete;
@@ -1806,9 +1806,9 @@ public:
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< WaitAndWriteActor, 0, Void >;
-															#line 432 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 432 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	WaitAndWriteActor(AFCPage* const& self,void const* const& data,int const& length,int const& offset) 
-															#line 1811 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 1811 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		 : Actor<Void>(),
 		   WaitAndWriteActorState<WaitAndWriteActor>(self, data, length, offset)
 	{
@@ -1831,14 +1831,14 @@ friend struct ActorCallback< WaitAndWriteActor, 0, Void >;
 
 	}
 };
-															#line 432 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 432 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 [[nodiscard]] static Future<Void> waitAndWrite( AFCPage* const& self, void const* const& data, int const& length, int const& offset ) {
-															#line 432 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 432 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	return Future<Void>(new WaitAndWriteActor(self, data, length, offset));
-															#line 1838 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 1838 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 }
 
-#line 437 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+#line 437 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 
 	Future<Void> readZeroCopy() {
 		++zeroCopyRefCount;
@@ -1890,26 +1890,26 @@ friend struct ActorCallback< WaitAndWriteActor, 0, Void >;
 		return notReading;
 	}
 
-																#line 1893 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+																#line 1893 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 // This generated class is to be used only via waitAndRead()
-															#line 488 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 488 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 template <class WaitAndReadActor>
-															#line 488 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 488 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 class WaitAndReadActorState {
-															#line 1899 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 1899 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 public:
-															#line 488 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 488 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	WaitAndReadActorState(AFCPage* const& self,void* const& data,int const& length,int const& offset) 
-															#line 488 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
-															#line 488 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 488 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
+															#line 488 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		 : self(self),
-															#line 488 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 488 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		   data(data),
-															#line 488 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 488 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		   length(length),
-															#line 488 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 488 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		   offset(offset)
-															#line 1912 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 1912 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 	{
 		fdb_probe_actor_create("waitAndRead", reinterpret_cast<unsigned long>(this));
 
@@ -1922,16 +1922,16 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 489 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 489 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 			StrictFuture<Void> __when_expr_0 = self->notReading;
-															#line 489 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 489 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 			if (static_cast<WaitAndReadActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 1929 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 1929 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<WaitAndReadActor*>(this)->actor_wait_state = 1;
-															#line 489 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 489 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< WaitAndReadActor, 0, Void >*>(static_cast<WaitAndReadActor*>(this)));
-															#line 1934 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 1934 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -1952,11 +1952,11 @@ public:
 	}
 	int a_body1cont1(Void const& _,int loopDepth) 
 	{
-															#line 490 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 490 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		memcpy(data, static_cast<uint8_t const*>(self->data) + offset, length);
-															#line 491 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 491 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		if (!static_cast<WaitAndReadActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~WaitAndReadActorState(); static_cast<WaitAndReadActor*>(this)->destroy(); return 0; }
-															#line 1959 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 1959 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		new (&static_cast<WaitAndReadActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~WaitAndReadActorState();
 		static_cast<WaitAndReadActor*>(this)->finishSendAndDelPromiseRef();
@@ -1966,11 +1966,11 @@ public:
 	}
 	int a_body1cont1(Void && _,int loopDepth) 
 	{
-															#line 490 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 490 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		memcpy(data, static_cast<uint8_t const*>(self->data) + offset, length);
-															#line 491 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 491 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		if (!static_cast<WaitAndReadActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~WaitAndReadActorState(); static_cast<WaitAndReadActor*>(this)->destroy(); return 0; }
-															#line 1973 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 1973 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		new (&static_cast<WaitAndReadActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~WaitAndReadActorState();
 		static_cast<WaitAndReadActor*>(this)->finishSendAndDelPromiseRef();
@@ -2041,20 +2041,20 @@ public:
 		fdb_probe_actor_exit("waitAndRead", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 488 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 488 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	AFCPage* self;
-															#line 488 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 488 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	void* data;
-															#line 488 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 488 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	int length;
-															#line 488 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 488 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	int offset;
-															#line 2052 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 2052 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 };
 // This generated class is to be used only via waitAndRead()
-															#line 488 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 488 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 class WaitAndReadActor final : public Actor<Void>, public ActorCallback< WaitAndReadActor, 0, Void >, public FastAllocated<WaitAndReadActor>, public WaitAndReadActorState<WaitAndReadActor> {
-															#line 2057 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 2057 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 public:
 	using FastAllocated<WaitAndReadActor>::operator new;
 	using FastAllocated<WaitAndReadActor>::operator delete;
@@ -2063,9 +2063,9 @@ public:
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< WaitAndReadActor, 0, Void >;
-															#line 488 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 488 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	WaitAndReadActor(AFCPage* const& self,void* const& data,int const& length,int const& offset) 
-															#line 2068 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 2068 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		 : Actor<Void>(),
 		   WaitAndReadActorState<WaitAndReadActor>(self, data, length, offset)
 	{
@@ -2088,29 +2088,29 @@ friend struct ActorCallback< WaitAndReadActor, 0, Void >;
 
 	}
 };
-															#line 488 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 488 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 [[nodiscard]] static Future<Void> waitAndRead( AFCPage* const& self, void* const& data, int const& length, int const& offset ) {
-															#line 488 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 488 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	return Future<Void>(new WaitAndReadActor(self, data, length, offset));
-															#line 2095 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 2095 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 }
 
-#line 493 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+#line 493 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 
-																#line 2100 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+																#line 2100 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 // This generated class is to be used only via readThrough()
-															#line 494 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 494 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 template <class ReadThroughActor>
-															#line 494 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 494 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 class ReadThroughActorState {
-															#line 2106 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 2106 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 public:
-															#line 494 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 494 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	ReadThroughActorState(AFCPage* const& self) 
-															#line 494 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
-															#line 494 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 494 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
+															#line 494 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		 : self(self)
-															#line 2113 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 2113 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 	{
 		fdb_probe_actor_create("readThrough", reinterpret_cast<unsigned long>(this));
 
@@ -2123,25 +2123,25 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 495 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 495 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 			ASSERT(!self->valid);
-															#line 496 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 496 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 			dst = self->data;
-															#line 497 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 497 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 			if (self->pageOffset < self->owner->prevLength)
-															#line 2132 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 2132 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 			{
 				try {
-															#line 499 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 499 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 					StrictFuture<int> __when_expr_0 = self->owner->uncached->read(dst, self->pageCache->pageSize, self->pageOffset);
-															#line 499 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 499 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 					if (static_cast<ReadThroughActor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), loopDepth);
-															#line 2139 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 2139 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 					if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch2(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 					static_cast<ReadThroughActor*>(this)->actor_wait_state = 1;
-															#line 499 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 499 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 					__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ReadThroughActor, 0, int >*>(static_cast<ReadThroughActor*>(this)));
-															#line 2144 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 2144 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 					loopDepth = 0;
 				}
 				catch (Error& error) {
@@ -2173,17 +2173,17 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 512 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 512 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		if (dst == self->data)
-															#line 2178 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 2178 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		{
-															#line 513 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 513 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 			self->valid = true;
-															#line 2182 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 2182 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		}
-															#line 514 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 514 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		if (!static_cast<ReadThroughActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~ReadThroughActorState(); static_cast<ReadThroughActor*>(this)->destroy(); return 0; }
-															#line 2186 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 2186 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		new (&static_cast<ReadThroughActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~ReadThroughActorState();
 		static_cast<ReadThroughActor*>(this)->finishSendAndDelPromiseRef();
@@ -2200,13 +2200,13 @@ public:
 	int a_body1Catch2(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 506 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 506 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 			self->zeroCopyRefCount = 0;
-															#line 507 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 507 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 			TraceEvent("ReadThroughFailed").error(e);
-															#line 508 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 508 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 			return a_body1Catch1(e, loopDepth);
-															#line 2209 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 2209 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		}
 		catch (Error& error) {
 			loopDepth = a_body1Catch1(error, loopDepth);
@@ -2218,13 +2218,13 @@ public:
 	}
 	int a_body1cont3(int const& _,int loopDepth) 
 	{
-															#line 500 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 500 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		if (_ != self->pageCache->pageSize)
-															#line 2223 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 2223 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		{
-															#line 501 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 501 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 			TraceEvent("ReadThroughShortRead") .detail("ReadAmount", _) .detail("PageSize", self->pageCache->pageSize) .detail("PageOffset", self->pageOffset);
-															#line 2227 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 2227 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		}
 		loopDepth = a_body1cont6(loopDepth);
 
@@ -2232,13 +2232,13 @@ public:
 	}
 	int a_body1cont3(int && _,int loopDepth) 
 	{
-															#line 500 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 500 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		if (_ != self->pageCache->pageSize)
-															#line 2237 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 2237 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		{
-															#line 501 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 501 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 			TraceEvent("ReadThroughShortRead") .detail("ReadAmount", _) .detail("PageSize", self->pageCache->pageSize) .detail("PageOffset", self->pageOffset);
-															#line 2241 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 2241 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		}
 		loopDepth = a_body1cont6(loopDepth);
 
@@ -2320,16 +2320,16 @@ public:
 
 		return loopDepth;
 	}
-															#line 494 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 494 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	AFCPage* self;
-															#line 496 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 496 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	void* dst;
-															#line 2327 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 2327 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 };
 // This generated class is to be used only via readThrough()
-															#line 494 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 494 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 class ReadThroughActor final : public Actor<Void>, public ActorCallback< ReadThroughActor, 0, int >, public FastAllocated<ReadThroughActor>, public ReadThroughActorState<ReadThroughActor> {
-															#line 2332 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 2332 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 public:
 	using FastAllocated<ReadThroughActor>::operator new;
 	using FastAllocated<ReadThroughActor>::operator delete;
@@ -2338,9 +2338,9 @@ public:
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< ReadThroughActor, 0, int >;
-															#line 494 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 494 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	ReadThroughActor(AFCPage* const& self) 
-															#line 2343 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 2343 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		 : Actor<Void>(),
 		   ReadThroughActorState<ReadThroughActor>(self)
 	{
@@ -2363,31 +2363,31 @@ friend struct ActorCallback< ReadThroughActor, 0, int >;
 
 	}
 };
-															#line 494 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 494 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 [[nodiscard]] static Future<Void> readThrough( AFCPage* const& self ) {
-															#line 494 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 494 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	return Future<Void>(new ReadThroughActor(self));
-															#line 2370 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 2370 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 }
 
-#line 516 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+#line 516 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 
-																#line 2375 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+																#line 2375 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 // This generated class is to be used only via writeThrough()
-															#line 517 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 517 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 template <class WriteThroughActor>
-															#line 517 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 517 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 class WriteThroughActorState {
-															#line 2381 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 2381 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 public:
-															#line 517 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 517 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	WriteThroughActorState(AFCPage* const& self,Promise<Void> const& writing) 
-															#line 517 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
-															#line 517 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 517 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
+															#line 517 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		 : self(self),
-															#line 517 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 517 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		   writing(writing)
-															#line 2390 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 2390 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 	{
 		fdb_probe_actor_create("writeThrough", reinterpret_cast<unsigned long>(this));
 
@@ -2401,22 +2401,22 @@ public:
 	{
 		try {
 			try {
-															#line 521 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 521 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 				dirty = self->dirty;
-															#line 522 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 522 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 				++self->writeThroughCount;
-															#line 523 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 523 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 				self->updateFlushableIndex();
-															#line 525 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 525 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 				StrictFuture<Void> __when_expr_0 = self->notReading && self->notFlushing;
-															#line 525 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 525 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 				if (static_cast<WriteThroughActor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), loopDepth);
-															#line 2414 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 2414 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 				if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch2(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 				static_cast<WriteThroughActor*>(this)->actor_wait_state = 1;
-															#line 525 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 525 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 				__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< WriteThroughActor, 0, Void >*>(static_cast<WriteThroughActor*>(this)));
-															#line 2419 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 2419 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 				loopDepth = 0;
 			}
 			catch (Error& error) {
@@ -2443,17 +2443,17 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 557 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 557 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		--self->writeThroughCount;
-															#line 558 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 558 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		self->updateFlushableIndex();
-															#line 560 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 560 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		writing.send(Void());
-															#line 563 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 563 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		self->pageCache->try_evict();
-															#line 565 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 565 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		if (!static_cast<WriteThroughActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~WriteThroughActorState(); static_cast<WriteThroughActor*>(this)->destroy(); return 0; }
-															#line 2456 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 2456 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		new (&static_cast<WriteThroughActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~WriteThroughActorState();
 		static_cast<WriteThroughActor*>(this)->finishSendAndDelPromiseRef();
@@ -2464,15 +2464,15 @@ public:
 	int a_body1Catch2(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 552 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 552 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 			--self->writeThroughCount;
-															#line 553 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 553 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 			self->setDirty();
-															#line 554 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 554 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 			writing.sendError(e);
-															#line 555 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 555 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 			return a_body1Catch1(e, loopDepth);
-															#line 2475 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 2475 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		}
 		catch (Error& error) {
 			loopDepth = a_body1Catch1(error, loopDepth);
@@ -2484,36 +2484,36 @@ public:
 	}
 	int a_body1cont2(Void const& _,int loopDepth) 
 	{
-															#line 527 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 527 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		if (dirty)
-															#line 2489 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 2489 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		{
-															#line 529 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 529 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 			if (self->owner->getRateControl())
-															#line 2493 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 2493 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 			{
-															#line 530 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 530 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 				int allowance = 1;
-															#line 532 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 532 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 				if (FLOW_KNOBS->FLOW_CACHEDFILE_WRITE_IO_SIZE > 0)
-															#line 2499 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 2499 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 				{
-															#line 533 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 533 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 					allowance = (self->pageCache->pageSize + FLOW_KNOBS->FLOW_CACHEDFILE_WRITE_IO_SIZE - 1) / FLOW_KNOBS->FLOW_CACHEDFILE_WRITE_IO_SIZE;
-															#line 535 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 535 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 					ASSERT(allowance > 0);
-															#line 2505 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 2505 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 				}
-															#line 537 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 537 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 				StrictFuture<Void> __when_expr_1 = self->owner->getRateControl()->getAllowance(allowance);
-															#line 537 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 537 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 				if (static_cast<WriteThroughActor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), loopDepth);
-															#line 2511 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 2511 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 				if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch2(__when_expr_1.getError(), loopDepth); else return a_body1cont2when1(__when_expr_1.get(), loopDepth); };
 				static_cast<WriteThroughActor*>(this)->actor_wait_state = 2;
-															#line 537 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 537 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 				__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< WriteThroughActor, 1, Void >*>(static_cast<WriteThroughActor*>(this)));
-															#line 2516 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 2516 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 				loopDepth = 0;
 			}
 			else
@@ -2530,36 +2530,36 @@ public:
 	}
 	int a_body1cont2(Void && _,int loopDepth) 
 	{
-															#line 527 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 527 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		if (dirty)
-															#line 2535 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 2535 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		{
-															#line 529 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 529 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 			if (self->owner->getRateControl())
-															#line 2539 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 2539 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 			{
-															#line 530 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 530 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 				int allowance = 1;
-															#line 532 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 532 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 				if (FLOW_KNOBS->FLOW_CACHEDFILE_WRITE_IO_SIZE > 0)
-															#line 2545 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 2545 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 				{
-															#line 533 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 533 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 					allowance = (self->pageCache->pageSize + FLOW_KNOBS->FLOW_CACHEDFILE_WRITE_IO_SIZE - 1) / FLOW_KNOBS->FLOW_CACHEDFILE_WRITE_IO_SIZE;
-															#line 535 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 535 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 					ASSERT(allowance > 0);
-															#line 2551 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 2551 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 				}
-															#line 537 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 537 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 				StrictFuture<Void> __when_expr_1 = self->owner->getRateControl()->getAllowance(allowance);
-															#line 537 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 537 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 				if (static_cast<WriteThroughActor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), loopDepth);
-															#line 2557 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 2557 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 				if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch2(__when_expr_1.getError(), loopDepth); else return a_body1cont2when1(__when_expr_1.get(), loopDepth); };
 				static_cast<WriteThroughActor*>(this)->actor_wait_state = 2;
-															#line 537 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 537 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 				__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< WriteThroughActor, 1, Void >*>(static_cast<WriteThroughActor*>(this)));
-															#line 2562 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 2562 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 				loopDepth = 0;
 			}
 			else
@@ -2645,28 +2645,28 @@ public:
 	}
 	int a_body1cont4(int loopDepth) 
 	{
-															#line 540 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 540 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		if (self->pageOffset + self->pageCache->pageSize > self->owner->length)
-															#line 2650 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 2650 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		{
-															#line 541 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 541 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 			ASSERT(self->pageOffset < self->owner->length);
-															#line 542 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 542 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 			memset(static_cast<uint8_t*>(self->data) + self->owner->length - self->pageOffset, 0, self->pageCache->pageSize - (self->owner->length - self->pageOffset));
-															#line 2656 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 2656 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		}
-															#line 547 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 547 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		auto f = self->owner->uncached->write(self->data, self->pageCache->pageSize, self->pageOffset);
-															#line 549 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 549 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		StrictFuture<Void> __when_expr_2 = f;
-															#line 549 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 549 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		if (static_cast<WriteThroughActor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), loopDepth);
-															#line 2664 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 2664 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch2(__when_expr_2.getError(), loopDepth); else return a_body1cont4when1(__when_expr_2.get(), loopDepth); };
 		static_cast<WriteThroughActor*>(this)->actor_wait_state = 3;
-															#line 549 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 549 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< WriteThroughActor, 2, Void >*>(static_cast<WriteThroughActor*>(this)));
-															#line 2669 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 2669 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -2834,18 +2834,18 @@ public:
 
 		return loopDepth;
 	}
-															#line 517 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 517 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	AFCPage* self;
-															#line 517 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 517 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	Promise<Void> writing;
-															#line 521 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 521 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	bool dirty;
-															#line 2843 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 2843 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 };
 // This generated class is to be used only via writeThrough()
-															#line 517 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 517 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 class WriteThroughActor final : public Actor<Void>, public ActorCallback< WriteThroughActor, 0, Void >, public ActorCallback< WriteThroughActor, 1, Void >, public ActorCallback< WriteThroughActor, 2, Void >, public FastAllocated<WriteThroughActor>, public WriteThroughActorState<WriteThroughActor> {
-															#line 2848 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 2848 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 public:
 	using FastAllocated<WriteThroughActor>::operator new;
 	using FastAllocated<WriteThroughActor>::operator delete;
@@ -2856,9 +2856,9 @@ public:
 friend struct ActorCallback< WriteThroughActor, 0, Void >;
 friend struct ActorCallback< WriteThroughActor, 1, Void >;
 friend struct ActorCallback< WriteThroughActor, 2, Void >;
-															#line 517 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 517 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	WriteThroughActor(AFCPage* const& self,Promise<Void> const& writing) 
-															#line 2861 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 2861 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		 : Actor<Void>(),
 		   WriteThroughActorState<WriteThroughActor>(self, writing)
 	{
@@ -2883,14 +2883,14 @@ friend struct ActorCallback< WriteThroughActor, 2, Void >;
 
 	}
 };
-															#line 517 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 517 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 [[nodiscard]] static Future<Void> writeThrough( AFCPage* const& self, Promise<Void> const& writing ) {
-															#line 517 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 517 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	return Future<Void>(new WriteThroughActor(self, writing));
-															#line 2890 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 2890 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 }
 
-#line 567 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+#line 567 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 
 	Future<Void> flush() {
 		if (!dirty && notFlushing.isReady())
@@ -2932,20 +2932,20 @@ friend struct ActorCallback< WriteThroughActor, 2, Void >;
 		return truncate_impl(this);
 	}
 
-																#line 2935 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+																#line 2935 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 // This generated class is to be used only via truncate_impl()
-															#line 608 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 608 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 template <class Truncate_implActor1>
-															#line 608 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 608 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 class Truncate_implActor1State {
-															#line 2941 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 2941 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 public:
-															#line 608 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 608 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	Truncate_implActor1State(AFCPage* const& self) 
-															#line 608 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
-															#line 608 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 608 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
+															#line 608 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		 : self(self)
-															#line 2948 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 2948 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 	{
 		fdb_probe_actor_create("truncate_impl", reinterpret_cast<unsigned long>(this));
 
@@ -2958,16 +2958,16 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 609 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 609 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 			StrictFuture<Void> __when_expr_0 = self->notReading && self->notFlushing && yield();
-															#line 609 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 609 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 			if (static_cast<Truncate_implActor1*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 2965 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 2965 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<Truncate_implActor1*>(this)->actor_wait_state = 1;
-															#line 609 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 609 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< Truncate_implActor1, 0, Void >*>(static_cast<Truncate_implActor1*>(this)));
-															#line 2970 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 2970 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -2988,11 +2988,11 @@ public:
 	}
 	int a_body1cont1(Void const& _,int loopDepth) 
 	{
-															#line 610 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 610 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		delete self;
-															#line 611 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 611 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		if (!static_cast<Truncate_implActor1*>(this)->SAV<Void>::futures) { (void)(Void()); this->~Truncate_implActor1State(); static_cast<Truncate_implActor1*>(this)->destroy(); return 0; }
-															#line 2995 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 2995 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		new (&static_cast<Truncate_implActor1*>(this)->SAV< Void >::value()) Void(Void());
 		this->~Truncate_implActor1State();
 		static_cast<Truncate_implActor1*>(this)->finishSendAndDelPromiseRef();
@@ -3002,11 +3002,11 @@ public:
 	}
 	int a_body1cont1(Void && _,int loopDepth) 
 	{
-															#line 610 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 610 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		delete self;
-															#line 611 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 611 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 		if (!static_cast<Truncate_implActor1*>(this)->SAV<Void>::futures) { (void)(Void()); this->~Truncate_implActor1State(); static_cast<Truncate_implActor1*>(this)->destroy(); return 0; }
-															#line 3009 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 3009 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		new (&static_cast<Truncate_implActor1*>(this)->SAV< Void >::value()) Void(Void());
 		this->~Truncate_implActor1State();
 		static_cast<Truncate_implActor1*>(this)->finishSendAndDelPromiseRef();
@@ -3077,14 +3077,14 @@ public:
 		fdb_probe_actor_exit("truncate_impl", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 608 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 608 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	AFCPage* self;
-															#line 3082 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 3082 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 };
 // This generated class is to be used only via truncate_impl()
-															#line 608 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 608 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 class Truncate_implActor1 final : public Actor<Void>, public ActorCallback< Truncate_implActor1, 0, Void >, public FastAllocated<Truncate_implActor1>, public Truncate_implActor1State<Truncate_implActor1> {
-															#line 3087 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 3087 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 public:
 	using FastAllocated<Truncate_implActor1>::operator new;
 	using FastAllocated<Truncate_implActor1>::operator delete;
@@ -3093,9 +3093,9 @@ public:
 	void destroy() override { ((Actor<Void>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< Truncate_implActor1, 0, Void >;
-															#line 608 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 608 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	Truncate_implActor1(AFCPage* const& self) 
-															#line 3098 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 3098 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 		 : Actor<Void>(),
 		   Truncate_implActor1State<Truncate_implActor1>(self)
 	{
@@ -3118,14 +3118,14 @@ friend struct ActorCallback< Truncate_implActor1, 0, Void >;
 
 	}
 };
-															#line 608 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 608 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 [[nodiscard]] static Future<Void> truncate_impl( AFCPage* const& self ) {
-															#line 608 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+															#line 608 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 	return Future<Void>(new Truncate_implActor1(self));
-															#line 3125 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.g.h"
+															#line 3125 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.g.h"
 }
 
-#line 613 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/AsyncFileCached.actor.h"
+#line 613 "/usr/src/libfdb_c/fdbrpc/AsyncFileCached.actor.h"
 
 	AFCPage(AsyncFileCached* owner, int64_t offset)
 	  : EvictablePage(owner->pageCache), owner(owner), pageOffset(offset), notReading(Void()), notFlushing(Void()),

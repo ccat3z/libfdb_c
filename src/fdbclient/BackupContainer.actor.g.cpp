@@ -1,5 +1,5 @@
 #define POST_ACTOR_COMPILER 1
-#line 1 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+#line 1 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 /*
  * BackupContainer.actor.cpp
  *
@@ -55,24 +55,24 @@
 
 namespace IBackupFile_impl {
 
-															#line 58 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 58 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 // This generated class is to be used only via appendStringRefWithLen()
-															#line 56 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 56 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 template <class AppendStringRefWithLenActor>
-															#line 56 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 56 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 class AppendStringRefWithLenActorState {
-															#line 64 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 64 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 public:
-															#line 56 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 56 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 	AppendStringRefWithLenActorState(Reference<IBackupFile> const& file,Standalone<StringRef> const& s) 
-															#line 56 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
-															#line 56 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 56 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
+															#line 56 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 		 : file(file),
-															#line 56 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 56 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 		   s(s),
-															#line 57 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 57 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 		   lenBuf(bigEndian32((uint32_t)s.size()))
-															#line 75 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 75 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 	{
 		fdb_probe_actor_create("appendStringRefWithLen", reinterpret_cast<unsigned long>(this));
 
@@ -85,16 +85,16 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 58 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 58 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 			StrictFuture<Void> __when_expr_0 = file->append(&lenBuf, sizeof(lenBuf));
-															#line 58 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 58 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 			if (static_cast<AppendStringRefWithLenActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 92 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 92 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<AppendStringRefWithLenActor*>(this)->actor_wait_state = 1;
-															#line 58 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 58 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< AppendStringRefWithLenActor, 0, Void >*>(static_cast<AppendStringRefWithLenActor*>(this)));
-															#line 97 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 97 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -115,32 +115,32 @@ public:
 	}
 	int a_body1cont1(Void const& _,int loopDepth) 
 	{
-															#line 59 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 59 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = file->append(s.begin(), s.size());
-															#line 59 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 59 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 		if (static_cast<AppendStringRefWithLenActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 122 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 122 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<AppendStringRefWithLenActor*>(this)->actor_wait_state = 2;
-															#line 59 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 59 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< AppendStringRefWithLenActor, 1, Void >*>(static_cast<AppendStringRefWithLenActor*>(this)));
-															#line 127 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 127 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont1(Void && _,int loopDepth) 
 	{
-															#line 59 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 59 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = file->append(s.begin(), s.size());
-															#line 59 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 59 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 		if (static_cast<AppendStringRefWithLenActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 138 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 138 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<AppendStringRefWithLenActor*>(this)->actor_wait_state = 2;
-															#line 59 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 59 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< AppendStringRefWithLenActor, 1, Void >*>(static_cast<AppendStringRefWithLenActor*>(this)));
-															#line 143 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 143 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -210,9 +210,9 @@ public:
 	}
 	int a_body1cont2(Void const& _,int loopDepth) 
 	{
-															#line 60 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 60 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 		if (!static_cast<AppendStringRefWithLenActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~AppendStringRefWithLenActorState(); static_cast<AppendStringRefWithLenActor*>(this)->destroy(); return 0; }
-															#line 215 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 215 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 		new (&static_cast<AppendStringRefWithLenActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~AppendStringRefWithLenActorState();
 		static_cast<AppendStringRefWithLenActor*>(this)->finishSendAndDelPromiseRef();
@@ -222,9 +222,9 @@ public:
 	}
 	int a_body1cont2(Void && _,int loopDepth) 
 	{
-															#line 60 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 60 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 		if (!static_cast<AppendStringRefWithLenActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~AppendStringRefWithLenActorState(); static_cast<AppendStringRefWithLenActor*>(this)->destroy(); return 0; }
-															#line 227 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 227 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 		new (&static_cast<AppendStringRefWithLenActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~AppendStringRefWithLenActorState();
 		static_cast<AppendStringRefWithLenActor*>(this)->finishSendAndDelPromiseRef();
@@ -295,18 +295,18 @@ public:
 		fdb_probe_actor_exit("appendStringRefWithLen", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 56 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 56 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 	Reference<IBackupFile> file;
-															#line 56 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 56 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 	Standalone<StringRef> s;
-															#line 57 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 57 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 	uint32_t lenBuf;
-															#line 304 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 304 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 };
 // This generated class is to be used only via appendStringRefWithLen()
-															#line 56 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 56 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 class AppendStringRefWithLenActor final : public Actor<Void>, public ActorCallback< AppendStringRefWithLenActor, 0, Void >, public ActorCallback< AppendStringRefWithLenActor, 1, Void >, public FastAllocated<AppendStringRefWithLenActor>, public AppendStringRefWithLenActorState<AppendStringRefWithLenActor> {
-															#line 309 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 309 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 public:
 	using FastAllocated<AppendStringRefWithLenActor>::operator new;
 	using FastAllocated<AppendStringRefWithLenActor>::operator delete;
@@ -316,9 +316,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< AppendStringRefWithLenActor, 0, Void >;
 friend struct ActorCallback< AppendStringRefWithLenActor, 1, Void >;
-															#line 56 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 56 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 	AppendStringRefWithLenActor(Reference<IBackupFile> const& file,Standalone<StringRef> const& s) 
-															#line 321 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 321 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 		 : Actor<Void>(),
 		   AppendStringRefWithLenActorState<AppendStringRefWithLenActor>(file, s)
 	{
@@ -342,14 +342,14 @@ friend struct ActorCallback< AppendStringRefWithLenActor, 1, Void >;
 
 	}
 };
-															#line 56 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 56 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 [[nodiscard]] Future<Void> appendStringRefWithLen( Reference<IBackupFile> const& file, Standalone<StringRef> const& s ) {
-															#line 56 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 56 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 	return Future<Void>(new AppendStringRefWithLenActor(file, s));
-															#line 349 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 349 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 }
 
-#line 62 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+#line 62 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 
 } // namespace IBackupFile_impl
 
@@ -618,23 +618,23 @@ Reference<IBackupContainer> IBackupContainer::openContainer(const std::string& u
 
 // Get a list of URLS to backup containers based on some a shorter URL.  This function knows about some set of supported
 // URL types which support this sort of backup discovery.
-															#line 621 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 621 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 namespace {
 // This generated class is to be used only via listContainers_impl()
-															#line 330 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 330 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 template <class ListContainers_implActor>
-															#line 330 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 330 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 class ListContainers_implActorState {
-															#line 628 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 628 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 public:
-															#line 330 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 330 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 	ListContainers_implActorState(std::string const& baseURL,Optional<std::string> const& proxy) 
-															#line 330 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
-															#line 330 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 330 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
+															#line 330 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 		 : baseURL(baseURL),
-															#line 330 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 330 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 		   proxy(proxy)
-															#line 637 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 637 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 	{
 		fdb_probe_actor_create("listContainers_impl", reinterpret_cast<unsigned long>(this));
 
@@ -648,67 +648,67 @@ public:
 	{
 		try {
 			try {
-															#line 332 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 332 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 				StringRef u(baseURL);
-															#line 333 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 333 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 				if (u.startsWith("file://"_sr))
-															#line 655 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 655 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 				{
-															#line 334 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 334 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 					StrictFuture<std::vector<std::string>> __when_expr_0 = BackupContainerLocalDirectory::listURLs(baseURL);
-															#line 334 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 334 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 					if (static_cast<ListContainers_implActor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), loopDepth);
-															#line 661 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 661 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 					if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch2(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 					static_cast<ListContainers_implActor*>(this)->actor_wait_state = 1;
-															#line 334 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 334 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 					__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ListContainers_implActor, 0, std::vector<std::string> >*>(static_cast<ListContainers_implActor*>(this)));
-															#line 666 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 666 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 					loopDepth = 0;
 				}
 				else
 				{
-															#line 336 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 336 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 					if (u.startsWith("blobstore://"_sr))
-															#line 673 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 673 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 					{
-															#line 337 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 337 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 						std::string resource;
-															#line 339 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 339 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 						S3BlobStoreEndpoint::ParametersT backupParams;
-															#line 340 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 340 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 						Reference<S3BlobStoreEndpoint> bstore = S3BlobStoreEndpoint::fromString( baseURL, proxy, &resource, &IBackupContainer::lastOpenError, &backupParams);
-															#line 343 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 343 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 						if (!resource.empty())
-															#line 683 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 683 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 						{
-															#line 344 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 344 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 							TraceEvent(SevWarn, "BackupContainer") .detail("Description", "Invalid backup container base URL, resource aka path should be blank.") .detail("URL", baseURL);
-															#line 347 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 347 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 							return a_body1Catch2(backup_invalid_url(), loopDepth);
-															#line 689 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 689 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 						}
-															#line 351 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 351 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 						BackupContainerS3BlobStore dummy(bstore, "dummy", backupParams, {});
-															#line 353 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 353 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 						StrictFuture<std::vector<std::string>> __when_expr_1 = BackupContainerS3BlobStore::listURLs(bstore, dummy.getBucket());
-															#line 353 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 353 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 						if (static_cast<ListContainers_implActor*>(this)->actor_wait_state < 0) return a_body1Catch2(actor_cancelled(), loopDepth);
-															#line 697 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 697 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 						if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch2(__when_expr_1.getError(), loopDepth); else return a_body1when2(__when_expr_1.get(), loopDepth); };
 						static_cast<ListContainers_implActor*>(this)->actor_wait_state = 2;
-															#line 353 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 353 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 						__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< ListContainers_implActor, 1, std::vector<std::string> >*>(static_cast<ListContainers_implActor*>(this)));
-															#line 702 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 702 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 						loopDepth = 0;
 					}
 					else
 					{
-															#line 364 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 364 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 						IBackupContainer::lastOpenError = "invalid URL prefix";
-															#line 365 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 365 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 						return a_body1Catch2(backup_invalid_url(), loopDepth);
-															#line 711 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 711 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 					}
 				}
 			}
@@ -737,33 +737,33 @@ public:
 	int a_body1Catch2(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 369 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 369 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 			if (e.code() == error_code_actor_cancelled)
-															#line 742 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 742 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 			{
-															#line 370 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 370 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 				return a_body1Catch1(e, loopDepth);
-															#line 746 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 746 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 			}
-															#line 372 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 372 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 			TraceEvent m(SevWarn, "BackupContainer");
-															#line 373 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 373 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 			m.error(e);
-															#line 374 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 374 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 			m.detail("Description", "Invalid backup container URL prefix.  See help.");
-															#line 375 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 375 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 			m.detail("URL", baseURL);
-															#line 376 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 376 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 			if (e.code() == error_code_backup_invalid_url)
-															#line 758 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 758 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 			{
-															#line 377 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 377 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 				m.detail("LastOpenError", IBackupContainer::lastOpenError);
-															#line 762 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 762 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 			}
-															#line 379 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 379 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 			return a_body1Catch1(e, loopDepth);
-															#line 766 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 766 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 		}
 		catch (Error& error) {
 			loopDepth = a_body1Catch1(error, loopDepth);
@@ -775,9 +775,9 @@ public:
 	}
 	int a_body1cont3(std::vector<std::string> const& results,int loopDepth) 
 	{
-															#line 335 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 335 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 		if (!static_cast<ListContainers_implActor*>(this)->SAV<std::vector<std::string>>::futures) { (void)(results); this->~ListContainers_implActorState(); static_cast<ListContainers_implActor*>(this)->destroy(); return 0; }
-															#line 780 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 780 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 		new (&static_cast<ListContainers_implActor*>(this)->SAV< std::vector<std::string> >::value()) std::vector<std::string>(results);
 		this->~ListContainers_implActorState();
 		static_cast<ListContainers_implActor*>(this)->finishSendAndDelPromiseRef();
@@ -787,9 +787,9 @@ public:
 	}
 	int a_body1cont3(std::vector<std::string> && results,int loopDepth) 
 	{
-															#line 335 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 335 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 		if (!static_cast<ListContainers_implActor*>(this)->SAV<std::vector<std::string>>::futures) { (void)(results); this->~ListContainers_implActorState(); static_cast<ListContainers_implActor*>(this)->destroy(); return 0; }
-															#line 792 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 792 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 		new (&static_cast<ListContainers_implActor*>(this)->SAV< std::vector<std::string> >::value()) std::vector<std::string>(results);
 		this->~ListContainers_implActorState();
 		static_cast<ListContainers_implActor*>(this)->finishSendAndDelPromiseRef();
@@ -862,9 +862,9 @@ public:
 	}
 	int a_body1cont6(std::vector<std::string> const& results,int loopDepth) 
 	{
-															#line 354 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 354 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 		if (!static_cast<ListContainers_implActor*>(this)->SAV<std::vector<std::string>>::futures) { (void)(results); this->~ListContainers_implActorState(); static_cast<ListContainers_implActor*>(this)->destroy(); return 0; }
-															#line 867 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 867 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 		new (&static_cast<ListContainers_implActor*>(this)->SAV< std::vector<std::string> >::value()) std::vector<std::string>(results);
 		this->~ListContainers_implActorState();
 		static_cast<ListContainers_implActor*>(this)->finishSendAndDelPromiseRef();
@@ -874,9 +874,9 @@ public:
 	}
 	int a_body1cont6(std::vector<std::string> && results,int loopDepth) 
 	{
-															#line 354 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 354 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 		if (!static_cast<ListContainers_implActor*>(this)->SAV<std::vector<std::string>>::futures) { (void)(results); this->~ListContainers_implActorState(); static_cast<ListContainers_implActor*>(this)->destroy(); return 0; }
-															#line 879 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 879 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 		new (&static_cast<ListContainers_implActor*>(this)->SAV< std::vector<std::string> >::value()) std::vector<std::string>(results);
 		this->~ListContainers_implActorState();
 		static_cast<ListContainers_implActor*>(this)->finishSendAndDelPromiseRef();
@@ -947,16 +947,16 @@ public:
 		fdb_probe_actor_exit("listContainers_impl", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 330 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 330 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 	std::string baseURL;
-															#line 330 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 330 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 	Optional<std::string> proxy;
-															#line 954 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 954 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 };
 // This generated class is to be used only via listContainers_impl()
-															#line 330 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 330 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 class ListContainers_implActor final : public Actor<std::vector<std::string>>, public ActorCallback< ListContainers_implActor, 0, std::vector<std::string> >, public ActorCallback< ListContainers_implActor, 1, std::vector<std::string> >, public FastAllocated<ListContainers_implActor>, public ListContainers_implActorState<ListContainers_implActor> {
-															#line 959 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 959 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 public:
 	using FastAllocated<ListContainers_implActor>::operator new;
 	using FastAllocated<ListContainers_implActor>::operator delete;
@@ -966,9 +966,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< ListContainers_implActor, 0, std::vector<std::string> >;
 friend struct ActorCallback< ListContainers_implActor, 1, std::vector<std::string> >;
-															#line 330 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 330 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 	ListContainers_implActor(std::string const& baseURL,Optional<std::string> const& proxy) 
-															#line 971 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 971 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 		 : Actor<std::vector<std::string>>(),
 		   ListContainers_implActorState<ListContainers_implActor>(baseURL, proxy)
 	{
@@ -993,43 +993,43 @@ friend struct ActorCallback< ListContainers_implActor, 1, std::vector<std::strin
 	}
 };
 }
-															#line 330 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 330 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 [[nodiscard]] Future<std::vector<std::string>> listContainers_impl( std::string const& baseURL, Optional<std::string> const& proxy ) {
-															#line 330 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 330 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 	return Future<std::vector<std::string>>(new ListContainers_implActor(baseURL, proxy));
-															#line 1000 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 1000 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 }
 
-#line 382 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+#line 382 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 
 Future<std::vector<std::string>> IBackupContainer::listContainers(const std::string& baseURL,
                                                                   const Optional<std::string>& proxy) {
 	return listContainers_impl(baseURL, proxy);
 }
 
-															#line 1010 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 1010 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 namespace {
 // This generated class is to be used only via timeKeeperVersionFromDatetime()
-															#line 388 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 388 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 template <class TimeKeeperVersionFromDatetimeActor>
-															#line 388 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 388 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 class TimeKeeperVersionFromDatetimeActorState {
-															#line 1017 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 1017 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 public:
-															#line 388 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 388 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 	TimeKeeperVersionFromDatetimeActorState(std::string const& datetime,Database const& db) 
-															#line 388 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
-															#line 388 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 388 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
+															#line 388 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 		 : datetime(datetime),
-															#line 388 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 388 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 		   db(db),
-															#line 389 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 389 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 		   versionMap(timeKeeperPrefixRange.begin),
-															#line 390 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 390 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 		   tr(makeReference<ReadYourWritesTransaction>(db)),
-															#line 392 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 392 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 		   time(BackupAgentBase::parseTime(datetime))
-															#line 1032 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 1032 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 	{
 		fdb_probe_actor_create("timeKeeperVersionFromDatetime", reinterpret_cast<unsigned long>(this));
 
@@ -1042,19 +1042,19 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 393 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 393 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 			if (time < 0)
-															#line 1047 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 1047 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 			{
-															#line 394 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 394 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 				fprintf( stderr, "ERROR: Incorrect date/time or format.  Format is %s.\n", BackupAgentBase::timeFormat().c_str());
-															#line 396 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 396 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 				return a_body1Catch1(backup_error(), loopDepth);
-															#line 1053 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 1053 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 			}
-															#line 399 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 399 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 			;
-															#line 1057 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 1057 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -1083,20 +1083,20 @@ public:
 	int a_body1loopBody1(int loopDepth) 
 	{
 		try {
-															#line 401 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 401 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 			tr->setOption(FDBTransactionOptions::ACCESS_SYSTEM_KEYS);
-															#line 402 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 402 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 			tr->setOption(FDBTransactionOptions::LOCK_AWARE);
-															#line 403 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 403 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 			StrictFuture<std::vector<std::pair<int64_t, Version>>> __when_expr_0 = versionMap.getRange(tr, 0, time, 1, Snapshot::False, Reverse::True);
-															#line 403 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 403 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 			if (static_cast<TimeKeeperVersionFromDatetimeActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 1094 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 1094 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1loopBody1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<TimeKeeperVersionFromDatetimeActor*>(this)->actor_wait_state = 1;
-															#line 403 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 403 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< TimeKeeperVersionFromDatetimeActor, 0, std::vector<std::pair<int64_t, Version>> >*>(static_cast<TimeKeeperVersionFromDatetimeActor*>(this)));
-															#line 1099 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 1099 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -1116,16 +1116,16 @@ public:
 	int a_body1loopBody1Catch1(const Error& e,int loopDepth=0) 
 	{
 		try {
-															#line 421 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 421 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 			StrictFuture<Void> __when_expr_2 = tr->onError(e);
-															#line 421 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 421 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 			if (static_cast<TimeKeeperVersionFromDatetimeActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 1123 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 1123 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 			if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1Catch1when1(__when_expr_2.get(), loopDepth); };
 			static_cast<TimeKeeperVersionFromDatetimeActor*>(this)->actor_wait_state = 3;
-															#line 421 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 421 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 			__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< TimeKeeperVersionFromDatetimeActor, 2, Void >*>(static_cast<TimeKeeperVersionFromDatetimeActor*>(this)));
-															#line 1128 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 1128 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -1138,20 +1138,20 @@ public:
 	}
 	int a_body1loopBody1cont2(int loopDepth) 
 	{
-															#line 405 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 405 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 		if (results.size() != 1)
-															#line 1143 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 1143 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 		{
-															#line 408 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 408 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 			StrictFuture<Void> __when_expr_1 = store(results, versionMap.getRange(tr, time, std::numeric_limits<int64_t>::max(), 1));
-															#line 408 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 408 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 			if (static_cast<TimeKeeperVersionFromDatetimeActor*>(this)->actor_wait_state < 0) return a_body1loopBody1Catch1(actor_cancelled(), loopDepth);
-															#line 1149 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 1149 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 			if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1loopBody1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1loopBody1cont2when1(__when_expr_1.get(), loopDepth); };
 			static_cast<TimeKeeperVersionFromDatetimeActor*>(this)->actor_wait_state = 2;
-															#line 408 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 408 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 			__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< TimeKeeperVersionFromDatetimeActor, 1, Void >*>(static_cast<TimeKeeperVersionFromDatetimeActor*>(this)));
-															#line 1154 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 1154 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 			loopDepth = 0;
 		}
 		else
@@ -1163,9 +1163,9 @@ public:
 	}
 	int a_body1loopBody1when1(std::vector<std::pair<int64_t, Version>> const& __results,int loopDepth) 
 	{
-															#line 403 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 403 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 		results = __results;
-															#line 1168 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 1168 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont2(loopDepth);
 
 		return loopDepth;
@@ -1230,11 +1230,11 @@ public:
 	}
 	int a_body1loopBody1cont3(int loopDepth) 
 	{
-															#line 417 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 417 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 		auto& result = results[0];
-															#line 418 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 418 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 		if (!static_cast<TimeKeeperVersionFromDatetimeActor*>(this)->SAV<Version>::futures) { (void)(std::max<Version>(0, result.second + (time - result.first) * CLIENT_KNOBS->CORE_VERSIONSPERSECOND)); this->~TimeKeeperVersionFromDatetimeActorState(); static_cast<TimeKeeperVersionFromDatetimeActor*>(this)->destroy(); return 0; }
-															#line 1237 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 1237 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 		new (&static_cast<TimeKeeperVersionFromDatetimeActor*>(this)->SAV< Version >::value()) Version(std::max<Version>(0, result.second + (time - result.first) * CLIENT_KNOBS->CORE_VERSIONSPERSECOND));
 		this->~TimeKeeperVersionFromDatetimeActorState();
 		static_cast<TimeKeeperVersionFromDatetimeActor*>(this)->finishSendAndDelPromiseRef();
@@ -1244,15 +1244,15 @@ public:
 	}
 	int a_body1loopBody1cont4(Void const& _,int loopDepth) 
 	{
-															#line 410 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 410 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 		if (results.size() != 1)
-															#line 1249 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 1249 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 		{
-															#line 411 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 411 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 			fprintf(stderr, "ERROR: Unable to calculate a version for given date/time.\n");
-															#line 412 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 412 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 			return a_body1loopBody1Catch1(backup_error(), loopDepth);
-															#line 1255 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 1255 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 		}
 		loopDepth = a_body1loopBody1cont3(loopDepth);
 
@@ -1260,15 +1260,15 @@ public:
 	}
 	int a_body1loopBody1cont4(Void && _,int loopDepth) 
 	{
-															#line 410 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 410 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 		if (results.size() != 1)
-															#line 1265 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 1265 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 		{
-															#line 411 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 411 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 			fprintf(stderr, "ERROR: Unable to calculate a version for given date/time.\n");
-															#line 412 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 412 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 			return a_body1loopBody1Catch1(backup_error(), loopDepth);
-															#line 1271 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 1271 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 		}
 		loopDepth = a_body1loopBody1cont3(loopDepth);
 
@@ -1412,24 +1412,24 @@ public:
 		fdb_probe_actor_exit("timeKeeperVersionFromDatetime", reinterpret_cast<unsigned long>(this), 2);
 
 	}
-															#line 388 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 388 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 	std::string datetime;
-															#line 388 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 388 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 	Database db;
-															#line 389 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 389 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 	KeyBackedMap<int64_t, Version> versionMap;
-															#line 390 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 390 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 	Reference<ReadYourWritesTransaction> tr;
-															#line 392 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 392 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 	int64_t time;
-															#line 403 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 403 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 	std::vector<std::pair<int64_t, Version>> results;
-															#line 1427 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 1427 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 };
 // This generated class is to be used only via timeKeeperVersionFromDatetime()
-															#line 388 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 388 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 class TimeKeeperVersionFromDatetimeActor final : public Actor<Version>, public ActorCallback< TimeKeeperVersionFromDatetimeActor, 0, std::vector<std::pair<int64_t, Version>> >, public ActorCallback< TimeKeeperVersionFromDatetimeActor, 1, Void >, public ActorCallback< TimeKeeperVersionFromDatetimeActor, 2, Void >, public FastAllocated<TimeKeeperVersionFromDatetimeActor>, public TimeKeeperVersionFromDatetimeActorState<TimeKeeperVersionFromDatetimeActor> {
-															#line 1432 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 1432 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 public:
 	using FastAllocated<TimeKeeperVersionFromDatetimeActor>::operator new;
 	using FastAllocated<TimeKeeperVersionFromDatetimeActor>::operator delete;
@@ -1440,9 +1440,9 @@ public:
 friend struct ActorCallback< TimeKeeperVersionFromDatetimeActor, 0, std::vector<std::pair<int64_t, Version>> >;
 friend struct ActorCallback< TimeKeeperVersionFromDatetimeActor, 1, Void >;
 friend struct ActorCallback< TimeKeeperVersionFromDatetimeActor, 2, Void >;
-															#line 388 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 388 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 	TimeKeeperVersionFromDatetimeActor(std::string const& datetime,Database const& db) 
-															#line 1445 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 1445 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 		 : Actor<Version>(),
 		   TimeKeeperVersionFromDatetimeActorState<TimeKeeperVersionFromDatetimeActor>(datetime, db)
 	{
@@ -1468,42 +1468,42 @@ friend struct ActorCallback< TimeKeeperVersionFromDatetimeActor, 2, Void >;
 	}
 };
 }
-															#line 388 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 388 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 [[nodiscard]] Future<Version> timeKeeperVersionFromDatetime( std::string const& datetime, Database const& db ) {
-															#line 388 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 388 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 	return Future<Version>(new TimeKeeperVersionFromDatetimeActor(datetime, db));
-															#line 1475 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 1475 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 }
 
-#line 425 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+#line 425 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 
-															#line 1480 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 1480 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 namespace {
 // This generated class is to be used only via timeKeeperEpochsFromVersion()
-															#line 426 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 426 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 template <class TimeKeeperEpochsFromVersionActor>
-															#line 426 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 426 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 class TimeKeeperEpochsFromVersionActorState {
-															#line 1487 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 1487 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 public:
-															#line 426 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 426 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 	TimeKeeperEpochsFromVersionActorState(Version const& v,Reference<ReadYourWritesTransaction> const& tr) 
-															#line 426 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
-															#line 426 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 426 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
+															#line 426 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 		 : v(v),
-															#line 426 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 426 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 		   tr(tr),
-															#line 427 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 427 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 		   versionMap(timeKeeperPrefixRange.begin),
-															#line 430 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 430 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 		   min(0),
-															#line 431 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 431 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 		   max((int64_t)now()),
-															#line 432 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 432 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 		   mid(),
-															#line 433 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 433 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 		   found()
-															#line 1506 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 1506 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 	{
 		fdb_probe_actor_create("timeKeeperEpochsFromVersion", reinterpret_cast<unsigned long>(this));
 
@@ -1516,13 +1516,13 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 435 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 435 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 			tr->setOption(FDBTransactionOptions::ACCESS_SYSTEM_KEYS);
-															#line 436 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 436 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 			tr->setOption(FDBTransactionOptions::LOCK_AWARE);
-															#line 438 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 438 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 			;
-															#line 1525 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 1525 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -1543,9 +1543,9 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 476 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 476 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 		if (!static_cast<TimeKeeperEpochsFromVersionActor*>(this)->SAV<Optional<int64_t>>::futures) { (void)(found.first + (v - found.second) / CLIENT_KNOBS->CORE_VERSIONSPERSECOND); this->~TimeKeeperEpochsFromVersionActorState(); static_cast<TimeKeeperEpochsFromVersionActor*>(this)->destroy(); return 0; }
-															#line 1548 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 1548 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 		new (&static_cast<TimeKeeperEpochsFromVersionActor*>(this)->SAV< Optional<int64_t> >::value()) Optional<int64_t>(found.first + (v - found.second) / CLIENT_KNOBS->CORE_VERSIONSPERSECOND);
 		this->~TimeKeeperEpochsFromVersionActorState();
 		static_cast<TimeKeeperEpochsFromVersionActor*>(this)->finishSendAndDelPromiseRef();
@@ -1562,18 +1562,18 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 439 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 439 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 		mid = (min + max + 1) / 2;
-															#line 442 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 442 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 		StrictFuture<std::vector<std::pair<int64_t, Version>>> __when_expr_0 = versionMap.getRange(tr, min, mid, 1, Snapshot::False, Reverse::True);
-															#line 442 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 442 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 		if (static_cast<TimeKeeperEpochsFromVersionActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 1571 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 1571 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 		if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 		static_cast<TimeKeeperEpochsFromVersionActor*>(this)->actor_wait_state = 1;
-															#line 442 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 442 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 		__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< TimeKeeperEpochsFromVersionActor, 0, std::vector<std::pair<int64_t, Version>> >*>(static_cast<TimeKeeperEpochsFromVersionActor*>(this)));
-															#line 1576 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 1576 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -1593,24 +1593,24 @@ public:
 	}
 	int a_body1loopBody1cont1(int loopDepth) 
 	{
-															#line 445 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 445 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 		if (results.size() != 1)
-															#line 1598 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 1598 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 		{
-															#line 446 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 446 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 			if (mid == min)
-															#line 1602 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 1602 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 			{
-															#line 449 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 449 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 				StrictFuture<Void> __when_expr_1 = store(results, versionMap.getRange(tr, 0, (int64_t)now(), 1));
-															#line 449 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 449 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 				if (static_cast<TimeKeeperEpochsFromVersionActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 1608 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 1608 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 				if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1cont1when1(__when_expr_1.get(), loopDepth); };
 				static_cast<TimeKeeperEpochsFromVersionActor*>(this)->actor_wait_state = 2;
-															#line 449 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 449 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 				__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< TimeKeeperEpochsFromVersionActor, 1, Void >*>(static_cast<TimeKeeperEpochsFromVersionActor*>(this)));
-															#line 1613 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 1613 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 				loopDepth = 0;
 			}
 			else
@@ -1627,9 +1627,9 @@ public:
 	}
 	int a_body1loopBody1when1(std::vector<std::pair<int64_t, Version>> const& __results,int loopDepth) 
 	{
-															#line 442 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 442 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 		results = __results;
-															#line 1632 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 1632 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 		loopDepth = a_body1loopBody1cont1(loopDepth);
 
 		return loopDepth;
@@ -1694,27 +1694,27 @@ public:
 	}
 	int a_body1loopBody1cont2(int loopDepth) 
 	{
-															#line 464 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 464 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 		found = results[0];
-															#line 466 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 466 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 		if (v < found.second)
-															#line 1701 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 1701 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 		{
-															#line 467 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 467 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 			max = found.first;
-															#line 1705 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 1705 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 		}
 		else
 		{
-															#line 469 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 469 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 			if (found.first == min)
-															#line 1711 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 1711 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 			{
 				return a_body1break1(loopDepth==0?0:loopDepth-1); // break
 			}
-															#line 472 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 472 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 			min = found.first;
-															#line 1717 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 1717 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 		}
 		if (loopDepth == 0) return a_body1loopHead1(0);
 
@@ -1722,51 +1722,51 @@ public:
 	}
 	int a_body1loopBody1cont3(int loopDepth) 
 	{
-															#line 460 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 460 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 		min = mid;
-															#line 1727 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 1727 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 		return a_body1loopHead1(loopDepth); // continue
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont4(Void const& _,int loopDepth) 
 	{
-															#line 451 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 451 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 		if (results.size() != 1)
-															#line 1736 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 1736 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 		{
-															#line 453 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 453 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 			if (!static_cast<TimeKeeperEpochsFromVersionActor*>(this)->SAV<Optional<int64_t>>::futures) { (void)(Optional<int64_t>()); this->~TimeKeeperEpochsFromVersionActorState(); static_cast<TimeKeeperEpochsFromVersionActor*>(this)->destroy(); return 0; }
-															#line 1740 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 1740 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 			new (&static_cast<TimeKeeperEpochsFromVersionActor*>(this)->SAV< Optional<int64_t> >::value()) Optional<int64_t>(Optional<int64_t>());
 			this->~TimeKeeperEpochsFromVersionActorState();
 			static_cast<TimeKeeperEpochsFromVersionActor*>(this)->finishSendAndDelPromiseRef();
 			return 0;
 		}
-															#line 456 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 456 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 		found = results[0];
-															#line 1748 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 1748 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 		return a_body1break1(loopDepth==0?0:loopDepth-1); // break
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont4(Void && _,int loopDepth) 
 	{
-															#line 451 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 451 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 		if (results.size() != 1)
-															#line 1757 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 1757 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 		{
-															#line 453 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 453 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 			if (!static_cast<TimeKeeperEpochsFromVersionActor*>(this)->SAV<Optional<int64_t>>::futures) { (void)(Optional<int64_t>()); this->~TimeKeeperEpochsFromVersionActorState(); static_cast<TimeKeeperEpochsFromVersionActor*>(this)->destroy(); return 0; }
-															#line 1761 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 1761 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 			new (&static_cast<TimeKeeperEpochsFromVersionActor*>(this)->SAV< Optional<int64_t> >::value()) Optional<int64_t>(Optional<int64_t>());
 			this->~TimeKeeperEpochsFromVersionActorState();
 			static_cast<TimeKeeperEpochsFromVersionActor*>(this)->finishSendAndDelPromiseRef();
 			return 0;
 		}
-															#line 456 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 456 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 		found = results[0];
-															#line 1769 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 1769 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 		return a_body1break1(loopDepth==0?0:loopDepth-1); // break
 
 		return loopDepth;
@@ -1834,28 +1834,28 @@ public:
 		fdb_probe_actor_exit("timeKeeperEpochsFromVersion", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 426 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 426 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 	Version v;
-															#line 426 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 426 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 	Reference<ReadYourWritesTransaction> tr;
-															#line 427 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 427 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 	KeyBackedMap<int64_t, Version> versionMap;
-															#line 430 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 430 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 	int64_t min;
-															#line 431 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 431 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 	int64_t max;
-															#line 432 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 432 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 	int64_t mid;
-															#line 433 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 433 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 	std::pair<int64_t, Version> found;
-															#line 442 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 442 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 	std::vector<std::pair<int64_t, Version>> results;
-															#line 1853 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 1853 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 };
 // This generated class is to be used only via timeKeeperEpochsFromVersion()
-															#line 426 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 426 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 class TimeKeeperEpochsFromVersionActor final : public Actor<Optional<int64_t>>, public ActorCallback< TimeKeeperEpochsFromVersionActor, 0, std::vector<std::pair<int64_t, Version>> >, public ActorCallback< TimeKeeperEpochsFromVersionActor, 1, Void >, public FastAllocated<TimeKeeperEpochsFromVersionActor>, public TimeKeeperEpochsFromVersionActorState<TimeKeeperEpochsFromVersionActor> {
-															#line 1858 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 1858 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 public:
 	using FastAllocated<TimeKeeperEpochsFromVersionActor>::operator new;
 	using FastAllocated<TimeKeeperEpochsFromVersionActor>::operator delete;
@@ -1865,9 +1865,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< TimeKeeperEpochsFromVersionActor, 0, std::vector<std::pair<int64_t, Version>> >;
 friend struct ActorCallback< TimeKeeperEpochsFromVersionActor, 1, Void >;
-															#line 426 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 426 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 	TimeKeeperEpochsFromVersionActor(Version const& v,Reference<ReadYourWritesTransaction> const& tr) 
-															#line 1870 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 1870 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 		 : Actor<Optional<int64_t>>(),
 		   TimeKeeperEpochsFromVersionActorState<TimeKeeperEpochsFromVersionActor>(v, tr)
 	{
@@ -1892,11 +1892,11 @@ friend struct ActorCallback< TimeKeeperEpochsFromVersionActor, 1, Void >;
 	}
 };
 }
-															#line 426 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 426 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 [[nodiscard]] Future<Optional<int64_t>> timeKeeperEpochsFromVersion( Version const& v, Reference<ReadYourWritesTransaction> const& tr ) {
-															#line 426 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+															#line 426 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"
 	return Future<Optional<int64_t>>(new TimeKeeperEpochsFromVersionActor(v, tr));
-															#line 1899 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.g.cpp"
+															#line 1899 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.g.cpp"
 }
 
-#line 478 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BackupContainer.actor.cpp"
+#line 478 "/usr/src/libfdb_c/fdbclient/BackupContainer.actor.cpp"

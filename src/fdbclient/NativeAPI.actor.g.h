@@ -1,5 +1,5 @@
 #define POST_ACTOR_COMPILER 1
-#line 1 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/NativeAPI.actor.h"
+#line 1 "/usr/src/libfdb_c/fdbclient/NativeAPI.actor.h"
 /*
  * NativeAPI.actor.h
  *
@@ -492,14 +492,14 @@ private:
 	Future<Void> committing;
 };
 
-															#line 495 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/NativeAPI.actor.g.h"
+															#line 495 "/usr/src/libfdb_c/fdbclient/NativeAPI.actor.g.h"
 [[nodiscard]] Future<Version> waitForCommittedVersion( Database const& cx, Version const& version, SpanID const& spanContext );
 
-#line 494 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/NativeAPI.actor.h"
-															#line 499 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/NativeAPI.actor.g.h"
+#line 494 "/usr/src/libfdb_c/fdbclient/NativeAPI.actor.h"
+															#line 499 "/usr/src/libfdb_c/fdbclient/NativeAPI.actor.g.h"
 [[nodiscard]] Future<Standalone<VectorRef<DDMetricsRef>>> waitDataDistributionMetricsList( Database const& cx, KeyRange const& keys, int const& shardLimit );
 
-#line 497 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/NativeAPI.actor.h"
+#line 497 "/usr/src/libfdb_c/fdbclient/NativeAPI.actor.h"
 
 std::string unprintable(const std::string&);
 
@@ -509,10 +509,10 @@ int64_t extractIntOption(Optional<StringRef> value,
 
 // Takes a snapshot of the cluster, specifically the following persistent
 // states: coordinator, TLog and storage state
-															#line 512 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/NativeAPI.actor.g.h"
+															#line 512 "/usr/src/libfdb_c/fdbclient/NativeAPI.actor.g.h"
 [[nodiscard]] Future<Void> snapCreate( Database const& cx, Standalone<StringRef> const& snapCmd, UID const& snapUID );
 
-#line 507 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/NativeAPI.actor.h"
+#line 507 "/usr/src/libfdb_c/fdbclient/NativeAPI.actor.h"
 
 // Adds necessary mutation(s) to the transaction, so that *one* checkpoint will be created for
 // each and every shards overlapping with `range`. Each checkpoint will be created at a random
@@ -527,16 +527,16 @@ Future<Void> createCheckpoint(Reference<ReadYourWritesTransaction> tr, KeyRangeR
 // One CheckpointMetaData will be returned for each distinctive shard.
 // The collective keyrange of the returned checkpoint(s) is a super-set of `keys`.
 // checkpoint_not_found() error will be returned if the specific checkpoint(s) cannot be found.
-															#line 530 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/NativeAPI.actor.g.h"
+															#line 530 "/usr/src/libfdb_c/fdbclient/NativeAPI.actor.g.h"
 [[nodiscard]] Future<std::vector<CheckpointMetaData>> getCheckpointMetaData( Database const& cx, KeyRange const& keys, Version const& version, CheckpointFormat const& format, double const& timeout = 5.0 );
 
-#line 526 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/NativeAPI.actor.h"
+#line 526 "/usr/src/libfdb_c/fdbclient/NativeAPI.actor.h"
 
 // Checks with Data Distributor that it is safe to mark all servers in exclusions as failed
-															#line 536 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/NativeAPI.actor.g.h"
+															#line 536 "/usr/src/libfdb_c/fdbclient/NativeAPI.actor.g.h"
 [[nodiscard]] Future<bool> checkSafeExclusions( Database const& cx, std::vector<AddressExclusion> const& exclusions );
 
-#line 529 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/NativeAPI.actor.h"
+#line 529 "/usr/src/libfdb_c/fdbclient/NativeAPI.actor.h"
 
 inline uint64_t getWriteOperationCost(uint64_t bytes) {
 	return bytes / std::max(1, CLIENT_KNOBS->WRITE_COST_BYTE_FACTOR) + 1;
@@ -544,15 +544,15 @@ inline uint64_t getWriteOperationCost(uint64_t bytes) {
 
 // Create a transaction to set the value of system key \xff/conf/perpetual_storage_wiggle. If enable == true, the value
 // will be 1. Otherwise, the value will be 0.
-															#line 547 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/NativeAPI.actor.g.h"
+															#line 547 "/usr/src/libfdb_c/fdbclient/NativeAPI.actor.g.h"
 [[nodiscard]] Future<Void> setPerpetualStorageWiggle( Database const& cx, bool const& enable, LockAware const& lockAware = LockAware::False );
 
-#line 537 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/NativeAPI.actor.h"
+#line 537 "/usr/src/libfdb_c/fdbclient/NativeAPI.actor.h"
 
-															#line 552 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/NativeAPI.actor.g.h"
+															#line 552 "/usr/src/libfdb_c/fdbclient/NativeAPI.actor.g.h"
 [[nodiscard]] Future<std::vector<std::pair<UID, StorageWiggleValue>>> readStorageWiggleValues( Database const& cx, bool const& primary, bool const& use_system_priority );
 
-#line 541 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/NativeAPI.actor.h"
+#line 541 "/usr/src/libfdb_c/fdbclient/NativeAPI.actor.h"
 
 // Returns the maximum legal size of a key. This size will be determined by the prefix of the passed in key
 // (system keys have a larger maximum size). This should be used for generic max key size requests.
@@ -569,10 +569,10 @@ int64_t getMaxWriteKeySize(KeyRef const& key, bool hasRawAccess);
 int64_t getMaxClearKeySize(KeyRef const& key);
 
 struct KeyRangeLocationInfo;
-															#line 572 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/NativeAPI.actor.g.h"
+															#line 572 "/usr/src/libfdb_c/fdbclient/NativeAPI.actor.g.h"
 [[nodiscard]] Future<KeyRangeLocationInfo> getKeyLocation_internal( Database const& cx, Optional<TenantName> const& tenant, Key const& key, SpanID const& spanID, Optional<UID> const& debugID, UseProvisionalProxies const& useProvisionalProxies, Reverse const& isBackward, Version const& version );
 
-#line 565 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/NativeAPI.actor.h"
+#line 565 "/usr/src/libfdb_c/fdbclient/NativeAPI.actor.h"
 
 #include "flow/unactorcompiler.h"
 #endif

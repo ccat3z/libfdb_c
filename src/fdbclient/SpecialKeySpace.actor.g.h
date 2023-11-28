@@ -1,5 +1,5 @@
 #define POST_ACTOR_COMPILER 1
-#line 1 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.h"
+#line 1 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.h"
 /*
  * SpecialKeySpace.actor.h
  *
@@ -134,28 +134,28 @@ public:
 
 	bool isAsync() const override { return true; }
 
-																#line 137 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.h"
+																#line 137 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.g.h"
 // This generated class is to be used only via getRangeAsyncActor()
-															#line 135 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.h"
+															#line 135 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.h"
 template <class GetRangeAsyncActorActor>
-															#line 135 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.h"
+															#line 135 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.h"
 class GetRangeAsyncActorActorState {
-															#line 143 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.h"
+															#line 143 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.g.h"
 public:
-															#line 135 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.h"
+															#line 135 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.h"
 	GetRangeAsyncActorActorState(const SpecialKeyRangeReadImpl* const& skrAyncImpl,ReadYourWritesTransaction* const& ryw,KeyRangeRef const& kr,GetRangeLimits const& limits,KeyRangeMap<Optional<RangeResult>>* const& cache) 
-															#line 135 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.h"
-															#line 135 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.h"
+															#line 135 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.h"
+															#line 135 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.h"
 		 : skrAyncImpl(skrAyncImpl),
-															#line 135 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.h"
+															#line 135 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.h"
 		   ryw(ryw),
-															#line 135 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.h"
+															#line 135 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.h"
 		   kr(kr),
-															#line 135 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.h"
+															#line 135 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.h"
 		   limits(limits),
-															#line 135 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.h"
+															#line 135 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.h"
 		   cache(cache)
-															#line 158 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.h"
+															#line 158 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.g.h"
 	{
 		fdb_probe_actor_create("getRangeAsyncActor", reinterpret_cast<unsigned long>(this));
 
@@ -168,26 +168,26 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.h"
+															#line 140 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.h"
 			ASSERT(skrAyncImpl->getKeyRange().contains(kr));
-															#line 141 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.h"
+															#line 141 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.h"
 			ASSERT(cache != nullptr);
-															#line 142 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.h"
+															#line 142 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.h"
 			ASSERT(cache->rangeContaining(kr.begin) == cache->rangeContainingKeyBefore(kr.end));
-															#line 143 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.h"
+															#line 143 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.h"
 			if (!(*cache)[kr.begin].present())
-															#line 179 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.h"
+															#line 179 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.g.h"
 			{
-															#line 147 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.h"
+															#line 147 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.h"
 				StrictFuture<RangeResult> __when_expr_0 = skrAyncImpl->getRange(ryw, skrAyncImpl->getKeyRange(), limits);
-															#line 147 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.h"
+															#line 147 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.h"
 				if (static_cast<GetRangeAsyncActorActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 185 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.h"
+															#line 185 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.g.h"
 				if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 				static_cast<GetRangeAsyncActorActor*>(this)->actor_wait_state = 1;
-															#line 147 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.h"
+															#line 147 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.h"
 				__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< GetRangeAsyncActorActor, 0, RangeResult >*>(static_cast<GetRangeAsyncActorActor*>(this)));
-															#line 190 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.h"
+															#line 190 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.g.h"
 				loopDepth = 0;
 			}
 			else
@@ -213,33 +213,33 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 150 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.h"
+															#line 150 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.h"
 		const auto& allResults = (*cache)[kr.begin].get();
-															#line 151 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.h"
+															#line 151 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.h"
 		int start = 0, end = allResults.size();
-															#line 152 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.h"
+															#line 152 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.h"
 		for(;start < allResults.size() && allResults[start].key < kr.begin;) {
-															#line 153 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.h"
+															#line 153 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.h"
 			++start;
-															#line 224 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.h"
+															#line 224 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.g.h"
 		}
-															#line 154 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.h"
+															#line 154 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.h"
 		for(;end > 0 && allResults[end - 1].key >= kr.end;) {
-															#line 155 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.h"
+															#line 155 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.h"
 			--end;
-															#line 230 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.h"
+															#line 230 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.g.h"
 		}
-															#line 156 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.h"
+															#line 156 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.h"
 		if (start < end)
-															#line 234 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.h"
+															#line 234 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.g.h"
 		{
-															#line 157 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.h"
+															#line 157 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.h"
 			RangeResult result = RangeResultRef(allResults.slice(start, end), false);
-															#line 158 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.h"
+															#line 158 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.h"
 			result.arena().dependsOn(allResults.arena());
-															#line 159 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.h"
+															#line 159 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.h"
 			if (!static_cast<GetRangeAsyncActorActor*>(this)->SAV<RangeResult>::futures) { (void)(result); this->~GetRangeAsyncActorActorState(); static_cast<GetRangeAsyncActorActor*>(this)->destroy(); return 0; }
-															#line 242 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.h"
+															#line 242 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.g.h"
 			new (&static_cast<GetRangeAsyncActorActor*>(this)->SAV< RangeResult >::value()) RangeResult(result);
 			this->~GetRangeAsyncActorActorState();
 			static_cast<GetRangeAsyncActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -247,9 +247,9 @@ public:
 		}
 		else
 		{
-															#line 161 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.h"
+															#line 161 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.h"
 			if (!static_cast<GetRangeAsyncActorActor*>(this)->SAV<RangeResult>::futures) { (void)(RangeResult()); this->~GetRangeAsyncActorActorState(); static_cast<GetRangeAsyncActorActor*>(this)->destroy(); return 0; }
-															#line 252 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.h"
+															#line 252 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.g.h"
 			new (&static_cast<GetRangeAsyncActorActor*>(this)->SAV< RangeResult >::value()) RangeResult(RangeResult());
 			this->~GetRangeAsyncActorActorState();
 			static_cast<GetRangeAsyncActorActor*>(this)->finishSendAndDelPromiseRef();
@@ -260,18 +260,18 @@ public:
 	}
 	int a_body1cont2(RangeResult const& result_,int loopDepth) 
 	{
-															#line 148 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.h"
+															#line 148 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.h"
 		cache->insert(skrAyncImpl->getKeyRange(), result_);
-															#line 265 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.h"
+															#line 265 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.g.h"
 		loopDepth = a_body1cont1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1cont2(RangeResult && result_,int loopDepth) 
 	{
-															#line 148 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.h"
+															#line 148 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.h"
 		cache->insert(skrAyncImpl->getKeyRange(), result_);
-															#line 274 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.h"
+															#line 274 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.g.h"
 		loopDepth = a_body1cont1(loopDepth);
 
 		return loopDepth;
@@ -339,22 +339,22 @@ public:
 		fdb_probe_actor_exit("getRangeAsyncActor", reinterpret_cast<unsigned long>(this), 0);
 
 	}
-															#line 135 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.h"
+															#line 135 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.h"
 	const SpecialKeyRangeReadImpl* skrAyncImpl;
-															#line 135 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.h"
+															#line 135 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.h"
 	ReadYourWritesTransaction* ryw;
-															#line 135 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.h"
+															#line 135 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.h"
 	KeyRangeRef kr;
-															#line 135 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.h"
+															#line 135 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.h"
 	GetRangeLimits limits;
-															#line 135 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.h"
+															#line 135 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.h"
 	KeyRangeMap<Optional<RangeResult>>* cache;
-															#line 352 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.h"
+															#line 352 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.g.h"
 };
 // This generated class is to be used only via getRangeAsyncActor()
-															#line 135 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.h"
+															#line 135 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.h"
 class GetRangeAsyncActorActor final : public Actor<RangeResult>, public ActorCallback< GetRangeAsyncActorActor, 0, RangeResult >, public FastAllocated<GetRangeAsyncActorActor>, public GetRangeAsyncActorActorState<GetRangeAsyncActorActor> {
-															#line 357 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.h"
+															#line 357 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.g.h"
 public:
 	using FastAllocated<GetRangeAsyncActorActor>::operator new;
 	using FastAllocated<GetRangeAsyncActorActor>::operator delete;
@@ -363,9 +363,9 @@ public:
 	void destroy() override { ((Actor<RangeResult>*)this)->~Actor(); operator delete(this); }
 #pragma clang diagnostic pop
 friend struct ActorCallback< GetRangeAsyncActorActor, 0, RangeResult >;
-															#line 135 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.h"
+															#line 135 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.h"
 	GetRangeAsyncActorActor(const SpecialKeyRangeReadImpl* const& skrAyncImpl,ReadYourWritesTransaction* const& ryw,KeyRangeRef const& kr,GetRangeLimits const& limits,KeyRangeMap<Optional<RangeResult>>* const& cache) 
-															#line 368 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.h"
+															#line 368 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.g.h"
 		 : Actor<RangeResult>(),
 		   GetRangeAsyncActorActorState<GetRangeAsyncActorActor>(skrAyncImpl, ryw, kr, limits, cache)
 	{
@@ -388,14 +388,14 @@ friend struct ActorCallback< GetRangeAsyncActorActor, 0, RangeResult >;
 
 	}
 };
-															#line 135 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.h"
+															#line 135 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.h"
 [[nodiscard]] static Future<RangeResult> getRangeAsyncActor( const SpecialKeyRangeReadImpl* const& skrAyncImpl, ReadYourWritesTransaction* const& ryw, KeyRangeRef const& kr, GetRangeLimits const& limits, KeyRangeMap<Optional<RangeResult>>* const& cache ) {
-															#line 135 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.h"
+															#line 135 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.h"
 	return Future<RangeResult>(new GetRangeAsyncActorActor(skrAyncImpl, ryw, kr, limits, cache));
-															#line 395 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.h"
+															#line 395 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.g.h"
 }
 
-#line 163 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.h"
+#line 163 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.h"
 };
 
 class SpecialKeySpace {
@@ -471,22 +471,22 @@ public:
 	static const std::set<std::string>& getTracingOptions() { return tracingOptions; }
 
 private:
-																#line 474 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.h"
+																#line 474 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.g.h"
 [[nodiscard]] static Future<Optional<Value>> getActor( SpecialKeySpace* const& sks, ReadYourWritesTransaction* const& ryw, KeyRef const& key );
 template <class> friend class SpecialKeySpace_GetActorActorState;
 
-#line 239 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.h"
+#line 239 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.h"
 
-																#line 480 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.h"
+																#line 480 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.g.h"
 [[nodiscard]] static Future<RangeResult> checkRYWValid( SpecialKeySpace* const& sks, ReadYourWritesTransaction* const& ryw, KeySelector const& begin, KeySelector const& end, GetRangeLimits const& limits, Reverse const& reverse );
 template <class> friend class SpecialKeySpace_CheckRYWValidActorState;
 
-#line 246 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.h"
-																#line 485 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.h"
+#line 246 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.h"
+																#line 485 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.g.h"
 [[nodiscard]] static Future<RangeResult> getRangeAggregationActor( SpecialKeySpace* const& sks, ReadYourWritesTransaction* const& ryw, KeySelector const& begin, KeySelector const& end, GetRangeLimits const& limits, Reverse const& reverse );
 template <class> friend class SpecialKeySpace_GetRangeAggregationActorActorState;
 
-#line 252 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.h"
+#line 252 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.h"
 
 	KeyRangeMap<SpecialKeyRangeReadImpl*> readImpls;
 	KeyRangeMap<SpecialKeySpace::MODULE> modules;
@@ -800,10 +800,10 @@ public:
 // If the underlying set of key-value pairs of a key space is not changing, then we expect repeating a read to give the
 // same result. Additionally, we can generate the expected result of any read if that read is reading a subrange. This
 // actor performs a read of an arbitrary subrange of [begin, end) and validates the results.
-															#line 803 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.g.h"
+															#line 803 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.g.h"
 [[nodiscard]] Future<Void> validateSpecialSubrangeRead( ReadYourWritesTransaction* const& ryw, KeySelector const& begin, KeySelector const& end, GetRangeLimits const& limits, Reverse const& reverse, RangeResult const& result );
 
-#line 571 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/SpecialKeySpace.actor.h"
+#line 571 "/usr/src/libfdb_c/fdbclient/SpecialKeySpace.actor.h"
 
 #include "flow/unactorcompiler.h"
 #endif

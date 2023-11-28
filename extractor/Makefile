@@ -2,6 +2,7 @@ BUILDER_IMAGE = foundationdb-builder
 EXTRACT_WORKDIR = workdir
 OUTPUT_DIR = $(error OUTPUT_DIR is required)
 OUTPUT_DIR_REAL = $(realpath $(OUTPUT_DIR))
+OUTPUT_DIR_CONTAINER = /usr/src/libfdb_c
 OUTPUT_SYMBOL_FILE = $(error OUTPUT_SYMBOL_FILE is required)
 
 BUILDER_DOCKER_FLAGS = \
@@ -21,9 +22,9 @@ extract: docker-image
 	mkdir -p "$(OUTPUT_DIR)"
 	docker run --rm -ti  \
 		$(BUILDER_DOCKER_FLAGS) \
-		-v "$(OUTPUT_DIR_REAL):$(OUTPUT_DIR_REAL)" \
+		-v "$(OUTPUT_DIR_REAL):$(OUTPUT_DIR_CONTAINER)" \
 		"$(BUILDER_IMAGE)" \
-		$(CURDIR)/$(EXTRACT_WORKDIR)/extract.sh "$(OUTPUT_DIR_REAL)"
+		$(CURDIR)/$(EXTRACT_WORKDIR)/extract.sh "$(OUTPUT_DIR_CONTAINER)"
 
 build-tests: docker-image
 	docker run --rm -ti  \

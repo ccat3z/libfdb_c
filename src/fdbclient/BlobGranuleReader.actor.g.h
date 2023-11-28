@@ -1,5 +1,5 @@
 #define POST_ACTOR_COMPILER 1
-#line 1 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BlobGranuleReader.actor.h"
+#line 1 "/usr/src/libfdb_c/fdbclient/BlobGranuleReader.actor.h"
 /*
  * BlobGranuleReader.actor.h
  *
@@ -40,15 +40,15 @@
 
 // Reads the fileset in the reply using the provided blob store, and filters data and mutations by key + version from
 // the request
-															#line 43 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BlobGranuleReader.actor.g.h"
+															#line 43 "/usr/src/libfdb_c/fdbclient/BlobGranuleReader.actor.g.h"
 [[nodiscard]] Future<RangeResult> readBlobGranule( BlobGranuleChunkRef const& chunk, KeyRangeRef const& keyRange, Version const& beginVersion, Version const& readVersion, Reference<BackupContainerFileSystem> const& bstore, Optional<BlobWorkerStats*> const& stats = Optional<BlobWorkerStats*>() );
 
-#line 47 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BlobGranuleReader.actor.h"
+#line 47 "/usr/src/libfdb_c/fdbclient/BlobGranuleReader.actor.h"
 
-															#line 48 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BlobGranuleReader.actor.g.h"
+															#line 48 "/usr/src/libfdb_c/fdbclient/BlobGranuleReader.actor.g.h"
 [[nodiscard]] Future<Void> readBlobGranules( BlobGranuleFileRequest const& request, BlobGranuleFileReply const& reply, Reference<BackupContainerFileSystem> const& bstore, PromiseStream<RangeResult> const& results );
 
-#line 52 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbclient/BlobGranuleReader.actor.h"
+#line 52 "/usr/src/libfdb_c/fdbclient/BlobGranuleReader.actor.h"
 
 #include "flow/unactorcompiler.h"
 #endif

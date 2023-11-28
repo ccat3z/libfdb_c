@@ -1,5 +1,5 @@
 #define POST_ACTOR_COMPILER 1
-#line 1 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+#line 1 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 /*
  * IAsyncFile.actor.cpp
  *
@@ -33,31 +33,31 @@ IAsyncFile::~IAsyncFile() = default;
 const static unsigned int ONE_MEGABYTE = 1 << 20;
 const static unsigned int FOUR_KILOBYTES = 4 << 10;
 
-															#line 36 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 36 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 namespace {
 // This generated class is to be used only via zeroRangeHelper()
-															#line 34 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 34 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 template <class ZeroRangeHelperActor>
-															#line 34 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 34 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 class ZeroRangeHelperActorState {
-															#line 43 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 43 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 public:
-															#line 34 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 34 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 	ZeroRangeHelperActorState(Reference<IAsyncFile> const& f,int64_t const& offset,int64_t const& length,int const& fixedbyte) 
-															#line 34 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
-															#line 34 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 34 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
+															#line 34 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		 : f(f),
-															#line 34 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 34 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		   offset(offset),
-															#line 34 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 34 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		   length(length),
-															#line 34 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 34 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		   fixedbyte(fixedbyte),
-															#line 35 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 35 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		   pos(offset),
-															#line 36 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 36 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		   zeros(aligned_alloc(ONE_MEGABYTE, ONE_MEGABYTE))
-															#line 60 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 60 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 	{
 		fdb_probe_actor_create("zeroRangeHelper", reinterpret_cast<unsigned long>(this));
 
@@ -70,11 +70,11 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 37 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 37 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 			memset(zeros, fixedbyte, ONE_MEGABYTE);
-															#line 39 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 39 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 			;
-															#line 77 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 77 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 			loopDepth = a_body1loopHead1(loopDepth);
 		}
 		catch (Error& error) {
@@ -95,11 +95,11 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 46 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 46 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		aligned_free(zeros);
-															#line 47 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 47 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (!static_cast<ZeroRangeHelperActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~ZeroRangeHelperActorState(); static_cast<ZeroRangeHelperActor*>(this)->destroy(); return 0; }
-															#line 102 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 102 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		new (&static_cast<ZeroRangeHelperActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~ZeroRangeHelperActorState();
 		static_cast<ZeroRangeHelperActor*>(this)->finishSendAndDelPromiseRef();
@@ -116,24 +116,24 @@ public:
 	}
 	int a_body1loopBody1(int loopDepth) 
 	{
-															#line 39 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 39 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (!(pos < offset + length))
-															#line 121 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 121 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		{
 			return a_body1break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 40 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 40 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		len = std::min<int64_t>(ONE_MEGABYTE, offset + length - pos);
-															#line 41 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 41 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<Void> __when_expr_0 = f->write(zeros, len, pos);
-															#line 41 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 41 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<ZeroRangeHelperActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 131 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 131 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1when1(__when_expr_0.get(), loopDepth); };
 		static_cast<ZeroRangeHelperActor*>(this)->actor_wait_state = 1;
-															#line 41 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 41 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< ZeroRangeHelperActor, 0, Void >*>(static_cast<ZeroRangeHelperActor*>(this)));
-															#line 136 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 136 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -153,36 +153,36 @@ public:
 	}
 	int a_body1loopBody1cont1(Void const& _,int loopDepth) 
 	{
-															#line 42 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 42 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		pos += len;
-															#line 43 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 43 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = yield();
-															#line 43 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 43 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<ZeroRangeHelperActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 162 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 162 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1cont1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<ZeroRangeHelperActor*>(this)->actor_wait_state = 2;
-															#line 43 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 43 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< ZeroRangeHelperActor, 1, Void >*>(static_cast<ZeroRangeHelperActor*>(this)));
-															#line 167 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 167 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1loopBody1cont1(Void && _,int loopDepth) 
 	{
-															#line 42 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 42 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		pos += len;
-															#line 43 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 43 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = yield();
-															#line 43 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 43 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<ZeroRangeHelperActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 180 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 180 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), std::max(0, loopDepth - 1)); else return a_body1loopBody1cont1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<ZeroRangeHelperActor*>(this)->actor_wait_state = 2;
-															#line 43 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 43 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< ZeroRangeHelperActor, 1, Void >*>(static_cast<ZeroRangeHelperActor*>(this)));
-															#line 185 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 185 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -325,26 +325,26 @@ public:
 		fdb_probe_actor_exit("zeroRangeHelper", reinterpret_cast<unsigned long>(this), 1);
 
 	}
-															#line 34 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 34 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 	Reference<IAsyncFile> f;
-															#line 34 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 34 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 	int64_t offset;
-															#line 34 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 34 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 	int64_t length;
-															#line 34 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 34 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 	int fixedbyte;
-															#line 35 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 35 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 	int64_t pos;
-															#line 36 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 36 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 	void* zeros;
-															#line 40 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 40 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 	int len;
-															#line 342 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 342 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 };
 // This generated class is to be used only via zeroRangeHelper()
-															#line 34 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 34 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 class ZeroRangeHelperActor final : public Actor<Void>, public ActorCallback< ZeroRangeHelperActor, 0, Void >, public ActorCallback< ZeroRangeHelperActor, 1, Void >, public FastAllocated<ZeroRangeHelperActor>, public ZeroRangeHelperActorState<ZeroRangeHelperActor> {
-															#line 347 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 347 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 public:
 	using FastAllocated<ZeroRangeHelperActor>::operator new;
 	using FastAllocated<ZeroRangeHelperActor>::operator delete;
@@ -354,9 +354,9 @@ public:
 #pragma clang diagnostic pop
 friend struct ActorCallback< ZeroRangeHelperActor, 0, Void >;
 friend struct ActorCallback< ZeroRangeHelperActor, 1, Void >;
-															#line 34 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 34 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 	ZeroRangeHelperActor(Reference<IAsyncFile> const& f,int64_t const& offset,int64_t const& length,int const& fixedbyte) 
-															#line 359 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 359 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		 : Actor<Void>(),
 		   ZeroRangeHelperActorState<ZeroRangeHelperActor>(f, offset, length, fixedbyte)
 	{
@@ -381,36 +381,36 @@ friend struct ActorCallback< ZeroRangeHelperActor, 1, Void >;
 	}
 };
 }
-															#line 34 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 34 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 [[nodiscard]] static Future<Void> zeroRangeHelper( Reference<IAsyncFile> const& f, int64_t const& offset, int64_t const& length, int const& fixedbyte ) {
-															#line 34 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 34 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 	return Future<Void>(new ZeroRangeHelperActor(f, offset, length, fixedbyte));
-															#line 388 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 388 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 }
 
-#line 49 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+#line 49 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 
 Future<Void> IAsyncFile::zeroRange(int64_t offset, int64_t length) {
 	return uncancellable(zeroRangeHelper(Reference<IAsyncFile>::addRef(this), offset, length, 0));
 }
 
-															#line 397 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 397 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 namespace {
 // This generated class is to be used only via flowTestCase54()
-															#line 54 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 54 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 template <class FlowTestCase54Actor>
-															#line 54 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 54 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 class FlowTestCase54ActorState {
-															#line 404 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 404 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 public:
-															#line 54 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 54 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 	FlowTestCase54ActorState(UnitTestParameters const& params) 
-															#line 54 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
-															#line 54 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 54 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
+															#line 54 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		 : params(params),
-															#line 55 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 55 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		   filename("/tmp/__ZEROJUNK__")
-															#line 413 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 413 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 	{
 		fdb_probe_actor_create("flowTestCase54", reinterpret_cast<unsigned long>(this));
 
@@ -423,16 +423,16 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 56 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 56 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 			StrictFuture<Reference<IAsyncFile>> __when_expr_0 = IAsyncFileSystem::filesystem()->open( filename, IAsyncFile::OPEN_ATOMIC_WRITE_AND_CREATE | IAsyncFile::OPEN_CREATE | IAsyncFile::OPEN_READWRITE, 0);
-															#line 56 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 56 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 			if (static_cast<FlowTestCase54Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 430 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 430 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<FlowTestCase54Actor*>(this)->actor_wait_state = 1;
-															#line 56 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 56 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase54Actor, 0, Reference<IAsyncFile> >*>(static_cast<FlowTestCase54Actor*>(this)));
-															#line 435 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 435 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -453,25 +453,25 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 60 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 60 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = f->sync();
-															#line 60 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 60 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<FlowTestCase54Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 460 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 460 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<FlowTestCase54Actor*>(this)->actor_wait_state = 2;
-															#line 60 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 60 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase54Actor, 1, Void >*>(static_cast<FlowTestCase54Actor*>(this)));
-															#line 465 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 465 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1when1(Reference<IAsyncFile> const& __f,int loopDepth) 
 	{
-															#line 56 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 56 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		f = __f;
-															#line 474 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 474 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = a_body1cont1(loopDepth);
 
 		return loopDepth;
@@ -536,32 +536,32 @@ public:
 	}
 	int a_body1cont2(Void const& _,int loopDepth) 
 	{
-															#line 61 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 61 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<Void> __when_expr_2 = f->zeroRange(0, ONE_MEGABYTE);
-															#line 61 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 61 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<FlowTestCase54Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 543 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 543 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1cont2when1(__when_expr_2.get(), loopDepth); };
 		static_cast<FlowTestCase54Actor*>(this)->actor_wait_state = 3;
-															#line 61 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 61 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase54Actor, 2, Void >*>(static_cast<FlowTestCase54Actor*>(this)));
-															#line 548 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 548 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont2(Void && _,int loopDepth) 
 	{
-															#line 61 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 61 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<Void> __when_expr_2 = f->zeroRange(0, ONE_MEGABYTE);
-															#line 61 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 61 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<FlowTestCase54Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 559 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 559 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1cont2when1(__when_expr_2.get(), loopDepth); };
 		static_cast<FlowTestCase54Actor*>(this)->actor_wait_state = 3;
-															#line 61 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 61 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase54Actor, 2, Void >*>(static_cast<FlowTestCase54Actor*>(this)));
-															#line 564 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 564 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -631,32 +631,32 @@ public:
 	}
 	int a_body1cont3(Void const& _,int loopDepth) 
 	{
-															#line 62 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 62 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<int64_t> __when_expr_3 = f->size();
-															#line 62 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 62 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<FlowTestCase54Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 638 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 638 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_3.isReady()) { if (__when_expr_3.isError()) return a_body1Catch1(__when_expr_3.getError(), loopDepth); else return a_body1cont3when1(__when_expr_3.get(), loopDepth); };
 		static_cast<FlowTestCase54Actor*>(this)->actor_wait_state = 4;
-															#line 62 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 62 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_3.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase54Actor, 3, int64_t >*>(static_cast<FlowTestCase54Actor*>(this)));
-															#line 643 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 643 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont3(Void && _,int loopDepth) 
 	{
-															#line 62 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 62 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<int64_t> __when_expr_3 = f->size();
-															#line 62 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 62 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<FlowTestCase54Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 654 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 654 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_3.isReady()) { if (__when_expr_3.isError()) return a_body1Catch1(__when_expr_3.getError(), loopDepth); else return a_body1cont3when1(__when_expr_3.get(), loopDepth); };
 		static_cast<FlowTestCase54Actor*>(this)->actor_wait_state = 4;
-															#line 62 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 62 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_3.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase54Actor, 3, int64_t >*>(static_cast<FlowTestCase54Actor*>(this)));
-															#line 659 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 659 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -726,36 +726,36 @@ public:
 	}
 	int a_body1cont4(int64_t const& size,int loopDepth) 
 	{
-															#line 63 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 63 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		ASSERT(ONE_MEGABYTE == size);
-															#line 66 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 66 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<Void> __when_expr_4 = zeroRangeHelper(f, 0, ONE_MEGABYTE, 0xff);
-															#line 66 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 66 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<FlowTestCase54Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 735 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 735 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_4.isReady()) { if (__when_expr_4.isError()) return a_body1Catch1(__when_expr_4.getError(), loopDepth); else return a_body1cont4when1(__when_expr_4.get(), loopDepth); };
 		static_cast<FlowTestCase54Actor*>(this)->actor_wait_state = 5;
-															#line 66 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 66 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_4.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase54Actor, 4, Void >*>(static_cast<FlowTestCase54Actor*>(this)));
-															#line 740 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 740 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont4(int64_t && size,int loopDepth) 
 	{
-															#line 63 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 63 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		ASSERT(ONE_MEGABYTE == size);
-															#line 66 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 66 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<Void> __when_expr_4 = zeroRangeHelper(f, 0, ONE_MEGABYTE, 0xff);
-															#line 66 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 66 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<FlowTestCase54Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 753 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 753 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_4.isReady()) { if (__when_expr_4.isError()) return a_body1Catch1(__when_expr_4.getError(), loopDepth); else return a_body1cont4when1(__when_expr_4.get(), loopDepth); };
 		static_cast<FlowTestCase54Actor*>(this)->actor_wait_state = 5;
-															#line 66 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 66 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_4.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase54Actor, 4, Void >*>(static_cast<FlowTestCase54Actor*>(this)));
-															#line 758 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 758 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -825,32 +825,32 @@ public:
 	}
 	int a_body1cont5(Void const& _,int loopDepth) 
 	{
-															#line 67 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 67 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<Void> __when_expr_5 = f->zeroRange(0, ONE_MEGABYTE);
-															#line 67 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 67 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<FlowTestCase54Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 832 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 832 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_5.isReady()) { if (__when_expr_5.isError()) return a_body1Catch1(__when_expr_5.getError(), loopDepth); else return a_body1cont5when1(__when_expr_5.get(), loopDepth); };
 		static_cast<FlowTestCase54Actor*>(this)->actor_wait_state = 6;
-															#line 67 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 67 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_5.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase54Actor, 5, Void >*>(static_cast<FlowTestCase54Actor*>(this)));
-															#line 837 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 837 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont5(Void && _,int loopDepth) 
 	{
-															#line 67 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 67 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<Void> __when_expr_5 = f->zeroRange(0, ONE_MEGABYTE);
-															#line 67 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 67 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<FlowTestCase54Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 848 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 848 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_5.isReady()) { if (__when_expr_5.isError()) return a_body1Catch1(__when_expr_5.getError(), loopDepth); else return a_body1cont5when1(__when_expr_5.get(), loopDepth); };
 		static_cast<FlowTestCase54Actor*>(this)->actor_wait_state = 6;
-															#line 67 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 67 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_5.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase54Actor, 5, Void >*>(static_cast<FlowTestCase54Actor*>(this)));
-															#line 853 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 853 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -920,36 +920,36 @@ public:
 	}
 	int a_body1cont6(Void const& _,int loopDepth) 
 	{
-															#line 68 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 68 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		page = (uint8_t*)malloc(FOUR_KILOBYTES);
-															#line 69 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 69 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<int> __when_expr_6 = f->read(page, FOUR_KILOBYTES, 0);
-															#line 69 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 69 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<FlowTestCase54Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 929 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 929 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_6.isReady()) { if (__when_expr_6.isError()) return a_body1Catch1(__when_expr_6.getError(), loopDepth); else return a_body1cont6when1(__when_expr_6.get(), loopDepth); };
 		static_cast<FlowTestCase54Actor*>(this)->actor_wait_state = 7;
-															#line 69 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 69 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_6.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase54Actor, 6, int >*>(static_cast<FlowTestCase54Actor*>(this)));
-															#line 934 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 934 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont6(Void && _,int loopDepth) 
 	{
-															#line 68 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 68 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		page = (uint8_t*)malloc(FOUR_KILOBYTES);
-															#line 69 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 69 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<int> __when_expr_6 = f->read(page, FOUR_KILOBYTES, 0);
-															#line 69 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 69 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<FlowTestCase54Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 947 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 947 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_6.isReady()) { if (__when_expr_6.isError()) return a_body1Catch1(__when_expr_6.getError(), loopDepth); else return a_body1cont6when1(__when_expr_6.get(), loopDepth); };
 		static_cast<FlowTestCase54Actor*>(this)->actor_wait_state = 7;
-															#line 69 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 69 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_6.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase54Actor, 6, int >*>(static_cast<FlowTestCase54Actor*>(this)));
-															#line 952 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 952 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -1019,56 +1019,56 @@ public:
 	}
 	int a_body1cont7(int const& n,int loopDepth) 
 	{
-															#line 70 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 70 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		ASSERT(n == FOUR_KILOBYTES);
-															#line 71 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 71 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		for(int i = 0;i < FOUR_KILOBYTES;i++) {
-															#line 72 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 72 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 			ASSERT(page[i] == 0);
-															#line 1028 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 1028 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		}
-															#line 74 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 74 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		free(page);
-															#line 77 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 77 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		f.clear();
-															#line 78 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 78 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<Void> __when_expr_7 = IAsyncFileSystem::filesystem()->deleteFile(filename, true);
-															#line 78 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 78 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<FlowTestCase54Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 1038 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 1038 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_7.isReady()) { if (__when_expr_7.isError()) return a_body1Catch1(__when_expr_7.getError(), loopDepth); else return a_body1cont7when1(__when_expr_7.get(), loopDepth); };
 		static_cast<FlowTestCase54Actor*>(this)->actor_wait_state = 8;
-															#line 78 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 78 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_7.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase54Actor, 7, Void >*>(static_cast<FlowTestCase54Actor*>(this)));
-															#line 1043 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 1043 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont7(int && n,int loopDepth) 
 	{
-															#line 70 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 70 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		ASSERT(n == FOUR_KILOBYTES);
-															#line 71 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 71 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		for(int i = 0;i < FOUR_KILOBYTES;i++) {
-															#line 72 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 72 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 			ASSERT(page[i] == 0);
-															#line 1056 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 1056 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		}
-															#line 74 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 74 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		free(page);
-															#line 77 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 77 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		f.clear();
-															#line 78 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 78 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<Void> __when_expr_7 = IAsyncFileSystem::filesystem()->deleteFile(filename, true);
-															#line 78 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 78 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<FlowTestCase54Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 1066 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 1066 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_7.isReady()) { if (__when_expr_7.isError()) return a_body1Catch1(__when_expr_7.getError(), loopDepth); else return a_body1cont7when1(__when_expr_7.get(), loopDepth); };
 		static_cast<FlowTestCase54Actor*>(this)->actor_wait_state = 8;
-															#line 78 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 78 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_7.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase54Actor, 7, Void >*>(static_cast<FlowTestCase54Actor*>(this)));
-															#line 1071 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 1071 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -1138,9 +1138,9 @@ public:
 	}
 	int a_body1cont8(Void const& _,int loopDepth) 
 	{
-															#line 79 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 79 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (!static_cast<FlowTestCase54Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~FlowTestCase54ActorState(); static_cast<FlowTestCase54Actor*>(this)->destroy(); return 0; }
-															#line 1143 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 1143 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		new (&static_cast<FlowTestCase54Actor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~FlowTestCase54ActorState();
 		static_cast<FlowTestCase54Actor*>(this)->finishSendAndDelPromiseRef();
@@ -1150,9 +1150,9 @@ public:
 	}
 	int a_body1cont8(Void && _,int loopDepth) 
 	{
-															#line 79 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 79 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (!static_cast<FlowTestCase54Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~FlowTestCase54ActorState(); static_cast<FlowTestCase54Actor*>(this)->destroy(); return 0; }
-															#line 1155 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 1155 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		new (&static_cast<FlowTestCase54Actor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~FlowTestCase54ActorState();
 		static_cast<FlowTestCase54Actor*>(this)->finishSendAndDelPromiseRef();
@@ -1223,20 +1223,20 @@ public:
 		fdb_probe_actor_exit("flowTestCase54", reinterpret_cast<unsigned long>(this), 7);
 
 	}
-															#line 54 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 54 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 	UnitTestParameters params;
-															#line 55 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 55 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 	std::string filename;
-															#line 56 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 56 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 	Reference<IAsyncFile> f;
-															#line 68 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 68 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 	uint8_t* page;
-															#line 1234 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 1234 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 };
 // This generated class is to be used only via flowTestCase54()
-															#line 54 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 54 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 class FlowTestCase54Actor final : public Actor<Void>, public ActorCallback< FlowTestCase54Actor, 0, Reference<IAsyncFile> >, public ActorCallback< FlowTestCase54Actor, 1, Void >, public ActorCallback< FlowTestCase54Actor, 2, Void >, public ActorCallback< FlowTestCase54Actor, 3, int64_t >, public ActorCallback< FlowTestCase54Actor, 4, Void >, public ActorCallback< FlowTestCase54Actor, 5, Void >, public ActorCallback< FlowTestCase54Actor, 6, int >, public ActorCallback< FlowTestCase54Actor, 7, Void >, public FastAllocated<FlowTestCase54Actor>, public FlowTestCase54ActorState<FlowTestCase54Actor> {
-															#line 1239 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 1239 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 public:
 	using FastAllocated<FlowTestCase54Actor>::operator new;
 	using FastAllocated<FlowTestCase54Actor>::operator delete;
@@ -1252,9 +1252,9 @@ friend struct ActorCallback< FlowTestCase54Actor, 4, Void >;
 friend struct ActorCallback< FlowTestCase54Actor, 5, Void >;
 friend struct ActorCallback< FlowTestCase54Actor, 6, int >;
 friend struct ActorCallback< FlowTestCase54Actor, 7, Void >;
-															#line 54 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 54 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 	FlowTestCase54Actor(UnitTestParameters const& params) 
-															#line 1257 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 1257 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		 : Actor<Void>(),
 		   FlowTestCase54ActorState<FlowTestCase54Actor>(params)
 	{
@@ -1285,43 +1285,43 @@ friend struct ActorCallback< FlowTestCase54Actor, 7, Void >;
 	}
 };
 }
-															#line 54 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 54 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 static Future<Void> flowTestCase54( UnitTestParameters const& params ) {
-															#line 54 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 54 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 	return Future<Void>(new FlowTestCase54Actor(params));
-															#line 1292 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 1292 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 }
 ACTOR_TEST_CASE(flowTestCase54, "/fileio/zero")
 
-#line 81 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+#line 81 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 
-															#line 1298 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 1298 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 namespace {
 // This generated class is to be used only via incrementalDeleteHelper()
-															#line 82 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 82 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 template <class IncrementalDeleteHelperActor>
-															#line 82 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 82 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 class IncrementalDeleteHelperActorState {
-															#line 1305 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 1305 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 public:
-															#line 82 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 82 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 	IncrementalDeleteHelperActorState(std::string const& filename,bool const& mustBeDurable,int64_t const& truncateAmt,double const& interval) 
-															#line 82 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
-															#line 82 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 82 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
+															#line 82 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		 : filename(filename),
-															#line 82 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 82 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		   mustBeDurable(mustBeDurable),
-															#line 82 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 82 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		   truncateAmt(truncateAmt),
-															#line 82 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 82 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		   interval(interval),
-															#line 86 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 86 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		   file(),
-															#line 87 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 87 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		   remainingFileSize(),
-															#line 88 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 88 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		   exists(fileExists(filename))
-															#line 1324 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 1324 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 	{
 		fdb_probe_actor_create("incrementalDeleteHelper", reinterpret_cast<unsigned long>(this));
 
@@ -1334,20 +1334,20 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 90 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 90 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 			if (exists)
-															#line 1339 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 1339 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 			{
-															#line 91 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 91 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 				StrictFuture<Reference<IAsyncFile>> __when_expr_0 = IAsyncFileSystem::filesystem()->open( filename, IAsyncFile::OPEN_READWRITE | IAsyncFile::OPEN_UNCACHED | IAsyncFile::OPEN_UNBUFFERED, 0);
-															#line 91 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 91 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 				if (static_cast<IncrementalDeleteHelperActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 1345 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 1345 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 				if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 				static_cast<IncrementalDeleteHelperActor*>(this)->actor_wait_state = 1;
-															#line 91 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 91 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 				__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< IncrementalDeleteHelperActor, 0, Reference<IAsyncFile> >*>(static_cast<IncrementalDeleteHelperActor*>(this)));
-															#line 1350 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 1350 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 				loopDepth = 0;
 			}
 			else
@@ -1373,52 +1373,52 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 99 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 99 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<Void> __when_expr_2 = IAsyncFileSystem::filesystem()->deleteFile(filename, mustBeDurable);
-															#line 99 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 99 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<IncrementalDeleteHelperActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 1380 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 1380 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1cont1when1(__when_expr_2.get(), loopDepth); };
 		static_cast<IncrementalDeleteHelperActor*>(this)->actor_wait_state = 3;
-															#line 99 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 99 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< IncrementalDeleteHelperActor, 2, Void >*>(static_cast<IncrementalDeleteHelperActor*>(this)));
-															#line 1385 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 1385 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont2(Reference<IAsyncFile> const& f,int loopDepth) 
 	{
-															#line 93 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 93 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		file = f;
-															#line 95 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 95 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<int64_t> __when_expr_1 = file->size();
-															#line 95 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 95 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<IncrementalDeleteHelperActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 1398 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 1398 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont2when1(__when_expr_1.get(), loopDepth); };
 		static_cast<IncrementalDeleteHelperActor*>(this)->actor_wait_state = 2;
-															#line 95 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 95 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< IncrementalDeleteHelperActor, 1, int64_t >*>(static_cast<IncrementalDeleteHelperActor*>(this)));
-															#line 1403 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 1403 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont2(Reference<IAsyncFile> && f,int loopDepth) 
 	{
-															#line 93 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 93 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		file = f;
-															#line 95 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 95 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<int64_t> __when_expr_1 = file->size();
-															#line 95 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 95 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<IncrementalDeleteHelperActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 1416 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 1416 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont2when1(__when_expr_1.get(), loopDepth); };
 		static_cast<IncrementalDeleteHelperActor*>(this)->actor_wait_state = 2;
-															#line 95 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 95 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< IncrementalDeleteHelperActor, 1, int64_t >*>(static_cast<IncrementalDeleteHelperActor*>(this)));
-															#line 1421 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 1421 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -1488,18 +1488,18 @@ public:
 	}
 	int a_body1cont3(int64_t const& fileSize,int loopDepth) 
 	{
-															#line 96 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 96 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		remainingFileSize = fileSize;
-															#line 1493 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 1493 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = a_body1cont1(loopDepth);
 
 		return loopDepth;
 	}
 	int a_body1cont3(int64_t && fileSize,int loopDepth) 
 	{
-															#line 96 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 96 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		remainingFileSize = fileSize;
-															#line 1502 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 1502 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = a_body1cont1(loopDepth);
 
 		return loopDepth;
@@ -1569,13 +1569,13 @@ public:
 	}
 	int a_body1cont5(Void const& _,int loopDepth) 
 	{
-															#line 101 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 101 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (exists)
-															#line 1574 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 1574 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		{
-															#line 102 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 102 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 			;
-															#line 1578 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 1578 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 			loopDepth = a_body1cont5loopHead1(loopDepth);
 		}
 		else
@@ -1587,13 +1587,13 @@ public:
 	}
 	int a_body1cont5(Void && _,int loopDepth) 
 	{
-															#line 101 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 101 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (exists)
-															#line 1592 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 1592 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		{
-															#line 102 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 102 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 			;
-															#line 1596 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 1596 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 			loopDepth = a_body1cont5loopHead1(loopDepth);
 		}
 		else
@@ -1668,9 +1668,9 @@ public:
 	}
 	int a_body1cont6(int loopDepth) 
 	{
-															#line 109 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 109 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (!static_cast<IncrementalDeleteHelperActor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~IncrementalDeleteHelperActorState(); static_cast<IncrementalDeleteHelperActor*>(this)->destroy(); return 0; }
-															#line 1673 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 1673 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		new (&static_cast<IncrementalDeleteHelperActor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~IncrementalDeleteHelperActorState();
 		static_cast<IncrementalDeleteHelperActor*>(this)->finishSendAndDelPromiseRef();
@@ -1693,22 +1693,22 @@ public:
 	}
 	int a_body1cont5loopBody1(int loopDepth) 
 	{
-															#line 102 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 102 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (!(remainingFileSize > 0))
-															#line 1698 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 1698 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		{
 			return a_body1cont5break1(loopDepth==0?0:loopDepth-1); // break
 		}
-															#line 103 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 103 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<Void> __when_expr_3 = file->truncate(remainingFileSize);
-															#line 103 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 103 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<IncrementalDeleteHelperActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 1706 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 1706 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_3.isReady()) { if (__when_expr_3.isError()) return a_body1Catch1(__when_expr_3.getError(), std::max(0, loopDepth - 1)); else return a_body1cont5loopBody1when1(__when_expr_3.get(), loopDepth); };
 		static_cast<IncrementalDeleteHelperActor*>(this)->actor_wait_state = 4;
-															#line 103 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 103 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_3.addCallbackAndClear(static_cast<ActorCallback< IncrementalDeleteHelperActor, 3, Void >*>(static_cast<IncrementalDeleteHelperActor*>(this)));
-															#line 1711 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 1711 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -1728,32 +1728,32 @@ public:
 	}
 	int a_body1cont5loopBody1cont1(Void const& _,int loopDepth) 
 	{
-															#line 104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 104 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<Void> __when_expr_4 = file->sync();
-															#line 104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 104 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<IncrementalDeleteHelperActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 1735 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 1735 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_4.isReady()) { if (__when_expr_4.isError()) return a_body1Catch1(__when_expr_4.getError(), std::max(0, loopDepth - 1)); else return a_body1cont5loopBody1cont1when1(__when_expr_4.get(), loopDepth); };
 		static_cast<IncrementalDeleteHelperActor*>(this)->actor_wait_state = 5;
-															#line 104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 104 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_4.addCallbackAndClear(static_cast<ActorCallback< IncrementalDeleteHelperActor, 4, Void >*>(static_cast<IncrementalDeleteHelperActor*>(this)));
-															#line 1740 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 1740 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont5loopBody1cont1(Void && _,int loopDepth) 
 	{
-															#line 104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 104 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<Void> __when_expr_4 = file->sync();
-															#line 104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 104 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<IncrementalDeleteHelperActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 1751 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 1751 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_4.isReady()) { if (__when_expr_4.isError()) return a_body1Catch1(__when_expr_4.getError(), std::max(0, loopDepth - 1)); else return a_body1cont5loopBody1cont1when1(__when_expr_4.get(), loopDepth); };
 		static_cast<IncrementalDeleteHelperActor*>(this)->actor_wait_state = 5;
-															#line 104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 104 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_4.addCallbackAndClear(static_cast<ActorCallback< IncrementalDeleteHelperActor, 4, Void >*>(static_cast<IncrementalDeleteHelperActor*>(this)));
-															#line 1756 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 1756 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -1823,32 +1823,32 @@ public:
 	}
 	int a_body1cont5loopBody1cont3(Void const& _,int loopDepth) 
 	{
-															#line 105 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 105 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<Void> __when_expr_5 = delay(interval);
-															#line 105 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 105 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<IncrementalDeleteHelperActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 1830 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 1830 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_5.isReady()) { if (__when_expr_5.isError()) return a_body1Catch1(__when_expr_5.getError(), std::max(0, loopDepth - 1)); else return a_body1cont5loopBody1cont3when1(__when_expr_5.get(), loopDepth); };
 		static_cast<IncrementalDeleteHelperActor*>(this)->actor_wait_state = 6;
-															#line 105 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 105 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_5.addCallbackAndClear(static_cast<ActorCallback< IncrementalDeleteHelperActor, 5, Void >*>(static_cast<IncrementalDeleteHelperActor*>(this)));
-															#line 1835 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 1835 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont5loopBody1cont3(Void && _,int loopDepth) 
 	{
-															#line 105 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 105 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<Void> __when_expr_5 = delay(interval);
-															#line 105 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 105 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<IncrementalDeleteHelperActor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), std::max(0, loopDepth - 1));
-															#line 1846 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 1846 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_5.isReady()) { if (__when_expr_5.isError()) return a_body1Catch1(__when_expr_5.getError(), std::max(0, loopDepth - 1)); else return a_body1cont5loopBody1cont3when1(__when_expr_5.get(), loopDepth); };
 		static_cast<IncrementalDeleteHelperActor*>(this)->actor_wait_state = 6;
-															#line 105 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 105 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_5.addCallbackAndClear(static_cast<ActorCallback< IncrementalDeleteHelperActor, 5, Void >*>(static_cast<IncrementalDeleteHelperActor*>(this)));
-															#line 1851 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 1851 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -1918,18 +1918,18 @@ public:
 	}
 	int a_body1cont5loopBody1cont4(Void const& _,int loopDepth) 
 	{
-															#line 102 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 102 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		remainingFileSize -= truncateAmt;
-															#line 1923 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 1923 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (loopDepth == 0) return a_body1cont5loopHead1(0);
 
 		return loopDepth;
 	}
 	int a_body1cont5loopBody1cont4(Void && _,int loopDepth) 
 	{
-															#line 102 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 102 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		remainingFileSize -= truncateAmt;
-															#line 1932 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 1932 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (loopDepth == 0) return a_body1cont5loopHead1(0);
 
 		return loopDepth;
@@ -1997,26 +1997,26 @@ public:
 		fdb_probe_actor_exit("incrementalDeleteHelper", reinterpret_cast<unsigned long>(this), 5);
 
 	}
-															#line 82 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 82 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 	std::string filename;
-															#line 82 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 82 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 	bool mustBeDurable;
-															#line 82 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 82 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 	int64_t truncateAmt;
-															#line 82 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 82 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 	double interval;
-															#line 86 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 86 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 	Reference<IAsyncFile> file;
-															#line 87 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 87 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 	int64_t remainingFileSize;
-															#line 88 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 88 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 	bool exists;
-															#line 2014 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 2014 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 };
 // This generated class is to be used only via incrementalDeleteHelper()
-															#line 82 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 82 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 class IncrementalDeleteHelperActor final : public Actor<Void>, public ActorCallback< IncrementalDeleteHelperActor, 0, Reference<IAsyncFile> >, public ActorCallback< IncrementalDeleteHelperActor, 1, int64_t >, public ActorCallback< IncrementalDeleteHelperActor, 2, Void >, public ActorCallback< IncrementalDeleteHelperActor, 3, Void >, public ActorCallback< IncrementalDeleteHelperActor, 4, Void >, public ActorCallback< IncrementalDeleteHelperActor, 5, Void >, public FastAllocated<IncrementalDeleteHelperActor>, public IncrementalDeleteHelperActorState<IncrementalDeleteHelperActor> {
-															#line 2019 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 2019 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 public:
 	using FastAllocated<IncrementalDeleteHelperActor>::operator new;
 	using FastAllocated<IncrementalDeleteHelperActor>::operator delete;
@@ -2030,9 +2030,9 @@ friend struct ActorCallback< IncrementalDeleteHelperActor, 2, Void >;
 friend struct ActorCallback< IncrementalDeleteHelperActor, 3, Void >;
 friend struct ActorCallback< IncrementalDeleteHelperActor, 4, Void >;
 friend struct ActorCallback< IncrementalDeleteHelperActor, 5, Void >;
-															#line 82 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 82 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 	IncrementalDeleteHelperActor(std::string const& filename,bool const& mustBeDurable,int64_t const& truncateAmt,double const& interval) 
-															#line 2035 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 2035 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		 : Actor<Void>(),
 		   IncrementalDeleteHelperActorState<IncrementalDeleteHelperActor>(filename, mustBeDurable, truncateAmt, interval)
 	{
@@ -2061,14 +2061,14 @@ friend struct ActorCallback< IncrementalDeleteHelperActor, 5, Void >;
 	}
 };
 }
-															#line 82 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 82 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 [[nodiscard]] static Future<Void> incrementalDeleteHelper( std::string const& filename, bool const& mustBeDurable, int64_t const& truncateAmt, double const& interval ) {
-															#line 82 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 82 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 	return Future<Void>(new IncrementalDeleteHelperActor(filename, mustBeDurable, truncateAmt, interval));
-															#line 2068 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 2068 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 }
 
-#line 111 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+#line 111 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 
 Future<Void> IAsyncFileSystem::incrementalDeleteFile(const std::string& filename, bool mustBeDurable) {
 	return uncancellable(incrementalDeleteHelper(filename,
@@ -2077,25 +2077,25 @@ Future<Void> IAsyncFileSystem::incrementalDeleteFile(const std::string& filename
 	                                             FLOW_KNOBS->INCREMENTAL_DELETE_INTERVAL));
 }
 
-															#line 2080 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 2080 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 namespace {
 // This generated class is to be used only via flowTestCase119()
-															#line 119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 119 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 template <class FlowTestCase119Actor>
-															#line 119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 119 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 class FlowTestCase119ActorState {
-															#line 2087 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 2087 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 public:
-															#line 119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 119 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 	FlowTestCase119ActorState(UnitTestParameters const& params) 
-															#line 119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
-															#line 119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 119 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
+															#line 119 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		 : params(params),
-															#line 121 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 121 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		   fileSize(5e9),
-															#line 122 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 122 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		   filename("/tmp/__JUNK__")
-															#line 2098 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 2098 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 	{
 		fdb_probe_actor_create("flowTestCase119", reinterpret_cast<unsigned long>(this));
 
@@ -2108,16 +2108,16 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 123 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 123 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 			StrictFuture<Reference<IAsyncFile>> __when_expr_0 = IAsyncFileSystem::filesystem()->open( filename, IAsyncFile::OPEN_ATOMIC_WRITE_AND_CREATE | IAsyncFile::OPEN_CREATE | IAsyncFile::OPEN_READWRITE, 0);
-															#line 123 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 123 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 			if (static_cast<FlowTestCase119Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 2115 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 2115 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<FlowTestCase119Actor*>(this)->actor_wait_state = 1;
-															#line 123 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 123 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase119Actor, 0, Reference<IAsyncFile> >*>(static_cast<FlowTestCase119Actor*>(this)));
-															#line 2120 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 2120 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -2138,25 +2138,25 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 125 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 125 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = f->sync();
-															#line 125 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 125 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<FlowTestCase119Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 2145 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 2145 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<FlowTestCase119Actor*>(this)->actor_wait_state = 2;
-															#line 125 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 125 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase119Actor, 1, Void >*>(static_cast<FlowTestCase119Actor*>(this)));
-															#line 2150 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 2150 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1when1(Reference<IAsyncFile> const& __f,int loopDepth) 
 	{
-															#line 123 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 123 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		f = __f;
-															#line 2159 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 2159 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = a_body1cont1(loopDepth);
 
 		return loopDepth;
@@ -2221,32 +2221,32 @@ public:
 	}
 	int a_body1cont2(Void const& _,int loopDepth) 
 	{
-															#line 126 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 126 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<Void> __when_expr_2 = f->truncate(fileSize);
-															#line 126 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 126 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<FlowTestCase119Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 2228 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 2228 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1cont2when1(__when_expr_2.get(), loopDepth); };
 		static_cast<FlowTestCase119Actor*>(this)->actor_wait_state = 3;
-															#line 126 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 126 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase119Actor, 2, Void >*>(static_cast<FlowTestCase119Actor*>(this)));
-															#line 2233 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 2233 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont2(Void && _,int loopDepth) 
 	{
-															#line 126 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 126 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<Void> __when_expr_2 = f->truncate(fileSize);
-															#line 126 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 126 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<FlowTestCase119Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 2244 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 2244 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1cont2when1(__when_expr_2.get(), loopDepth); };
 		static_cast<FlowTestCase119Actor*>(this)->actor_wait_state = 3;
-															#line 126 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 126 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase119Actor, 2, Void >*>(static_cast<FlowTestCase119Actor*>(this)));
-															#line 2249 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 2249 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -2316,36 +2316,36 @@ public:
 	}
 	int a_body1cont3(Void const& _,int loopDepth) 
 	{
-															#line 128 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 128 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		f.clear();
-															#line 129 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 129 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<Void> __when_expr_3 = IAsyncFileSystem::filesystem()->incrementalDeleteFile(filename, true);
-															#line 129 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 129 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<FlowTestCase119Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 2325 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 2325 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_3.isReady()) { if (__when_expr_3.isError()) return a_body1Catch1(__when_expr_3.getError(), loopDepth); else return a_body1cont3when1(__when_expr_3.get(), loopDepth); };
 		static_cast<FlowTestCase119Actor*>(this)->actor_wait_state = 4;
-															#line 129 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 129 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_3.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase119Actor, 3, Void >*>(static_cast<FlowTestCase119Actor*>(this)));
-															#line 2330 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 2330 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont3(Void && _,int loopDepth) 
 	{
-															#line 128 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 128 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		f.clear();
-															#line 129 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 129 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<Void> __when_expr_3 = IAsyncFileSystem::filesystem()->incrementalDeleteFile(filename, true);
-															#line 129 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 129 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<FlowTestCase119Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 2343 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 2343 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_3.isReady()) { if (__when_expr_3.isError()) return a_body1Catch1(__when_expr_3.getError(), loopDepth); else return a_body1cont3when1(__when_expr_3.get(), loopDepth); };
 		static_cast<FlowTestCase119Actor*>(this)->actor_wait_state = 4;
-															#line 129 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 129 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_3.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase119Actor, 3, Void >*>(static_cast<FlowTestCase119Actor*>(this)));
-															#line 2348 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 2348 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -2415,9 +2415,9 @@ public:
 	}
 	int a_body1cont4(Void const& _,int loopDepth) 
 	{
-															#line 130 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 130 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (!static_cast<FlowTestCase119Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~FlowTestCase119ActorState(); static_cast<FlowTestCase119Actor*>(this)->destroy(); return 0; }
-															#line 2420 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 2420 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		new (&static_cast<FlowTestCase119Actor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~FlowTestCase119ActorState();
 		static_cast<FlowTestCase119Actor*>(this)->finishSendAndDelPromiseRef();
@@ -2427,9 +2427,9 @@ public:
 	}
 	int a_body1cont4(Void && _,int loopDepth) 
 	{
-															#line 130 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 130 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (!static_cast<FlowTestCase119Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~FlowTestCase119ActorState(); static_cast<FlowTestCase119Actor*>(this)->destroy(); return 0; }
-															#line 2432 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 2432 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		new (&static_cast<FlowTestCase119Actor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~FlowTestCase119ActorState();
 		static_cast<FlowTestCase119Actor*>(this)->finishSendAndDelPromiseRef();
@@ -2500,20 +2500,20 @@ public:
 		fdb_probe_actor_exit("flowTestCase119", reinterpret_cast<unsigned long>(this), 3);
 
 	}
-															#line 119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 119 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 	UnitTestParameters params;
-															#line 121 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 121 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 	int64_t fileSize;
-															#line 122 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 122 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 	std::string filename;
-															#line 123 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 123 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 	Reference<IAsyncFile> f;
-															#line 2511 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 2511 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 };
 // This generated class is to be used only via flowTestCase119()
-															#line 119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 119 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 class FlowTestCase119Actor final : public Actor<Void>, public ActorCallback< FlowTestCase119Actor, 0, Reference<IAsyncFile> >, public ActorCallback< FlowTestCase119Actor, 1, Void >, public ActorCallback< FlowTestCase119Actor, 2, Void >, public ActorCallback< FlowTestCase119Actor, 3, Void >, public FastAllocated<FlowTestCase119Actor>, public FlowTestCase119ActorState<FlowTestCase119Actor> {
-															#line 2516 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 2516 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 public:
 	using FastAllocated<FlowTestCase119Actor>::operator new;
 	using FastAllocated<FlowTestCase119Actor>::operator delete;
@@ -2525,9 +2525,9 @@ friend struct ActorCallback< FlowTestCase119Actor, 0, Reference<IAsyncFile> >;
 friend struct ActorCallback< FlowTestCase119Actor, 1, Void >;
 friend struct ActorCallback< FlowTestCase119Actor, 2, Void >;
 friend struct ActorCallback< FlowTestCase119Actor, 3, Void >;
-															#line 119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 119 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 	FlowTestCase119Actor(UnitTestParameters const& params) 
-															#line 2530 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 2530 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		 : Actor<Void>(),
 		   FlowTestCase119ActorState<FlowTestCase119Actor>(params)
 	{
@@ -2554,41 +2554,41 @@ friend struct ActorCallback< FlowTestCase119Actor, 3, Void >;
 	}
 };
 }
-															#line 119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 119 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 static Future<Void> flowTestCase119( UnitTestParameters const& params ) {
-															#line 119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 119 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 	return Future<Void>(new FlowTestCase119Actor(params));
-															#line 2561 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 2561 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 }
 ACTOR_TEST_CASE(flowTestCase119, "/fileio/incrementalDelete")
 
-#line 132 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+#line 132 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 
-															#line 2567 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 2567 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 namespace {
 // This generated class is to be used only via flowTestCase133()
-															#line 133 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 133 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 template <class FlowTestCase133Actor>
-															#line 133 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 133 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 class FlowTestCase133ActorState {
-															#line 2574 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 2574 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 public:
-															#line 133 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 133 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 	FlowTestCase133ActorState(UnitTestParameters const& params) 
-															#line 133 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
-															#line 133 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 133 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
+															#line 133 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		 : params(params),
-															#line 135 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 135 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		   fileSize(100e6),
-															#line 136 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 136 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		   filename("/tmp/__JUNK__." + deterministicRandom()->randomUniqueID().toString()),
-															#line 137 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 137 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		   renamedFile("/tmp/__RENAMED_JUNK__." + deterministicRandom()->randomUniqueID().toString()),
-															#line 138 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 138 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		   data(new char[4096]),
-															#line 139 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 139 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		   readData(new char[4096])
-															#line 2591 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 2591 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 	{
 		fdb_probe_actor_create("flowTestCase133", reinterpret_cast<unsigned long>(this));
 
@@ -2601,16 +2601,16 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 140 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 			StrictFuture<Reference<IAsyncFile>> __when_expr_0 = IAsyncFileSystem::filesystem()->open( filename, IAsyncFile::OPEN_ATOMIC_WRITE_AND_CREATE | IAsyncFile::OPEN_CREATE | IAsyncFile::OPEN_READWRITE, 0644);
-															#line 140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 140 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 			if (static_cast<FlowTestCase133Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 2608 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 2608 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<FlowTestCase133Actor*>(this)->actor_wait_state = 1;
-															#line 140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 140 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase133Actor, 0, Reference<IAsyncFile> >*>(static_cast<FlowTestCase133Actor*>(this)));
-															#line 2613 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 2613 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -2631,25 +2631,25 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 145 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 145 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = f->sync();
-															#line 145 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 145 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<FlowTestCase133Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 2638 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 2638 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<FlowTestCase133Actor*>(this)->actor_wait_state = 2;
-															#line 145 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 145 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase133Actor, 1, Void >*>(static_cast<FlowTestCase133Actor*>(this)));
-															#line 2643 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 2643 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1when1(Reference<IAsyncFile> const& __f,int loopDepth) 
 	{
-															#line 140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 140 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		f = __f;
-															#line 2652 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 2652 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = a_body1cont1(loopDepth);
 
 		return loopDepth;
@@ -2714,32 +2714,32 @@ public:
 	}
 	int a_body1cont2(Void const& _,int loopDepth) 
 	{
-															#line 146 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 146 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<Void> __when_expr_2 = f->truncate(fileSize);
-															#line 146 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 146 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<FlowTestCase133Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 2721 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 2721 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1cont2when1(__when_expr_2.get(), loopDepth); };
 		static_cast<FlowTestCase133Actor*>(this)->actor_wait_state = 3;
-															#line 146 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 146 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase133Actor, 2, Void >*>(static_cast<FlowTestCase133Actor*>(this)));
-															#line 2726 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 2726 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont2(Void && _,int loopDepth) 
 	{
-															#line 146 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 146 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<Void> __when_expr_2 = f->truncate(fileSize);
-															#line 146 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 146 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<FlowTestCase133Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 2737 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 2737 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1cont2when1(__when_expr_2.get(), loopDepth); };
 		static_cast<FlowTestCase133Actor*>(this)->actor_wait_state = 3;
-															#line 146 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 146 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase133Actor, 2, Void >*>(static_cast<FlowTestCase133Actor*>(this)));
-															#line 2742 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 2742 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -2809,48 +2809,48 @@ public:
 	}
 	int a_body1cont3(Void const& _,int loopDepth) 
 	{
-															#line 147 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 147 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		memset(data.get(), 0, 4096);
-															#line 149 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 149 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		for(int i = 0;i < 16;++i) {
-															#line 150 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 150 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 			data[i] = deterministicRandom()->randomAlphaNumeric();
-															#line 2818 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 2818 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		}
-															#line 153 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 153 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<Void> __when_expr_3 = f->write(data.get(), 4096, 0);
-															#line 153 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 153 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<FlowTestCase133Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 2824 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 2824 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_3.isReady()) { if (__when_expr_3.isError()) return a_body1Catch1(__when_expr_3.getError(), loopDepth); else return a_body1cont3when1(__when_expr_3.get(), loopDepth); };
 		static_cast<FlowTestCase133Actor*>(this)->actor_wait_state = 4;
-															#line 153 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 153 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_3.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase133Actor, 3, Void >*>(static_cast<FlowTestCase133Actor*>(this)));
-															#line 2829 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 2829 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont3(Void && _,int loopDepth) 
 	{
-															#line 147 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 147 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		memset(data.get(), 0, 4096);
-															#line 149 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 149 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		for(int i = 0;i < 16;++i) {
-															#line 150 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 150 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 			data[i] = deterministicRandom()->randomAlphaNumeric();
-															#line 2842 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 2842 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		}
-															#line 153 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 153 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<Void> __when_expr_3 = f->write(data.get(), 4096, 0);
-															#line 153 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 153 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<FlowTestCase133Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 2848 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 2848 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_3.isReady()) { if (__when_expr_3.isError()) return a_body1Catch1(__when_expr_3.getError(), loopDepth); else return a_body1cont3when1(__when_expr_3.get(), loopDepth); };
 		static_cast<FlowTestCase133Actor*>(this)->actor_wait_state = 4;
-															#line 153 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 153 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_3.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase133Actor, 3, Void >*>(static_cast<FlowTestCase133Actor*>(this)));
-															#line 2853 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 2853 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -2920,32 +2920,32 @@ public:
 	}
 	int a_body1cont4(Void const& _,int loopDepth) 
 	{
-															#line 154 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 154 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<Void> __when_expr_4 = f->write(data.get(), 4096, fileSize - 4096);
-															#line 154 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 154 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<FlowTestCase133Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 2927 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 2927 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_4.isReady()) { if (__when_expr_4.isError()) return a_body1Catch1(__when_expr_4.getError(), loopDepth); else return a_body1cont4when1(__when_expr_4.get(), loopDepth); };
 		static_cast<FlowTestCase133Actor*>(this)->actor_wait_state = 5;
-															#line 154 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 154 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_4.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase133Actor, 4, Void >*>(static_cast<FlowTestCase133Actor*>(this)));
-															#line 2932 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 2932 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont4(Void && _,int loopDepth) 
 	{
-															#line 154 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 154 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<Void> __when_expr_4 = f->write(data.get(), 4096, fileSize - 4096);
-															#line 154 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 154 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<FlowTestCase133Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 2943 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 2943 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_4.isReady()) { if (__when_expr_4.isError()) return a_body1Catch1(__when_expr_4.getError(), loopDepth); else return a_body1cont4when1(__when_expr_4.get(), loopDepth); };
 		static_cast<FlowTestCase133Actor*>(this)->actor_wait_state = 5;
-															#line 154 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 154 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_4.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase133Actor, 4, Void >*>(static_cast<FlowTestCase133Actor*>(this)));
-															#line 2948 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 2948 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -3015,32 +3015,32 @@ public:
 	}
 	int a_body1cont6(Void const& _,int loopDepth) 
 	{
-															#line 155 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 155 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<Void> __when_expr_5 = f->sync();
-															#line 155 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 155 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<FlowTestCase133Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 3022 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 3022 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_5.isReady()) { if (__when_expr_5.isError()) return a_body1Catch1(__when_expr_5.getError(), loopDepth); else return a_body1cont6when1(__when_expr_5.get(), loopDepth); };
 		static_cast<FlowTestCase133Actor*>(this)->actor_wait_state = 6;
-															#line 155 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 155 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_5.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase133Actor, 5, Void >*>(static_cast<FlowTestCase133Actor*>(this)));
-															#line 3027 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 3027 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont6(Void && _,int loopDepth) 
 	{
-															#line 155 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 155 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<Void> __when_expr_5 = f->sync();
-															#line 155 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 155 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<FlowTestCase133Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 3038 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 3038 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_5.isReady()) { if (__when_expr_5.isError()) return a_body1Catch1(__when_expr_5.getError(), loopDepth); else return a_body1cont6when1(__when_expr_5.get(), loopDepth); };
 		static_cast<FlowTestCase133Actor*>(this)->actor_wait_state = 6;
-															#line 155 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 155 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_5.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase133Actor, 5, Void >*>(static_cast<FlowTestCase133Actor*>(this)));
-															#line 3043 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 3043 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -3110,36 +3110,36 @@ public:
 	}
 	int a_body1cont7(Void const& _,int loopDepth) 
 	{
-															#line 157 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 157 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		f.clear();
-															#line 158 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 158 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<Void> __when_expr_6 = IAsyncFileSystem::filesystem()->renameFile(filename, renamedFile);
-															#line 158 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 158 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<FlowTestCase133Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 3119 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 3119 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_6.isReady()) { if (__when_expr_6.isError()) return a_body1Catch1(__when_expr_6.getError(), loopDepth); else return a_body1cont7when1(__when_expr_6.get(), loopDepth); };
 		static_cast<FlowTestCase133Actor*>(this)->actor_wait_state = 7;
-															#line 158 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 158 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_6.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase133Actor, 6, Void >*>(static_cast<FlowTestCase133Actor*>(this)));
-															#line 3124 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 3124 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont7(Void && _,int loopDepth) 
 	{
-															#line 157 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 157 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		f.clear();
-															#line 158 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 158 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<Void> __when_expr_6 = IAsyncFileSystem::filesystem()->renameFile(filename, renamedFile);
-															#line 158 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 158 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<FlowTestCase133Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 3137 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 3137 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_6.isReady()) { if (__when_expr_6.isError()) return a_body1Catch1(__when_expr_6.getError(), loopDepth); else return a_body1cont7when1(__when_expr_6.get(), loopDepth); };
 		static_cast<FlowTestCase133Actor*>(this)->actor_wait_state = 7;
-															#line 158 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 158 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_6.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase133Actor, 6, Void >*>(static_cast<FlowTestCase133Actor*>(this)));
-															#line 3142 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 3142 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -3209,32 +3209,32 @@ public:
 	}
 	int a_body1cont8(Void const& _,int loopDepth) 
 	{
-															#line 159 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 159 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<Reference<IAsyncFile>> __when_expr_7 = IAsyncFileSystem::filesystem()->open(renamedFile, IAsyncFile::OPEN_READONLY, 0);
-															#line 159 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 159 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<FlowTestCase133Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 3216 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 3216 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_7.isReady()) { if (__when_expr_7.isError()) return a_body1Catch1(__when_expr_7.getError(), loopDepth); else return a_body1cont8when1(__when_expr_7.get(), loopDepth); };
 		static_cast<FlowTestCase133Actor*>(this)->actor_wait_state = 8;
-															#line 159 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 159 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_7.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase133Actor, 7, Reference<IAsyncFile> >*>(static_cast<FlowTestCase133Actor*>(this)));
-															#line 3221 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 3221 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont8(Void && _,int loopDepth) 
 	{
-															#line 159 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 159 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<Reference<IAsyncFile>> __when_expr_7 = IAsyncFileSystem::filesystem()->open(renamedFile, IAsyncFile::OPEN_READONLY, 0);
-															#line 159 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 159 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<FlowTestCase133Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 3232 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 3232 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_7.isReady()) { if (__when_expr_7.isError()) return a_body1Catch1(__when_expr_7.getError(), loopDepth); else return a_body1cont8when1(__when_expr_7.get(), loopDepth); };
 		static_cast<FlowTestCase133Actor*>(this)->actor_wait_state = 8;
-															#line 159 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 159 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_7.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase133Actor, 7, Reference<IAsyncFile> >*>(static_cast<FlowTestCase133Actor*>(this)));
-															#line 3237 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 3237 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -3304,80 +3304,80 @@ public:
 	}
 	int a_body1cont9(Reference<IAsyncFile> const& _f,int loopDepth) 
 	{
-															#line 160 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 160 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		f = _f;
-															#line 163 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 163 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		bool renamedExists = false;
-															#line 164 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 164 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		auto bName = basename(renamedFile);
-															#line 165 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 165 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		auto files = platform::listFiles("/tmp/");
-															#line 166 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 166 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		for( const auto& file : files ) {
-															#line 167 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 167 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 			if (file == bName)
-															#line 3319 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 3319 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 			{
-															#line 168 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 168 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 				renamedExists = true;
-															#line 3323 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 3323 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 			}
-															#line 170 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 170 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 			ASSERT(file != filename);
-															#line 3327 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 3327 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		}
-															#line 172 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 172 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		ASSERT(renamedExists);
-															#line 175 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 175 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<int> __when_expr_8 = f->read(readData.get(), 4096, 0);
-															#line 175 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 175 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<FlowTestCase133Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 3335 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 3335 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_8.isReady()) { if (__when_expr_8.isError()) return a_body1Catch1(__when_expr_8.getError(), loopDepth); else return a_body1cont9when1(__when_expr_8.get(), loopDepth); };
 		static_cast<FlowTestCase133Actor*>(this)->actor_wait_state = 9;
-															#line 175 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 175 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_8.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase133Actor, 8, int >*>(static_cast<FlowTestCase133Actor*>(this)));
-															#line 3340 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 3340 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont9(Reference<IAsyncFile> && _f,int loopDepth) 
 	{
-															#line 160 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 160 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		f = _f;
-															#line 163 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 163 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		bool renamedExists = false;
-															#line 164 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 164 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		auto bName = basename(renamedFile);
-															#line 165 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 165 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		auto files = platform::listFiles("/tmp/");
-															#line 166 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 166 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		for( const auto& file : files ) {
-															#line 167 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 167 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 			if (file == bName)
-															#line 3359 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 3359 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 			{
-															#line 168 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 168 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 				renamedExists = true;
-															#line 3363 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 3363 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 			}
-															#line 170 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 170 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 			ASSERT(file != filename);
-															#line 3367 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 3367 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		}
-															#line 172 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 172 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		ASSERT(renamedExists);
-															#line 175 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 175 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<int> __when_expr_8 = f->read(readData.get(), 4096, 0);
-															#line 175 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 175 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<FlowTestCase133Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 3375 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 3375 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_8.isReady()) { if (__when_expr_8.isError()) return a_body1Catch1(__when_expr_8.getError(), loopDepth); else return a_body1cont9when1(__when_expr_8.get(), loopDepth); };
 		static_cast<FlowTestCase133Actor*>(this)->actor_wait_state = 9;
-															#line 175 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 175 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_8.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase133Actor, 8, int >*>(static_cast<FlowTestCase133Actor*>(this)));
-															#line 3380 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 3380 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -3447,44 +3447,44 @@ public:
 	}
 	int a_body1cont10(int const& length,int loopDepth) 
 	{
-															#line 176 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 176 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		ASSERT(length == 4096);
-															#line 177 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 177 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		ASSERT(memcmp(readData.get(), data.get(), 4096) == 0);
-															#line 179 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 179 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		f.clear();
-															#line 182 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 182 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<Void> __when_expr_9 = IAsyncFileSystem::filesystem()->deleteFile(renamedFile, true);
-															#line 182 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 182 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<FlowTestCase133Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 3460 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 3460 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_9.isReady()) { if (__when_expr_9.isError()) return a_body1Catch1(__when_expr_9.getError(), loopDepth); else return a_body1cont10when1(__when_expr_9.get(), loopDepth); };
 		static_cast<FlowTestCase133Actor*>(this)->actor_wait_state = 10;
-															#line 182 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 182 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_9.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase133Actor, 9, Void >*>(static_cast<FlowTestCase133Actor*>(this)));
-															#line 3465 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 3465 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont10(int && length,int loopDepth) 
 	{
-															#line 176 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 176 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		ASSERT(length == 4096);
-															#line 177 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 177 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		ASSERT(memcmp(readData.get(), data.get(), 4096) == 0);
-															#line 179 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 179 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		f.clear();
-															#line 182 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 182 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<Void> __when_expr_9 = IAsyncFileSystem::filesystem()->deleteFile(renamedFile, true);
-															#line 182 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 182 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<FlowTestCase133Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 3482 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 3482 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_9.isReady()) { if (__when_expr_9.isError()) return a_body1Catch1(__when_expr_9.getError(), loopDepth); else return a_body1cont10when1(__when_expr_9.get(), loopDepth); };
 		static_cast<FlowTestCase133Actor*>(this)->actor_wait_state = 10;
-															#line 182 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 182 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_9.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase133Actor, 9, Void >*>(static_cast<FlowTestCase133Actor*>(this)));
-															#line 3487 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 3487 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -3554,9 +3554,9 @@ public:
 	}
 	int a_body1cont10cont1(Void const& _,int loopDepth) 
 	{
-															#line 183 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 183 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (!static_cast<FlowTestCase133Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~FlowTestCase133ActorState(); static_cast<FlowTestCase133Actor*>(this)->destroy(); return 0; }
-															#line 3559 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 3559 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		new (&static_cast<FlowTestCase133Actor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~FlowTestCase133ActorState();
 		static_cast<FlowTestCase133Actor*>(this)->finishSendAndDelPromiseRef();
@@ -3566,9 +3566,9 @@ public:
 	}
 	int a_body1cont10cont1(Void && _,int loopDepth) 
 	{
-															#line 183 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 183 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (!static_cast<FlowTestCase133Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~FlowTestCase133ActorState(); static_cast<FlowTestCase133Actor*>(this)->destroy(); return 0; }
-															#line 3571 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 3571 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		new (&static_cast<FlowTestCase133Actor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~FlowTestCase133ActorState();
 		static_cast<FlowTestCase133Actor*>(this)->finishSendAndDelPromiseRef();
@@ -3639,26 +3639,26 @@ public:
 		fdb_probe_actor_exit("flowTestCase133", reinterpret_cast<unsigned long>(this), 9);
 
 	}
-															#line 133 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 133 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 	UnitTestParameters params;
-															#line 135 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 135 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 	int64_t fileSize;
-															#line 136 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 136 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 	std::string filename;
-															#line 137 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 137 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 	std::string renamedFile;
-															#line 138 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 138 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 	std::unique_ptr<char[]> data;
-															#line 139 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 139 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 	std::unique_ptr<char[]> readData;
-															#line 140 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 140 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 	Reference<IAsyncFile> f;
-															#line 3656 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 3656 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 };
 // This generated class is to be used only via flowTestCase133()
-															#line 133 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 133 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 class FlowTestCase133Actor final : public Actor<Void>, public ActorCallback< FlowTestCase133Actor, 0, Reference<IAsyncFile> >, public ActorCallback< FlowTestCase133Actor, 1, Void >, public ActorCallback< FlowTestCase133Actor, 2, Void >, public ActorCallback< FlowTestCase133Actor, 3, Void >, public ActorCallback< FlowTestCase133Actor, 4, Void >, public ActorCallback< FlowTestCase133Actor, 5, Void >, public ActorCallback< FlowTestCase133Actor, 6, Void >, public ActorCallback< FlowTestCase133Actor, 7, Reference<IAsyncFile> >, public ActorCallback< FlowTestCase133Actor, 8, int >, public ActorCallback< FlowTestCase133Actor, 9, Void >, public FastAllocated<FlowTestCase133Actor>, public FlowTestCase133ActorState<FlowTestCase133Actor> {
-															#line 3661 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 3661 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 public:
 	using FastAllocated<FlowTestCase133Actor>::operator new;
 	using FastAllocated<FlowTestCase133Actor>::operator delete;
@@ -3676,9 +3676,9 @@ friend struct ActorCallback< FlowTestCase133Actor, 6, Void >;
 friend struct ActorCallback< FlowTestCase133Actor, 7, Reference<IAsyncFile> >;
 friend struct ActorCallback< FlowTestCase133Actor, 8, int >;
 friend struct ActorCallback< FlowTestCase133Actor, 9, Void >;
-															#line 133 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 133 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 	FlowTestCase133Actor(UnitTestParameters const& params) 
-															#line 3681 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 3681 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		 : Actor<Void>(),
 		   FlowTestCase133ActorState<FlowTestCase133Actor>(params)
 	{
@@ -3711,34 +3711,34 @@ friend struct ActorCallback< FlowTestCase133Actor, 9, Void >;
 	}
 };
 }
-															#line 133 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 133 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 static Future<Void> flowTestCase133( UnitTestParameters const& params ) {
-															#line 133 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 133 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 	return Future<Void>(new FlowTestCase133Actor(params));
-															#line 3718 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 3718 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 }
 ACTOR_TEST_CASE(flowTestCase133, "/fileio/rename")
 
-#line 185 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+#line 185 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 
 // Truncating to extend size should zero the new data
-															#line 3725 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 3725 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 namespace {
 // This generated class is to be used only via flowTestCase187()
-															#line 187 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 187 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 template <class FlowTestCase187Actor>
-															#line 187 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 187 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 class FlowTestCase187ActorState {
-															#line 3732 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 3732 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 public:
-															#line 187 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 187 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 	FlowTestCase187ActorState(UnitTestParameters const& params) 
-															#line 187 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
-															#line 187 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 187 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
+															#line 187 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		 : params(params),
-															#line 188 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 188 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		   filename("/tmp/__JUNK__")
-															#line 3741 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 3741 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 	{
 		fdb_probe_actor_create("flowTestCase187", reinterpret_cast<unsigned long>(this));
 
@@ -3751,16 +3751,16 @@ public:
 	int a_body1(int loopDepth=0) 
 	{
 		try {
-															#line 189 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 189 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 			StrictFuture<Reference<IAsyncFile>> __when_expr_0 = IAsyncFileSystem::filesystem()->open( filename, IAsyncFile::OPEN_ATOMIC_WRITE_AND_CREATE | IAsyncFile::OPEN_CREATE | IAsyncFile::OPEN_READWRITE, 0);
-															#line 189 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 189 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 			if (static_cast<FlowTestCase187Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 3758 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 3758 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 			if (__when_expr_0.isReady()) { if (__when_expr_0.isError()) return a_body1Catch1(__when_expr_0.getError(), loopDepth); else return a_body1when1(__when_expr_0.get(), loopDepth); };
 			static_cast<FlowTestCase187Actor*>(this)->actor_wait_state = 1;
-															#line 189 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 189 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 			__when_expr_0.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase187Actor, 0, Reference<IAsyncFile> >*>(static_cast<FlowTestCase187Actor*>(this)));
-															#line 3763 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 3763 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 			loopDepth = 0;
 		}
 		catch (Error& error) {
@@ -3781,27 +3781,27 @@ public:
 	}
 	int a_body1cont1(int loopDepth) 
 	{
-															#line 191 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 191 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		data = std::array<char, 4096>();
-															#line 192 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 192 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<Void> __when_expr_1 = f->sync();
-															#line 192 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 192 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<FlowTestCase187Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 3790 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 3790 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_1.isReady()) { if (__when_expr_1.isError()) return a_body1Catch1(__when_expr_1.getError(), loopDepth); else return a_body1cont1when1(__when_expr_1.get(), loopDepth); };
 		static_cast<FlowTestCase187Actor*>(this)->actor_wait_state = 2;
-															#line 192 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 192 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_1.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase187Actor, 1, Void >*>(static_cast<FlowTestCase187Actor*>(this)));
-															#line 3795 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 3795 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1when1(Reference<IAsyncFile> const& __f,int loopDepth) 
 	{
-															#line 189 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 189 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		f = __f;
-															#line 3804 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 3804 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = a_body1cont1(loopDepth);
 
 		return loopDepth;
@@ -3866,32 +3866,32 @@ public:
 	}
 	int a_body1cont2(Void const& _,int loopDepth) 
 	{
-															#line 193 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 193 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<Void> __when_expr_2 = f->truncate(4096);
-															#line 193 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 193 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<FlowTestCase187Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 3873 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 3873 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1cont2when1(__when_expr_2.get(), loopDepth); };
 		static_cast<FlowTestCase187Actor*>(this)->actor_wait_state = 3;
-															#line 193 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 193 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase187Actor, 2, Void >*>(static_cast<FlowTestCase187Actor*>(this)));
-															#line 3878 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 3878 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont2(Void && _,int loopDepth) 
 	{
-															#line 193 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 193 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<Void> __when_expr_2 = f->truncate(4096);
-															#line 193 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 193 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<FlowTestCase187Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 3889 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 3889 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_2.isReady()) { if (__when_expr_2.isError()) return a_body1Catch1(__when_expr_2.getError(), loopDepth); else return a_body1cont2when1(__when_expr_2.get(), loopDepth); };
 		static_cast<FlowTestCase187Actor*>(this)->actor_wait_state = 3;
-															#line 193 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 193 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_2.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase187Actor, 2, Void >*>(static_cast<FlowTestCase187Actor*>(this)));
-															#line 3894 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 3894 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -3961,32 +3961,32 @@ public:
 	}
 	int a_body1cont3(Void const& _,int loopDepth) 
 	{
-															#line 194 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 194 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<int> __when_expr_3 = f->read(&data[0], 4096, 0);
-															#line 194 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 194 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<FlowTestCase187Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 3968 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 3968 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_3.isReady()) { if (__when_expr_3.isError()) return a_body1Catch1(__when_expr_3.getError(), loopDepth); else return a_body1cont3when1(__when_expr_3.get(), loopDepth); };
 		static_cast<FlowTestCase187Actor*>(this)->actor_wait_state = 4;
-															#line 194 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 194 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_3.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase187Actor, 3, int >*>(static_cast<FlowTestCase187Actor*>(this)));
-															#line 3973 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 3973 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont3(Void && _,int loopDepth) 
 	{
-															#line 194 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 194 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<int> __when_expr_3 = f->read(&data[0], 4096, 0);
-															#line 194 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 194 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<FlowTestCase187Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 3984 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 3984 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_3.isReady()) { if (__when_expr_3.isError()) return a_body1Catch1(__when_expr_3.getError(), loopDepth); else return a_body1cont3when1(__when_expr_3.get(), loopDepth); };
 		static_cast<FlowTestCase187Actor*>(this)->actor_wait_state = 4;
-															#line 194 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 194 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_3.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase187Actor, 3, int >*>(static_cast<FlowTestCase187Actor*>(this)));
-															#line 3989 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 3989 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -4056,52 +4056,52 @@ public:
 	}
 	int a_body1cont4(int const& length,int loopDepth) 
 	{
-															#line 195 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 195 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		ASSERT(length == 4096);
-															#line 196 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 196 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		for( auto c : data ) {
-															#line 197 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 197 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 			ASSERT(c == '\0');
-															#line 4065 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 4065 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		}
-															#line 200 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 200 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		f.clear();
-															#line 201 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 201 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<Void> __when_expr_4 = IAsyncFileSystem::filesystem()->incrementalDeleteFile(filename, true);
-															#line 201 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 201 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<FlowTestCase187Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 4073 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 4073 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_4.isReady()) { if (__when_expr_4.isError()) return a_body1Catch1(__when_expr_4.getError(), loopDepth); else return a_body1cont4when1(__when_expr_4.get(), loopDepth); };
 		static_cast<FlowTestCase187Actor*>(this)->actor_wait_state = 5;
-															#line 201 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 201 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_4.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase187Actor, 4, Void >*>(static_cast<FlowTestCase187Actor*>(this)));
-															#line 4078 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 4078 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
 	}
 	int a_body1cont4(int && length,int loopDepth) 
 	{
-															#line 195 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 195 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		ASSERT(length == 4096);
-															#line 196 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 196 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		for( auto c : data ) {
-															#line 197 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 197 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 			ASSERT(c == '\0');
-															#line 4091 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 4091 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		}
-															#line 200 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 200 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		f.clear();
-															#line 201 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 201 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		StrictFuture<Void> __when_expr_4 = IAsyncFileSystem::filesystem()->incrementalDeleteFile(filename, true);
-															#line 201 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 201 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (static_cast<FlowTestCase187Actor*>(this)->actor_wait_state < 0) return a_body1Catch1(actor_cancelled(), loopDepth);
-															#line 4099 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 4099 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		if (__when_expr_4.isReady()) { if (__when_expr_4.isError()) return a_body1Catch1(__when_expr_4.getError(), loopDepth); else return a_body1cont4when1(__when_expr_4.get(), loopDepth); };
 		static_cast<FlowTestCase187Actor*>(this)->actor_wait_state = 5;
-															#line 201 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 201 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		__when_expr_4.addCallbackAndClear(static_cast<ActorCallback< FlowTestCase187Actor, 4, Void >*>(static_cast<FlowTestCase187Actor*>(this)));
-															#line 4104 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 4104 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		loopDepth = 0;
 
 		return loopDepth;
@@ -4171,9 +4171,9 @@ public:
 	}
 	int a_body1cont5(Void const& _,int loopDepth) 
 	{
-															#line 202 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 202 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (!static_cast<FlowTestCase187Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~FlowTestCase187ActorState(); static_cast<FlowTestCase187Actor*>(this)->destroy(); return 0; }
-															#line 4176 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 4176 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		new (&static_cast<FlowTestCase187Actor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~FlowTestCase187ActorState();
 		static_cast<FlowTestCase187Actor*>(this)->finishSendAndDelPromiseRef();
@@ -4183,9 +4183,9 @@ public:
 	}
 	int a_body1cont5(Void && _,int loopDepth) 
 	{
-															#line 202 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 202 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 		if (!static_cast<FlowTestCase187Actor*>(this)->SAV<Void>::futures) { (void)(Void()); this->~FlowTestCase187ActorState(); static_cast<FlowTestCase187Actor*>(this)->destroy(); return 0; }
-															#line 4188 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 4188 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		new (&static_cast<FlowTestCase187Actor*>(this)->SAV< Void >::value()) Void(Void());
 		this->~FlowTestCase187ActorState();
 		static_cast<FlowTestCase187Actor*>(this)->finishSendAndDelPromiseRef();
@@ -4256,20 +4256,20 @@ public:
 		fdb_probe_actor_exit("flowTestCase187", reinterpret_cast<unsigned long>(this), 4);
 
 	}
-															#line 187 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 187 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 	UnitTestParameters params;
-															#line 188 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 188 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 	std::string filename;
-															#line 189 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 189 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 	Reference<IAsyncFile> f;
-															#line 191 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 191 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 	std::array<char, 4096> data;
-															#line 4267 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 4267 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 };
 // This generated class is to be used only via flowTestCase187()
-															#line 187 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 187 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 class FlowTestCase187Actor final : public Actor<Void>, public ActorCallback< FlowTestCase187Actor, 0, Reference<IAsyncFile> >, public ActorCallback< FlowTestCase187Actor, 1, Void >, public ActorCallback< FlowTestCase187Actor, 2, Void >, public ActorCallback< FlowTestCase187Actor, 3, int >, public ActorCallback< FlowTestCase187Actor, 4, Void >, public FastAllocated<FlowTestCase187Actor>, public FlowTestCase187ActorState<FlowTestCase187Actor> {
-															#line 4272 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 4272 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 public:
 	using FastAllocated<FlowTestCase187Actor>::operator new;
 	using FastAllocated<FlowTestCase187Actor>::operator delete;
@@ -4282,9 +4282,9 @@ friend struct ActorCallback< FlowTestCase187Actor, 1, Void >;
 friend struct ActorCallback< FlowTestCase187Actor, 2, Void >;
 friend struct ActorCallback< FlowTestCase187Actor, 3, int >;
 friend struct ActorCallback< FlowTestCase187Actor, 4, Void >;
-															#line 187 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 187 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 	FlowTestCase187Actor(UnitTestParameters const& params) 
-															#line 4287 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 4287 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 		 : Actor<Void>(),
 		   FlowTestCase187ActorState<FlowTestCase187Actor>(params)
 	{
@@ -4312,12 +4312,12 @@ friend struct ActorCallback< FlowTestCase187Actor, 4, Void >;
 	}
 };
 }
-															#line 187 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 187 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 static Future<Void> flowTestCase187( UnitTestParameters const& params ) {
-															#line 187 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+															#line 187 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
 	return Future<Void>(new FlowTestCase187Actor(params));
-															#line 4319 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.g.cpp"
+															#line 4319 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.g.cpp"
 }
 ACTOR_TEST_CASE(flowTestCase187, "/fileio/truncateAndRead")
 
-#line 204 "/home/ccat3z/Documents/moqi/foundationdb-client/src/fdbrpc/IAsyncFile.actor.cpp"
+#line 204 "/usr/src/libfdb_c/fdbrpc/IAsyncFile.actor.cpp"
