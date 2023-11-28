@@ -21,7 +21,7 @@
 #include "fdbrpc/AsyncFileEncrypted.h"
 #include "flow/StreamCipher.h"
 #include "flow/UnitTest.h"
-#include "flow/xxhash.h"
+#include "xxhash.h"
 #include "flow/actorcompiler.h" // must be last include
 
 class AsyncFileEncryptedImpl {

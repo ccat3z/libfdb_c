@@ -36,7 +36,7 @@
 #include "flow/EncryptUtils.h"
 #include "flow/FastRef.h"
 #include "flow/flow.h"
-#include "flow/xxhash.h"
+#include "xxhash.h"
 
 #include <openssl/aes.h>
 #include <openssl/engine.h>

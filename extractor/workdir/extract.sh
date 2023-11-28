@@ -36,6 +36,7 @@ function convert_fdb_source() {
                 -e 's|contrib/fmt-8.1.1/include/||' \
                 -e 's|flow/stacktrace.h|absl/debugging/stacktrace.h|' \
                 -e 's|fdbrpc/md5/md5.h|openssl/md5.h|;' \
+                -e 's|flow/xxhash.h|xxhash.h|' \
                 > "$_target"
 
             if [[ "$file" =~ ^(.*)\.actor\.(h|cpp)$ ]]; then
@@ -62,6 +63,8 @@ _skip_source=(
     stacktrace_internal
     stacktrace.amalgamation.cpp
     stacktrace.h
+    xxhash.c
+    xxhash.h
 )
 _copy_source=(
     config.h.cmake
