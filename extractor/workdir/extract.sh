@@ -62,6 +62,8 @@ _skip_source=(
     stacktrace_internal
     stacktrace.amalgamation.cpp
     stacktrace.h
+    SignalSafeUnwind.cpp
+    SignalSafeUnwind.h
 )
 _copy_source=(
     config.h.cmake
