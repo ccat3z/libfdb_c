@@ -19,7 +19,6 @@ if(NOT TARGET fdbdeps)
     find_package(msgpack-cxx CONFIG REQUIRED)
     find_package(OpenSSL REQUIRED)
     find_package(absl CONFIG REQUIRED)
-    find_package(xxHash CONFIG REQUIRED)
 
     add_library(fdbdeps INTERFACE)
     target_link_libraries(fdbdeps INTERFACE
@@ -29,7 +28,6 @@ if(NOT TARGET fdbdeps)
         OpenSSL::SSL
         OpenSSL::Crypto
         absl::debugging
-        xxHash::xxhash
     )
 endif()
 

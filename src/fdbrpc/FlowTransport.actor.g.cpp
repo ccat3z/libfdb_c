@@ -43,7 +43,7 @@
 #include "flow/ProtocolVersion.h"
 #include "flow/UnitTest.h"
 #define XXH_INLINE_ALL
-#include "xxhash.h"
+#include "flow/xxhash.h"
 #include "flow/actorcompiler.h" // This must be the last #include.
 
 static NetworkAddressList g_currentDeliveryPeerAddress = NetworkAddressList();
