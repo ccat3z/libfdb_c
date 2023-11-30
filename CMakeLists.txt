@@ -34,6 +34,11 @@ endif()
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_CXX_STANDARD 20)
 
+# Sanitizer
+if(DEFINED USE_ASAN)
+    add_compile_definitions(ADDRESS_SANITIZER)
+endif()
+
 # Rename ambiguous symbols
 file(STRINGS "symbols.list" SYMBOL_LISTS)
 foreach(symbol IN LISTS SYMBOL_LISTS)
