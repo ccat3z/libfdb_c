@@ -1,6 +1,6 @@
 # libfdb_c
 
-This repository extracts libfdb_c from [FoundationDB](https://github.com/apple/foundationdb) \
+This repository extracts libfdb_c from [FoundationDB](https://github.com/apple/foundationdb)
 and pre-process the flow code to avoid mono during compilation.
 
 ## Build
