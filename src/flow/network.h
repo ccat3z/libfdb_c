@@ -24,8 +24,8 @@
 #pragma once
 
 #include <array>
-#include <regex>
 #include <string>
+#include <re2/re2.h>
 #include <stdint.h>
 #include <variant>
 #include <atomic>

@@ -1,0 +1,62 @@
+diff --git a/fdbclient/NativeAPI.actor.cpp b/fdbclient/NativeAPI.actor.cpp
+index bdd46fc03..1af99225d 100644
+--- a/fdbclient/NativeAPI.actor.cpp
++++ b/fdbclient/NativeAPI.actor.cpp
+@@ -23,7 +23,7 @@
+ #include <algorithm>
+ #include <iterator>
+ #include <memory>
+-#include <regex>
++#include <re2/re2.h>
+ #include <unordered_set>
+ #include <tuple>
+ #include <utility>
+@@ -2338,7 +2338,7 @@ const UniqueOrderedOptionList<FDBTransactionOptions>& Database::getTransactionDe
+ }
+ 
+ void setNetworkOption(FDBNetworkOptions::Option option, Optional<StringRef> value) {
+-	std::regex identifierRegex("^[a-zA-Z0-9_]*$");
++	re2::RE2 identifierRegex("^[a-zA-Z0-9_]*$");
+ 	switch (option) {
+ 	// SOMEDAY: If the network is already started, should these five throw an error?
+ 	case FDBNetworkOptions::TRACE_ENABLE:
+@@ -2366,7 +2366,7 @@ void setNetworkOption(FDBNetworkOptions::Option option, Optional<StringRef> valu
+ 		if (networkOptions.traceFileIdentifier.length() > CLIENT_KNOBS->TRACE_LOG_FILE_IDENTIFIER_MAX_LENGTH) {
+ 			fprintf(stderr, "Trace file identifier provided is too long.\n");
+ 			throw invalid_option_value();
+-		} else if (!std::regex_match(networkOptions.traceFileIdentifier, identifierRegex)) {
++		} else if (!re2::RE2::FullMatch(networkOptions.traceFileIdentifier, identifierRegex)) {
+ 			fprintf(stderr, "Trace file identifier should only contain alphanumerics and underscores.\n");
+ 			throw invalid_option_value();
+ 		}
+diff --git a/flow/Hostname.h b/flow/Hostname.h
+index c7871e502..1ec8c2adb 100644
+--- a/flow/Hostname.h
++++ b/flow/Hostname.h
+@@ -53,9 +53,9 @@ struct Hostname {
+ 	//    host-name:1234
+ 	//    host-name_part1.host-name_part2:1234:tls
+ 	static bool isHostname(const std::string& s) {
+-		std::regex validation("^([\\w\\-]+\\.?)+:([\\d]+){1,}(:tls)?$");
+-		std::regex ipv4Validation("^([\\d]{1,3}\\.?){4,}:([\\d]+){1,}(:tls)?$");
+-		return !std::regex_match(s, ipv4Validation) && std::regex_match(s, validation);
++		re2::RE2 validation("^([\\w\\-]+\\.?)+:([\\d]+){1,}(:tls)?$");
++		re2::RE2 ipv4Validation("^([\\d]{1,3}\\.?){4,}:([\\d]+){1,}(:tls)?$");
++		return !re2::RE2::FullMatch(s, ipv4Validation) && re2::RE2::FullMatch(s, validation);
+ 	}
+ 
+ 	static Hostname parse(const std::string& s);
+diff --git a/flow/network.h b/flow/network.h
+index f89da5fd2..008bce7a7 100644
+--- a/flow/network.h
++++ b/flow/network.h
+@@ -24,8 +24,8 @@
+ #pragma once
+ 
+ #include <array>
+-#include <regex>
+ #include <string>
++#include <re2/re2.h>
+ #include <stdint.h>
+ #include <variant>
+ #include <atomic>
